@@ -237,7 +237,3 @@ class NodeBaseTest(unittest.TestCase):
         test_child_node.add_parent(parent_node=test_parent_node_2)
         test_child_node.add_parent(parent_node=test_parent_node_3)
         self.assertListEqual(test_child_node.get_parents_names(), ['parent_node_3', 'parent_node_2', 'parent_node_1'])
-
-
-if __name__ == '__main__':
-    unittest.main()

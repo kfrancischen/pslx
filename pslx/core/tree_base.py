@@ -12,8 +12,19 @@ class TreeBase(Base):
         )
         self._max_dict_size = max_dict_size
 
+    def get_root_node(self):
+        return self._root
+
+    def set_root_node(self, root):
+        for child in self._root.get_children_nodes():
+            root.add_child(child)
+            self._root.delete(child)
+
+        self._root = root
+        return
+
     def add_node(self, parent_node, child_node):
-        assert child_node.get_num_parents() == 0
+        assert child_node.get_num_parents() == 0 and parent_node != child_node
         if parent_node != self._root:
             assert parent_node.get_num_parents() != 0
 
@@ -43,7 +54,7 @@ class TreeBase(Base):
                 return search_node
             child_nodes = search_node.get_children_nodes()
             for child_node in child_nodes:
-                search_node.append(child_node)
+                search_queue.append(child_node)
         return None
 
     def get_tree_size(self):
@@ -51,7 +62,7 @@ class TreeBase(Base):
 
     def get_subtree_size(self, node):
         if node.get_num_children() == 0:
-            return 0
+            return 1
         else:
             result = 1
             for child_node in node.get_children_nodes():
@@ -62,23 +73,29 @@ class TreeBase(Base):
         result_node_names, num_result_nodes = [], 0
         search_queue = deque()
         search_queue.append(self._root)
-        while search_queue and max_num_node > 0 and num_result_nodes < max_num_node:
+        while search_queue:
+            if num_result_nodes >= max_num_node > 0:
+                break
             search_node = search_queue.popleft()
             result_node_names.append(search_node.get_node_name())
+            num_result_nodes += 1
             child_nodes = search_node.get_children_nodes()
             for child_node in child_nodes:
-                search_node.append(child_node)
+                search_queue.append(child_node)
         return result_node_names
 
     def dfs_search(self, max_num_node=-1):
         result_node_names, num_result_nodes = [], 0
         search_stack = [self._root]
-        while search_stack and max_num_node > 0 and num_result_nodes < max_num_node:
+        while search_stack:
+            if num_result_nodes >= max_num_node > 0:
+                break
             search_node = search_stack.pop()
             result_node_names.append(search_node.get_node_name())
+            num_result_nodes += 1
             child_nodes = search_node.get_children_nodes()
             for child_node in child_nodes:
-                search_node.append(child_node)
+                search_stack.append(child_node)
         return result_node_names
 
     def _trim_tree(self, node, max_capacity=-1):
@@ -93,7 +110,7 @@ class TreeBase(Base):
                 child_node.delete_parent(parent_node=node)
             return
         else:
-            children_nodes = node.get_num_children()
+            children_nodes = node.get_children_nodes()
             cumulative_size = 1
             pivot_index = len(children_nodes) - 1
             while pivot_index >= 0:
@@ -134,5 +151,23 @@ class TreeBase(Base):
                 leaf_node_names.append(search_node.get_node_name())
 
             for child_node in child_nodes:
-                search_node.append(child_node)
+                search_queue.append(child_node)
         return leaf_node_names
+
+    def print_tree(self):
+        result_node_names = []
+        search_queue = deque()
+        search_queue.append(self._root)
+        print_str, level = '', 0
+        while search_queue:
+            search_node = search_queue.popleft()
+            print_str += search_node.get_node_name()
+            result_node_names.append(search_node.get_node_name())
+            child_nodes = search_node.get_children_nodes()
+            if len(search_queue) > 0:
+                print_str += '->'
+            else:
+                print('Level ' + str(level) + ': ' + print_str)
+                print_str = ''
+            for child_node in child_nodes:
+                search_queue.append(child_node)
