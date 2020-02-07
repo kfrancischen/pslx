@@ -1,0 +1,2 @@
+LOGGING_TOOL:
+  DISK_LOG_FILE_DIR: "log/"

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package schema;
+
+// the next will be 2
+enum ModeType {
+    TEST = 0;
+    PROD = 1;
+}
+
+// the next will be 2
+enum SortOrder {
+    ORDER = 0;
+    REVERSE = 1;
+}
+
+// the next will be 3
+enum DataModelType {
+    DEFAULT = 0;
+    BATCH = 1;
+    STREAMING = 2;
+}
+
+// the next will be 4
+enum DiskLoggerLevel {
+    INFO = 0;
+    DEBUG = 1;
+    WARNING = 2;
+    NOTSET = 3;
+}
+
+// the next will be 5
+enum PartitionerType {
+    YEARLY = 0;
+    MONTHLY = 1;
+    DAILY = 2;
+    HOURLY = 3;
+    MINUTELY = 4;
+}
