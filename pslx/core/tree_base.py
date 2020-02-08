@@ -57,52 +57,52 @@ class TreeBase(Base):
                 search_queue.append(child_node)
         return None
 
-    def get_tree_size(self):
-        return self.get_subtree_size(node=self._root)
+    def get_num_nodes(self):
+        return self.get_num_nodes_subtree(node=self._root)
 
-    def get_subtree_size(self, node):
+    def get_num_nodes_subtree(self, node):
         if node.get_num_children() == 0:
             return 1
         else:
             result = 1
             for child_node in node.get_children_nodes():
-                result += self.get_subtree_size(node=child_node)
+                result += self.get_num_nodes_subtree(node=child_node)
             return result
 
     def bfs_search(self, max_num_node=-1):
-        result_node_names, num_result_nodes = [], 0
+        result, num_result_nodes = [], 0
         search_queue = deque()
-        search_queue.append(self._root)
+        search_queue.append((self._root, 0))
         while search_queue:
             if num_result_nodes >= max_num_node > 0:
                 break
-            search_node = search_queue.popleft()
-            result_node_names.append(search_node.get_node_name())
+            search_node, dist_to_root = search_queue.popleft()
+            result.append((search_node.get_node_name(), dist_to_root))
             num_result_nodes += 1
-            child_nodes = search_node.get_children_nodes()
-            for child_node in child_nodes:
-                search_queue.append(child_node)
-        return result_node_names
+
+            for child_node in search_node.get_children_nodes():
+                search_queue.append((child_node, dist_to_root + 1))
+        return result
 
     def dfs_search(self, max_num_node=-1):
-        result_node_names, num_result_nodes = [], 0
-        search_stack = [self._root]
+        result, num_result_nodes = [], 0
+        search_stack = [(self._root, 0)]
         while search_stack:
             if num_result_nodes >= max_num_node > 0:
                 break
-            search_node = search_stack.pop()
-            result_node_names.append(search_node.get_node_name())
+            search_node, dist_to_root = search_stack.pop()
+            result.append((search_node.get_node_name(), dist_to_root))
             num_result_nodes += 1
-            child_nodes = search_node.get_children_nodes()
-            for child_node in child_nodes:
-                search_stack.append(child_node)
-        return result_node_names
+
+            for child_node in search_node.get_children_nodes():
+                search_stack.append((child_node, dist_to_root + 1))
+        return result
 
     def _trim_tree(self, node, max_capacity=-1):
         if not node.is_children_ordered():
             self.log_print(string=node.get_node_name() + ' is not ordered. Be careful when you trim the tree.')
 
-        if max_capacity <= 0 or self.get_subtree_size(node=node) <= max_capacity:
+        if max_capacity <= 0 or self.get_num_nodes_subtree(node=node) <= max_capacity:
             return
         if max_capacity < 1 + node.get_num_children():
             num_children_to_trim = 1 + node.get_num_children() - max_capacity
@@ -115,7 +115,7 @@ class TreeBase(Base):
             pivot_index = len(children_nodes) - 1
             while pivot_index >= 0:
                 child_node = children_nodes[pivot_index]
-                child_node_subtree_size = self.get_subtree_size(node=child_node)
+                child_node_subtree_size = self.get_num_nodes_subtree(node=child_node)
 
                 if cumulative_size + child_node_subtree_size < max_capacity:
                     cumulative_size += child_node_subtree_size

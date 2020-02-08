@@ -82,6 +82,7 @@ class UnorderedNodeBase(NodeBase):
         super().__init__(node_name=node_name)
 
     def add_child(self, child_node):
+        assert child_node != self
         if self.has_child(child_name=child_node.get_node_name()):
             self.log_print("Node name duplicated. Will overwrite the previous node.")
         self._children[child_node.get_node_name()] = child_node
@@ -89,6 +90,7 @@ class UnorderedNodeBase(NodeBase):
             child_node.add_parent(parent_node=self)
 
     def add_parent(self, parent_node):
+        assert parent_node != self
         if self.has_parent(parent_name=parent_node.get_node_name()):
             self.log_print("Node name duplicated. Will overwrite the previous node.")
         self._parents[parent_node.get_node_name()] = parent_node
@@ -106,6 +108,7 @@ class OrderedNodeBase(NodeBase):
         self._order = order
 
     def add_child(self, child_node):
+        assert child_node != self
         if self.has_child(child_name=child_node.get_node_name()):
             self.log_print("Node name duplicated. Will overwrite the previous node.")
         self._children[child_node.get_node_name()] = child_node
@@ -115,6 +118,7 @@ class OrderedNodeBase(NodeBase):
             child_node.add_parent(parent_node=self)
 
     def add_parent(self, parent_node):
+        assert parent_node != self
         if self.has_parent(parent_name=parent_node.get_node_name()):
             self.log_print("Node name duplicated. Will overwrite the previous node.")
         self._parents[parent_node.get_node_name()] = parent_node
