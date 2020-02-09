@@ -1,6 +1,6 @@
 from pslx.core.operator_base import OperatorBase
 from pslx.tool.logging_tool import LoggingTool
-from pslx.schema.enums_pb2 import OperatorStatus
+from pslx.schema.enums_pb2 import Status
 
 
 class DummyLoggingTool(LoggingTool):
@@ -16,5 +16,5 @@ class DummyOperator(OperatorBase):
         super().__init__(node_name=node_name)
 
     def _execute(self, **kwargs):
-        self.set_status(status=OperatorStatus.SUCCESSFUL)
+        self.set_status(status=Status.SUCCESSFUL)
         return

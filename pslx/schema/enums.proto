@@ -38,7 +38,7 @@ enum PartitionerType {
     MINUTELY = 4;
 }
 
-enum OperatorStatus {
+enum Status {
     IDLE = 0;
     WAITING = 1;
     RUNNING = 2;

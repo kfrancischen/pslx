@@ -2,15 +2,15 @@ import time
 from pslx.core.exception import OperatorFailureException
 from pslx.core.node_base import OrderedNodeBase
 from pslx.schema.enums_pb2 import DataModelType
-from pslx.schema.enums_pb2 import OperatorStatus
 from pslx.schema.enums_pb2 import SortOrder
+from pslx.schema.enums_pb2 import Status
 from pslx.schema.snapshots_pb2 import OperatorSnapShot
 from pslx.util.proto_util import get_name_by_value, write_proto_to_file
 
 
 class OperatorBase(OrderedNodeBase):
     DATA_MODEL = DataModelType.DEFAULT
-    STATUS = OperatorStatus.IDLE
+    STATUS = Status.IDLE
 
     def __init__(self, node_name, order=SortOrder.ORDER):
         super().__init__(node_name=node_name, order=order)
@@ -32,12 +32,12 @@ class OperatorBase(OrderedNodeBase):
         return self.DATA_MODEL
 
     def set_status(self, status):
-        self.log_print("Switching to " + get_name_by_value(enum_type=OperatorStatus, value=status) +
-                       " status from " + get_name_by_value(enum_type=OperatorStatus, value=self.STATUS) + '.')
+        self.log_print("Switching to " + get_name_by_value(enum_type=Status, value=status) +
+                       " status from " + get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
         self.STATUS = status
 
     def unset_status(self):
-        self.set_status(status=OperatorStatus.IDLE)
+        self.set_status(status=Status.IDLE)
 
     def get_status(self):
         return self.STATUS
@@ -45,12 +45,12 @@ class OperatorBase(OrderedNodeBase):
     def wait_for_upstream_status(self):
         if self.DATA_MODEL != DataModelType.DEFAULT:
             for parent in self.get_parents_nodes():
-                if parent.get_status() in [OperatorStatus.WAITING, OperatorStatus.RUNNING]:
+                if parent.get_status() in [Status.WAITING, Status.RUNNING]:
                     self.log_print("Upstream operator " + parent.get_node_name() + " is still in status: " +
-                                   get_name_by_value(enum_type=OperatorStatus, value=parent.get_status()) + '.')
+                                   get_name_by_value(enum_type=Status, value=parent.get_status()) + '.')
                     return False
-                elif parent.get_status() == OperatorStatus.FAILED:
-                    self.set_status(status=OperatorStatus.FAILED)
+                elif parent.get_status() == Status.FAILED:
+                    self.set_status(status=Status.FAILED)
                     self.log_print("Upstream operator " + parent.get_node_name() + " failed.")
                     break
         return True
@@ -63,11 +63,11 @@ class OperatorBase(OrderedNodeBase):
 
     def is_status_consistent(self):
         for parent_node in self.get_parents_nodes():
-            if (parent_node.get_status() in [OperatorStatus.IDLE, OperatorStatus.WAITING, OperatorStatus.RUNNING] and
-                    self.STATUS in [OperatorStatus.RUNNING, OperatorStatus.SUCCEEDED, OperatorStatus.FAILED]):
+            if (parent_node.get_status() in [Status.IDLE, Status.WAITING, Status.RUNNING] and
+                    self.STATUS in [Status.RUNNING, Status.SUCCEEDED, Status.FAILED]):
                 return False
-            if (parent_node.get_status() == OperatorStatus.FAILED and
-                    self.STATUS in [OperatorStatus.RUNNING, OperatorStatus.SUCCEEDED]):
+            if (parent_node.get_status() == Status.FAILED and
+                    self.STATUS in [Status.RUNNING, Status.SUCCEEDED]):
                 return False
 
         return True
@@ -82,20 +82,21 @@ class OperatorBase(OrderedNodeBase):
             proto=self._snapshot,
             file_name=output_file
         )
+        return self._snapshot
 
     def execute(self, **kwargs):
         assert self.is_data_model_consistent() and self.is_status_consistent()
         for parent_node in self.get_parents_nodes():
-            if parent_node.get_status() == OperatorStatus.FAILED:
+            if parent_node.get_status() == Status.FAILED:
                 self.log_print("Operator " + parent_node.get_node_name() +
                                " failed. This results in failure of all the following descendant operators.")
-                self.set_status(status=OperatorStatus.FAILED)
+                self.set_status(status=Status.FAILED)
                 return
 
-        self.set_status(status=OperatorStatus.RUNNING)
+        self.set_status(status=Status.RUNNING)
         for child_node in self.get_children_nodes():
-            if child_node.get_status() != OperatorStatus.WAITING:
-                child_node.set_status(OperatorStatus.WAITING)
+            if child_node.get_status() != Status.WAITING:
+                child_node.set_status(Status.WAITING)
         if self._slo < 0:
             self.log_print("Operator has negative -1. This might result in indefinite run. "
                            "Please check set_slo() function.")
@@ -103,10 +104,10 @@ class OperatorBase(OrderedNodeBase):
         while self._slo < 0 or time.time() - start_time > self._slo > 0:
             try:
                 self._execute(**kwargs)
-                self.set_status(status=OperatorStatus.SUCCEEDED)
+                self.set_status(status=Status.SUCCEEDED)
             except OperatorFailureException as err:
                 self.log_print(str(err))
-                self.set_status(status=OperatorStatus.FAILED)
+                self.set_status(status=Status.FAILED)
 
     def _execute(self, **kwargs):
         raise NotImplementedError
