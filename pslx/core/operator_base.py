@@ -72,6 +72,13 @@ class OperatorBase(OrderedNodeBase):
 
     def execute(self, **kwargs):
         assert self.is_data_model_consistent() and self.is_status_consistent()
+        for parent_node in self.get_parents_nodes():
+            if parent_node.get_status() == OperatorStatus.FAILED:
+                self.log_print("Operator " + parent_node.get_node_name() +
+                               " failed. This results in failure of all the following descendant operators.")
+                self.set_status(status=OperatorStatus.FAILED)
+                return
+
         self.set_status(status=OperatorStatus.RUNNING)
         for child_node in self.get_children_nodes():
             if child_node.get_status() != OperatorStatus.WAITING:

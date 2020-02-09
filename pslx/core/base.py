@@ -36,7 +36,7 @@ class Base(object):
     @classmethod
     def log_print(cls, string):
         if cls.LOG_EVERYTHING:
-            print(ColorsUtil.BOLD + '[SYS-LOG] class' + ColorsUtil.RESET + ' ' +
+            print('[SYS-LOG]' + ColorsUtil.BOLD + ' class' + ColorsUtil.RESET + ' ' +
                   ColorsUtil.Foreground.GREEN + '[%s]' % cls.get_class_name() + ColorsUtil.RESET + ' & ' +
                   ColorsUtil.BOLD + 'Timestamp' + ColorsUtil.RESET + ' ' +
                   ColorsUtil.Foreground.RED + '[%s]' % str(cur_time_in_pst()) + ColorsUtil.RESET +
