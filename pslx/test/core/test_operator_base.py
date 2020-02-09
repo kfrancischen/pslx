@@ -1,6 +1,6 @@
 import unittest
-from pslx.schema.enums_pb2 import DataModelType
-from pslx.schema.enums_pb2 import Status
+from pslx.schema.enums_pb2 import DataModelType, ModeType, Status
+from pslx.schema.snapshots_pb2 import OperatorSnapshot, NodeSnapshot
 from pslx.util.dummy_util import DummyOperator
 
 
@@ -80,3 +80,38 @@ class TestOperatorBase(unittest.TestCase):
         test_operator_2.set_status(status=Status.FAILED)
         test_operator_1.add_child(child_node=test_operator_2)
         self.assertTrue(test_operator_2.is_status_consistent())
+
+    def test_take_snapshot_1(self):
+        test_operator_1 = DummyOperator(node_name='test_operator_1')
+        test_operator_2 = DummyOperator(node_name='test_operator_2')
+        test_operator_1.set_status(status=Status.SUCCEEDED)
+        test_operator_2.set_status(status=Status.FAILED)
+        test_operator_1.add_child(child_node=test_operator_2)
+        expected_node_snapshot = NodeSnapshot()
+        expected_node_snapshot.node_name = 'test_operator_1'
+        expected_node_snapshot.children_names.extend(['test_operator_2'])
+        expected_operator_snapshot = OperatorSnapshot()
+        expected_operator_snapshot.operator_name = 'test_operator_1'
+        expected_operator_snapshot.data_model = DataModelType.DEFAULT
+        expected_operator_snapshot.status = Status.SUCCEEDED
+        expected_operator_snapshot.node_snapshot.CopyFrom(expected_node_snapshot)
+        self.assertEqual(test_operator_1.get_operator_snapshot(), expected_operator_snapshot)
+
+    def test_take_snapshot_2(self):
+        test_operator_1 = DummyOperator(node_name='test_operator_1')
+        test_operator_2 = DummyOperator(node_name='test_operator_2')
+        test_operator_3 = DummyOperator(node_name='test_operator_3')
+        test_operator_1.set_status(status=Status.SUCCEEDED)
+        test_operator_2.set_status(status=Status.FAILED)
+        test_operator_3.set_status(status=Status.SUCCEEDED)
+        test_operator_1.add_child(child_node=test_operator_2)
+        test_operator_1.add_child(child_node=test_operator_3)
+        expected_node_snapshot = NodeSnapshot()
+        expected_node_snapshot.node_name = 'test_operator_1'
+        expected_node_snapshot.children_names.extend(['test_operator_2', 'test_operator_3'])
+        expected_operator_snapshot = OperatorSnapshot()
+        expected_operator_snapshot.operator_name = 'test_operator_1'
+        expected_operator_snapshot.data_model = DataModelType.DEFAULT
+        expected_operator_snapshot.status = Status.SUCCEEDED
+        expected_operator_snapshot.node_snapshot.CopyFrom(expected_node_snapshot)
+        self.assertEqual(test_operator_1.get_operator_snapshot(), expected_operator_snapshot)

@@ -1,6 +1,7 @@
 from collections import OrderedDict, defaultdict
 from pslx.core.base import Base
 from pslx.schema.enums_pb2 import SortOrder
+from pslx.schema.snapshots_pb2 import NodeSnapshot
 
 
 class NodeBase(Base):
@@ -72,6 +73,15 @@ class NodeBase(Base):
 
     def has_parent(self, parent_name):
         return parent_name in self._parents
+
+    def get_node_snapshot(self):
+        node_snapshot = NodeSnapshot()
+        node_snapshot.node_name = self._node_name
+        for child_name in self.get_children_names():
+            node_snapshot.children_names.append(child_name)
+        for parent_name in self.get_parents_names():
+            node_snapshot.parents_names.append(parent_name)
+        return node_snapshot
 
 
 class UnorderedNodeBase(NodeBase):

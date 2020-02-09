@@ -4,7 +4,7 @@ from pslx.core.node_base import OrderedNodeBase
 from pslx.schema.enums_pb2 import DataModelType
 from pslx.schema.enums_pb2 import SortOrder
 from pslx.schema.enums_pb2 import Status
-from pslx.schema.snapshots_pb2 import OperatorSnapShot
+from pslx.schema.snapshots_pb2 import OperatorSnapshot
 from pslx.util.proto_util import get_name_by_value, write_proto_to_file
 
 
@@ -15,7 +15,6 @@ class OperatorBase(OrderedNodeBase):
     def __init__(self, node_name, order=SortOrder.ORDER):
         super().__init__(node_name=node_name, order=order)
         self._slo = -1
-        self._snapshot = OperatorSnapShot()
 
     def set_slo(self, slo):
         self._slo = slo
@@ -72,17 +71,19 @@ class OperatorBase(OrderedNodeBase):
 
         return True
 
-    def take_snapshot(self, output_file):
-        self._snapshot.mode_type = self.get_mode()
-        self._snapshot.operator_name = self.get_node_name()
-        self._snapshot.data_model = self.get_data_model()
-        self._snapshot.status = self.get_status()
-        self.log_print("Saved to file " + output_file + '.')
-        write_proto_to_file(
-            proto=self._snapshot,
-            file_name=output_file
-        )
-        return self._snapshot
+    def get_operator_snapshot(self, output_file=None):
+        snapshot = OperatorSnapshot()
+        snapshot.operator_name = self.get_node_name()
+        snapshot.data_model = self.get_data_model()
+        snapshot.status = self.get_status()
+        snapshot.node_snapshot.CopyFrom(self.get_node_snapshot())
+        if output_file:
+            self.log_print("Saved to file " + output_file + '.')
+            write_proto_to_file(
+                proto=snapshot,
+                file_name=output_file
+            )
+        return snapshot
 
     def execute(self, **kwargs):
         assert self.is_data_model_consistent() and self.is_status_consistent()
@@ -98,7 +99,7 @@ class OperatorBase(OrderedNodeBase):
             if child_node.get_status() != Status.WAITING:
                 child_node.set_status(Status.WAITING)
         if self._slo < 0:
-            self.log_print("Operator has negative -1. This might result in indefinite run. "
+            self.log_print("Operator has negative SLO = -1. This might result in indefinite run. "
                            "Please check set_slo() function.")
         start_time = time.time()
         while self._slo < 0 or time.time() - start_time > self._slo > 0:

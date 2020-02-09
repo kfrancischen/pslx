@@ -38,6 +38,7 @@ enum PartitionerType {
     MINUTELY = 4;
 }
 
+// the next will be 5
 enum Status {
     IDLE = 0;
     WAITING = 1;

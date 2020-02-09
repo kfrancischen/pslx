@@ -4,21 +4,22 @@ import "enums.proto";
 
 package pslx;
 
-message OperatorSnapShot {
-    ModeType mode_type = 1;
-    string operator_name = 2;
-    DataModelType data_model = 3;
-    Status status = 4;
+message NodeSnapshot {
+    string node_name = 1;
+    repeated string children_names = 2;
+    repeated string parents_names = 3;
 }
 
+message OperatorSnapshot {
+    string operator_name = 1;
+    DataModelType data_model = 2;
+    Status status = 3;
+    NodeSnapshot node_snapshot = 4;
+}
 
-message ContainerSnapShot {
-    message GraphSnapShot {
-        string node_name = 1;
-        repeated string child_name = 2;
-    }
+message ContainerSnapshot {
     string root_name = 1;
-    map<string, OperatorSnapShot> node_snapshot_map = 2;
+    map<string, OperatorSnapshot> operator_snapshot_map = 2;
     bool is_initialized = 3;
     Status status = 4;
 }
