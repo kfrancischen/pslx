@@ -9,7 +9,7 @@ def check_valid_enum(enum_type, value):
 
 def get_name_by_value(enum_type, value):
     try:
-        return enum_type.Name(value=value)
+        return enum_type.Name(number=value)
     except ProtobufValueNotExistException as _:
         return None
 

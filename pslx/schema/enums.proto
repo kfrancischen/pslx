@@ -37,3 +37,11 @@ enum PartitionerType {
     HOURLY = 3;
     MINUTELY = 4;
 }
+
+enum OperatorStatus {
+    IDLE = 0;
+    WAITING = 1;
+    RUNNING = 2;
+    SUCCEEDED = 3;
+    FAILED = 4;
+}

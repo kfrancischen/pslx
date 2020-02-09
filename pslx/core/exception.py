@@ -15,3 +15,7 @@ class ProtobufNameNotExistException(ProtobufException):
 
 class ProtobufValueNotExistException(ProtobufException):
     pass
+
+
+class OperatorFailureException(ExceptionBase):
+    pass
