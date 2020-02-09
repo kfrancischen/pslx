@@ -8,3 +8,4 @@ for file in schema/*; do
   fi
 
 done
+sed -i -e 's/import enums_pb2 as enums__pb2/import pslx.schema.enums_pb2 as enums__pb2/g' schema/snapshots_pb2.py

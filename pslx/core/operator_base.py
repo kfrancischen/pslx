@@ -4,7 +4,8 @@ from pslx.core.node_base import OrderedNodeBase
 from pslx.schema.enums_pb2 import DataModelType
 from pslx.schema.enums_pb2 import OperatorStatus
 from pslx.schema.enums_pb2 import SortOrder
-from pslx.util.proto_util import get_name_by_value
+from pslx.schema.snapshots_pb2 import OperatorSnapShot
+from pslx.util.proto_util import get_name_by_value, write_proto_to_file
 
 
 class OperatorBase(OrderedNodeBase):
@@ -14,6 +15,7 @@ class OperatorBase(OrderedNodeBase):
     def __init__(self, node_name, order=SortOrder.ORDER):
         super().__init__(node_name=node_name, order=order)
         self._slo = -1
+        self._snapshot = OperatorSnapShot()
 
     def set_slo(self, slo):
         self._slo = slo
@@ -69,6 +71,17 @@ class OperatorBase(OrderedNodeBase):
                 return False
 
         return True
+
+    def take_snapshot(self, output_file):
+        self._snapshot.mode_type = self.get_mode()
+        self._snapshot.operator_name = self.get_node_name()
+        self._snapshot.data_model = self.get_data_model()
+        self._snapshot.status = self.get_status()
+        self.log_print("Saved to file " + output_file + '.')
+        write_proto_to_file(
+            proto=self._snapshot,
+            file_name=output_file
+        )
 
     def execute(self, **kwargs):
         assert self.is_data_model_consistent() and self.is_status_consistent()

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "enums.proto";
+
+package pslx;
+
+message OperatorSnapShot {
+    ModeType mode_type = 1;
+    string operator_name = 2;
+    DataModelType data_model = 3;
+    OperatorStatus status = 4;
+}

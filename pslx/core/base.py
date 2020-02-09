@@ -16,6 +16,9 @@ class Base(object):
             self._mode = ModeType.PROD
         return
 
+    def get_mode(self):
+        return self._mode
+
     @classmethod
     def get_class_name(cls):
         return cls.__name__
