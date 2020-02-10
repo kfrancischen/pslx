@@ -1,6 +1,6 @@
-import os
 from google.protobuf.json_format import MessageToJson, Parse
-from pslx.core.exception import ProtobufNameNotExistException, ProtobufValueNotExistException
+from pslx.core.exception import ProtobufNameNotExistException, ProtobufValueNotExistException, FileNotExistException
+from pslx.util.file_util import FileUtil
 
 
 def check_valid_enum(enum_type, value):
@@ -22,18 +22,17 @@ def get_value_by_name(enum_type, name):
 
 
 def write_proto_to_file(proto, file_name):
-    dir_path = '/'.join(file_name.split('/')[:-1])
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
-    with open(file_name, 'wb') as outfile:
+    with open(FileUtil.create_if_not_exist(file_name=file_name), 'wb') as outfile:
         outfile.write(proto.SerializeToString())
 
 
 def read_proto_from_file(proto_type, file_name):
     proto = proto_type()
-    assert os.path.exists(file_name)
-    with open(file_name, 'rb') as infile:
-        proto.ParseFromString(infile.read())
+    try:
+        with open(FileUtil.die_if_not_exist(file_name=file_name), 'rb') as infile:
+            proto.ParseFromString(infile.read())
+    except FileNotExistException as _:
+        pass
     return proto
 
 

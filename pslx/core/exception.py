@@ -19,3 +19,15 @@ class ProtobufValueNotExistException(ProtobufException):
 
 class OperatorFailureException(ExceptionBase):
     pass
+
+
+class FileNotExistException(ExceptionBase):
+    pass
+
+
+class ContainerUninitializedException(ExceptionBase):
+    pass
+
+
+class ContainerAlreadyInitializedException(ExceptionBase):
+    pass
