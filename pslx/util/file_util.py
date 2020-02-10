@@ -41,5 +41,5 @@ class FileUtil(object):
     def get_mode(cls, file_path):
         if get_name_by_value(enum_type=ModeType, value=ModeType.TEST) in file_path:
             return ModeType.TEST
-        else
+        else:
             return ModeType.PROD
