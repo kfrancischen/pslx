@@ -21,6 +21,14 @@ class OperatorFailureException(ExceptionBase):
     pass
 
 
+class OperatorStatusInconsistentException(ExceptionBase):
+    pass
+
+
+class OperatorDataModelInconsistentException(ExceptionBase):
+    pass
+
+
 class FileNotExistException(ExceptionBase):
     pass
 

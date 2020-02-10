@@ -124,56 +124,6 @@ class GraphBaseTest(unittest.TestCase):
         test_graph.add_direct_edge(from_node=test_node_4, to_node=test_node_3)
         self.assertListEqual(test_graph.get_source_nodes(), [test_node_1, test_node_4])
 
-    def test_bfs_search_1(self):
-        test_node_1 = OrderedNodeBase(node_name='test_node_1')
-        test_node_2 = OrderedNodeBase(node_name='test_node_2')
-        test_node_3 = OrderedNodeBase(node_name='test_node_3')
-        test_graph = GraphBase()
-        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_2)
-        test_graph.add_direct_edge(from_node=test_node_2, to_node=test_node_3)
-        test_graph.add_direct_edge(from_node=test_node_3, to_node=test_node_1)
-        self.assertListEqual(test_graph.bfs_search(), [])
-
-    def test_bfs_search_2(self):
-        test_node_1 = OrderedNodeBase(node_name='test_node_1')
-        test_node_2 = OrderedNodeBase(node_name='test_node_2')
-        test_node_3 = OrderedNodeBase(node_name='test_node_3')
-        test_node_4 = OrderedNodeBase(node_name='test_node_4')
-        test_graph = GraphBase()
-        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_2)
-        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_3)
-        test_graph.add_direct_edge(from_node=test_node_4, to_node=test_node_2)
-        test_graph.add_direct_edge(from_node=test_node_4, to_node=test_node_3)
-        self.assertListEqual(
-            test_graph.bfs_search(),
-            [('test_node_1', 0), ('test_node_4', 0), ('test_node_2', 1), ('test_node_3', 1)]
-        )
-
-    def test_dfs_search_1(self):
-        test_node_1 = OrderedNodeBase(node_name='test_node_1')
-        test_node_2 = OrderedNodeBase(node_name='test_node_2')
-        test_node_3 = OrderedNodeBase(node_name='test_node_3')
-        test_graph = GraphBase()
-        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_2)
-        test_graph.add_direct_edge(from_node=test_node_2, to_node=test_node_3)
-        test_graph.add_direct_edge(from_node=test_node_3, to_node=test_node_1)
-        self.assertListEqual(test_graph.dfs_search(), [])
-
-    def test_dfs_search_2(self):
-        test_node_1 = OrderedNodeBase(node_name='test_node_1')
-        test_node_2 = OrderedNodeBase(node_name='test_node_2')
-        test_node_3 = OrderedNodeBase(node_name='test_node_3')
-        test_node_4 = OrderedNodeBase(node_name='test_node_4')
-        test_graph = GraphBase()
-        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_2)
-        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_3)
-        test_graph.add_direct_edge(from_node=test_node_4, to_node=test_node_2)
-        test_graph.add_direct_edge(from_node=test_node_4, to_node=test_node_3)
-        self.assertListEqual(
-            test_graph.dfs_search(),
-            [('test_node_4', 0), ('test_node_3', 1), ('test_node_2', 1), ('test_node_1', 0)]
-        )
-
     def test_replace_node(self):
         test_node_1 = OrderedNodeBase(node_name='test_node_1')
         test_node_2 = OrderedNodeBase(node_name='test_node_2')
@@ -188,11 +138,58 @@ class GraphBaseTest(unittest.TestCase):
 
         test_graph.replace_node(old_node=test_node_4, new_node=test_node_5)
         self.assertListEqual(
-            test_graph.bfs_search(),
+            test_graph.topological_sort(),
             [('test_node_1', 0), ('test_node_5', 0), ('test_node_2', 1), ('test_node_3', 1)]
         )
 
-        self.assertListEqual(
-            test_graph.dfs_search(),
-            [('test_node_5', 0), ('test_node_3', 1), ('test_node_2', 1), ('test_node_1', 0)]
+    def test_topological_sort_1(self):
+        test_node_1 = OrderedNodeBase(node_name='test_node_1')
+        test_node_2 = OrderedNodeBase(node_name='test_node_2')
+        test_node_3 = OrderedNodeBase(node_name='test_node_3')
+        test_graph = GraphBase()
+        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_2)
+        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_3)
+
+        test_graph.add_direct_edge(from_node=test_node_3, to_node=test_node_2)
+        self.assertListEqual(test_graph.topological_sort(),
+                             [('test_node_1', 0), ('test_node_3', 1), ('test_node_2', 2)])
+        self.assertDictEqual(
+            test_graph.get_node_levels(),
+            {0: ['test_node_1'], 1: ['test_node_3'], 2: ['test_node_2']}
         )
+
+    def test_topological_sort_2(self):
+        test_node_1 = OrderedNodeBase(node_name='test_node_1')
+        test_node_2 = OrderedNodeBase(node_name='test_node_2')
+        test_node_3 = OrderedNodeBase(node_name='test_node_3')
+        test_node_4 = OrderedNodeBase(node_name='test_node_4')
+        test_graph = GraphBase()
+        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_2)
+        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_3)
+        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_4)
+        test_graph.add_direct_edge(from_node=test_node_3, to_node=test_node_4)
+        test_graph.add_direct_edge(from_node=test_node_4, to_node=test_node_2)
+        self.assertListEqual(test_graph.topological_sort(),
+                             [('test_node_1', 0), ('test_node_3', 1), ('test_node_4', 2), ('test_node_2', 3)])
+        self.assertDictEqual(
+            test_graph.get_node_levels(),
+            {0: ['test_node_1'], 1: ['test_node_3'], 2: ['test_node_4'], 3: ['test_node_2']}
+        )
+
+    def test_topological_sort_3(self):
+        test_node_1 = OrderedNodeBase(node_name='test_node_1')
+        test_node_2 = OrderedNodeBase(node_name='test_node_2')
+        test_node_3 = OrderedNodeBase(node_name='test_node_3')
+        test_node_4 = OrderedNodeBase(node_name='test_node_4')
+        test_node_5 = OrderedNodeBase(node_name='test_node_5')
+        test_graph = GraphBase()
+        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_2)
+        test_graph.add_direct_edge(from_node=test_node_1, to_node=test_node_3)
+        test_graph.add_direct_edge(from_node=test_node_4, to_node=test_node_2)
+        test_graph.add_direct_edge(from_node=test_node_4, to_node=test_node_3)
+        test_graph.add_direct_edge(from_node=test_node_4, to_node=test_node_5)
+        self.assertDictEqual(
+            test_graph.get_node_levels(),
+            {0: ['test_node_1', 'test_node_4'], 1: ['test_node_2', 'test_node_3', 'test_node_5']}
+        )
+

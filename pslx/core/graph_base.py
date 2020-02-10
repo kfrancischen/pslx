@@ -1,4 +1,5 @@
 from collections import deque
+from collections import defaultdict
 from collections import OrderedDict
 from pslx.core.base import Base
 
@@ -92,51 +93,51 @@ class GraphBase(Base):
         self._node_name_to_node_dict.pop(old_node.get_node_name(), None)
         self._node_name_to_node_dict[new_node.get_node_name()] = new_node
 
-    def bfs_search(self):
+    def topological_sort(self):
+
+        def _traverse(cur_node, cur_visited, cur_stack):
+            visited[cur_node.get_node_name()] = True
+            for next_node in cur_node.get_children_nodes():
+                if not visited[next_node.get_node_name()]:
+                    _traverse(next_node, cur_visited, cur_stack)
+            cur_stack.append(cur_node.get_node_name())
+
         if not self.is_dag():
-            self.log_print(string='Cannot do unique BFS search if the graph is cyclic.')
+            self.log_print(string='Cannot do topological sort if the graph is cyclic.')
             return []
         if not self.is_connected():
-            self.log_print(string='Cannot do unique BFS search if the graph is not fully connected.')
+            self.log_print(string='Cannot do topological sort if the graph is not fully connected.')
             return []
-        source_nodes = self.get_source_nodes()
+
+        traversed_nodes = []
+        levels = {node_name: float('-inf') for node_name in self._node_name_to_node_dict.keys()}
+
         visited = {node_name: False for node_name in self._node_name_to_node_dict.keys()}
-        result = []
-        search_queue = deque()
-        for source_node in source_nodes:
-            visited[source_node.get_node_name()] = True
-            search_queue.append((source_node, 0))
-        while search_queue:
-            search_node, dist_to_root = search_queue.popleft()
-            result.append((search_node.get_node_name(), dist_to_root))
-            for child_node in search_node.get_children_nodes():
-                if not visited[child_node.get_node_name()]:
-                    visited[child_node.get_node_name()] = True
-                    search_queue.append((child_node, dist_to_root + 1))
-        return result
+        for node in self._node_name_to_node_dict.values():
+            if not visited[node.get_node_name()]:
+                _traverse(node, visited, traversed_nodes)
 
-    def dfs_search(self):
-        if not self.is_dag():
-            self.log_print(string='Cannot do unique DFS search if the graph is cyclic.')
-            return []
-        if not self.is_connected():
-            self.log_print(string='Cannot do unique DFS search if the graph is not fully connected.')
-            return []
         source_nodes = self.get_source_nodes()
-        visited = {node_name: False for node_name in self._node_name_to_node_dict.keys()}
-        result = []
-        search_stack = []
-        for source_node in source_nodes:
-            visited[source_node.get_node_name()] = True
-            search_stack.append((source_node, 0))
-        while search_stack:
-            search_node, dist_to_root = search_stack.pop()
+        for node in source_nodes:
+            levels[node.get_node_name()] = 0
 
-            visited[search_node.get_node_name()] = True
-            result.append((search_node.get_node_name(), dist_to_root))
+        while traversed_nodes:
+            node_name = traversed_nodes.pop()
+            if levels[node_name] != float('inf'):
+                for child_node in self._node_name_to_node_dict[node_name].get_children_nodes():
 
-            for child_node in search_node.get_children_nodes():
-                if not visited[child_node.get_node_name()]:
-                    visited[child_node.get_node_name()] = True
-                    search_stack.append((child_node, dist_to_root + 1))
-        return result
+                    if levels[child_node.get_node_name()] < levels[node_name] + 1:
+                        levels[child_node.get_node_name()] = levels[node_name] + 1
+
+        return sorted([(key, val) for key, val in levels.items()], key=lambda pair: pair[1])
+
+    def get_node_levels(self):
+        sort_result = self.topological_sort()
+        level_map = defaultdict(list)
+        for result in sort_result:
+            level_map[result[1]].append(result[0])
+
+        for level in level_map:
+            level_map[level].sort(
+                key=lambda name: self._node_name_to_node_dict[name].get_num_children())
+        return level_map
