@@ -14,10 +14,14 @@ class OperatorBase(OrderedNodeBase):
 
     def __init__(self, node_name, order=SortOrder.ORDER):
         super().__init__(node_name=node_name, order=order)
-        self._slo = -1
-
-    def set_slo(self, slo):
-        self._slo = slo
+        self._config = {
+            'can_save_snapshot': False,
+            'slo': -1,
+        }
+    
+    def set_config(self, config):
+        assert isinstance(config, dict)
+        self._config.update(config)
 
     def set_data_model(self, model):
         self.log_print("Switching to " + get_name_by_value(enum_type=DataModelType, value=model) +
@@ -77,7 +81,7 @@ class OperatorBase(OrderedNodeBase):
         snapshot.data_model = self.get_data_model()
         snapshot.status = self.get_status()
         snapshot.node_snapshot.CopyFrom(self.get_node_snapshot())
-        if output_file:
+        if output_file and self._config['can_save_snapshot']:
             self.log_print("Saved to file " + output_file + '.')
             write_proto_to_file(
                 proto=snapshot,
@@ -85,7 +89,7 @@ class OperatorBase(OrderedNodeBase):
             )
         return snapshot
 
-    def execute(self, **kwargs):
+    def execute(self):
         assert self.is_data_model_consistent() and self.is_status_consistent()
         for parent_node in self.get_parents_nodes():
             if parent_node.get_status() == Status.FAILED:
@@ -98,17 +102,16 @@ class OperatorBase(OrderedNodeBase):
         for child_node in self.get_children_nodes():
             if child_node.get_status() != Status.WAITING:
                 child_node.set_status(Status.WAITING)
-        if self._slo < 0:
+        if self._config['slo'] < 0:
             self.log_print("Operator has negative SLO = -1. This might result in indefinite run. "
                            "Please check set_slo() function.")
         start_time = time.time()
-        while self._slo < 0 or time.time() - start_time > self._slo > 0:
+        while self._config['slo'] < 0 or time.time() - start_time > self._config['slo'] > 0:
             try:
-                self._execute(**kwargs)
-                self.set_status(status=Status.SUCCEEDED)
+                self._execute()
             except OperatorFailureException as err:
                 self.log_print(str(err))
                 self.set_status(status=Status.FAILED)
 
-    def _execute(self, **kwargs):
+    def _execute(self):
         raise NotImplementedError
