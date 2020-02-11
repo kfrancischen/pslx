@@ -1,10 +1,13 @@
+import asyncio
+
 from pslx.core.graph_base import GraphBase
 import pslx.core.exception as exception
 from pslx.schema.enums_pb2 import DataModelType
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.snapshots_pb2 import ContainerSnapshot
 from pslx.util.file_util import FileUtil
-from pslx.util.proto_util import write_proto_to_file
+from pslx.util.proto_util import write_proto_to_file, get_name_by_value
+from pslx.util.timezone_util import cur_time_in_pst
 
 
 class ContainerBase(GraphBase):
@@ -20,6 +23,8 @@ class ContainerBase(GraphBase):
             class_name=self.get_class_name() + '__' + container_name,
             ttl=ttl
         )
+        self._start_time = None
+        self._end_time = None
 
     def initialize(self, force=False):
         for operator in self._node_name_to_node_dict.values():
@@ -36,8 +41,15 @@ class ContainerBase(GraphBase):
                 else:
                     operator.get_data_model(self.DATA_MODEL)
 
-        # More to be added (TODO)
         self._is_initialized = True
+
+    def set_status(self, status):
+        self.log_print("Switching to " + get_name_by_value(enum_type=Status, value=status) +
+                       " status from " + get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
+        self.STATUS = status
+
+    def unset_status(self):
+        self.set_status(status=Status.IDLE)
 
     def uninitialize(self):
         self._is_initialized = False
@@ -48,7 +60,7 @@ class ContainerBase(GraphBase):
             raise exception.ContainerAlreadyInitializedException
         self.add_direct_edge(from_node=from_operator, to_node=to_operator)
 
-    def get_container_snapshot(self, output_file=None):
+    def get_container_snapshot(self):
         if not self._is_initialized:
             self.log_print("Warning: taking snapshot when the container is not initialized.")
 
@@ -56,25 +68,45 @@ class ContainerBase(GraphBase):
         snapshot.container_name = self._container_name
         snapshot.is_initialized = self._is_initialized
         snapshot.status = self.STATUS
-        for op_name, op in self._node_name_to_node_dict:
-            if output_file:
-                op_output_file = FileUtil.dir_name(output_file) + '/' + op_name + '.pb'
-            else:
-                op_output_file = None
+        if self._start_time:
+            snapshot.start_time = str(self._start_time)
+        if self._end_time:
+            snapshot.end_time = str(self._end_time)
 
+        for op_name, op in self._node_name_to_node_dict:
+            op_output_file = FileUtil.dir_name(self._tmp_file_folder) + '/' + 'SNAPSHOT_' + str(cur_time_in_pst()) + \
+                             op_name + '.pb'
             snapshot.operator_snapshot_map[op_name] = op.get_operator_snapshot(output_file=op_output_file)
 
-        if output_file:
-            self.log_print("Saved to file " + output_file + '.')
-            write_proto_to_file(
-                proto=snapshot,
-                file_name=output_file
-            )
+        self.log_print("Saved to file " + self._tmp_file_folder + '.')
+        write_proto_to_file(
+            proto=snapshot,
+            file_name=self._tmp_file_folder + '/' + 'SNAPSHOT_' + str(cur_time_in_pst()) + self._container_name + '.pb'
+        )
         return snapshot
+
+    async def _execute(self):
+        tasks = []
+        for operator in self._node_name_to_node_dict.values():
+            tasks.append(asyncio.create_task(operator.execute()))
+
+        await asyncio.wait(tasks)
 
     def execute(self):
         if not self._is_initialized:
             self.log_print("Cannot execute if the container is not initialized.")
             raise exception.ContainerUninitializedException
-        # (TODO)
-        pass
+        self.get_container_snapshot()
+        self.set_status(status=Status.RUNNING)
+
+        self._start_time = cur_time_in_pst()
+        asyncio.run(self._execute())
+        self._end_time = cur_time_in_pst()
+
+        self.set_status(status=Status.SUCCEEDED)
+        for operator in self._node_name_to_node_dict.values():
+            if operator.get_status() == Status.FAILED:
+                self.set_status(status=Status.FAILED)
+                break
+
+        self.get_container_snapshot()

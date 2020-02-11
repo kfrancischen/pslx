@@ -1,5 +1,8 @@
+import asyncio
 import unittest
-from pslx.schema.enums_pb2 import DataModelType, ModeType, Status
+
+from pslx.test.aio_test_case import AioTestCase
+from pslx.schema.enums_pb2 import DataModelType, Status
 from pslx.schema.snapshots_pb2 import OperatorSnapshot, NodeSnapshot
 from pslx.util.dummy_util import DummyOperator
 
@@ -115,3 +118,38 @@ class TestOperatorBase(unittest.TestCase):
         expected_operator_snapshot.status = Status.SUCCEEDED
         expected_operator_snapshot.node_snapshot.CopyFrom(expected_node_snapshot)
         self.assertEqual(test_operator_1.get_operator_snapshot(), expected_operator_snapshot)
+
+
+class AioTestOperatorBase(AioTestCase):
+
+    async def test_execution_1(self):
+        test_operator_1 = DummyOperator(node_name='test_operator_1')
+        test_operator_2 = DummyOperator(node_name='test_operator_2')
+        test_operator_1.add_child(child_node=test_operator_2)
+        test_operator_1.set_status(status=Status.SUCCEEDED)
+        await test_operator_1.execute()
+        self.assertEqual(test_operator_1.get_operator_snapshot().status, Status.SUCCEEDED)
+
+    async def test_execution_2(self):
+        test_operator_1 = DummyOperator(node_name='test_operator_1')
+        test_operator_2 = DummyOperator(node_name='test_operator_2')
+        test_operator_3 = DummyOperator(node_name='test_operator_3')
+        test_operator_1.add_child(child_node=test_operator_2)
+        test_operator_2.add_child(child_node=test_operator_3)
+        test_operator_1.set_status(status=Status.SUCCEEDED)
+        tasks = [asyncio.create_task(test_operator_2.execute()), asyncio.create_task(test_operator_3.execute())]
+        await asyncio.wait(tasks)
+        self.assertEqual(test_operator_2.get_operator_snapshot().status, Status.SUCCEEDED)
+        self.assertEqual(test_operator_3.get_operator_snapshot().status, Status.SUCCEEDED)
+
+    async def test_execution_3(self):
+        test_operator_1 = DummyOperator(node_name='test_operator_1')
+        test_operator_2 = DummyOperator(node_name='test_operator_2')
+        test_operator_3 = DummyOperator(node_name='test_operator_3')
+        test_operator_1.add_child(child_node=test_operator_2)
+        test_operator_2.add_child(child_node=test_operator_3)
+        test_operator_1.set_status(status=Status.FAILED)
+        tasks = [asyncio.create_task(test_operator_2.execute()), asyncio.create_task(test_operator_3.execute())]
+        await asyncio.wait(tasks)
+        self.assertEqual(test_operator_2.get_operator_snapshot().status, Status.FAILED)
+        self.assertEqual(test_operator_3.get_operator_snapshot().status, Status.FAILED)

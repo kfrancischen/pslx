@@ -15,6 +15,8 @@ message OperatorSnapshot {
     DataModelType data_model = 2;
     Status status = 3;
     NodeSnapshot node_snapshot = 4;
+    string start_time = 5;
+    string end_time = 6;
 }
 
 message ContainerSnapshot {
@@ -22,4 +24,6 @@ message ContainerSnapshot {
     map<string, OperatorSnapshot> operator_snapshot_map = 2;
     bool is_initialized = 3;
     Status status = 4;
+    string start_time = 5;
+    string end_time = 6;
 }

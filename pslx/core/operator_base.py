@@ -1,4 +1,5 @@
-import time
+import datetime
+
 from pslx.core.exception import OperatorFailureException
 from pslx.core.node_base import OrderedNodeBase
 from pslx.schema.enums_pb2 import DataModelType
@@ -6,6 +7,7 @@ from pslx.schema.enums_pb2 import SortOrder
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.snapshots_pb2 import OperatorSnapshot
 from pslx.util.proto_util import get_name_by_value, write_proto_to_file
+from pslx.util.timezone_util import cur_time_in_pst
 
 
 class OperatorBase(OrderedNodeBase):
@@ -15,9 +17,11 @@ class OperatorBase(OrderedNodeBase):
     def __init__(self, node_name, order=SortOrder.ORDER):
         super().__init__(node_name=node_name, order=order)
         self._config = {
-            'can_save_snapshot': False,
+            'save_snapshot': False,
             'slo': -1,
         }
+        self._start_time = None
+        self._end_time = None
     
     def set_config(self, config):
         assert isinstance(config, dict)
@@ -35,7 +39,7 @@ class OperatorBase(OrderedNodeBase):
         return self.DATA_MODEL
 
     def set_status(self, status):
-        self.log_print("Switching to " + get_name_by_value(enum_type=Status, value=status) +
+        self.log_print(self._node_name + " switching to " + get_name_by_value(enum_type=Status, value=status) +
                        " status from " + get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
         self.STATUS = status
 
@@ -81,7 +85,11 @@ class OperatorBase(OrderedNodeBase):
         snapshot.data_model = self.get_data_model()
         snapshot.status = self.get_status()
         snapshot.node_snapshot.CopyFrom(self.get_node_snapshot())
-        if output_file and self._config['can_save_snapshot']:
+        if self._start_time:
+            snapshot.start_time = str(self._start_time)
+        if self._end_time:
+            snapshot.end_time = str(self._end_time)
+        if output_file and self._config['save_snapshot']:
             self.log_print("Saved to file " + output_file + '.')
             write_proto_to_file(
                 proto=snapshot,
@@ -89,8 +97,11 @@ class OperatorBase(OrderedNodeBase):
             )
         return snapshot
 
-    def execute(self):
+    async def execute(self):
         assert self.is_data_model_consistent() and self.is_status_consistent()
+        if self.get_status() == Status.SUCCEEDED:
+            self.log_print("Process already succeeded. It might have been finished by another process.")
+            return
         for parent_node in self.get_parents_nodes():
             if parent_node.get_status() == Status.FAILED:
                 self.log_print("Operator " + parent_node.get_node_name() +
@@ -99,19 +110,25 @@ class OperatorBase(OrderedNodeBase):
                 return
 
         self.set_status(status=Status.RUNNING)
+        self._start_time = cur_time_in_pst()
         for child_node in self.get_children_nodes():
             if child_node.get_status() != Status.WAITING:
                 child_node.set_status(Status.WAITING)
         if self._config['slo'] < 0:
             self.log_print("Operator has negative SLO = -1. This might result in indefinite run. "
                            "Please check set_slo() function.")
-        start_time = time.time()
-        while self._config['slo'] < 0 or time.time() - start_time > self._config['slo'] > 0:
+
+        while self._config['slo'] < 0 or (self._config['slo'] > 0 and cur_time_in_pst() - self._start_time >
+                                          datetime.timedelta(self._config['slo'])):
             try:
-                self._execute()
+                if self._execute():
+                    self._end_time = cur_time_in_pst()
+                    self.set_status(status=Status.SUCCEEDED)
+                    return
             except OperatorFailureException as err:
                 self.log_print(str(err))
-                self.set_status(status=Status.FAILED)
+
+        self.set_status(status=Status.FAILED)
 
     def _execute(self):
         raise NotImplementedError
