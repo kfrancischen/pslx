@@ -6,8 +6,9 @@ from pslx.schema.enums_pb2 import DataModelType
 from pslx.schema.enums_pb2 import SortOrder
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.snapshots_pb2 import OperatorSnapshot
-from pslx.util.proto_util import get_name_by_value, write_proto_to_file
-from pslx.util.timezone_util import cur_time_in_pst
+from pslx.util.file_util import FileUtil
+from pslx.util.proto_util import ProtoUtil
+from pslx.util.timezone_util import TimezoneUtil
 
 
 class OperatorBase(OrderedNodeBase):
@@ -28,8 +29,9 @@ class OperatorBase(OrderedNodeBase):
         self._config.update(config)
 
     def set_data_model(self, model):
-        self.log_print("Switching to " + get_name_by_value(enum_type=DataModelType, value=model) +
-                       " model from " + get_name_by_value(enum_type=DataModelType, value=self.DATA_MODEL) + '.')
+        self.log_print("Switching to " + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=model) +
+                       " model from " + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=self.DATA_MODEL) +
+                       '.')
         self.DATA_MODEL = model
 
     def unset_data_model(self):
@@ -39,8 +41,8 @@ class OperatorBase(OrderedNodeBase):
         return self.DATA_MODEL
 
     def set_status(self, status):
-        self.log_print(self._node_name + " switching to " + get_name_by_value(enum_type=Status, value=status) +
-                       " status from " + get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
+        self.log_print(self._node_name + " switching to " + ProtoUtil.get_name_by_value(enum_type=Status, value=status)
+                       + " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
         self.STATUS = status
 
     def unset_status(self):
@@ -54,7 +56,7 @@ class OperatorBase(OrderedNodeBase):
             for parent in self.get_parents_nodes():
                 if parent.get_status() in [Status.WAITING, Status.RUNNING]:
                     self.log_print("Upstream operator " + parent.get_node_name() + " is still in status: " +
-                                   get_name_by_value(enum_type=Status, value=parent.get_status()) + '.')
+                                   ProtoUtil.get_name_by_value(enum_type=Status, value=parent.get_status()) + '.')
                     return False
                 elif parent.get_status() == Status.FAILED:
                     self.set_status(status=Status.FAILED)
@@ -91,7 +93,7 @@ class OperatorBase(OrderedNodeBase):
             snapshot.end_time = str(self._end_time)
         if output_file and self._config['save_snapshot']:
             self.log_print("Saved to file " + output_file + '.')
-            write_proto_to_file(
+            FileUtil.write_proto_to_file(
                 proto=snapshot,
                 file_name=output_file
             )
@@ -110,7 +112,7 @@ class OperatorBase(OrderedNodeBase):
                 return
 
         self.set_status(status=Status.RUNNING)
-        self._start_time = cur_time_in_pst()
+        self._start_time = TimezoneUtil.cur_time_in_pst()
         for child_node in self.get_children_nodes():
             if child_node.get_status() != Status.WAITING:
                 child_node.set_status(Status.WAITING)
@@ -118,11 +120,11 @@ class OperatorBase(OrderedNodeBase):
             self.log_print("Operator has negative SLO = -1. This might result in indefinite run. "
                            "Please check set_slo() function.")
 
-        while self._config['slo'] < 0 or (self._config['slo'] > 0 and cur_time_in_pst() - self._start_time >
-                                          datetime.timedelta(self._config['slo'])):
+        while self._config['slo'] < 0 or (self._config['slo'] > 0 and TimezoneUtil.cur_time_in_pst() -
+                                          self._start_time > datetime.timedelta(self._config['slo'])):
             try:
                 if self._execute():
-                    self._end_time = cur_time_in_pst()
+                    self._end_time = TimezoneUtil.cur_time_in_pst()
                     self.set_status(status=Status.SUCCEEDED)
                     return
             except OperatorFailureException as err:

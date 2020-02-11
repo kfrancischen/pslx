@@ -1,7 +1,7 @@
 import os
 import inspect
 from pslx.schema.enums_pb2 import ModeType
-from pslx.util.timezone_util import cur_time_in_pst
+from pslx.util.timezone_util import TimezoneUtil
 from pslx.util.color_util import ColorsUtil
 
 
@@ -42,5 +42,5 @@ class Base(object):
             print('[SYS-LOG]' + ColorsUtil.BOLD + ' class' + ColorsUtil.RESET + ' ' +
                   ColorsUtil.Foreground.GREEN + '[%s]' % cls.get_class_name() + ColorsUtil.RESET + ' & ' +
                   ColorsUtil.BOLD + 'Timestamp' + ColorsUtil.RESET + ' ' +
-                  ColorsUtil.Foreground.RED + '[%s]' % str(cur_time_in_pst()) + ColorsUtil.RESET +
+                  ColorsUtil.Foreground.RED + '[%s]' % str(TimezoneUtil.cur_time_in_pst()) + ColorsUtil.RESET +
                   ': ' + string)

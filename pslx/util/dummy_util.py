@@ -2,7 +2,7 @@ from pslx.core.operator_base import OperatorBase
 from pslx.tool.logging_tool import LoggingTool
 
 
-class DummyLoggingTool(LoggingTool):
+class DummyLogging(LoggingTool):
     def __init__(self, name=None, date=None, root_dir=None, level=None,retention=0):
         super().__init__(name=None, date=date, root_dir=root_dir, level=level, retention=retention)
 
@@ -16,3 +16,14 @@ class DummyOperator(OperatorBase):
 
     def _execute(self, **kwargs):
         return True
+
+
+class DummyUtil(object):
+
+    @classmethod
+    def dummy_logging(cls):
+        return DummyLogging()
+
+    @classmethod
+    def dummy_operator(cls, node_name='dummy_operator'):
+        return DummyOperator(node_name=node_name)
