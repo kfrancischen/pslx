@@ -4,10 +4,10 @@ import unittest
 
 class AioTestCase(unittest.TestCase):
 
-    def __init__(self, methodName='runTest', loop=None):
+    def __init__(self, method_name='run_async_test', loop=None):
         self.loop = loop or asyncio.get_event_loop()
         self._function_cache = {}
-        super(AioTestCase, self).__init__(methodName=methodName)
+        super(AioTestCase, self).__init__(methodName=method_name)
 
     def coroutine_function_decorator(self, func):
         def wrapper(*args, **kw):
