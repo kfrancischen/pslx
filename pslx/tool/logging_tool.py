@@ -2,18 +2,14 @@ import logging
 import datetime
 import os
 from pslx.core.base import Base
-from pslx.config.general_config import TimeZoneObj, SearchDirObj
 from pslx.schema.enums_pb2 import DiskLoggerLevel
-from pslx.util.yaml_util import yaml_to_dict
 from pslx.util.color_util import ColorsUtil
+from pslx.util.timezone_util import TimezoneUtil
 
 
 class LoggingTool(Base):
-    assert SearchDirObj.CONFIG_DIR[-1] == '/'
-    CONFIG_PATH = SearchDirObj.CONFIG_DIR + 'tool_config.yaml'
-
     def __init__(self, name, date=datetime.datetime.utcnow(), root_dir='database/', level=DiskLoggerLevel.INFO,
-                 retention=0):
+                 ttl=-1):
         super().__init__()
         if name:
             self._start_date = date
@@ -22,7 +18,7 @@ class LoggingTool(Base):
             if root_dir and root_dir[-1] != '/':
                 root_dir += '/'
 
-            retention = retention if retention > 0 else 0
+            self._ttl = ttl if ttl > 0 else 0
             self._name = name
 
             if level == DiskLoggerLevel.DEBUG:
@@ -42,9 +38,7 @@ class LoggingTool(Base):
                 self._suffix = 'notset'
                 self._bg_color = ColorsUtil.Background.PURPLE
 
-            self._retention = retention
-            self._log_file_dir = (root_dir + yaml_to_dict(file_name=self.CONFIG_PATH)['LOGGING_TOOL'][
-                'DISK_LOG_FILE_DIR'] + 'ttl=' + str(self._retention) + '/')
+            self._log_file_dir = (root_dir + 'log/' + 'name/ttl=' + str(self._ttl) + '/')
 
             self._new_logger()
 
@@ -56,7 +50,7 @@ class LoggingTool(Base):
         file_name = self._log_file_dir + '/' + self._name + '-' + str(self._start_date.year) + '-' + str(
             self._start_date.month) + '-' + str(self._start_date.day) + '-' + self._suffix
 
-        if self._retention > 0:
+        if self._ttl > 0:
             for existing_file_name in os.listdir(self._log_file_dir):
                 existing_file_name_split = existing_file_name.split('-')
                 if existing_file_name_split[0] == self._name:
@@ -64,7 +58,7 @@ class LoggingTool(Base):
                         int(existing_file_name_split[1]), int(existing_file_name_split[2]),
                         int(existing_file_name_split[3])
                     )
-                    if self._start_date - file_date > datetime.timedelta(days=self._retention):
+                    if self._start_date - file_date > datetime.timedelta(days=self._ttl):
                         os.remove(self._log_file_dir + '/' + existing_file_name)
 
         fh = logging.FileHandler(file_name + '.log')
@@ -80,5 +74,5 @@ class LoggingTool(Base):
             self._new_logger()
 
         self._logger.info(self._bg_color + self._suffix.upper() + ' [' +
-                          str(datetime.datetime.now(TimeZoneObj.WESTERN_TIMEZONE).replace(tzinfo=None)) + '] ' +
+                          str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + '] ' +
                           ColorsUtil.RESET + string)

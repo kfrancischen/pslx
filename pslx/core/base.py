@@ -6,7 +6,6 @@ from pslx.util.color_util import ColorsUtil
 
 
 class Base(object):
-    CONFIG_PATH = ''
     LOG_EVERYTHING = os.getenv('LOG_EVERYTHING', False)
 
     def __init__(self):

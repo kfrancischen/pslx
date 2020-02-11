@@ -6,8 +6,8 @@ from pslx.schema.enums_pb2 import DataModelType
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.snapshots_pb2 import ContainerSnapshot
 from pslx.util.file_util import FileUtil
-from pslx.util.proto_util import get_name_by_value
-from pslx.util.timezone_util import cur_time_in_pst
+from pslx.util.proto_util import ProtoUtil
+from pslx.util.timezone_util import TimezoneUtil
 
 
 class ContainerBase(GraphBase):
@@ -44,8 +44,8 @@ class ContainerBase(GraphBase):
         self._is_initialized = True
 
     def set_status(self, status):
-        self.log_print("Switching to " + get_name_by_value(enum_type=Status, value=status) +
-                       " status from " + get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
+        self.log_print("Switching to " + ProtoUtil.get_name_by_value(enum_type=Status, value=status) +
+                       " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
         self.STATUS = status
 
     def unset_status(self):
@@ -74,14 +74,15 @@ class ContainerBase(GraphBase):
             snapshot.end_time = str(self._end_time)
 
         for op_name, op in self._node_name_to_node_dict:
-            op_output_file = FileUtil.dir_name(self._tmp_file_folder) + '/' + 'SNAPSHOT_' + str(cur_time_in_pst()) + \
-                             op_name + '.pb'
+            op_output_file = FileUtil.dir_name(self._tmp_file_folder) + '/' + 'SNAPSHOT_' + \
+                             str(TimezoneUtil.cur_time_in_pst()) + op_name + '.pb'
             snapshot.operator_snapshot_map[op_name] = op.get_operator_snapshot(output_file=op_output_file)
 
         self.log_print("Saved to file " + self._tmp_file_folder + '.')
         FileUtil.write_proto_to_file(
             proto=snapshot,
-            file_name=self._tmp_file_folder + '/' + 'SNAPSHOT_' + str(cur_time_in_pst()) + self._container_name + '.pb'
+            file_name=(self._tmp_file_folder + '/' + 'SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) +
+                       self._container_name + '.pb')
         )
         return snapshot
 
@@ -99,9 +100,9 @@ class ContainerBase(GraphBase):
         self.get_container_snapshot()
         self.set_status(status=Status.RUNNING)
 
-        self._start_time = cur_time_in_pst()
+        self._start_time = TimezoneUtil.cur_time_in_pst()
         asyncio.run(self._execute())
-        self._end_time = cur_time_in_pst()
+        self._end_time = TimezoneUtil.cur_time_in_pst()
 
         self.set_status(status=Status.SUCCEEDED)
         for operator in self._node_name_to_node_dict.values():

@@ -1,5 +1,11 @@
 import datetime
-from pslx.config.general_config import TimeZoneObj
+import pytz
+
+
+class TimeZoneObj(object):
+    EASTERN_TIMEZONE = pytz.timezone('US/Eastern')
+    WESTERN_TIMEZONE = pytz.timezone('US/Pacific')
+    UTC_TIMEZONE = pytz.timezone('UTC')
 
 
 class TimezoneUtil(object):

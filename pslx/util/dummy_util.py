@@ -3,8 +3,8 @@ from pslx.tool.logging_tool import LoggingTool
 
 
 class DummyLogging(LoggingTool):
-    def __init__(self, name=None, date=None, root_dir=None, level=None,retention=0):
-        super().__init__(name=None, date=date, root_dir=root_dir, level=level, retention=retention)
+    def __init__(self, name=None, date=None, root_dir=None, level=None, ttl=-0):
+        super().__init__(name=None, date=date, root_dir=root_dir, level=level, ttl=ttl)
 
     def write_log(self, string):
         return
