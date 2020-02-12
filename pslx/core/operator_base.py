@@ -1,6 +1,6 @@
 import datetime
 
-from pslx.core.exception import OperatorFailureException
+from pslx.core.exception import OperatorFailureException, FileNotExistException
 from pslx.core.node_base import OrderedNodeBase
 from pslx.schema.enums_pb2 import DataModelType
 from pslx.schema.enums_pb2 import SortOrder
@@ -51,6 +51,17 @@ class OperatorBase(OrderedNodeBase):
 
     def get_status(self):
         return self.STATUS
+
+    def get_status_from_snapshot(self, snapshot_file):
+        try:
+            snapshot = FileUtil.read_proto_from_file(
+                proto_type=OperatorSnapshot,
+                file_name=FileUtil.die_if_not_exist(file_name=snapshot_file)
+            )
+            return snapshot.status
+        except FileNotExistException as err:
+            self.log_print(str(err))
+            return Status.IDLE
 
     def get_data(self):
         return self._data

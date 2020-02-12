@@ -100,21 +100,27 @@ class ContainerBase(GraphBase):
         self.log_print("Finished task: " + task)
         self._logger.write_log("Finished task: " + task)
 
-    def execute(self, num_process=1):
+    def execute(self, is_backfill=False, num_process=1):
         if not self._is_initialized:
             self.log_print("Cannot execute if the container is not initialized.")
             raise exception.ContainerUninitializedException
         self.get_container_snapshot()
         self.set_status(status=Status.RUNNING)
+        operator_status = {}
+        if is_backfill:
+            operator_status = self._get_latest_status_of_operators()
 
         self._start_time = TimezoneUtil.cur_time_in_pst()
         task_queue, finished_queue = multiprocessing.Queue(), multiprocessing.Queue()
-        multiprocessing.Pool(num_process, self._execute, (task_queue, finished_queue, ))
+        multiprocessing.Pool(num_process, self._execute, (task_queue, finished_queue,))
         node_levels = self.get_node_levels()
         max_level = max(node_levels.keys())
         for level in range(max_level + 1):
-            for op in node_levels[level]:
-                task_queue.put(op)
+            for operator_name in node_levels[level]:
+                if is_backfill and operator_status[operator_name] == Status.SUCCEEDED:
+                    self._node_name_to_node_dict[operator_name].set_status(status=Status.SUCCEEDED)
+                    continue
+                task_queue.put(operator_name)
 
         self._end_time = TimezoneUtil.cur_time_in_pst()
 
@@ -125,3 +131,16 @@ class ContainerBase(GraphBase):
                 break
 
         self.get_container_snapshot()
+
+    def _get_latest_status_of_operators(self):
+        operator_status = {}
+        snapshot_files = FileUtil.get_file_names(dir_name=self._tmp_file_folder)
+        for snapshot_file in snapshot_files[::-1]:
+            operator_name = snapshot_file.split('_')[1]
+            if operator_name not in operator_status:
+                operator_status[operator_name] = self._node_name_to_node_dict[operator_name].get_status_from_snapshot(
+                    snapshot_file=snapshot_file
+                )
+            if len(operator_status) == len(self._node_name_to_node_dict):
+                break
+        return operator_status
