@@ -91,6 +91,7 @@ class OperatorBase(OrderedNodeBase):
         snapshot.data_model = self.get_data_model()
         snapshot.status = self.get_status()
         snapshot.node_snapshot.CopyFrom(self.get_node_snapshot())
+        snapshot.slo = self._config['slo']
         if self._start_time:
             snapshot.start_time = str(self._start_time)
         if self._end_time:

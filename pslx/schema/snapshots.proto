@@ -17,6 +17,7 @@ message OperatorSnapshot {
     NodeSnapshot node_snapshot = 4;
     string start_time = 5;
     string end_time = 6;
+    int32 slo = 7;
 }
 
 message ContainerSnapshot {

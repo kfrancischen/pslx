@@ -8,6 +8,7 @@ from pslx.schema.snapshots_pb2 import ContainerSnapshot
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil
+from pslx.util.dummy_util import DummyUtil
 
 
 class ContainerBase(GraphBase):
@@ -25,6 +26,7 @@ class ContainerBase(GraphBase):
         )
         self._start_time = None
         self._end_time = None
+        self._logger = DummyUtil.dummy_logging()
 
     def initialize(self, force=False):
         for operator in self._node_name_to_node_dict.values():
@@ -79,6 +81,7 @@ class ContainerBase(GraphBase):
             snapshot.operator_snapshot_map[op_name] = op.get_operator_snapshot(output_file=op_output_file)
 
         self.log_print("Saved to file " + self._tmp_file_folder + '.')
+        self._logger.write_log("Saved to file " + self._tmp_file_folder + '.')
         FileUtil.write_proto_to_file(
             proto=snapshot,
             file_name=(self._tmp_file_folder + '/' + 'SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) +
@@ -88,10 +91,14 @@ class ContainerBase(GraphBase):
 
     def _execute(self, task_queue, finished_queue):
         task = task_queue.get(True)
+        self.log_print("Starting task: " + task)
+        self._logger.write_log("Starting task: " + task)
         op = self._node_name_to_node_dict[task]
         op.execute()
         self.get_container_snapshot()
         finished_queue.append(task)
+        self.log_print("Finished task: " + task)
+        self._logger.write_log("Finished task: " + task)
 
     def execute(self, num_process=1):
         if not self._is_initialized:
