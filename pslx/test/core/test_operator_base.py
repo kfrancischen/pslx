@@ -95,6 +95,7 @@ class TestOperatorBase(unittest.TestCase):
         expected_operator_snapshot.operator_name = 'test_operator_1'
         expected_operator_snapshot.data_model = DataModelType.DEFAULT
         expected_operator_snapshot.status = Status.SUCCEEDED
+        expected_operator_snapshot.slo = -1
         expected_operator_snapshot.node_snapshot.CopyFrom(expected_node_snapshot)
         self.assertEqual(test_operator_1.get_operator_snapshot(), expected_operator_snapshot)
 
@@ -114,6 +115,7 @@ class TestOperatorBase(unittest.TestCase):
         expected_operator_snapshot.operator_name = 'test_operator_1'
         expected_operator_snapshot.data_model = DataModelType.DEFAULT
         expected_operator_snapshot.status = Status.SUCCEEDED
+        expected_operator_snapshot.slo = -1
         expected_operator_snapshot.node_snapshot.CopyFrom(expected_node_snapshot)
         self.assertEqual(test_operator_1.get_operator_snapshot(), expected_operator_snapshot)
 
