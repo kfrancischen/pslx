@@ -23,6 +23,7 @@ class OperatorBase(OrderedNodeBase):
         }
         self._start_time = None
         self._end_time = None
+        self._data = None
     
     def set_config(self, config):
         assert isinstance(config, dict)
@@ -50,6 +51,9 @@ class OperatorBase(OrderedNodeBase):
 
     def get_status(self):
         return self.STATUS
+
+    def get_data(self):
+        return self._data
 
     def wait_for_upstream_status(self):
         if self.DATA_MODEL != DataModelType.DEFAULT:
@@ -99,7 +103,7 @@ class OperatorBase(OrderedNodeBase):
             )
         return snapshot
 
-    async def execute(self):
+    def execute(self):
         assert self.is_data_model_consistent() and self.is_status_consistent()
         if self.get_status() == Status.SUCCEEDED:
             self.log_print("Process already succeeded. It might have been finished by another process.")

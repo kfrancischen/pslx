@@ -1,4 +1,4 @@
-import asyncio
+import multiprocessing
 
 from pslx.core.graph_base import GraphBase
 import pslx.core.exception as exception
@@ -86,14 +86,14 @@ class ContainerBase(GraphBase):
         )
         return snapshot
 
-    async def _execute(self):
-        tasks = []
-        for operator in self._node_name_to_node_dict.values():
-            tasks.append(asyncio.create_task(operator.execute()))
+    def _execute(self, task_queue, finished_queue):
+        task = task_queue.get(True)
+        op = self._node_name_to_node_dict[task]
+        op.execute()
+        self.get_container_snapshot()
+        finished_queue.append(task)
 
-        await asyncio.wait(tasks)
-
-    def execute(self):
+    def execute(self, num_process=1):
         if not self._is_initialized:
             self.log_print("Cannot execute if the container is not initialized.")
             raise exception.ContainerUninitializedException
@@ -101,7 +101,14 @@ class ContainerBase(GraphBase):
         self.set_status(status=Status.RUNNING)
 
         self._start_time = TimezoneUtil.cur_time_in_pst()
-        asyncio.run(self._execute())
+        task_queue, finished_queue = multiprocessing.Queue(), multiprocessing.Queue()
+        multiprocessing.Pool(num_process, self._execute, (task_queue, finished_queue, ))
+        node_levels = self.get_node_levels()
+        max_level = max(node_levels.keys())
+        for level in range(max_level + 1):
+            for op in node_levels[level]:
+                task_queue.put(op)
+
         self._end_time = TimezoneUtil.cur_time_in_pst()
 
         self.set_status(status=Status.SUCCEEDED)
