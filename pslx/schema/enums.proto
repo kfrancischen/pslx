@@ -46,3 +46,9 @@ enum Status {
     SUCCEEDED = 3;
     FAILED = 4;
 }
+
+// the next will be 2
+enum Signal {
+    START = 0;
+    STOP = 1;
+}

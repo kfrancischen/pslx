@@ -3,6 +3,7 @@ import multiprocessing
 from pslx.core.graph_base import GraphBase
 import pslx.core.exception as exception
 from pslx.schema.enums_pb2 import DataModelType
+from pslx.schema.enums_pb2 import Signal
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.snapshots_pb2 import ContainerSnapshot
 from pslx.util.file_util import FileUtil
@@ -90,15 +91,15 @@ class ContainerBase(GraphBase):
         return snapshot
 
     def _execute(self, task_queue, finished_queue):
-        task = task_queue.get(True)
-        self.log_print("Starting task: " + task)
-        self._logger.write_log("Starting task: " + task)
-        op = self._node_name_to_node_dict[task]
-        op.execute()
-        self.get_container_snapshot()
-        finished_queue.append(task)
-        self.log_print("Finished task: " + task)
-        self._logger.write_log("Finished task: " + task)
+        for operator_name in iter(task_queue, Signal.STOP):
+            self.log_print("Starting task: " + operator_name)
+            self._logger.write_log("Starting task: " + operator_name)
+            op = self._node_name_to_node_dict[operator_name]
+            op.execute()
+            self.get_container_snapshot()
+            finished_queue.put(operator_name)
+            self.log_print("Finished task: " + operator_name)
+            self._logger.write_log("Finished task: " + operator_name)
 
     def execute(self, is_backfill=False, num_process=1):
         if not self._is_initialized:
@@ -112,7 +113,12 @@ class ContainerBase(GraphBase):
 
         self._start_time = TimezoneUtil.cur_time_in_pst()
         task_queue, finished_queue = multiprocessing.Queue(), multiprocessing.Queue()
-        multiprocessing.Pool(num_process, self._execute, (task_queue, finished_queue,))
+        process_list = []
+        for _ in range(num_process):
+            process = multiprocessing.Process(target=self._execute, args=(task_queue, finished_queue))
+            process.start()
+            process_list.append(process)
+
         node_levels = self.get_node_levels()
         max_level = max(node_levels.keys())
         for level in range(max_level + 1):
@@ -122,6 +128,7 @@ class ContainerBase(GraphBase):
                     continue
                 task_queue.put(operator_name)
 
+        task_queue.put(Signal.STOP)
         self._end_time = TimezoneUtil.cur_time_in_pst()
 
         self.set_status(status=Status.SUCCEEDED)
@@ -131,6 +138,8 @@ class ContainerBase(GraphBase):
                 break
 
         self.get_container_snapshot()
+        for process in process_list:
+            process.join()
 
     def _get_latest_status_of_operators(self):
         operator_status = {}
