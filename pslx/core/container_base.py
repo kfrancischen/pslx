@@ -127,8 +127,9 @@ class ContainerBase(GraphBase):
                     self._node_name_to_node_dict[operator_name].set_status(status=Status.SUCCEEDED)
                     continue
                 task_queue.put(operator_name)
+        for _ in range(num_process):
+            task_queue.put(Signal.STOP)
 
-        task_queue.put(Signal.STOP)
         self._end_time = TimezoneUtil.cur_time_in_pst()
 
         self.set_status(status=Status.SUCCEEDED)
@@ -138,6 +139,12 @@ class ContainerBase(GraphBase):
                 break
 
         self.get_container_snapshot()
+        log_str = 'Finishing order is:'
+        for operator_name in finished_queue.get():
+            log_str += '\t' + operator_name
+        self._logger.write_log(log_str)
+        self.log_print(log_str)
+
         for process in process_list:
             process.join()
 
