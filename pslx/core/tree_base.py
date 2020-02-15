@@ -31,7 +31,7 @@ class TreeBase(Base):
         parent_node.add_child(child_node)
         if parent_node.get_node_name() in self._node_name_to_node_dict or \
                 child_node.get_node_name() in self._node_name_to_node_dict:
-            self.log_print(string='Attention: node names need to be unique.')
+            self.sys_log(string='Attention: node names need to be unique.')
 
         if parent_node.get_node_name() not in self._node_name_to_node_dict:
             self._node_name_to_node_dict[parent_node.get_node_name()] = parent_node
@@ -100,7 +100,7 @@ class TreeBase(Base):
 
     def _trim_tree(self, node, max_capacity=-1):
         if not node.is_children_ordered():
-            self.log_print(string=node.get_node_name() + ' is not ordered. Be careful when you trim the tree.')
+            self.sys_log(string=node.get_node_name() + ' is not ordered. Be careful when you trim the tree.')
 
         if max_capacity <= 0 or self.get_num_nodes_subtree(node=node) <= max_capacity:
             return

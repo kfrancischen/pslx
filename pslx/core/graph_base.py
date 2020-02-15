@@ -103,10 +103,10 @@ class GraphBase(Base):
             cur_stack.append(cur_node.get_node_name())
 
         if not self.is_dag():
-            self.log_print(string='Cannot do topological sort if the graph is cyclic.')
+            self.sys_log(string='Cannot do topological sort if the graph is cyclic.')
             return []
         if not self.is_connected():
-            self.log_print(string='Cannot do topological sort if the graph is not fully connected.')
+            self.sys_log(string='Cannot do topological sort if the graph is not fully connected.')
             return []
 
         traversed_nodes = []

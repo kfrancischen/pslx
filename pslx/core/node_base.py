@@ -94,7 +94,7 @@ class UnorderedNodeBase(NodeBase):
     def add_child(self, child_node):
         assert child_node != self
         if self.has_child(child_name=child_node.get_node_name()):
-            self.log_print("Node name duplicated. Will overwrite the previous node.")
+            self.sys_log("Node name duplicated. Will overwrite the previous node.")
         self._children[child_node.get_node_name()] = child_node
         if not child_node.has_parent(parent_name=self._node_name):
             child_node.add_parent(parent_node=self)
@@ -102,7 +102,7 @@ class UnorderedNodeBase(NodeBase):
     def add_parent(self, parent_node):
         assert parent_node != self
         if self.has_parent(parent_name=parent_node.get_node_name()):
-            self.log_print("Node name duplicated. Will overwrite the previous node.")
+            self.sys_log("Node name duplicated. Will overwrite the previous node.")
         self._parents[parent_node.get_node_name()] = parent_node
         if not parent_node.has_child(child_name=self._node_name):
             parent_node.add_child(child_node=self)
@@ -120,7 +120,7 @@ class OrderedNodeBase(NodeBase):
     def add_child(self, child_node):
         assert child_node != self
         if self.has_child(child_name=child_node.get_node_name()):
-            self.log_print("Node name duplicated. Will overwrite the previous node.")
+            self.sys_log("Node name duplicated. Will overwrite the previous node.")
         self._children[child_node.get_node_name()] = child_node
         if self._order == SortOrder.REVERSE:
             self._children.move_to_end(key=child_node.get_node_name(), last=False)
@@ -130,7 +130,7 @@ class OrderedNodeBase(NodeBase):
     def add_parent(self, parent_node):
         assert parent_node != self
         if self.has_parent(parent_name=parent_node.get_node_name()):
-            self.log_print("Node name duplicated. Will overwrite the previous node.")
+            self.sys_log("Node name duplicated. Will overwrite the previous node.")
         self._parents[parent_node.get_node_name()] = parent_node
         if self._order == SortOrder.REVERSE:
             self._parents.move_to_end(key=parent_node.get_node_name(), last=False)

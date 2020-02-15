@@ -27,6 +27,16 @@ class TestOperatorBase(unittest.TestCase):
         test_operator.unset_status()
         self.assertEqual(test_operator.get_status(), Status.IDLE)
 
+    def test_mark_as_done(self):
+        test_operator = DummyUtil.dummy_operator(node_name='test_operator')
+        test_operator.mark_as_done()
+        self.assertTrue(test_operator.is_done())
+
+    def test_is_done(self):
+        test_operator = DummyUtil.dummy_operator(node_name='test_operator')
+        test_operator.set_status(status=Status.FAILED)
+        self.assertFalse(test_operator.is_done())
+
     def test_wait_for_upstream_status(self):
         test_operator_1 = DummyUtil.dummy_operator(node_name='test_operator_1')
         test_operator_2 = DummyUtil.dummy_operator(node_name='test_operator_2')

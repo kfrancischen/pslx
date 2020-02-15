@@ -36,7 +36,7 @@ class Base(object):
         return '->'.join(inheritance_level)
 
     @classmethod
-    def log_print(cls, string):
+    def sys_log(cls, string):
         if cls.LOG_EVERYTHING:
             print('[SYS-LOG]' + ColorsUtil.BOLD + ' class' + ColorsUtil.RESET + ' ' +
                   ColorsUtil.Foreground.GREEN + '[%s]' % cls.get_class_name() + ColorsUtil.RESET + ' & ' +

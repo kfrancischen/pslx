@@ -2,6 +2,7 @@ import multiprocessing
 
 from pslx.core.graph_base import GraphBase
 import pslx.core.exception as exception
+from pslx.core.operator_base import OperatorBase
 from pslx.schema.enums_pb2 import DataModelType
 from pslx.schema.enums_pb2 import Signal
 from pslx.schema.enums_pb2 import Status
@@ -28,17 +29,18 @@ class ContainerBase(GraphBase):
         self._start_time = None
         self._end_time = None
         self._logger = DummyUtil.dummy_logging()
+        self._blockers = []
 
     def initialize(self, force=False):
         for operator in self._node_name_to_node_dict.values():
             if operator.set_status() != self.STATUS:
-                self.log_print("Status of " + operator.get_node_name() + " is not consistent.")
+                self.sys_log("Status of " + operator.get_node_name() + " is not consistent.")
                 if not force:
                     raise exception.OperatorStatusInconsistentException
                 else:
                     operator.set_status(self.STATUS)
             if operator.get_data_model() != self.DATA_MODEL:
-                self.log_print("Data model of " + operator.get_node_name() + " is not consistent.")
+                self.sys_log("Data model of " + operator.get_node_name() + " is not consistent.")
                 if not force:
                     raise exception.OperatorDataModelInconsistentException
                 else:
@@ -47,7 +49,7 @@ class ContainerBase(GraphBase):
         self._is_initialized = True
 
     def set_status(self, status):
-        self.log_print("Switching to " + ProtoUtil.get_name_by_value(enum_type=Status, value=status) +
+        self.sys_log("Switching to " + ProtoUtil.get_name_by_value(enum_type=Status, value=status) +
                        " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
         self.STATUS = status
 
@@ -59,13 +61,16 @@ class ContainerBase(GraphBase):
 
     def add_operator_edge(self, from_operator, to_operator):
         if self._is_initialized:
-            self.log_print("Cannot add more connections if the container is already initialized.")
+            self.sys_log("Cannot add more connections if the container is already initialized.")
             raise exception.ContainerAlreadyInitializedException
         self.add_direct_edge(from_node=from_operator, to_node=to_operator)
 
+    def add_blocker(self, snapshot_file_pattern):
+        self._blockers.append(snapshot_file_pattern)
+
     def get_container_snapshot(self):
         if not self._is_initialized:
-            self.log_print("Warning: taking snapshot when the container is not initialized.")
+            self.sys_log("Warning: taking snapshot when the container is not initialized.")
 
         snapshot = ContainerSnapshot()
         snapshot.container_name = self._container_name
@@ -81,7 +86,7 @@ class ContainerBase(GraphBase):
                              str(TimezoneUtil.cur_time_in_pst()) + op_name + '.pb'
             snapshot.operator_snapshot_map[op_name] = op.get_operator_snapshot(output_file=op_output_file)
 
-        self.log_print("Saved to file " + self._tmp_file_folder + '.')
+        self.sys_log("Saved to file " + self._tmp_file_folder + '.')
         self._logger.write_log("Saved to file " + self._tmp_file_folder + '.')
         FileUtil.write_proto_to_file(
             proto=snapshot,
@@ -92,19 +97,34 @@ class ContainerBase(GraphBase):
 
     def _execute(self, task_queue, finished_queue):
         for operator_name in iter(task_queue, Signal.STOP):
-            self.log_print("Starting task: " + operator_name)
+            self.sys_log("Starting task: " + operator_name)
             self._logger.write_log("Starting task: " + operator_name)
             op = self._node_name_to_node_dict[operator_name]
             op.execute()
             self.get_container_snapshot()
             finished_queue.put(operator_name)
-            self.log_print("Finished task: " + operator_name)
+            self.sys_log("Finished task: " + operator_name)
             self._logger.write_log("Finished task: " + operator_name)
 
     def execute(self, is_backfill=False, num_process=1):
         if not self._is_initialized:
-            self.log_print("Cannot execute if the container is not initialized.")
+            self.sys_log("Cannot execute if the container is not initialized.")
             raise exception.ContainerUninitializedException
+
+        self._logger.log_print('Blockers are: ' + ', '.join(self._blockers))
+        self.sys_log('Blockers are: ' + ', '.join(self._blockers))
+        unblocked_blocker = 0
+        while unblocked_blocker < len(self._blockers):
+            for blocker in self._blockers:
+                latest_snapshot_files = FileUtil.get_file_names_from_pattern(pattern=blocker)
+                if not latest_snapshot_files:
+                    continue
+                latest_snapshot_file = latest_snapshot_files[-1]
+                if OperatorBase.get_status_from_snapshot(snapshot_file=latest_snapshot_file) != Status.SUCCEEDED:
+                    continue
+                else:
+                    unblocked_blocker += 1
+
         self.get_container_snapshot()
         self.set_status(status=Status.RUNNING)
         operator_status = {}
@@ -143,14 +163,14 @@ class ContainerBase(GraphBase):
         for operator_name in finished_queue.get():
             log_str += '\t' + operator_name
         self._logger.write_log(log_str)
-        self.log_print(log_str)
+        self.sys_log(log_str)
 
         for process in process_list:
             process.join()
 
     def _get_latest_status_of_operators(self):
         operator_status = {}
-        snapshot_files = FileUtil.get_file_names(dir_name=self._tmp_file_folder)
+        snapshot_files = FileUtil.get_file_names_in_dir(dir_name=self._tmp_file_folder)
         for snapshot_file in snapshot_files[::-1]:
             operator_name = snapshot_file.split('_')[1]
             if operator_name not in operator_status:

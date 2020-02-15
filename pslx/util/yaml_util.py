@@ -1,6 +1,7 @@
 import os
 import yaml
 
+
 class YamlUtil(object):
 
     @classmethod
@@ -10,7 +11,6 @@ class YamlUtil(object):
         else:
             with open(file_name, 'r') as infile:
                 return yaml.safe_load(infile)
-
 
 
 if __name__ == '__main__':

@@ -30,9 +30,8 @@ class OperatorBase(OrderedNodeBase):
         self._config.update(config)
 
     def set_data_model(self, model):
-        self.log_print("Switching to " + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=model) +
-                       " model from " + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=self.DATA_MODEL) +
-                       '.')
+        self.sys_log("Switching to " + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=model) +
+                     " model from " + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=self.DATA_MODEL) + '.')
         self.DATA_MODEL = model
 
     def unset_data_model(self):
@@ -42,8 +41,8 @@ class OperatorBase(OrderedNodeBase):
         return self.DATA_MODEL
 
     def set_status(self, status):
-        self.log_print(self._node_name + " switching to " + ProtoUtil.get_name_by_value(enum_type=Status, value=status)
-                       + " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
+        self.sys_log(self._node_name + " switching to " + ProtoUtil.get_name_by_value(enum_type=Status, value=status)
+                     + " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
         self.STATUS = status
 
     def unset_status(self):
@@ -56,17 +55,17 @@ class OperatorBase(OrderedNodeBase):
         self.set_status(status=Status.SUCCEEDED)
 
     def is_done(self):
-        return self.STATUS == Status.SUCCEEDED 
+        return self.STATUS == Status.SUCCEEDED
 
-    def get_status_from_snapshot(self, snapshot_file):
+    @classmethod
+    def get_status_from_snapshot(cls, snapshot_file):
         try:
             snapshot = FileUtil.read_proto_from_file(
                 proto_type=OperatorSnapshot,
                 file_name=FileUtil.die_if_not_exist(file_name=snapshot_file)
             )
             return snapshot.status
-        except FileNotExistException as err:
-            self.log_print(str(err))
+        except FileNotExistException as _:
             return Status.IDLE
 
     def get_data(self):
@@ -76,12 +75,12 @@ class OperatorBase(OrderedNodeBase):
         if self.DATA_MODEL != DataModelType.DEFAULT:
             for parent in self.get_parents_nodes():
                 if parent.get_status() in [Status.WAITING, Status.RUNNING]:
-                    self.log_print("Upstream operator " + parent.get_node_name() + " is still in status: " +
-                                   ProtoUtil.get_name_by_value(enum_type=Status, value=parent.get_status()) + '.')
+                    self.sys_log("Upstream operator " + parent.get_node_name() + " is still in status: " +
+                                 ProtoUtil.get_name_by_value(enum_type=Status, value=parent.get_status()) + '.')
                     return False
                 elif parent.get_status() == Status.FAILED:
                     self.set_status(status=Status.FAILED)
-                    self.log_print("Upstream operator " + parent.get_node_name() + " failed.")
+                    self.sys_log("Upstream operator " + parent.get_node_name() + " failed.")
                     break
         return True
 
@@ -114,7 +113,7 @@ class OperatorBase(OrderedNodeBase):
         if self._end_time:
             snapshot.end_time = str(self._end_time)
         if output_file and self._config['save_snapshot']:
-            self.log_print("Saved to file " + output_file + '.')
+            self.sys_log("Saved to file " + output_file + '.')
             FileUtil.write_proto_to_file(
                 proto=snapshot,
                 file_name=output_file
@@ -124,12 +123,12 @@ class OperatorBase(OrderedNodeBase):
     def execute(self):
         assert self.is_data_model_consistent() and self.is_status_consistent()
         if self.get_status() == Status.SUCCEEDED:
-            self.log_print("Process already succeeded. It might have been finished by another process.")
+            self.sys_log("Process already succeeded. It might have been finished by another process.")
             return
         for parent_node in self.get_parents_nodes():
             if parent_node.get_status() == Status.FAILED:
-                self.log_print("Operator " + parent_node.get_node_name() +
-                               " failed. This results in failure of all the following descendant operators.")
+                self.sys_log("Operator " + parent_node.get_node_name() +
+                             " failed. This results in failure of all the following descendant operators.")
                 self.set_status(status=Status.FAILED)
                 return
 
@@ -139,8 +138,8 @@ class OperatorBase(OrderedNodeBase):
             if child_node.get_status() != Status.WAITING:
                 child_node.set_status(Status.WAITING)
         if self._config['slo'] < 0:
-            self.log_print("Operator has negative SLO = -1. This might result in indefinite run. "
-                           "Please check set_slo() function.")
+            self.sys_log("Operator has negative SLO = -1. This might result in indefinite run. "
+                         "Please check set_slo() function.")
 
         while self._config['slo'] < 0 or (self._config['slo'] > 0 and TimezoneUtil.cur_time_in_pst() -
                                           self._start_time > datetime.timedelta(self._config['slo'])):
@@ -150,7 +149,7 @@ class OperatorBase(OrderedNodeBase):
                     self.set_status(status=Status.SUCCEEDED)
                     return
             except OperatorFailureException as err:
-                self.log_print(str(err))
+                self.sys_log(str(err))
 
         self.set_status(status=Status.FAILED)
 

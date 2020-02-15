@@ -1,3 +1,4 @@
+import glob
 import os
 from pslx.core.exception import FileNotExistException
 from pslx.schema.enums_pb2 import ModeType
@@ -38,13 +39,17 @@ class FileUtil(object):
         return os.path.join(pre_path, class_name, 'ttl=' + str(ttl))
 
     @classmethod
-    def get_file_names(cls, dir_name):
+    def get_file_names_in_dir(cls, dir_name):
         if not os.path.exists(dir_name):
             return []
         file_names = sorted([
             file_name for file_name in os.listdir(dir_name) if os.path.isfile(os.path.join(dir_name, file_name))]
         )
         return [os.path.join(dir_name, file_name) for file_name in file_names]
+
+    @classmethod
+    def get_file_names_from_pattern(cls, pattern):
+        return sorted(glob.glob(pattern))
 
     @classmethod
     def get_mode(cls, file_path):

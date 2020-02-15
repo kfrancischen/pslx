@@ -21,7 +21,7 @@ class BasicStreamingContainer(ContainerBase):
         )
 
     def execute(self, is_backfill=False, num_process=1):
-        self.log_print(string='Streaming Container does not allow multi-processing.')
+        self.sys_log(string='Streaming Container does not allow multi-processing.')
         self._logger.write_log('Streaming Container does not allow multi-processing.')
         super().execute(is_backfill=is_backfill, num_process=1)
 
@@ -46,7 +46,7 @@ class ScheduledStreamingContainer(BasicStreamingContainer):
             'second': second,
         }
         self._logger.write_log("Spec sets to " + str(self._scheduler_spec))
-        self.log_print("Spec sets to " + str(self._scheduler_spec))
+        self.sys_log("Spec sets to " + str(self._scheduler_spec))
 
     def execute(self, is_backfill=False, num_process=1):
         background_scheduler = BackgroundScheduler(timezone=TimeZoneObj.WESTERN_TIMEZONE)

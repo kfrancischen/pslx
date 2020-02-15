@@ -41,7 +41,7 @@ class ScheduledBatchContainer(BasicBatchContainer):
             'second': second,
         }
         self._logger.write_log("Spec sets to " + str(self._scheduler_spec))
-        self.log_print("Spec sets to " + str(self._scheduler_spec))
+        self.sys_log("Spec sets to " + str(self._scheduler_spec))
 
     def execute(self, is_backfill=False, num_process=1):
         background_scheduler = BackgroundScheduler(timezone=TimeZoneObj.WESTERN_TIMEZONE)
