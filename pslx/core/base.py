@@ -10,9 +10,9 @@ class Base(object):
 
     def __init__(self):
         if 'TEST' not in os.environ or not os.environ['TEST']:
-            self._mode = ModeType.TEST
-        else:
             self._mode = ModeType.PROD
+        else:
+            self._mode = ModeType.TEST
         return
 
     def get_mode(self):

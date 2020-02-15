@@ -32,9 +32,9 @@ class FileUtil(object):
     @classmethod
     def join_paths(cls, root_dir, class_name, ttl=-1):
         if 'TEST' not in os.environ or not os.environ['TEST']:
-            pre_path = os.path.join(root_dir, ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.TEST))
-        else:
             pre_path = os.path.join(root_dir, ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.PROD))
+        else:
+            pre_path = os.path.join(root_dir, ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.TEST))
 
         return os.path.join(pre_path, class_name, 'ttl=' + str(ttl))
 
