@@ -55,6 +55,9 @@ class OperatorBase(OrderedNodeBase):
     def mark_as_done(self):
         self.set_status(status=Status.SUCCEEDED)
 
+    def is_done(self):
+        return self.STATUS == Status.SUCCEEDED 
+
     def get_status_from_snapshot(self, snapshot_file):
         try:
             snapshot = FileUtil.read_proto_from_file(
