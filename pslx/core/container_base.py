@@ -50,7 +50,7 @@ class ContainerBase(GraphBase):
 
     def set_status(self, status):
         self.sys_log("Switching to " + ProtoUtil.get_name_by_value(enum_type=Status, value=status) +
-                       " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
+                     " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
         self.STATUS = status
 
     def unset_status(self):

@@ -6,10 +6,10 @@ from pslx.util.color_util import ColorsUtil
 
 
 class Base(object):
-    LOG_EVERYTHING = os.getenv('LOG_EVERYTHING', False)
+    LOG_EVERYTHING = os.getenv('PSLX_LOG', False)
 
     def __init__(self):
-        if 'TEST' not in os.environ or not os.environ['TEST']:
+        if 'PSLX_TEST' not in os.environ or not os.environ['PSLX_TEST']:
             self._mode = ModeType.PROD
         else:
             self._mode = ModeType.TEST
