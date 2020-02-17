@@ -33,7 +33,7 @@ class ContainerBase(GraphBase):
 
     def initialize(self, force=False):
         for operator in self._node_name_to_node_dict.values():
-            if operator.set_status() != self.STATUS:
+            if operator.get_status() != self.STATUS:
                 self.sys_log("Status of " + operator.get_node_name() + " is not consistent.")
                 if not force:
                     raise exception.OperatorStatusInconsistentException
@@ -81,22 +81,22 @@ class ContainerBase(GraphBase):
         if self._end_time:
             snapshot.end_time = str(self._end_time)
 
-        for op_name, op in self._node_name_to_node_dict:
+        for op_name, op in self._node_name_to_node_dict.items():
             op_output_file = FileUtil.dir_name(self._tmp_file_folder) + '/' + 'SNAPSHOT_' + \
-                             str(TimezoneUtil.cur_time_in_pst()) + op_name + '.pb'
-            snapshot.operator_snapshot_map[op_name] = op.get_operator_snapshot(output_file=op_output_file)
+                             str(TimezoneUtil.cur_time_in_pst()) + '_' + op_name + '.pb'
+            snapshot.operator_snapshot_map[op_name].CopyFrom(op.get_operator_snapshot(output_file=op_output_file))
 
         self.sys_log("Saved to file " + self._tmp_file_folder + '.')
         self._logger.write_log("Saved to file " + self._tmp_file_folder + '.')
         FileUtil.write_proto_to_file(
             proto=snapshot,
-            file_name=(self._tmp_file_folder + '/' + 'SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) +
+            file_name=(self._tmp_file_folder + '/' + 'SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' +
                        self._container_name + '.pb')
         )
         return snapshot
 
     def _execute(self, task_queue, finished_queue):
-        for operator_name in iter(task_queue, Signal.STOP):
+        for operator_name in iter(task_queue.get, Signal.STOP):
             self.sys_log("Starting task: " + operator_name)
             self._logger.write_log("Starting task: " + operator_name)
             op = self._node_name_to_node_dict[operator_name]
@@ -111,7 +111,7 @@ class ContainerBase(GraphBase):
             self.sys_log("Cannot execute if the container is not initialized.")
             raise exception.ContainerUninitializedException
 
-        self._logger.log_print('Blockers are: ' + ', '.join(self._blockers))
+        self._logger.write_log('Blockers are: ' + ', '.join(self._blockers))
         self.sys_log('Blockers are: ' + ', '.join(self._blockers))
         unblocked_blocker = 0
         while unblocked_blocker < len(self._blockers):
@@ -160,8 +160,10 @@ class ContainerBase(GraphBase):
 
         self.get_container_snapshot()
         log_str = 'Finishing order is:'
-        for operator_name in finished_queue.get():
-            log_str += '\t' + operator_name
+        for _ in range(self.get_num_nodes()):
+            operator_name = finished_queue.get()
+            if operator_name != Signal.STOP:
+                log_str += operator_name + '\t'
         self._logger.write_log(log_str)
         self.sys_log(log_str)
 

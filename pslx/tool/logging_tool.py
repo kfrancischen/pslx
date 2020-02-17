@@ -38,7 +38,7 @@ class LoggingTool(Base):
                 self._suffix = 'notset'
                 self._bg_color = ColorsUtil.Background.PURPLE
 
-            self._log_file_dir = (root_dir + 'log/' + 'name/ttl=' + str(self._ttl) + '/')
+            self._log_file_dir = (root_dir + 'log/' + name + '/ttl=' + str(self._ttl) + '/')
 
             self._new_logger()
 
@@ -73,6 +73,5 @@ class LoggingTool(Base):
             self._start_date = now
             self._new_logger()
 
-        self._logger.info(self._bg_color + self._suffix.upper() + ' [' +
-                          str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + '] ' +
+        self._logger.info(self._bg_color + ' [PST: ' + str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + '] ' +
                           ColorsUtil.RESET + string)

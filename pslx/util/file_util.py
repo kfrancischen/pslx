@@ -16,9 +16,11 @@ class FileUtil(object):
 
     @classmethod
     def create_if_not_exist(cls, file_name):
-        if not os.path.exists(file_name):
-            dir_name = cls.dir_name(file_name=file_name)
+        dir_name = cls.dir_name(file_name=file_name)
+        if not os.path.exists(dir_name):
             os.makedirs(dir_name)
+            with open(file_name, 'w') as _:
+                pass
 
         return file_name
 
@@ -35,8 +37,10 @@ class FileUtil(object):
             pre_path = os.path.join(root_dir, ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.PROD))
         else:
             pre_path = os.path.join(root_dir, ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.TEST))
-
-        return os.path.join(pre_path, class_name, 'ttl=' + str(ttl))
+        if ttl < 0:
+            return os.path.join(pre_path, class_name)
+        else:
+            return os.path.join(pre_path, class_name, 'ttl=' + str(ttl))
 
     @classmethod
     def get_file_names_in_dir(cls, dir_name):

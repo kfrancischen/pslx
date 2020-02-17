@@ -57,6 +57,12 @@ class OperatorBase(OrderedNodeBase):
     def is_done(self):
         return self.STATUS == Status.SUCCEEDED
 
+    def get_data_from_dependency(self, dependency_name):
+        if not self.get_parent(parent_name=dependency_name):
+            return None
+        else:
+            return self.get_parent(parent_name=dependency_name).get_data()
+
     @classmethod
     def get_status_from_snapshot(cls, snapshot_file):
         try:
