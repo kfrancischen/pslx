@@ -132,7 +132,7 @@ class ContainerBase(GraphBase):
             operator_status = self._get_latest_status_of_operators()
 
         self._start_time = TimezoneUtil.cur_time_in_pst()
-        task_queue, finished_queue = multiprocessing.Queue(), multiprocessing.Queue()
+        task_queue, finished_queue, num_tasks = multiprocessing.Queue(), multiprocessing.Queue(), 0
         process_list = []
         for _ in range(num_process):
             process = multiprocessing.Process(target=self._execute, args=(task_queue, finished_queue))
@@ -147,6 +147,7 @@ class ContainerBase(GraphBase):
                     self._node_name_to_node_dict[operator_name].set_status(status=Status.SUCCEEDED)
                     continue
                 task_queue.put(operator_name)
+                num_tasks += 1
         for _ in range(num_process):
             task_queue.put(Signal.STOP)
 
@@ -160,10 +161,9 @@ class ContainerBase(GraphBase):
 
         self.get_container_snapshot()
         log_str = 'Finishing order is:'
-        for _ in range(self.get_num_nodes()):
-            operator_name = finished_queue.get()
-            if operator_name != Signal.STOP:
-                log_str += operator_name + '\t'
+        for _ in range(num_tasks):
+            log_str += ', ' + finished_queue.get()
+            
         self._logger.write_log(log_str)
         self.sys_log(log_str)
 
