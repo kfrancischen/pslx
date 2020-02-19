@@ -15,8 +15,8 @@ class OperatorBase(OrderedNodeBase):
     DATA_MODEL = DataModelType.DEFAULT
     STATUS = Status.IDLE
 
-    def __init__(self, node_name, order=SortOrder.ORDER):
-        super().__init__(node_name=node_name, order=order)
+    def __init__(self, operator_name, order=SortOrder.ORDER):
+        super().__init__(node_name=operator_name, order=order)
         self._config = {
             'save_snapshot': False,
             'slo': -1,

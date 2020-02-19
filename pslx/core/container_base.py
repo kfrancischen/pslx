@@ -160,9 +160,12 @@ class ContainerBase(GraphBase):
                 break
 
         self.get_container_snapshot()
-        log_str = 'Finishing order is:'
+        log_str = 'Finishing order is: '
+        tasks_list = []
         for _ in range(num_tasks):
-            log_str += ', ' + finished_queue.get()
+            tasks_list.append(finished_queue.get())
+
+        log_str += ', '.join(tasks_list)
             
         self._logger.write_log(log_str)
         self.sys_log(log_str)

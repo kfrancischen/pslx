@@ -6,8 +6,8 @@ from pslx.schema.enums_pb2 import SortOrder
 class BatchOperator(OperatorBase):
     DATA_MODEL = DataModelType.BATCH
 
-    def __init__(self, node_name, order=SortOrder.ORDER):
-        super().__init__(node_name=node_name, order=order)
+    def __init__(self, operator_name, order=SortOrder.ORDER):
+        super().__init__(operator_name=operator_name, order=order)
 
     def set_data_model(self, model):
         pass

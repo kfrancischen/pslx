@@ -12,8 +12,8 @@ class DummyLogging(LoggingTool):
 
 
 class DummyOperator(OperatorBase):
-    def __init__(self, node_name):
-        super().__init__(node_name=node_name)
+    def __init__(self, operator_name):
+        super().__init__(operator_name=operator_name)
 
     def _execute(self, **kwargs):
         return True
@@ -26,17 +26,17 @@ class DummyUtil(object):
         return DummyLogging()
 
     @classmethod
-    def dummy_operator(cls, node_name='dummy_operator'):
-        return DummyOperator(node_name=node_name)
+    def dummy_operator(cls, operator_name='dummy_operator'):
+        return DummyOperator(operator_name=operator_name)
 
     @classmethod
-    def dummy_streaming_operator(cls, node_name='dummy_streaming_operator'):
-        op = DummyOperator(node_name=node_name)
+    def dummy_streaming_operator(cls, operator_name='dummy_streaming_operator'):
+        op = DummyOperator(operator_name=operator_name)
         op.set_data_model(model=DataModelType.STREAMING)
         return op
 
     @classmethod
-    def dummy_bach_operator(cls, node_name='dummy_batch_operator'):
-        op = DummyOperator(node_name=node_name)
+    def dummy_bach_operator(cls, operator_name='dummy_batch_operator'):
+        op = DummyOperator(operator_name=operator_name)
         op.set_data_model(model=DataModelType.BATCH)
         return op
