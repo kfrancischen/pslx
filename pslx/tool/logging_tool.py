@@ -5,6 +5,7 @@ from pslx.core.base import Base
 from pslx.schema.enums_pb2 import DiskLoggerLevel
 from pslx.util.color_util import ColorsUtil
 from pslx.util.timezone_util import TimezoneUtil
+from pslx.util.file_util import FileUtil
 
 
 class LoggingTool(Base):
@@ -18,7 +19,6 @@ class LoggingTool(Base):
             if root_dir and root_dir[-1] != '/':
                 root_dir += '/'
 
-            self._ttl = ttl if ttl > 0 else 0
             self._name = name
 
             if level == DiskLoggerLevel.DEBUG:
@@ -38,7 +38,11 @@ class LoggingTool(Base):
                 self._suffix = 'notset'
                 self._bg_color = ColorsUtil.Background.PURPLE
 
-            self._log_file_dir = (root_dir + 'log/' + name + '/ttl=' + str(self._ttl) + '/')
+            self._log_file_dir = FileUtil.join_paths(
+                root_dir=root_dir + 'log/',
+                class_name=name,
+                ttl=ttl
+            )
 
             self._new_logger()
 
@@ -49,17 +53,6 @@ class LoggingTool(Base):
             os.makedirs(self._log_file_dir)
         file_name = self._log_file_dir + '/' + self._name + '-' + str(self._start_date.year) + '-' + str(
             self._start_date.month) + '-' + str(self._start_date.day) + '-' + self._suffix
-
-        if self._ttl > 0:
-            for existing_file_name in os.listdir(self._log_file_dir):
-                existing_file_name_split = existing_file_name.split('-')
-                if existing_file_name_split[0] == self._name:
-                    file_date = datetime.datetime(
-                        int(existing_file_name_split[1]), int(existing_file_name_split[2]),
-                        int(existing_file_name_split[3])
-                    )
-                    if self._start_date - file_date > datetime.timedelta(days=self._ttl):
-                        os.remove(self._log_file_dir + '/' + existing_file_name)
 
         fh = logging.FileHandler(file_name + '.log')
         fh.setLevel(self._logging_level)
@@ -73,5 +66,4 @@ class LoggingTool(Base):
             self._start_date = now
             self._new_logger()
 
-        self._logger.info(self._bg_color + ' [PST: ' + str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + '] ' +
-                          ColorsUtil.RESET + string)
+        self._logger.info('[PST: ' + str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + '] ' + string)

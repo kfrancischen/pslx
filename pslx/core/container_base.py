@@ -17,12 +17,14 @@ class ContainerBase(GraphBase):
     DATA_MODEL = DataModelType.DEFAULT
     STATUS = Status.IDLE
 
-    def __init__(self, container_name, tmp_file_folder='tmp/', ttl=-1):
+    def __init__(self, container_name, root_dir='database/', ttl=-1):
         super().__init__()
+        if root_dir and root_dir[-1] != '/':
+            root_dir += '/'
         self._container_name = container_name
         self._is_initialized = False
         self._tmp_file_folder = FileUtil.join_paths(
-            root_dir=tmp_file_folder,
+            root_dir=root_dir + 'snapshots/',
             class_name=self.get_class_name() + '__' + container_name,
             ttl=ttl
         )
@@ -86,8 +88,8 @@ class ContainerBase(GraphBase):
                              str(TimezoneUtil.cur_time_in_pst()) + '_' + op_name + '.pb'
             snapshot.operator_snapshot_map[op_name].CopyFrom(op.get_operator_snapshot(output_file=op_output_file))
 
-        self.sys_log("Saved to file " + self._tmp_file_folder + '.')
-        self._logger.write_log("Saved to file " + self._tmp_file_folder + '.')
+        self.sys_log("Saved to folder " + self._tmp_file_folder + '.')
+        self._logger.write_log("Saved to folder " + self._tmp_file_folder + '.')
         FileUtil.write_proto_to_file(
             proto=snapshot,
             file_name=(self._tmp_file_folder + '/' + 'SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' +
@@ -101,6 +103,7 @@ class ContainerBase(GraphBase):
             self._logger.write_log("Starting task: " + operator_name)
             op = self._node_name_to_node_dict[operator_name]
             op.execute()
+            self.sys_log("Taking snapshot after executing " + operator_name)
             self.get_container_snapshot()
             finished_queue.put(operator_name)
             self.sys_log("Finished task: " + operator_name)
@@ -111,7 +114,6 @@ class ContainerBase(GraphBase):
             self.sys_log("Cannot execute if the container is not initialized.")
             raise exception.ContainerUninitializedException
 
-        self._logger.write_log('Blockers are: ' + ', '.join(self._blockers))
         self.sys_log('Blockers are: ' + ', '.join(self._blockers))
         unblocked_blocker = 0
         while unblocked_blocker < len(self._blockers):
@@ -126,6 +128,7 @@ class ContainerBase(GraphBase):
                     unblocked_blocker += 1
 
         self.get_container_snapshot()
+        self.sys_log("Taking snapshot at start.")
         self.set_status(status=Status.RUNNING)
         operator_status = {}
         if is_backfill:
@@ -159,7 +162,6 @@ class ContainerBase(GraphBase):
                 self.set_status(status=Status.FAILED)
                 break
 
-        self.get_container_snapshot()
         log_str = 'Finishing order is: '
         tasks_list = []
         for _ in range(num_tasks):
@@ -172,6 +174,9 @@ class ContainerBase(GraphBase):
 
         for process in process_list:
             process.join()
+
+        self.get_container_snapshot()
+        self.sys_log("Taking snapshot in the end.")
 
     def _get_latest_status_of_operators(self):
         operator_status = {}
