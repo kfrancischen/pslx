@@ -39,3 +39,7 @@ class ContainerUninitializedException(ExceptionBase):
 
 class ContainerAlreadyInitializedException(ExceptionBase):
     pass
+
+
+class StorageInternalException(ExceptionBase):
+    pass

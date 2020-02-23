@@ -29,8 +29,27 @@ enum DiskLoggerLevel {
     NOTSET = 3;
 }
 
+// the next will be 3
+enum StorageType {
+    DEFAULT_STORAGE = 0;
+    PARTITIONER_STORAGE = 1;
+    FIX_SIZE_STORAGE = 2;
+}
+
+// the next will be 1
+enum ReadRuleType {
+    READ_FROM_BEGINNING = 0;
+    READ_FROM_END = 1;
+}
+
+// the next will be 2
+enum WriteRuleType {
+    WRITE_FROM_BEGINNING = 0;
+    WRITE_FROM_END = 1;
+}
+
 // the next will be 5
-enum PartitionerType {
+enum PartitionerStorageType {
     YEARLY = 0;
     MONTHLY = 1;
     DAILY = 2;

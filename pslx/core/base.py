@@ -13,7 +13,7 @@ class Base(object):
             self._mode = ModeType.PROD
         else:
             self._mode = ModeType.TEST
-        return
+        self._config = {}
 
     def get_mode(self):
         return self._mode
@@ -21,6 +21,10 @@ class Base(object):
     @classmethod
     def get_class_name(cls):
         return cls.__name__
+
+    def set_config(self, config):
+        assert isinstance(config, dict)
+        self._config.update(config)
 
     @classmethod
     def get_full_class_name(cls):

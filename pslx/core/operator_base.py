@@ -24,10 +24,6 @@ class OperatorBase(OrderedNodeBase):
         self._start_time = None
         self._end_time = None
         self._data = None
-    
-    def set_config(self, config):
-        assert isinstance(config, dict)
-        self._config.update(config)
 
     def set_data_model(self, model):
         self.sys_log("Switching to " + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=model) +
