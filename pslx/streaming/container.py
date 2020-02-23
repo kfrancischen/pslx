@@ -22,11 +22,10 @@ class DefaultStreamingContainer(ContainerBase):
 
     def execute(self, is_backfill=False, num_process=1):
         self.sys_log(string='Streaming Container does not allow multi-processing.')
-        self._logger.write_log('Streaming Container does not allow multi-processing.')
         super().execute(is_backfill=is_backfill, num_process=1)
 
 
-class ScheduledStreamingContainer(DefaultStreamingContainer):
+class CronStreamingContainer(DefaultStreamingContainer):
     DATA_MODEL = DataModelType.STREAMING
 
     def __init__(self, container_name, root_dir='database/', ttl=-1):
@@ -58,5 +57,41 @@ class ScheduledStreamingContainer(DefaultStreamingContainer):
             hour=self._scheduler_spec['hour'],
             minute=self._scheduler_spec['minute'],
             second=self._scheduler_spec['second']
+        )
+        background_scheduler.start()
+
+
+class IntervalStreamingContainer(DefaultStreamingContainer):
+    DATA_MODEL = DataModelType.STREAMING
+
+    def __init__(self, container_name, root_dir='database/', ttl=-1):
+        super().__init__(container_name, root_dir=root_dir, ttl=ttl)
+        self._scheduler_spec = {
+            'days': 0,
+            'hours': 0,
+            'minutes': 0,
+            'seconds': 0,
+        }
+
+    def set_schedule(self, days, hours=0, minutes=0, seconds=0):
+        self._scheduler_spec = {
+            'days': days,
+            'hours': hours,
+            'minutes': minutes,
+            'seconds': seconds,
+        }
+        self._logger.write_log("Spec sets to " + str(self._scheduler_spec))
+        self.sys_log("Spec sets to " + str(self._scheduler_spec))
+
+    def execute(self, is_backfill=False, num_process=1):
+        background_scheduler = BackgroundScheduler(timezone=TimeZoneObj.WESTERN_TIMEZONE)
+        background_scheduler.add_job(
+            super().execute,
+            'interval',
+            args=[is_backfill, 1],
+            days=self._scheduler_spec['days'],
+            hours=self._scheduler_spec['hours'],
+            minutes=self._scheduler_spec['minutes'],
+            seconds=self._scheduler_spec['seconds']
         )
         background_scheduler.start()
