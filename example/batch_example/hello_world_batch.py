@@ -14,8 +14,8 @@ class HelloWorldOp(BatchOperator):
 
 
 class HelloWorldContainer(DefaultBatchContainer):
-    def __init__(self):
-        super().__init__(container_name='hello_world_container')
+    def __init__(self, container_name='hello_world_container', ttl=-1):
+        super().__init__(container_name=container_name, ttl=ttl)
 
 
 if __name__ == "__main__":
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     container1.initialize()
     container1.execute()
 
-    container2 = HelloWorldContainer()
+    container2 = HelloWorldContainer(container_name='hello_world_container_2', ttl=1)
     dummy_op = DummyUtil.dummy_bach_operator(operator_name='dummy')
     container2.add_operator_edge(from_operator=op1,
                                  to_operator=dummy_op)
