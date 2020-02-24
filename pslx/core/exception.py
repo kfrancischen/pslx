@@ -47,3 +47,11 @@ class StorageInternalException(ExceptionBase):
 
 class StoragePastLineException(ExceptionBase):
     pass
+
+
+class StorageReadException(ExceptionBase):
+    pass
+
+
+class StorageWriteException(ExceptionBase):
+    pass

@@ -1,7 +1,8 @@
 import time
 
-from pslx.core.exception import StoragePastLineException
+from pslx.core.exception import StoragePastLineException, StorageReadException, StorageWriteException
 from pslx.schema.enums_pb2 import StorageType, ReadRuleType, WriteRuleType, Status
+from pslx.schema.enums_pb2 import ModeType
 from pslx.storage.storage_base import StorageBase
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.file_util import FileUtil
@@ -30,6 +31,19 @@ class DefaultStorage(StorageBase):
 
     def get_file_name(self):
         return self._file_name
+
+    def set_config(self, config):
+        super().set_config(config=config)
+        if 'override_to_prod':
+            self._file_name = self._file_name.replace(
+                ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.TEST),
+                ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.PROD)
+            )
+        if 'override_to_test':
+            self._file_name = self._file_name.replace(
+                ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.PROD),
+                ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.TEST)
+            )
 
     def read(self, params=None):
         if not params:
@@ -63,12 +77,17 @@ class DefaultStorage(StorageBase):
                                        " only has " + str(len(lines)) + " lines.")
                 raise StoragePastLineException
             else:
-                result = lines[self._last_read_line:new_line_number]
-                assert len(result) == params['num_line']
-                result = [line.strip() for line in result]
-                self._last_read_line = new_line_number
-                self._reader_status = Status.IDLE
-                return result
+                try:
+                    result = lines[self._last_read_line:new_line_number]
+                    assert len(result) == params['num_line']
+                    result = [line.strip() for line in result]
+                    self._last_read_line = new_line_number
+                    self._reader_status = Status.IDLE
+                    return result
+                except Exception as err:
+                    self.sys_log(str(err))
+                    self._logger.write_log(str(err))
+                    raise StorageReadException
 
     def write(self, data, params=None):
         if not isinstance(data, str):
@@ -96,13 +115,18 @@ class DefaultStorage(StorageBase):
             data_to_write = params['delimiter'].join([str(val) for val in data])
         else:
             data_to_write = data
-        if self._config['write_rule_type'] == WriteRuleType.WRITE_FROM_END:
-            with open(self._file_name, 'a') as outfile:
-                outfile.write(data_to_write + '\n')
-        else:
-            with open(self._file_name, 'r+') as outfile:
-                file_data = outfile.read()
-                outfile.seek(0, 0)
-                outfile.write(data_to_write + '\n' + file_data)
+        try:
+            if self._config['write_rule_type'] == WriteRuleType.WRITE_FROM_END:
+                with open(self._file_name, 'a') as outfile:
+                    outfile.write(data_to_write + '\n')
+            else:
+                with open(self._file_name, 'r+') as outfile:
+                    file_data = outfile.read()
+                    outfile.seek(0, 0)
+                    outfile.write(data_to_write + '\n' + file_data)
 
-        self._writer_status = Status.IDLE
+            self._writer_status = Status.IDLE
+        except Exception as err:
+            self.sys_log(str(err))
+            self._logger.write_log(str(err))
+            raise StorageWriteException
