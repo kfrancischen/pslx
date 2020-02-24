@@ -34,6 +34,7 @@ enum StorageType {
     DEFAULT_STORAGE = 0;
     PARTITIONER_STORAGE = 1;
     FIX_SIZE_STORAGE = 2;
+    PROTO_TABLE_STORAGE = 3;
 }
 
 // the next will be 1

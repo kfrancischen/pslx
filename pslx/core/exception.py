@@ -43,3 +43,7 @@ class ContainerAlreadyInitializedException(ExceptionBase):
 
 class StorageInternalException(ExceptionBase):
     pass
+
+
+class StoragePastLineException(ExceptionBase):
+    pass

@@ -8,6 +8,12 @@ class TimeZoneObj(object):
     UTC_TIMEZONE = pytz.timezone('UTC')
 
 
+class TimeSleepObj(object):
+    ONE_SECOND = 1
+    FIVE_SECONDS = 5
+    TEN_SECONDS = 10
+
+
 class TimezoneUtil(object):
 
     @classmethod
@@ -45,3 +51,7 @@ class TimezoneUtil(object):
     @classmethod
     def cur_time_in_est(cls):
         return datetime.datetime.now(tz=TimeZoneObj.WESTERN_TIMEZONE)
+
+    @classmethod
+    def cur_time_from_str(cls, time_str):
+        return datetime.datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S.%f%z")

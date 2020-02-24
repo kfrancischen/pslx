@@ -1,17 +1,20 @@
 from pslx.core.base import Base
+from pslx.schema.enums_pb2 import Status
 from pslx.util.dummy_util import DummyUtil
 
 
 class StorageBase(Base):
     STORAGE_TYPE = None
 
-    def __init__(self, logger=None, ttl=-1):
+    def __init__(self, logger=None):
         super().__init__()
         if not logger:
             self._logger = DummyUtil.dummy_logging()
         else:
             self._logger = logger
-        self._ttl = ttl
+
+        self._reader_status = Status.IDLE
+        self._writer_status = Status.IDLE
 
     def get_storage_type(self):
         return self.STORAGE_TYPE
@@ -22,8 +25,8 @@ class StorageBase(Base):
     def initialize_from_dir(self, dir_name):
         raise NotImplementedError
 
-    def read(self):
+    def read(self, params=None):
         raise NotImplementedError
 
-    def write(self, data):
+    def write(self, data, params=None):
         raise NotImplementedError
