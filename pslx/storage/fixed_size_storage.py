@@ -107,11 +107,11 @@ class FixedSizeStorage(DefaultStorage):
                     outfile.seek(0, 0)
                     outfile.write(data_to_write + '\n' + file_data)
 
+                self._stored_data = [data_to_write] + self._stored_data[:-1]
+
             self._writer_status = Status.IDLE
+
         except Exception as err:
             self.sys_log(str(err))
             self._logger.write_log(str(err))
             raise StorageWriteException
-        # (TODO)
-        pass
-
