@@ -29,15 +29,15 @@ enum DiskLoggerLevel {
     NOTSET = 3;
 }
 
-// the next will be 3
+// the next will be 4
 enum StorageType {
     DEFAULT_STORAGE = 0;
     PARTITIONER_STORAGE = 1;
-    FIX_SIZE_STORAGE = 2;
+    FIXED_SIZE_STORAGE = 2;
     PROTO_TABLE_STORAGE = 3;
 }
 
-// the next will be 1
+// the next will be 2
 enum ReadRuleType {
     READ_FROM_BEGINNING = 0;
     READ_FROM_END = 1;

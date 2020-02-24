@@ -55,3 +55,7 @@ class StorageReadException(ExceptionBase):
 
 class StorageWriteException(ExceptionBase):
     pass
+
+
+class StorageExceedsFixedSizeException(ExceptionBase):
+    pass

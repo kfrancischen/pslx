@@ -4,8 +4,8 @@ from pslx.core.exception import StoragePastLineException, StorageReadException, 
 from pslx.schema.enums_pb2 import StorageType, ReadRuleType, WriteRuleType, Status
 from pslx.schema.enums_pb2 import ModeType
 from pslx.storage.storage_base import StorageBase
-from pslx.util.proto_util import ProtoUtil
 from pslx.util.file_util import FileUtil
+from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimeSleepObj
 
 

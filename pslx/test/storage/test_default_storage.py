@@ -18,6 +18,8 @@ class DefaultStorageTest(unittest.TestCase):
         default_storage.initialize_from_file(file_name=self.TEST_DATA_1)
         data = default_storage.read()
         self.assertEqual(data, ['1,2,3'])
+        data = default_storage.read()
+        self.assertEqual(data, ['2,3,4'])
 
     def test_read_from_beginning_2(self):
         default_storage = DefaultStorage()
