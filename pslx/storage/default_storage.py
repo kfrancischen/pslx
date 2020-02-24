@@ -16,7 +16,7 @@ class DefaultStorage(StorageBase):
         self._file_name = None
         self._config = {
             'read_rule_type': ReadRuleType.READ_FROM_BEGINNING,
-            'write_rule_type': WriteRuleType.WRITE_FROM_BEGINNING,
+            'write_rule_type': WriteRuleType.WRITE_FROM_END,
         }
         self._last_read_line = 0
 
@@ -28,13 +28,21 @@ class DefaultStorage(StorageBase):
     def initialize_from_file(self, file_name):
         self._file_name = FileUtil.create_if_not_exist(file_name=file_name)
 
+    def get_file_name(self):
+        return self._file_name
+
     def read(self, params=None):
         if not params:
             params = {
                 'num_line': 1,
             }
+        else:
+            assert isinstance(params, dict) and 'num_line' in params
+
         for param in params:
             if param != 'num_line':
+                self._logger.write_log(param +
+                                       " will be omitted since it is not useful as an input argument in this function.")
                 self.sys_log(param + " will be omitted since it is not useful as an input argument in this function.")
 
         while self._writer_status != Status.IDLE:
@@ -49,22 +57,34 @@ class DefaultStorage(StorageBase):
 
             new_line_number = self._last_read_line + params['num_line']
             if new_line_number > len(lines):
+                self.sys_log(str(new_line_number) + " exceeds the file limit. " + self.get_file_name() + " only has " +
+                             str(len(lines)) + " lines.")
+                self._logger.write_log(str(new_line_number) + " exceeds the file limit. " + self.get_file_name() +
+                                       " only has " + str(len(lines)) + " lines.")
                 raise StoragePastLineException
             else:
                 result = lines[self._last_read_line:new_line_number]
                 assert len(result) == params['num_line']
+                result = [line.strip() for line in result]
                 self._last_read_line = new_line_number
                 self._reader_status = Status.IDLE
                 return result
 
     def write(self, data, params=None):
-        assert isinstance(data, list)
-        if not params:
-            params = {
-                'delimiter': ','
-            }
-        for param in params:
-            if param != 'delimiter':
+        if not isinstance(data, str):
+            if not params:
+                params = {
+                    'delimiter': ','
+                }
+            else:
+                assert isinstance(params, dict) and 'delimiter' in params
+
+        if params:
+            for param in params:
+                if not isinstance(data, str) and param == 'delimiter':
+                    continue
+                self._logger.write_log(param +
+                                       " will be omitted since it is not useful as an input argument in this function.")
                 self.sys_log(param + " will be omitted since it is not useful as an input argument in this function.")
 
         while self._reader_status != Status.IDLE:
@@ -72,8 +92,11 @@ class DefaultStorage(StorageBase):
             time.sleep(TimeSleepObj.ONE_SECOND)
 
         self._writer_status = Status.RUNNING
-        data_to_write = params['delimiter'].join(data)
-        if self._config['write_rule_type'] == WriteRuleType.WRITE_FROM_BEGINNING:
+        if not isinstance(data, str):
+            data_to_write = params['delimiter'].join([str(val) for val in data])
+        else:
+            data_to_write = data
+        if self._config['write_rule_type'] == WriteRuleType.WRITE_FROM_END:
             with open(self._file_name, 'a') as outfile:
                 outfile.write(data_to_write + '\n')
         else:
