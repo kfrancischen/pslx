@@ -17,9 +17,12 @@ class DefaultStorageTest(unittest.TestCase):
         default_storage = DefaultStorage()
         default_storage.initialize_from_file(file_name=self.TEST_DATA_1)
         data = default_storage.read()
-        self.assertEqual(data, ['1,2,3'])
+        self.assertListEqual(data, ['1,2,3'])
         data = default_storage.read()
-        self.assertEqual(data, ['2,3,4'])
+        self.assertListEqual(data, ['2,3,4'])
+        default_storage.start_from_first_line()
+        data = default_storage.read()
+        self.assertListEqual(data, ['1,2,3'])
 
     def test_read_from_beginning_2(self):
         default_storage = DefaultStorage()
@@ -27,7 +30,7 @@ class DefaultStorageTest(unittest.TestCase):
         data = default_storage.read({
             'num_line': 2,
         })
-        self.assertEqual(data, ['1,2,3', '2,3,4'])
+        self.assertListEqual(data, ['1,2,3', '2,3,4'])
 
     def test_read_from_end_1(self):
         default_storage = DefaultStorage()
@@ -38,7 +41,7 @@ class DefaultStorageTest(unittest.TestCase):
             }
         )
         data = default_storage.read()
-        self.assertEqual(data, ['2,3,4'])
+        self.assertListEqual(data, ['2,3,4'])
 
     def test_read_from_end_2(self):
         default_storage = DefaultStorage()
@@ -51,7 +54,7 @@ class DefaultStorageTest(unittest.TestCase):
         data = default_storage.read({
             'num_line': 2,
         })
-        self.assertEqual(data, ['2,3,4', '1,2,3'])
+        self.assertListEqual(data, ['2,3,4', '1,2,3'])
 
     def test_write_from_end(self):
         default_storage = DefaultStorage()
@@ -64,8 +67,8 @@ class DefaultStorageTest(unittest.TestCase):
         )
         default_storage.write(data=data)
         data = default_storage.read()
-        self.assertEqual(data, ['3,4,5'])
         copyfile(self.TEST_DATA_1, self.TEST_DATA_2)
+        self.assertListEqual(data, ['3,4,5'])
 
     def test_write_from_beginning(self):
         default_storage = DefaultStorage()
@@ -78,5 +81,5 @@ class DefaultStorageTest(unittest.TestCase):
         )
         default_storage.write(data=data)
         data = default_storage.read()
-        self.assertEqual(data, ['3,4,5'])
         copyfile(self.TEST_DATA_1, self.TEST_DATA_2)
+        self.assertListEqual(data, ['3,4,5'])

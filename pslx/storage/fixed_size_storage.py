@@ -1,7 +1,7 @@
 import time
 
 from pslx.core.exception import StorageExceedsFixedSizeException, StorageWriteException
-from pslx.schema.enums_pb2 import StorageType, Status, WriteRuleType
+from pslx.schema.enums_pb2 import StorageType, Status, WriteRuleType, ReadRuleType
 from pslx.storage.default_storage import DefaultStorage
 from pslx.util.timezone_util import TimeSleepObj
 
@@ -19,12 +19,10 @@ class FixedSizeStorage(DefaultStorage):
         self._stored_data = None
 
     def _pre_load_data(self):
-        if not self._stored_data:
-            self._stored_data = super(FixedSizeStorage, self).read(
-                params={
-                    'num_line': self._fixed_size
-                }
-            )
+        if not self._stored_data and self._fixed_size > 0:
+            with open(self._file_name, 'r') as infile:
+                lines = infile.readlines()
+                self._stored_data = [line.strip() for line in lines[:self._fixed_size]]
 
     def read(self, params=None):
         if not params:
@@ -34,6 +32,9 @@ class FixedSizeStorage(DefaultStorage):
             }
         else:
             assert isinstance(params, dict) and 'num_line' in params and 'force_load' in params
+
+        if self._fixed_size < 0:
+            params['force_load'] = True
 
         for param in params:
             if param not in ['num_line', 'force_load']:
@@ -54,6 +55,7 @@ class FixedSizeStorage(DefaultStorage):
             return self._stored_data[:params['num_line']]
         else:
             if params['force_load']:
+                self.start_from_first_line()
                 self._stored_data = super(FixedSizeStorage, self).read(
                     params={
                         'num_line': params['num_line']

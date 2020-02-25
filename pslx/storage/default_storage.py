@@ -45,6 +45,9 @@ class DefaultStorage(StorageBase):
                 ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.TEST)
             )
 
+    def start_from_first_line(self):
+        self._last_read_line = 0
+
     def read(self, params=None):
         if not params:
             params = {
@@ -66,7 +69,7 @@ class DefaultStorage(StorageBase):
         self._reader_status = Status.RUNNING
         with open(self._file_name, 'r') as infile:
             lines = infile.readlines()
-            if self._config['read_rule_type'] == ReadRuleType.READ_FROM_END:
+            if 'read_rule_type' in self._config and self._config['read_rule_type'] == ReadRuleType.READ_FROM_END:
                 lines = lines[::-1]
 
             new_line_number = self._last_read_line + params['num_line']
