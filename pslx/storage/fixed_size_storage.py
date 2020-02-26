@@ -1,7 +1,7 @@
 import time
 
 from pslx.core.exception import StorageExceedsFixedSizeException, StorageWriteException
-from pslx.schema.enums_pb2 import StorageType, Status, WriteRuleType, ReadRuleType
+from pslx.schema.enums_pb2 import StorageType, Status, WriteRuleType
 from pslx.storage.default_storage import DefaultStorage
 from pslx.util.timezone_util import TimeSleepObj
 
