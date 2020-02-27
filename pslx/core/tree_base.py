@@ -154,6 +154,18 @@ class TreeBase(Base):
                 search_queue.append(child_node)
         return leaf_node_names
 
+    def get_rightmost_leaf(self):
+        node = self._root
+        while node.get_num_children() > 0:
+            node = node.get_children_nodes()[-1]
+        return node.get_node_name()
+
+    def get_leftmost_leaf(self):
+        node = self._root
+        while node.get_num_children() > 0:
+            node = node.get_children_nodes()[0]
+        return node.get_node_name()
+
     def print_tree(self):
         result_node_names = []
         search_queue = deque()

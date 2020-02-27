@@ -27,7 +27,8 @@ class DefaultStorage(StorageBase):
         return
 
     def initialize_from_file(self, file_name):
-        self._file_name = FileUtil.create_if_not_exist(file_name=file_name)
+        self._file_name = FileUtil.create_file_if_not_exist(file_name=file_name)
+        self._last_read_line = 0
 
     def get_file_name(self):
         return self._file_name

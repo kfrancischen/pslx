@@ -64,7 +64,7 @@ class OperatorBase(OrderedNodeBase):
         try:
             snapshot = FileUtil.read_proto_from_file(
                 proto_type=OperatorSnapshot,
-                file_name=FileUtil.die_if_not_exist(file_name=snapshot_file)
+                file_name=FileUtil.die_if_file_not_exist(file_name=snapshot_file)
             )
             return snapshot.status
         except FileNotExistException as _:

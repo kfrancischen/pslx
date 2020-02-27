@@ -33,6 +33,10 @@ class FileNotExistException(ExceptionBase):
     pass
 
 
+class DirNotExistException(ExceptionBase):
+    pass
+
+
 class ContainerUninitializedException(ExceptionBase):
     pass
 
@@ -58,4 +62,8 @@ class StorageWriteException(ExceptionBase):
 
 
 class StorageExceedsFixedSizeException(ExceptionBase):
+    pass
+
+
+class StoragePartitionerReadException(ExceptionBase):
     pass

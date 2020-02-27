@@ -38,7 +38,7 @@ class LoggingTool(Base):
                 self._suffix = 'notset'
                 self._bg_color = ColorsUtil.Background.PURPLE
 
-            self._log_file_dir = FileUtil.join_paths(
+            self._log_file_dir = FileUtil.join_paths_to_file_with_mode(
                 root_dir=root_dir + 'log/',
                 class_name=name,
                 ttl=ttl

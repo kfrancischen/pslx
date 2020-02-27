@@ -339,3 +339,68 @@ class TreeBaseTest(unittest.TestCase):
         )
         self.assertListEqual(test_tree.get_leaves(), ['test_child_node_3', 'test_child_node_2'])
 
+    def test_get_leftmost_leaf(self):
+        test_parent_node = OrderedNodeBase(node_name='test_parent_node')
+        test_child_node_1 = OrderedNodeBase(node_name='test_child_node_1')
+        test_child_node_2 = OrderedNodeBase(node_name='test_child_node_2')
+        test_tree = TreeBase(root=test_parent_node)
+        test_tree.add_node(
+            parent_node=test_parent_node,
+            child_node=test_child_node_1
+        )
+        test_tree.add_node(
+            parent_node=test_parent_node,
+            child_node=test_child_node_2
+        )
+        self.assertEqual(test_tree.get_leftmost_leaf(), 'test_child_node_1')
+
+    def test_get_rightmost_leaf(self):
+        test_parent_node = OrderedNodeBase(node_name='test_parent_node')
+        test_child_node_1 = OrderedNodeBase(node_name='test_child_node_1')
+        test_child_node_2 = OrderedNodeBase(node_name='test_child_node_2')
+        test_tree = TreeBase(root=test_parent_node)
+        test_tree.add_node(
+            parent_node=test_parent_node,
+            child_node=test_child_node_1
+        )
+        test_tree.add_node(
+            parent_node=test_parent_node,
+            child_node=test_child_node_2
+        )
+        self.assertEqual(test_tree.get_rightmost_leaf(), 'test_child_node_2')
+
+    def test_leftmost_rightmost_leaves(self):
+        test_parent_node = OrderedNodeBase(node_name='test_parent_node')
+        test_child_node_1 = OrderedNodeBase(node_name='test_child_node_1')
+        test_child_node_2 = OrderedNodeBase(node_name='test_child_node_2')
+        test_child_node_3 = OrderedNodeBase(node_name='test_child_node_3')
+        test_child_node_4 = OrderedNodeBase(node_name='test_child_node_4')
+        test_child_node_5 = OrderedNodeBase(node_name='test_child_node_5')
+        test_child_node_6 = OrderedNodeBase(node_name='test_child_node_6')
+        test_tree = TreeBase(root=test_parent_node)
+        test_tree.add_node(
+            parent_node=test_parent_node,
+            child_node=test_child_node_1
+        )
+        test_tree.add_node(
+            parent_node=test_parent_node,
+            child_node=test_child_node_2
+        )
+        test_tree.add_node(
+            parent_node=test_child_node_1,
+            child_node=test_child_node_3
+        )
+        test_tree.add_node(
+            parent_node=test_child_node_1,
+            child_node=test_child_node_4
+        )
+        test_tree.add_node(
+            parent_node=test_child_node_2,
+            child_node=test_child_node_5
+        )
+        test_tree.add_node(
+            parent_node=test_child_node_2,
+            child_node=test_child_node_6
+        )
+        self.assertEqual(test_tree.get_leftmost_leaf(), 'test_child_node_3')
+        self.assertEqual(test_tree.get_rightmost_leaf(), 'test_child_node_6')
