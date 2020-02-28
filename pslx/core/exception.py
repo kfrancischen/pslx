@@ -63,7 +63,3 @@ class StorageWriteException(ExceptionBase):
 
 class StorageExceedsFixedSizeException(ExceptionBase):
     pass
-
-
-class StoragePartitionerReadException(ExceptionBase):
-    pass

@@ -15,6 +15,16 @@ class FileUtil(object):
         return os.path.dirname(file_name)
 
     @classmethod
+    def is_file_empty(cls, file_name):
+        cls.die_if_file_not_exist(file_name=file_name)
+        return os.stat(file_name).st_size == 0
+
+    @classmethod
+    def is_dir_empty(cls, dir_name):
+        cls.die_if_dir_not_exist(dir_name=dir_name)
+        return len(os.listdir(dir_name)) == 0
+
+    @classmethod
     def create_file_if_not_exist(cls, file_name):
         dir_name = cls.dir_name(file_name=file_name)
         if not os.path.exists(dir_name):
@@ -43,6 +53,21 @@ class FileUtil(object):
             raise DirNotExistException
         else:
             return dir_name
+
+    @classmethod
+    def list_dir(cls, dir_name):
+        cls.die_if_dir_not_exist(dir_name=dir_name)
+        return os.listdir(dir_name)
+
+    @classmethod
+    def list_files_in_dir(cls, dir_name):
+        everything = cls.list_dir(dir_name=dir_name)
+        return [item for item in everything if os.path.isfile(item)]
+
+    @classmethod
+    def list_dirs_in_dir(cls, dir_name):
+        everything = cls.list_dir(dir_name=dir_name)
+        return [item for item in everything if os.path.isdir(item)]
 
     @classmethod
     def join_paths_to_file_with_mode(cls, root_dir, class_name, ttl=-1):
