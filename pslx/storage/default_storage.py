@@ -4,6 +4,7 @@ from pslx.core.exception import StoragePastLineException, StorageReadException, 
 from pslx.schema.enums_pb2 import StorageType, ReadRuleType, WriteRuleType, Status
 from pslx.schema.enums_pb2 import ModeType
 from pslx.storage.storage_base import StorageBase
+from pslx.tool.filelock_tool import FileLockTool
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimeSleepObj
@@ -68,30 +69,32 @@ class DefaultStorage(StorageBase):
             time.sleep(TimeSleepObj.ONE_SECOND)
 
         self._reader_status = Status.RUNNING
-        with open(self._file_name, 'r') as infile:
-            lines = infile.readlines()
-            if 'read_rule_type' in self._config and self._config['read_rule_type'] == ReadRuleType.READ_FROM_END:
-                lines = lines[::-1]
 
-            new_line_number = self._last_read_line + params['num_line']
-            if new_line_number > len(lines):
-                self.sys_log(str(new_line_number) + " exceeds the file limit. " + self.get_file_name() + " only has " +
-                             str(len(lines)) + " lines.")
-                self._logger.write_log(str(new_line_number) + " exceeds the file limit. " + self.get_file_name() +
-                                       " only has " + str(len(lines)) + " lines.")
-                raise StoragePastLineException
-            else:
-                try:
-                    result = lines[self._last_read_line:new_line_number]
-                    assert len(result) == params['num_line']
-                    result = [line.strip() for line in result]
-                    self._last_read_line = new_line_number
-                    self._reader_status = Status.IDLE
-                    return result
-                except Exception as err:
-                    self.sys_log(str(err))
-                    self._logger.write_log(str(err))
-                    raise StorageReadException
+        with FileLockTool(self._file_name, read_mode=True):
+            with open(self._file_name, 'r') as infile:
+                lines = infile.readlines()
+                if 'read_rule_type' in self._config and self._config['read_rule_type'] == ReadRuleType.READ_FROM_END:
+                    lines = lines[::-1]
+
+                new_line_number = self._last_read_line + params['num_line']
+                if new_line_number > len(lines):
+                    self.sys_log(str(new_line_number) + " exceeds the file limit. " + self.get_file_name() +
+                                 " only has " + str(len(lines)) + " lines.")
+                    self._logger.write_log(str(new_line_number) + " exceeds the file limit. " + self.get_file_name() +
+                                           " only has " + str(len(lines)) + " lines.")
+                    raise StoragePastLineException
+                else:
+                    try:
+                        result = lines[self._last_read_line:new_line_number]
+                        assert len(result) == params['num_line']
+                        result = [line.strip() for line in result]
+                        self._last_read_line = new_line_number
+                        self._reader_status = Status.IDLE
+                        return result
+                    except Exception as err:
+                        self.sys_log(str(err))
+                        self._logger.write_log(str(err))
+                        raise StorageReadException
 
     def write(self, data, params=None):
         if not isinstance(data, str):
@@ -121,13 +124,15 @@ class DefaultStorage(StorageBase):
             data_to_write = data
         try:
             if self._config['write_rule_type'] == WriteRuleType.WRITE_FROM_END:
-                with open(self._file_name, 'a') as outfile:
-                    outfile.write(data_to_write + '\n')
+                with FileLockTool(self._file_name, read_mode=False):
+                    with open(self._file_name, 'a') as outfile:
+                        outfile.write(data_to_write + '\n')
             else:
-                with open(self._file_name, 'r+') as outfile:
-                    file_data = outfile.read()
-                    outfile.seek(0, 0)
-                    outfile.write(data_to_write + '\n' + file_data)
+                with FileLockTool(self._file_name, read_mode=False):
+                    with open(self._file_name, 'r+') as outfile:
+                        file_data = outfile.read()
+                        outfile.seek(0, 0)
+                        outfile.write(data_to_write + '\n' + file_data)
 
             self._writer_status = Status.IDLE
         except Exception as err:

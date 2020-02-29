@@ -9,9 +9,19 @@ class TimeZoneObj(object):
 
 
 class TimeSleepObj(object):
+    ONE_THOUSANDTH_SECOND = 0.001
+    ONE_HUNDREDTH_SECOND = 0.01
+    ONE_TENTH_SECOND = 0.1
+    HALF_SECOND = 0.5
     ONE_SECOND = 1
     FIVE_SECONDS = 5
     TEN_SECONDS = 10
+    HALF_MINUTE = 30
+    ONE_MINUTE = 60
+    HALF_HOUR = 30 * 60
+    ONE_HOUR = 60 * 60
+    HALF_DAY = 60 * 60 * 12
+    ONE_DAY = 60 * 60 * 24
 
 
 class TimezoneUtil(object):

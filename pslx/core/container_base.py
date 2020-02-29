@@ -7,6 +7,7 @@ from pslx.schema.enums_pb2 import DataModelType
 from pslx.schema.enums_pb2 import Signal
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.snapshots_pb2 import ContainerSnapshot
+from pslx.tool.filelock_tool import FileLockTool
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil
@@ -90,11 +91,13 @@ class ContainerBase(GraphBase):
 
         self.sys_log("Saved to folder " + self._tmp_file_folder + '.')
         self._logger.write_log("Saved to folder " + self._tmp_file_folder + '.')
-        FileUtil.write_proto_to_file(
-            proto=snapshot,
-            file_name=(self._tmp_file_folder + '/' + 'SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' +
-                       self._container_name + '.pb')
-        )
+        output_file_name = (self._tmp_file_folder + '/' + 'SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' +
+                            self._container_name + '.pb')
+        with FileLockTool(output_file_name, read_mode=False):
+            FileUtil.write_proto_to_file(
+                proto=snapshot,
+                file_name=output_file_name
+            )
         return snapshot
 
     def _execute(self, task_queue, finished_queue):

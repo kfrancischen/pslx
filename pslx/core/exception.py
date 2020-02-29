@@ -63,3 +63,7 @@ class StorageWriteException(ExceptionBase):
 
 class StorageExceedsFixedSizeException(ExceptionBase):
     pass
+
+
+class FileLockToolException(ExceptionBase):
+    pass

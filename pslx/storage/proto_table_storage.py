@@ -4,6 +4,7 @@ from pslx.core.exception import StorageReadException, StorageWriteException
 from pslx.schema.enums_pb2 import StorageType, Status
 from pslx.schema.storage_pb2 import ProtoTable
 from pslx.storage.storage_base import StorageBase
+from pslx.tool.filelock_tool import FileLockTool
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil, TimeSleepObj
@@ -30,10 +31,11 @@ class ProtoTableStorage(StorageBase):
         if FileUtil.is_file_empty(file_name=self._file_name):
             self._table_message = ProtoTable()
         else:
-            self._table_message = FileUtil.read_proto_from_file(
-                proto_type=ProtoTable,
-                file_name=self._file_name
-            )
+            with FileLockTool(self._file_name, read_mode=True):
+                self._table_message = FileUtil.read_proto_from_file(
+                    proto_type=ProtoTable,
+                    file_name=self._file_name
+                )
         if not self._table_message.table_path:
             self._table_message.table_path = self._file_name
         if not self._table_message.table_name:
@@ -87,11 +89,12 @@ class ProtoTableStorage(StorageBase):
                 any_message = ProtoUtil.message_to_any(message=data[1])
                 self._table_message.data[data[0]].CopyFrom(any_message)
                 self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
-                FileUtil.write_proto_to_file(
-                    proto=self._table_message,
-                    file_name=self._file_name
-                )
-                self._writer_status = Status.IDLE
+                with FileLockTool(self._file_name, read_mode=False):
+                    FileUtil.write_proto_to_file(
+                        proto=self._table_message,
+                        file_name=self._file_name
+                    )
+                    self._writer_status = Status.IDLE
             except Exception as err:
                 self.sys_log("Got exception: " + str(err))
                 self._logger.write_log("Got exception: " + str(err))

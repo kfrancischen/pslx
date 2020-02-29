@@ -6,6 +6,7 @@ from pslx.schema.enums_pb2 import DataModelType
 from pslx.schema.enums_pb2 import SortOrder
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.snapshots_pb2 import OperatorSnapshot
+from pslx.tool.filelock_tool import FileLockTool
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil
@@ -62,10 +63,11 @@ class OperatorBase(OrderedNodeBase):
     @classmethod
     def get_status_from_snapshot(cls, snapshot_file):
         try:
-            snapshot = FileUtil.read_proto_from_file(
-                proto_type=OperatorSnapshot,
-                file_name=FileUtil.die_if_file_not_exist(file_name=snapshot_file)
-            )
+            with FileLockTool(snapshot_file, read_mode=True):
+                snapshot = FileUtil.read_proto_from_file(
+                    proto_type=OperatorSnapshot,
+                    file_name=FileUtil.die_if_file_not_exist(file_name=snapshot_file)
+                )
             return snapshot.status
         except FileNotExistException as _:
             return Status.IDLE
@@ -116,10 +118,11 @@ class OperatorBase(OrderedNodeBase):
             snapshot.end_time = str(self._end_time)
         if output_file and self._config['save_snapshot']:
             self.sys_log("Saved to file " + output_file + '.')
-            FileUtil.write_proto_to_file(
-                proto=snapshot,
-                file_name=output_file
-            )
+            with FileLockTool(output_file, read_mode=False):
+                FileUtil.write_proto_to_file(
+                    proto=snapshot,
+                    file_name=output_file
+                )
         return snapshot
 
     def execute(self):

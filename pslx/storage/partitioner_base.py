@@ -14,6 +14,13 @@ from pslx.util.timezone_util import TimeSleepObj
 class PartitionerBase(StorageBase):
     STORAGE_TYPE = StorageType.PARTITIONER_STORAGE
     PARTITIONER_TYPE = None
+    PARTITIONER_TYPE_TO_HEIGHT_MAP = {
+        PartitionerStorageType.YEARLY: 1,
+        PartitionerStorageType.MONTHLY: 2,
+        PartitionerStorageType.DAILY: 3,
+        PartitionerStorageType.HOURLY: 4,
+        PartitionerStorageType.MINUTELY: 5,
+    }
 
     def __init__(self, logger=None, max_size=-1):
         super().__init__(logger=logger)
@@ -57,6 +64,8 @@ class PartitionerBase(StorageBase):
                     return
 
         _recursive_initialize_from_dir(node=root_node)
+        if not self.is_empty():
+            assert self._file_tree.get_height() == self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]
 
     def set_config(self, config):
         self._underlying_storage.set_config(config=config)
@@ -96,7 +105,7 @@ class PartitionerBase(StorageBase):
         latest_dir = self.get_latest_dir()
         file_names = FileUtil.list_files_in_dir(dir_name=latest_dir)
         if len(file_names):
-            self.sys_log("Partitioner only allow one file in the patition during read.")
+            self.sys_log("Partitioner only allows one file in the partition during read.")
             raise StorageReadException
 
         file_name = FileUtil.join_paths_to_file(root_dir=latest_dir, class_name=file_names[0])

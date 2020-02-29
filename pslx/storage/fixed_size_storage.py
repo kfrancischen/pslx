@@ -3,6 +3,7 @@ import time
 from pslx.core.exception import StorageExceedsFixedSizeException, StorageWriteException
 from pslx.schema.enums_pb2 import StorageType, Status, WriteRuleType
 from pslx.storage.default_storage import DefaultStorage
+from pslx.tool.filelock_tool import FileLockTool
 from pslx.util.timezone_util import TimeSleepObj
 
 
@@ -101,13 +102,15 @@ class FixedSizeStorage(DefaultStorage):
 
         try:
             if self._config['write_rule_type'] == WriteRuleType.WRITE_FROM_END:
-                with open(self._file_name, 'a') as outfile:
-                    outfile.write(data_to_write + '\n')
+                with FileLockTool(self._file_name, read_mode=False):
+                    with open(self._file_name, 'a') as outfile:
+                        outfile.write(data_to_write + '\n')
             else:
-                with open(self._file_name, 'r+') as outfile:
-                    file_data = outfile.read()
-                    outfile.seek(0, 0)
-                    outfile.write(data_to_write + '\n' + file_data)
+                with FileLockTool(self._file_name, read_mode=False):
+                    with open(self._file_name, 'r+') as outfile:
+                        file_data = outfile.read()
+                        outfile.seek(0, 0)
+                        outfile.write(data_to_write + '\n' + file_data)
 
                 self._stored_data = [data_to_write] + self._stored_data[:-1]
 

@@ -166,6 +166,14 @@ class TreeBase(Base):
             node = node.get_children_nodes()[0]
         return node.get_node_name()
 
+    def get_height(self):
+        node = self._root
+        height = 1
+        while node.get_num_children() > 0:
+            node = node.get_children_nodes()[0]
+            height += 1
+        return height
+
     def print_tree(self):
         result_node_names = []
         search_queue = deque()
