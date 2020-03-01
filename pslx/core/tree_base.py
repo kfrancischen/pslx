@@ -129,6 +129,7 @@ class TreeBase(Base):
             for index in range(pivot_index):
                 child_node = children_nodes[index]
                 child_node.delete_parent(parent_node=node)
+                self._node_name_to_node_dict.pop(child_node.get_node_name(), None)
             return
 
     def trim_tree(self, max_capacity=-1):
