@@ -102,7 +102,8 @@ class TreeBase(Base):
         if not node.is_children_ordered():
             self.sys_log(string=node.get_node_name() + ' is not ordered. Be careful when you trim the tree.')
 
-        if max_capacity <= 0 or self.get_num_nodes_subtree(node=node) <= max_capacity:
+        cumulative_size = self.get_num_nodes_subtree(node=node)
+        if max_capacity <= 0 or cumulative_size <= max_capacity:
             return
         if max_capacity < 1 + node.get_num_children():
             num_children_to_trim = 1 + node.get_num_children() - max_capacity
@@ -111,19 +112,17 @@ class TreeBase(Base):
             return
         else:
             children_nodes = node.get_children_nodes()
-            cumulative_size = 1
-            pivot_index = len(children_nodes) - 1
-            while pivot_index >= 0:
+            pivot_index = 0
+            while pivot_index < len(children_nodes):
                 child_node = children_nodes[pivot_index]
-                child_node_subtree_size = self.get_num_nodes_subtree(node=child_node)
 
-                if cumulative_size + child_node_subtree_size < max_capacity:
-                    cumulative_size += child_node_subtree_size
-                    pivot_index -= 1
+                cumulative_size -= self.get_num_nodes_subtree(node=child_node)
+                if cumulative_size >= max_capacity:
+                    pivot_index += 1
                 else:
                     self._trim_tree(
                         node=child_node,
-                        max_capacity=max_capacity-cumulative_size
+                        max_capacity=max_capacity - cumulative_size
                     )
                     break
 

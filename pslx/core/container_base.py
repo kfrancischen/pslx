@@ -26,7 +26,7 @@ class ContainerBase(GraphBase):
         self._is_initialized = False
         self._tmp_file_folder = FileUtil.join_paths_to_dir_with_mode(
             root_dir=root_dir + 'snapshots/',
-            class_name=self.get_class_name() + '__' + container_name,
+            base_name=self.get_class_name() + '__' + container_name,
             ttl=ttl
         )
         self._start_time = None

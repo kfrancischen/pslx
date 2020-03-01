@@ -40,7 +40,7 @@ class LoggingTool(Base):
 
             self._log_file_dir = FileUtil.join_paths_to_file_with_mode(
                 root_dir=root_dir + 'log/',
-                class_name=name,
+                base_name=name,
                 ttl=ttl
             )
 

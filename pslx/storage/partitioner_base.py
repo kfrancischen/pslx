@@ -1,6 +1,6 @@
 import time
 
-from pslx.core.exception import StorageReadException
+from pslx.core.exception import StorageReadException, StorageWriteException
 from pslx.core.node_base import OrderedNodeBase
 from pslx.core.tree_base import TreeBase
 from pslx.schema.enums_pb2 import StorageType, PartitionerStorageType, SortOrder, Status
@@ -8,7 +8,7 @@ from pslx.storage.default_storage import DefaultStorage
 from pslx.storage.storage_base import StorageBase
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
-from pslx.util.timezone_util import TimeSleepObj
+from pslx.util.timezone_util import TimeSleepObj, TimezoneUtil
 
 
 class PartitionerBase(StorageBase):
@@ -48,7 +48,7 @@ class PartitionerBase(StorageBase):
             node_name = node.get_node_name()
             for child_node_name in sorted(FileUtil.list_dirs_in_dir(dir_name=node_name), reverse=True):
                 child_node = OrderedNodeBase(
-                    node_name=FileUtil.join_paths_to_dir(root_dir=node_name, class_name=child_node_name),
+                    node_name=FileUtil.join_paths_to_dir(root_dir=node_name, base_name=child_node_name),
                     order=SortOrder.REVERSE
                 )
                 if not FileUtil.is_dir_empty(child_node.get_node_name()):
@@ -108,7 +108,7 @@ class PartitionerBase(StorageBase):
             self.sys_log("Partitioner only allows one file in the partition during read.")
             raise StorageReadException
 
-        file_name = FileUtil.join_paths_to_file(root_dir=latest_dir, class_name=file_names[0])
+        file_name = FileUtil.join_paths_to_file(root_dir=latest_dir, base_name=file_names[0])
         if file_name != self._underlying_storage.get_file_name():
             self._underlying_storage.initialize_from_file(file_name=file_name)
         try:
@@ -121,7 +121,57 @@ class PartitionerBase(StorageBase):
             raise StorageReadException
 
     def make_new_partition(self, timestamp):
-        pass
+        new_dir_list = FileUtil.parse_timestamp_to_dir(timestamp=timestamp).split('/')
+        new_dir = '/'.join(new_dir_list[self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]])
+        child_node = OrderedNodeBase(
+            node_name=FileUtil.join_paths_to_dir(
+                root_dir=self._file_tree.get_root_node().get_node_name(),
+                base_name=new_dir
+            ),
+            order=SortOrder.REVERSE
+        )
+        if FileUtil.does_dir_exist(dir_name=child_node.get_node_name()):
+            self.sys_log(child_node.get_node_name() + " exist. Don't make new partition.")
+            return None
+        else:
+            self.sys_log(child_node.get_node_name() + " doesn't exist. Make new partition.")
+            self._logger.write_log(child_node.get_node_name() + " doesn't exist. Make new partition.")
+            parent_node = self._file_tree.find_node(node_name=self.get_latest_dir())
+            self._file_tree.add_node(
+                parent_node=parent_node,
+                child_node=child_node
+            )
+            self._file_tree.trim_tree(max_capacity=self._max_size)
+            return child_node.get_node_name()
 
     def write(self, data, params=None):
-        pass
+        to_make_partition = True
+        if params and 'make_partition' in params:
+            to_make_partition = params['make_partition']
+            params.pop('make_partition', None)
+
+        file_base_name = 'data'
+        if params and 'base_name' not in params:
+            file_base_name = params['base_name']
+            params.pop('base_name', None)
+
+        while self._reader_status != Status.IDLE:
+            self.sys_log("Waiting for reader to finish.")
+            time.sleep(TimeSleepObj.ONE_SECOND)
+
+        self._writer_status = Status.RUNNING
+        if to_make_partition:
+            new_dir_name = self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_pst())
+            if new_dir_name:
+                self._underlying_storage.initialize_from_file(
+                    file_name=FileUtil.create_file_if_not_exist(
+                        file_name=FileUtil.join_paths_to_file(root_dir=new_dir_name, base_name=file_base_name)
+                    )
+                )
+        try:
+            self._underlying_storage.write(data=data, params=params)
+            self._writer_status = Status.IDLE
+        except Exception as err:
+            self.sys_log(str(err))
+            self._logger.write_log(str(err))
+            raise StorageWriteException
