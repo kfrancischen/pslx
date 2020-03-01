@@ -33,6 +33,11 @@ if __name__ == "__main__":
 
     container2 = HelloWorldContainer(container_name='hello_world_container_2', ttl=1)
     dummy_op = DummyUtil.dummy_bach_operator(operator_name='dummy')
+    op1.set_config(
+        config={
+            'save_snapshot': True,
+        }
+    )
     container2.add_operator_edge(from_operator=op1,
                                  to_operator=dummy_op)
     container2.add_operator_edge(from_operator=op2,

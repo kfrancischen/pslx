@@ -24,7 +24,7 @@ class ContainerBase(GraphBase):
             root_dir += '/'
         self._container_name = container_name
         self._is_initialized = False
-        self._tmp_file_folder = FileUtil.join_paths_to_dir_with_mode(
+        self._snapshot_file_folder = FileUtil.join_paths_to_dir_with_mode(
             root_dir=root_dir + 'snapshots/',
             base_name=self.get_class_name() + '__' + container_name,
             ttl=ttl
@@ -85,14 +85,18 @@ class ContainerBase(GraphBase):
             snapshot.end_time = str(self._end_time)
 
         for op_name, op in self._node_name_to_node_dict.items():
-            op_output_file = FileUtil.dir_name(self._tmp_file_folder) + '/' + 'SNAPSHOT_' + \
-                             str(TimezoneUtil.cur_time_in_pst()) + '_' + op_name + '.pb'
+            op_output_file = FileUtil.join_paths_to_file(
+                root_dir=FileUtil.join_paths_to_dir(FileUtil.dir_name(self._snapshot_file_folder), 'operators'),
+                base_name='SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' + op_name + '.pb'
+            )
             snapshot.operator_snapshot_map[op_name].CopyFrom(op.get_operator_snapshot(output_file=op_output_file))
 
-        self.sys_log("Saved to folder " + self._tmp_file_folder + '.')
-        self._logger.write_log("Saved to folder " + self._tmp_file_folder + '.')
-        output_file_name = (self._tmp_file_folder + '/' + 'SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' +
-                            self._container_name + '.pb')
+        self.sys_log("Saved to folder " + self._snapshot_file_folder + '.')
+        self._logger.write_log("Saved to folder " + self._snapshot_file_folder + '.')
+        output_file_name = FileUtil.join_paths_to_file(
+            root_dir=FileUtil.dir_name(self._snapshot_file_folder),
+            base_name='SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' + self._container_name + '.pb'
+        )
         with FileLockTool(output_file_name, read_mode=False):
             FileUtil.write_proto_to_file(
                 proto=snapshot,
@@ -183,7 +187,8 @@ class ContainerBase(GraphBase):
 
     def _get_latest_status_of_operators(self):
         operator_status = {}
-        snapshot_files = FileUtil.get_file_names_in_dir(dir_name=self._tmp_file_folder)
+        snapshot_files = FileUtil.get_file_names_in_dir(
+            dir_name=FileUtil.join_paths_to_dir(FileUtil.dir_name(self._snapshot_file_folder), 'operators'))
         for snapshot_file in snapshot_files[::-1]:
             operator_name = snapshot_file.split('_')[1]
             if operator_name not in operator_status:
