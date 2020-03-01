@@ -40,11 +40,14 @@ class ProtoTableStorage(StorageBase):
             self._table_message.table_path = self._file_name
         if not self._table_message.table_name:
             self._table_message.table_name = FileUtil.base_name(file_name=file_name)
-        if not self._table_message.create_time:
-            self._table_message.create_time = str(TimezoneUtil.cur_time_in_pst())
+        if not self._table_message.created_time:
+            self._table_message.created_time = str(TimezoneUtil.cur_time_in_pst())
 
     def get_file_name(self):
         return self._file_name
+
+    def get_num_entries(self):
+        return len(self._table_message.data)
 
     def read(self, params=None):
         assert 'message_type' in params and 'key' in params
@@ -84,6 +87,7 @@ class ProtoTableStorage(StorageBase):
         if data[0] in self._table_message.data and not params['overwrite']:
             self.sys_log(data[0] + " already exist and will not be overwritten.")
             self._logger.write_log(data[0] + " already exist and will not be overwritten.")
+            self._writer_status = Status.IDLE
         else:
             try:
                 any_message = ProtoUtil.message_to_any(message=data[1])

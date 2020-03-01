@@ -41,6 +41,7 @@ class PartitionerBase(StorageBase):
         pass
 
     def initialize_from_dir(self, dir_name):
+        dir_name = FileUtil.normalize_dir_name(dir_name=dir_name)
 
         def _recursive_initialize_from_dir(node, max_recursion):
             if max_recursion == 0:
@@ -158,7 +159,7 @@ class PartitionerBase(StorageBase):
             self._logger.write_log(str(err))
             raise StorageReadException
 
-    def make_new_partition(self, timestamp):
+    def _make_new_partition(self, timestamp):
         new_dir_list = FileUtil.parse_timestamp_to_dir(timestamp=timestamp).split('/')
         new_dir = '/'.join(new_dir_list[:self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]])
         child_node = OrderedNodeBase(
@@ -199,7 +200,7 @@ class PartitionerBase(StorageBase):
 
         self._writer_status = Status.RUNNING
         if to_make_partition:
-            new_dir_name = self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_pst())
+            new_dir_name = self._make_new_partition(timestamp=TimezoneUtil.cur_time_in_pst())
             if new_dir_name:
                 self._underlying_storage.initialize_from_file(
                     file_name=FileUtil.create_file_if_not_exist(

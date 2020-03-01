@@ -35,9 +35,9 @@ class FileUtil(object):
 
     @classmethod
     def create_file_if_not_exist(cls, file_name):
-        dir_name = cls.dir_name(file_name=file_name)
-        if not cls.does_dir_exist(dir_name=dir_name):
-            os.makedirs(dir_name)
+        file_name = cls.normalize_file_name(file_name=file_name)
+        dir_name = cls.create_dir_if_not_exist(dir_name=cls.dir_name(file_name=file_name))
+        if not cls.does_file_exist(file_name=file_name):
             with open(file_name, 'w') as _:
                 pass
 
@@ -45,6 +45,7 @@ class FileUtil(object):
 
     @classmethod
     def create_dir_if_not_exist(cls, dir_name):
+        dir_name = cls.normalize_dir_name(dir_name=dir_name)
         if not cls.does_dir_exist(dir_name=dir_name):
             os.makedirs(dir_name)
         return dir_name
@@ -67,6 +68,14 @@ class FileUtil(object):
     def list_dir(cls, dir_name):
         cls.die_if_dir_not_exist(dir_name=dir_name)
         return os.listdir(dir_name)
+
+    @classmethod
+    def normalize_file_name(cls, file_name):
+        return os.path.normpath(path=file_name)
+
+    @classmethod
+    def normalize_dir_name(cls, dir_name):
+        return os.path.normpath(path=dir_name) + '/'
 
     @classmethod
     def list_files_in_dir(cls, dir_name):
@@ -147,10 +156,12 @@ class FileUtil(object):
 
     @classmethod
     def parse_dir_to_timestamp(cls, dir_name):
-        dir_name_list = dir_name.split('/')
+        dir_name = cls.normalize_dir_name(dir_name=dir_name)
+        dir_name_list = dir_name.split('/')[:-1]
         dir_name_list = [int(val) for val in dir_name_list]
         for _ in range(len(dir_name_list), 3):
             dir_name_list.append(1)
         for _ in range(len(dir_name_list), 5):
             dir_name_list.append(0)
-        return datetime.datetime(dir_name[0], dir_name[1], dir_name[2], dir_name[3], dir_name[4])
+        return datetime.datetime(dir_name_list[0], dir_name_list[1], dir_name_list[2], dir_name_list[3],
+                                 dir_name_list[4])

@@ -1,5 +1,6 @@
 from google.protobuf.any_pb2 import Any
-from google.protobuf.json_format import MessageToJson, Parse
+import google.protobuf.text_format as text_format
+import google.protobuf.json_format as json_format
 from pslx.core.exception import ProtobufNameNotExistException, ProtobufValueNotExistException
 
 
@@ -25,18 +26,33 @@ class ProtoUtil(object):
 
     @classmethod
     def message_to_json(cls, proto_message):
-        return MessageToJson(
+        return json_format.MessageToJson(
             message=proto_message,
             preserving_proto_field_name=True
         )
 
     @classmethod
+    def message_to_text(cls, proto_message):
+        return text_format.MessageToString(
+            message=proto_message
+        )
+
+    @classmethod
     def json_to_message(cls, message_type, json_str):
         proto_message = message_type()
-        return Parse(
+        return json_format.Parse(
             text=json_str,
             message=proto_message,
             ignore_unknown_fields=True
+        )
+
+    @classmethod
+    def text_to_message(cls, message_type, text_str):
+        proto_message = message_type()
+        return text_format.Parse(
+            text=text_str,
+            message=proto_message,
+            allow_unknown_field=True
         )
 
     @classmethod
@@ -50,3 +66,4 @@ class ProtoUtil(object):
         proto_message = message_type()
         any_message.Unpack(proto_message)
         return proto_message
+
