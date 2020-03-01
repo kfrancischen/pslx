@@ -1,3 +1,4 @@
+from shutil import copyfile
 import unittest
 
 from pslx.schema.snapshots_pb2 import NodeSnapshot, OperatorSnapshot
@@ -42,11 +43,13 @@ class ProtoTableStorageTest(unittest.TestCase):
     )
     TEST_DATA_1 = "pslx/test/storage/test_data/test_proto_table_data.pb"
     TEST_DATA_2 = "pslx/test/storage/test_data/test_proto_table_data_2.pb"
+    TEST_DATA_3 = "pslx/test/storage/test_data/test_proto_table_data_3.pb"
+    TEST_DATA_4 = "pslx/test/storage/test_data/test_proto_table_data_4.pb"
 
     def test_write_1(self):
         proto_table_storage = ProtoTableStorage()
         proto_table_storage.initialize_from_file(
-            file_name=self.TEST_DATA_1
+            file_name=self.TEST_DATA_3
         )
         proto_table_storage.write(
             data=['test', self.EXAMPLE_PROTO_1],
@@ -58,11 +61,12 @@ class ProtoTableStorageTest(unittest.TestCase):
             }
         )
         self.assertEqual(result_proto, self.EXAMPLE_PROTO_1)
+        copyfile(self.TEST_DATA_1, self.TEST_DATA_3)
 
     def test_write_2(self):
         proto_table_storage = ProtoTableStorage()
         proto_table_storage.initialize_from_file(
-            file_name=self.TEST_DATA_2
+            file_name=self.TEST_DATA_4
         )
         proto_table_storage.write(
             data=['test', self.EXAMPLE_PROTO_1],
@@ -89,14 +93,12 @@ class ProtoTableStorageTest(unittest.TestCase):
         )
         self.assertEqual(result_proto, self.EXAMPLE_PROTO_3)
         self.assertEqual(proto_table_storage.get_num_entries(), 2)
-        proto_table_storage.write(
-            data=['test_1', self.EXAMPLE_PROTO_2]
-        )
+        copyfile(self.TEST_DATA_2, self.TEST_DATA_4)
 
     def test_write_3(self):
         proto_table_storage = ProtoTableStorage()
         proto_table_storage.initialize_from_file(
-            file_name=self.TEST_DATA_2
+            file_name=self.TEST_DATA_4
         )
         proto_table_storage.write(
             data=['test', self.EXAMPLE_PROTO_1],
@@ -126,4 +128,5 @@ class ProtoTableStorageTest(unittest.TestCase):
         )
         self.assertEqual(result_proto, self.EXAMPLE_PROTO_2)
         self.assertEqual(proto_table_storage.get_num_entries(), 2)
+        copyfile(self.TEST_DATA_2, self.TEST_DATA_4)
 
