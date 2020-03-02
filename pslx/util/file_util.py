@@ -36,7 +36,7 @@ class FileUtil(object):
     @classmethod
     def create_file_if_not_exist(cls, file_name):
         file_name = cls.normalize_file_name(file_name=file_name)
-        dir_name = cls.create_dir_if_not_exist(dir_name=cls.dir_name(file_name=file_name))
+        cls.create_dir_if_not_exist(dir_name=cls.dir_name(file_name=file_name))
         if not cls.does_file_exist(file_name=file_name):
             with open(file_name, 'w') as _:
                 pass
@@ -66,8 +66,10 @@ class FileUtil(object):
 
     @classmethod
     def list_dir(cls, dir_name):
+        cls.normalize_dir_name(dir_name=dir_name)
         cls.die_if_dir_not_exist(dir_name=dir_name)
-        return os.listdir(dir_name)
+        items = os.listdir(dir_name)
+        return [os.path.join(dir_name, item) for item in items]
 
     @classmethod
     def normalize_file_name(cls, file_name):
@@ -96,7 +98,7 @@ class FileUtil(object):
         if ttl < 0:
             return os.path.join(pre_path, base_name)
         else:
-            return os.path.join(pre_path, base_name, 'ttl=' + str(ttl))
+            return os.path.join(pre_path, 'ttl=' + str(ttl), base_name)
 
     @classmethod
     def join_paths_to_dir_with_mode(cls, root_dir, base_name, ttl=-1):
@@ -107,7 +109,7 @@ class FileUtil(object):
         if ttl < 0:
             return os.path.join(root_dir, base_name)
         else:
-            return os.path.join(root_dir, base_name, 'ttl=' + str(ttl))
+            return os.path.join(root_dir, 'ttl=' + str(ttl), base_name)
 
     @classmethod
     def join_paths_to_dir(cls, root_dir, base_name, ttl=-1):
@@ -165,3 +167,27 @@ class FileUtil(object):
             dir_name_list.append(0)
         return datetime.datetime(dir_name_list[0], dir_name_list[1], dir_name_list[2], dir_name_list[3],
                                  dir_name_list[4])
+
+    @classmethod
+    def create_container_snapshot_pattern(cls, container_name, contain_class, container_ttl=-1):
+        contain_snapshot_dir = cls.join_paths_to_dir_with_mode(
+            root_dir=os.getenv('DATABASE', 'database/'),
+            base_name=contain_class.get_class_name() + '__' + container_name,
+            ttl=container_ttl
+        )
+        return FileUtil.join_paths_to_file(
+            root_dir=FileUtil.dir_name(contain_snapshot_dir),
+            base_name='SNAPSHOT_*_' + container_name + '.pb'
+        )
+
+    @classmethod
+    def create_operator_snapshot_pattern(cls, container_name, operator_name, contain_class, container_ttl=-1):
+        contain_snapshot_dir = cls.join_paths_to_dir_with_mode(
+            root_dir=os.getenv('DATABASE', 'database/'),
+            base_name=contain_class.get_class_name() + '__' + container_name,
+            ttl=container_ttl
+        )
+        return FileUtil.join_paths_to_file(
+            root_dir=FileUtil.join_paths_to_dir(FileUtil.dir_name(contain_snapshot_dir), 'operators'),
+            base_name='SNAPSHOT_*_' + operator_name + '.pb'
+        )

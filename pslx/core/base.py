@@ -7,6 +7,7 @@ from pslx.util.color_util import ColorsUtil
 
 class Base(object):
     LOG_EVERYTHING = os.getenv('PSLX_LOG', False)
+    DATABASE_DIR = os.getenv('DATABASE', 'database/')
 
     def __init__(self):
         if 'PSLX_TEST' not in os.environ or not os.environ['PSLX_TEST']:

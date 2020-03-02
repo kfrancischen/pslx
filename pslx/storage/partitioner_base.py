@@ -55,7 +55,6 @@ class PartitionerBase(StorageBase):
                     self.sys_log("Reach the max number of node: " + str(self._max_size))
                     return
 
-                child_node_name = FileUtil.join_paths_to_dir(root_dir=node_name, base_name=child_node_name)
                 if not from_scratch and self._cmp_dir_by_timestamp(
                         dir_name_1=child_node_name, dir_name_2=self.get_latest_dir()):
                     continue
@@ -102,11 +101,13 @@ class PartitionerBase(StorageBase):
         else:
             return False
 
-    @staticmethod
-    def _cmp_dir_by_timestamp(dir_name_1, dir_name_2):
+    def _cmp_dir_by_timestamp(self, dir_name_1, dir_name_2):
         if not dir_name_2:
             return False
         else:
+            dir_name_1 = dir_name_1.replace(self._file_tree.get_root_name())
+            dir_name_2 = dir_name_2.replace(self._file_tree.get_root_name())
+
             dir_name_1_timestamp = FileUtil.parse_dir_to_timestamp(dir_name=dir_name_1)
             dir_name_2_timestamp = FileUtil.parse_dir_to_timestamp(dir_name=dir_name_2)
             return dir_name_1_timestamp < dir_name_2_timestamp
@@ -136,7 +137,7 @@ class PartitionerBase(StorageBase):
             time.sleep(TimeSleepObj.ONE_SECOND)
 
         self._reader_status = Status.RUNNING
-        self.initialize_from_dir(dir_name=self._file_tree.get_root_node().get_node_name())
+        self.initialize_from_dir(dir_name=self._file_tree.get_root_name())
         if self.is_empty():
             self.sys_log("Current partitioner is empty, cannot read anything.")
             return []
@@ -164,7 +165,7 @@ class PartitionerBase(StorageBase):
         new_dir = '/'.join(new_dir_list[:self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]])
         child_node = OrderedNodeBase(
             node_name=FileUtil.join_paths_to_dir(
-                root_dir=self._file_tree.get_root_node().get_node_name(),
+                root_dir=self._file_tree.get_root_name(),
                 base_name=new_dir
             ),
             order=SortOrder.REVERSE

@@ -9,15 +9,11 @@ from pslx.util.file_util import FileUtil
 
 
 class LoggingTool(Base):
-    def __init__(self, name, date=datetime.datetime.utcnow(), root_dir='database/', level=DiskLoggerLevel.INFO,
-                 ttl=-1):
+    def __init__(self, name, date=datetime.datetime.utcnow(), level=DiskLoggerLevel.INFO, ttl=-1):
         super().__init__()
         if name:
             self._start_date = date
             assert '-' not in name
-
-            if root_dir and root_dir[-1] != '/':
-                root_dir += '/'
 
             self._name = name
 
@@ -39,7 +35,7 @@ class LoggingTool(Base):
                 self._bg_color = ColorsUtil.Background.PURPLE
 
             self._log_file_dir = FileUtil.join_paths_to_file_with_mode(
-                root_dir=root_dir + 'log/',
+                root_dir=FileUtil.join_paths_to_dir(root_dir=self.DATABASE_DIR, base_name='log'),
                 base_name=name,
                 ttl=ttl
             )

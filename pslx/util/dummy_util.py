@@ -4,8 +4,8 @@ from pslx.schema.enums_pb2 import DataModelType
 
 
 class DummyLogging(LoggingTool):
-    def __init__(self, name=None, date=None, root_dir=None, level=None, ttl=-0):
-        super().__init__(name=None, date=date, root_dir=root_dir, level=level, ttl=ttl)
+    def __init__(self, name=None, date=None, level=None, ttl=-0):
+        super().__init__(name=None, date=date, level=level, ttl=ttl)
 
     def write_log(self, string):
         return

@@ -11,12 +11,11 @@ from pslx.util.timezone_util import TimeZoneObj
 class DefaultBatchContainer(ContainerBase):
     DATA_MODEL = DataModelType.BATCH
 
-    def __init__(self, container_name, root_dir='database/', ttl=-1):
-        super().__init__(container_name, root_dir=root_dir, ttl=ttl)
+    def __init__(self, container_name, ttl=-1):
+        super().__init__(container_name, ttl=ttl)
         self._logger = LoggingTool(
             name=(self.get_class_name() + '__' +
                   ProtoUtil.get_name_by_value(enum_type=DataModelType, value=self.DATA_MODEL) + '__' + container_name),
-            root_dir=os.getenv('DATA_ROOT_DIR', 'database/'),
             ttl=ttl
         )
 
@@ -24,8 +23,8 @@ class DefaultBatchContainer(ContainerBase):
 class CronBatchContainer(DefaultBatchContainer):
     DATA_MODEL = DataModelType.BATCH
 
-    def __init__(self, container_name, root_dir='database/', ttl=-1):
-        super().__init__(container_name, root_dir=root_dir, ttl=ttl)
+    def __init__(self, container_name, ttl=-1):
+        super().__init__(container_name, ttl=ttl)
         self._scheduler_spec = {
             'day_of_week': None,
             'hour': None,
@@ -60,8 +59,8 @@ class CronBatchContainer(DefaultBatchContainer):
 class IntervalBatchContainer(DefaultBatchContainer):
     DATA_MODEL = DataModelType.BATCH
 
-    def __init__(self, container_name, root_dir='database/', ttl=-1):
-        super().__init__(container_name, root_dir=root_dir, ttl=ttl)
+    def __init__(self, container_name, ttl=-1):
+        super().__init__(container_name, ttl=ttl)
         self._scheduler_spec = {
             'days': 0,
             'hours': 0,

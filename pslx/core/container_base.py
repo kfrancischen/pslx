@@ -18,21 +18,19 @@ class ContainerBase(GraphBase):
     DATA_MODEL = DataModelType.DEFAULT
     STATUS = Status.IDLE
 
-    def __init__(self, container_name, root_dir='database/', ttl=-1):
+    def __init__(self, container_name, ttl=-1):
         super().__init__()
-        if root_dir and root_dir[-1] != '/':
-            root_dir += '/'
         self._container_name = container_name
         self._is_initialized = False
         self._snapshot_file_folder = FileUtil.join_paths_to_dir_with_mode(
-            root_dir=root_dir + 'snapshots/',
+            root_dir=FileUtil.join_paths_to_dir(root_dir=self.DATABASE_DIR, base_name='snapshots'),
             base_name=self.get_class_name() + '__' + container_name,
             ttl=ttl
         )
         self._start_time = None
         self._end_time = None
         self._logger = DummyUtil.dummy_logging()
-        self._blockers = []
+        self._upstream_ops = []
 
     def initialize(self, force=False):
         for operator in self._node_name_to_node_dict.values():
@@ -68,8 +66,8 @@ class ContainerBase(GraphBase):
             raise exception.ContainerAlreadyInitializedException
         self.add_direct_edge(from_node=from_operator, to_node=to_operator)
 
-    def add_blocker(self, snapshot_file_pattern):
-        self._blockers.append(snapshot_file_pattern)
+    def add_upstream_op(self, op_snapshot_file_pattern):
+        self._upstream_ops.append(op_snapshot_file_pattern)
 
     def get_container_snapshot(self):
         if not self._is_initialized:
@@ -121,10 +119,10 @@ class ContainerBase(GraphBase):
             self.sys_log("Cannot execute if the container is not initialized.")
             raise exception.ContainerUninitializedException
 
-        self.sys_log('Blockers are: ' + ', '.join(self._blockers))
+        self.sys_log('Upstream operators are: ' + ', '.join(self._upstream_ops))
         unblocked_blocker = 0
-        while unblocked_blocker < len(self._blockers):
-            for blocker in self._blockers:
+        while unblocked_blocker < len(self._upstream_ops):
+            for blocker in self._upstream_ops:
                 latest_snapshot_files = FileUtil.get_file_names_from_pattern(pattern=blocker)
                 if not latest_snapshot_files:
                     continue

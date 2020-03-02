@@ -10,6 +10,11 @@ class TreeBaseTest(unittest.TestCase):
         test_tree = TreeBase(root=test_root_node)
         self.assertEqual(test_tree.get_root_node(), test_root_node)
 
+    def test_get_root_name(self):
+        test_root_node = UnorderedNodeBase(node_name='test_root_node')
+        test_tree = TreeBase(root=test_root_node)
+        self.assertEqual(test_tree.get_root_name(), 'test_root_node')
+
     def test_set_root_node(self):
         test_root_node = UnorderedNodeBase(node_name='test_root_node')
         test_tree = TreeBase(root=test_root_node)

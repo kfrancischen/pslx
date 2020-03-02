@@ -15,6 +15,9 @@ class TreeBase(Base):
     def get_root_node(self):
         return self._root
 
+    def get_root_name(self):
+        return self._root.get_node_name()
+
     def set_root_node(self, root):
         for child in self._root.get_children_nodes():
             root.add_child(child)
