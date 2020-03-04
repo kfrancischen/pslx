@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "enums.proto";
+
+package pslx;
+
+
+service GenericRPC {
+    rpc RPCWithReturn (GenericRequest)  returns (GenericResponse) {}
+    rpc RCPWithoutReturn (GenericRequest) returns (google.protobuf.Empty) {}
+}
+
+
+message GenericRequest {
+    string timestamp = 1;
+    string uuid = 2;
+    google.protobuf.Any request_data = 3;
+    Status status = 4;
+}
+
+message GenericResponse {
+    string timestamp = 1;
+    string request_uuid = 2;
+    google.protobuf.Any request_data = 3;
+    Status status = 4;
+}
+
