@@ -52,6 +52,7 @@ class FileUtil(object):
 
     @classmethod
     def die_if_file_not_exist(cls, file_name):
+        file_name = cls.normalize_file_name(file_name=file_name)
         if not cls.does_file_exist(file_name=file_name):
             raise FileNotExistException
         else:
@@ -59,17 +60,18 @@ class FileUtil(object):
 
     @classmethod
     def die_if_dir_not_exist(cls, dir_name):
+        dir_name = cls.normalize_dir_name(dir_name=dir_name)
         if not cls.does_dir_exist(dir_name=dir_name):
             raise DirNotExistException
         else:
             return dir_name
 
     @classmethod
-    def list_dir(cls, dir_name):
+    def _list_dir(cls, dir_name):
         cls.normalize_dir_name(dir_name=dir_name)
         cls.die_if_dir_not_exist(dir_name=dir_name)
         items = os.listdir(dir_name)
-        return [os.path.join(dir_name, item) for item in items]
+        return [cls.join_paths_to_file(dir_name, item) for item in items]
 
     @classmethod
     def normalize_file_name(cls, file_name):
@@ -81,13 +83,13 @@ class FileUtil(object):
 
     @classmethod
     def list_files_in_dir(cls, dir_name):
-        everything = cls.list_dir(dir_name=dir_name)
-        return [item for item in everything if os.path.isfile(item)]
+        everything = cls._list_dir(dir_name=dir_name)
+        return [cls.normalize_file_name(item) for item in everything if os.path.isfile(item)]
 
     @classmethod
     def list_dirs_in_dir(cls, dir_name):
-        everything = cls.list_dir(dir_name=dir_name)
-        return [item for item in everything if os.path.isdir(item)]
+        everything = cls._list_dir(dir_name=dir_name)
+        return [cls.normalize_dir_name(item) for item in everything if os.path.isdir(item)]
 
     @classmethod
     def join_paths_to_file_with_mode(cls, root_dir, base_name, ttl=-1):

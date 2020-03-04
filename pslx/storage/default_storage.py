@@ -36,12 +36,12 @@ class DefaultStorage(StorageBase):
 
     def set_config(self, config):
         super().set_config(config=config)
-        if 'override_to_prod':
+        if 'override_to_prod' in self._config and self._file_name:
             self._file_name = self._file_name.replace(
                 ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.TEST),
                 ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.PROD)
             )
-        if 'override_to_test':
+        if 'override_to_test' in self._config and self._file_name:
             self._file_name = self._file_name.replace(
                 ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.PROD),
                 ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.TEST)

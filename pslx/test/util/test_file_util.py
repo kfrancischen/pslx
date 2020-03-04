@@ -128,7 +128,7 @@ class FileUtilTest(unittest.TestCase):
 
     def test_list_dir(self):
         dir_name = "pslx/test/util/"
-        self.assertTrue("pslx/test/util/test_file_util.py" in FileUtil.list_dir(dir_name=dir_name))
+        self.assertTrue("pslx/test/util/test_file_util.py" in FileUtil._list_dir(dir_name=dir_name))
 
     def test_list_files_in_dir(self):
         dir_name = "pslx/test/util/"
@@ -136,5 +136,5 @@ class FileUtilTest(unittest.TestCase):
 
     def test_list_dirs_in_dir(self):
         dir_name = "pslx/test/"
-        self.assertTrue("pslx/test/util" in FileUtil.list_dirs_in_dir(dir_name=dir_name))
+        self.assertTrue("pslx/test/util/" in FileUtil.list_dirs_in_dir(dir_name=dir_name))
 

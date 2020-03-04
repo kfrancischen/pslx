@@ -78,9 +78,10 @@ class PartitionerBase(StorageBase):
                 _recursive_initialize_from_dir(node=child_node, max_recursion=max_recursion - 1)
 
         from_scratch = False
+        FileUtil.create_dir_if_not_exist(dir_name=dir_name)
         if not self._file_tree:
             root_node = OrderedNodeBase(
-                node_name=FileUtil.create_dir_if_not_exist(dir_name=dir_name),
+                node_name=FileUtil.normalize_dir_name(dir_name=dir_name),
                 order=SortOrder.REVERSE
             )
             self._file_tree = TreeBase(root=root_node, max_dict_size=self._max_size)
@@ -88,11 +89,17 @@ class PartitionerBase(StorageBase):
 
         _recursive_initialize_from_dir(
             node=self._file_tree.get_root_node(),
-            max_recursion=self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE] - 1
+            max_recursion=self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]
         )
 
     def set_config(self, config):
         self._underlying_storage.set_config(config=config)
+
+    def get_size(self):
+        if not self._file_tree:
+            return 0
+        else:
+            return self._file_tree.get_num_nodes()
 
     def is_empty(self):
         leftmost_leaf_name = self._file_tree.get_leftmost_leaf()
@@ -105,8 +112,8 @@ class PartitionerBase(StorageBase):
         if not dir_name_2:
             return False
         else:
-            dir_name_1 = dir_name_1.replace(self._file_tree.get_root_name())
-            dir_name_2 = dir_name_2.replace(self._file_tree.get_root_name())
+            dir_name_1 = dir_name_1.replace(self._file_tree.get_root_name(), '')
+            dir_name_2 = dir_name_2.replace(self._file_tree.get_root_name(), '')
 
             dir_name_1_timestamp = FileUtil.parse_dir_to_timestamp(dir_name=dir_name_1)
             dir_name_2_timestamp = FileUtil.parse_dir_to_timestamp(dir_name=dir_name_2)
@@ -127,8 +134,11 @@ class PartitionerBase(StorageBase):
             return self._file_tree.get_leftmost_leaf()
 
     def read(self, params=None):
-        file_base_name = 'data'
-        if params and 'base_name' not in params:
+        if self._underlying_storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE:
+            file_base_name = 'data.pb'
+        else:
+            file_base_name = 'data'
+        if params and 'base_name' in params:
             file_base_name = params['base_name']
             params.pop('base_name', None)
 
@@ -150,6 +160,7 @@ class PartitionerBase(StorageBase):
             raise StorageReadException
 
         if file_name != self._underlying_storage.get_file_name():
+            self.sys_log("Sync to the latest file to " + file_name)
             self._underlying_storage.initialize_from_file(file_name=file_name)
         try:
             result = self._underlying_storage.read(params=params)
@@ -176,7 +187,7 @@ class PartitionerBase(StorageBase):
         else:
             self.sys_log(child_node.get_node_name() + " doesn't exist. Make new partition.")
             self._logger.write_log(child_node.get_node_name() + " doesn't exist. Make new partition.")
-            parent_node = self._file_tree.find_node(node_name=self.get_latest_dir())
+            parent_node = self._file_tree.find_node(node_name=self._file_tree.get_rightmost_leaf())
             self._file_tree.add_node(
                 parent_node=parent_node,
                 child_node=child_node
@@ -190,8 +201,11 @@ class PartitionerBase(StorageBase):
             to_make_partition = params['make_partition']
             params.pop('make_partition', None)
 
-        file_base_name = 'data'
-        if params and 'base_name' not in params:
+        if self._underlying_storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE:
+            file_base_name = 'data.pb'
+        else:
+            file_base_name = 'data'
+        if params and 'base_name' in params:
             file_base_name = params['base_name']
             params.pop('base_name', None)
 
@@ -201,13 +215,20 @@ class PartitionerBase(StorageBase):
 
         self._writer_status = Status.RUNNING
         if to_make_partition:
-            new_dir_name = self._make_new_partition(timestamp=TimezoneUtil.cur_time_in_pst())
-            if new_dir_name:
-                self._underlying_storage.initialize_from_file(
-                    file_name=FileUtil.create_file_if_not_exist(
-                        file_name=FileUtil.join_paths_to_file(root_dir=new_dir_name, base_name=file_base_name)
-                    )
-                )
+            self._make_new_partition(timestamp=TimezoneUtil.cur_time_in_pst())
+
+        self.initialize_from_dir(dir_name=self._file_tree.get_root_name())
+
+        file_name = FileUtil.join_paths_to_file(
+            root_dir=self._file_tree.get_rightmost_leaf(),
+            base_name=file_base_name)
+
+        if file_name != self._underlying_storage.get_file_name():
+            self.sys_log("Sync to the latest file to " + file_name)
+            self._underlying_storage.initialize_from_file(
+                file_name=file_name
+            )
+
         try:
             self._underlying_storage.write(data=data, params=params)
             self._writer_status = Status.IDLE
@@ -215,3 +236,8 @@ class PartitionerBase(StorageBase):
             self.sys_log(str(err))
             self._logger.write_log(str(err))
             raise StorageWriteException
+
+    def print_self(self):
+        # for debug only
+        if self._file_tree:
+            self._file_tree.print_self()

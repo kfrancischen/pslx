@@ -177,7 +177,7 @@ class TreeBase(Base):
             height += 1
         return height
 
-    def print_tree(self):
+    def print_self(self):
         result_node_names = []
         search_queue = deque()
         search_queue.append(self._root)
@@ -192,5 +192,6 @@ class TreeBase(Base):
             else:
                 print('Level ' + str(level) + ': ' + print_str)
                 print_str = ''
+                level += 1
             for child_node in child_nodes:
                 search_queue.append(child_node)
