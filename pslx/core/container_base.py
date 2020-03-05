@@ -159,6 +159,9 @@ class ContainerBase(GraphBase):
         for _ in range(num_process):
             task_queue.put(Signal.STOP)
 
+        for process in process_list:
+            process.join()
+
         self._end_time = TimezoneUtil.cur_time_in_pst()
 
         self.set_status(status=Status.SUCCEEDED)
@@ -176,9 +179,6 @@ class ContainerBase(GraphBase):
             
         self._logger.write_log(log_str)
         self.sys_log(log_str)
-
-        for process in process_list:
-            process.join()
 
         self.get_container_snapshot()
         self.sys_log("Taking snapshot in the end.")
