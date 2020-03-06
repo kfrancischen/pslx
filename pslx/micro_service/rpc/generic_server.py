@@ -2,7 +2,7 @@ from concurrent import futures
 import grpc
 
 from pslx.core.base import Base
-from pslx.schema.rpc_pb2_grpc import add_GenericRPCServicer_to_server
+from pslx.schema.rpc_pb2_grpc import add_GenericRPCServiceServicer_to_server
 from pslx.util.dummy_util import DummyUtil
 
 
@@ -20,7 +20,7 @@ class GenericServer(Base):
         self._url = server_url
 
     def add_rpc(self, rpc):
-        add_GenericRPCServicer_to_server(rpc, self._rpc_server)
+        add_GenericRPCServiceServicer_to_server(rpc, self._rpc_server)
 
     def start_server(self):
         self._rpc_server.add_insecure_port(self._url)

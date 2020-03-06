@@ -1,11 +1,16 @@
 import grpc
+import uuid
 
 from pslx.core.base import Base
-from pslx.schema.rpc_pb2_grpc import GenericRPCStub
+from pslx.schema.rpc_pb2 import GenericRPCRequest
+from pslx.schema.rpc_pb2_grpc import GenericRPCServiceStub
 from pslx.util.dummy_util import DummyUtil
+from pslx.util.proto_util import ProtoUtil
+from pslx.util.timezone_util import TimezoneUtil
 
 
 class GenericClient(Base):
+    RESPONSE_MESSAGE_TYPE = None
 
     def __init__(self, client_name):
         super().__init__()
@@ -16,21 +21,21 @@ class GenericClient(Base):
 
     def create_client(self, server_url):
         self._channel = grpc.insecure_channel(server_url)
-        self._stub = GenericRPCStub(channel=self._channel)
+        self._stub = GenericRPCServiceStub(channel=self._channel)
 
-    def send_request(self, request, require_response=False):
-        if require_response:
-            return self._send_request_with_response(request=request)
-        else:
-            self._send_request_without_response(request=request)
+    def send_request(self, request):
+        generic_request = GenericRPCRequest()
+        generic_request.request_data.CopyFrom(ProtoUtil.message_to_any(message=request))
+        generic_request.timestamp = str(TimezoneUtil.cur_time_in_pst())
+        generic_request.uuid = str(uuid.uuid4())
+        response = self._stub.SendRequest(request=generic_request)
+        if not self.RESPONSE_MESSAGE_TYPE:
             return None
-
-    def _send_request_with_response(self, request):
-        response = self._stub.RPCWithReturn(request=request)
-        return response
-
-    def _send_request_without_response(self, request):
-        self._stub.RCPWithoutReturn(request=request)
+        else:
+            return ProtoUtil.any_to_message(
+                message_type=self.RESPONSE_MESSAGE_TYPE,
+                any_message=response.request_data
+            )
 
     def close(self):
         self._channel.close()

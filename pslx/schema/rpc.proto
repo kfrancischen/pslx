@@ -1,15 +1,13 @@
 syntax = "proto3";
 
 import "google/protobuf/any.proto";
-import "google/protobuf/empty.proto";
 import "enums.proto";
 
 package pslx;
 
 
 service GenericRPCService {
-    rpc RPCWithReturn (GenericRPCRequest)  returns (GenericRPCResponse) {}
-    rpc RCPWithoutReturn (GenericRPCRequest) returns (google.protobuf.Empty) {}
+    rpc SendRequest (GenericRPCRequest)  returns (GenericRPCResponse) {}
 }
 
 // the next will be 5
@@ -24,7 +22,12 @@ message GenericRPCRequest {
 message GenericRPCResponse {
     string timestamp = 1;
     string request_uuid = 2;
-    google.protobuf.Any request_data = 3;
+    google.protobuf.Any response_data = 3;
     Status status = 4;
 }
 
+message GenericRPCRequestResponsePair {
+    string uuid = 1;
+    GenericRPCRequest generic_rpc_request = 2;
+    GenericRPCResponse generic_rpc_response =3;
+}
