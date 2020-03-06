@@ -31,3 +31,25 @@ message GenericRPCRequestResponsePair {
     GenericRPCRequest generic_rpc_request = 2;
     GenericRPCResponse generic_rpc_response =3;
 }
+
+message InstantMessagingRPCRequest {
+    InstantMessagingType type = 1;
+    string channel_name = 2;
+    string webhook_url = 3;
+    string message = 4;
+}
+
+message EmailPRCRequest {
+    string from_email = 1;
+    string to_email = 2;
+    string content = 3;
+}
+
+message RPCIORequest {
+    StorageType type = 1;
+    oneof path {
+        string file_name = 2;
+        string dir_name = 3;
+    }
+    map<string, string> params = 4;
+}

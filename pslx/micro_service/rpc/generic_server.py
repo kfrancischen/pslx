@@ -2,6 +2,7 @@ from concurrent import futures
 import grpc
 
 from pslx.core.base import Base
+from pslx.core.exception import RPCAlreadyExistException, RPCServerNotInitializedException
 from pslx.schema.rpc_pb2_grpc import add_GenericRPCServiceServicer_to_server
 from pslx.util.dummy_util import DummyUtil
 
@@ -14,15 +15,37 @@ class GenericServer(Base):
         self._logger = DummyUtil.dummy_logging()
         self._url = None
         self._rpc_server = None
+        self._has_added_rpc = False
+
+    def get_server_name(self):
+        return self._server_name
+
+    def get_server_url(self):
+        return self._url
 
     def create_server(self, max_worker, server_url):
+        self.sys_log("Create server with num of worker s = " + str(max_worker) + " and url = " + server_url + '.')
+        self._logger.write_log("Create server with num of worker s = " + str(max_worker) + " and url = " +
+                               server_url + '.')
         self._rpc_server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_worker))
         self._url = server_url
 
-    def add_rpc(self, rpc):
+    def bind_rpc(self, rpc):
+        if self._has_added_rpc:
+            self.sys_log("RPC already exist, cannot bind any more.")
+            self._logger.write_log("RPC already exist, cannot bind any more.")
+            raise RPCAlreadyExistException
+
         add_GenericRPCServiceServicer_to_server(rpc, self._rpc_server)
+        self._has_added_rpc = True
 
     def start_server(self):
-        self._rpc_server.add_insecure_port(self._url)
-        self._rpc_server.start()
-        self._rpc_server.wait_for_termination()
+        if self._rpc_server:
+            self._logger.write_log("Starting server.")
+            self._rpc_server.add_insecure_port(self._url)
+            self._rpc_server.start()
+            self._rpc_server.wait_for_termination()
+        else:
+            self._logger.write_log("Please create server first.")
+            self.sys_log("Please create server first.")
+            raise RPCServerNotInitializedException

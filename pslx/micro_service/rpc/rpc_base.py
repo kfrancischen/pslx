@@ -1,4 +1,5 @@
 from pslx.core.base import Base
+from pslx.schema.enums_pb2 import StorageType
 from pslx.schema.common_pb2 import EmptyMessage
 from pslx.schema.rpc_pb2 import GenericRPCResponse, GenericRPCRequestResponsePair
 from pslx.schema.rpc_pb2_grpc import GenericRPCServiceServicer
@@ -14,13 +15,22 @@ class RPCBase(GenericRPCServiceServicer, Base):
         Base.__init__(self)
         self._logger = DummyUtil.dummy_logging()
         self._service_name = service_name
+        if request_storage:
+            assert request_storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE
         self._request_storage = request_storage
 
+    def get_rpc_service_name(self):
+        return self._service_name
+
+    def get_storage(self):
+        return self._request_storage
+
     def SendRequest(self, request, context):
+        self.sys_log("Get request with uuid " + request.uuid)
         decomposed_request = self.request_decomposer(request=request)
         response, status = self.impl(request=decomposed_request)
         generic_response = self.response_composer(response=response)
-        generic_response.request_uuid = decomposed_request.uuid
+        generic_response.request_uuid = request.uuid
         generic_response.status = status
         request.status = status
 
@@ -29,6 +39,7 @@ class RPCBase(GenericRPCServiceServicer, Base):
             request_response_pair.uuid = request.uuid
             request_response_pair.generic_rpc_request.CopyFrom(request)
             request_response_pair.generic_rpc_response.CopyFrom(generic_response)
+            self.sys_log("Save to " + self._request_storage.get_file_name())
 
             self._request_storage.write(
                 data=[request.uuid, request_response_pair],

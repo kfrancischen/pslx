@@ -67,3 +67,15 @@ class StorageExceedsFixedSizeException(ExceptionBase):
 
 class FileLockToolException(ExceptionBase):
     pass
+
+
+class RPCAlreadyExistException(ExceptionBase):
+    pass
+
+
+class RPCChannelCloseException(ExceptionBase):
+    pass
+
+
+class RPCServerNotInitializedException(ExceptionBase):
+    pass

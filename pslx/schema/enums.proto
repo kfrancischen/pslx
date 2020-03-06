@@ -21,6 +21,13 @@ enum DataModelType {
     STREAMING = 2;
 }
 
+// the next will be 3
+enum InstantMessagingType {
+    SLACK = 0;
+    ROCKETCHAT = 1;
+    TEAMS = 2;
+}
+
 // the next will be 4
 enum DiskLoggerLevel {
     INFO = 0;
