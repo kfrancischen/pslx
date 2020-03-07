@@ -63,10 +63,10 @@ class RPCBase(GenericRPCServiceServicer, Base):
         generic_response = GenericRPCResponse()
         if not response:
             empty_message = EmptyMessage()
-            generic_response.request_data.CopyFrom(ProtoUtil.message_to_any(empty_message))
+            generic_response.response_data.CopyFrom(ProtoUtil.message_to_any(empty_message))
             generic_response.timestamp = str(TimezoneUtil.cur_time_in_pst())
         else:
-            generic_response.request_data.CopyFrom(ProtoUtil.message_to_any(response))
+            generic_response.response_data.CopyFrom(ProtoUtil.message_to_any(response))
         generic_response.timestamp = str(TimezoneUtil.cur_time_in_pst())
 
         return generic_response

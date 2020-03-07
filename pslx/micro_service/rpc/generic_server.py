@@ -24,8 +24,8 @@ class GenericServer(Base):
         return self._url
 
     def create_server(self, max_worker, server_url):
-        self.sys_log("Create server with num of worker s = " + str(max_worker) + " and url = " + server_url + '.')
-        self._logger.write_log("Create server with num of worker s = " + str(max_worker) + " and url = " +
+        self.sys_log("Create server with num of workers = " + str(max_worker) + " and url = " + server_url + '.')
+        self._logger.write_log("Create server with num of workers = " + str(max_worker) + " and url = " +
                                server_url + '.')
         self._rpc_server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_worker))
         self._url = server_url
@@ -35,7 +35,7 @@ class GenericServer(Base):
             self.sys_log("RPC already exist, cannot bind any more.")
             self._logger.write_log("RPC already exist, cannot bind any more.")
             raise RPCAlreadyExistException
-
+        self.sys_log("Server " + self._url + " binding to rpc with name " + rpc.get_rpc_service_name() + '.')
         add_GenericRPCServiceServicer_to_server(rpc, self._rpc_server)
         self._has_added_rpc = True
 

@@ -55,7 +55,7 @@ class InstantMessagingRPC(RPCBase):
         status = Status.SUCCEEDED
         if not is_test and webhook_url:
             data = {
-                "text": message['message'] + "\nCurrent time is " + str(TimezoneUtil.cur_time_in_pst()) +
+                "text": message + "\nCurrent time is " + str(TimezoneUtil.cur_time_in_pst()) +
                 '\n-----------------------------------------------'
             }
             try:
@@ -72,7 +72,7 @@ class InstantMessagingRPC(RPCBase):
         status = Status.SUCCEEDED
         if not is_test and webhook_url:
             teams_json_data = {
-                "text": message['message'] + ". Current time is " + str(TimezoneUtil.cur_time_in_pst()),
+                "text": message + ". Current time is " + str(TimezoneUtil.cur_time_in_pst()),
                 "@content": "http://schema.org/extensions",
                 "@type": "MessageCard",
             }
