@@ -32,7 +32,7 @@ if __name__ == "__main__":
     container1.execute()
 
     container2 = HelloWorldContainer(container_name='hello_world_container_2', ttl=1)
-    dummy_op = DummyUtil.dummy_bach_operator(operator_name='dummy')
+    dummy_op = DummyUtil.dummy_batch_operator(operator_name='dummy')
     op1.set_config(
         config={
             'save_snapshot': True,

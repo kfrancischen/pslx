@@ -83,6 +83,8 @@ class ContainerBase(GraphBase):
             snapshot.end_time = str(self._end_time)
 
         for op_name, op in self._node_name_to_node_dict.items():
+            if 'Dummy' in op.get_class_name():
+                continue
             op_output_file = FileUtil.join_paths_to_file(
                 root_dir=FileUtil.join_paths_to_dir(FileUtil.dir_name(self._snapshot_file_folder), 'operators'),
                 base_name='SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' + op_name + '.pb'

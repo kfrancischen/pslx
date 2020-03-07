@@ -1,11 +1,11 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-import os
+import time
 
 from pslx.core.container_base import ContainerBase
 from pslx.schema.enums_pb2 import DataModelType
 from pslx.tool.logging_tool import LoggingTool
 from pslx.util.proto_util import ProtoUtil
-from pslx.util.timezone_util import TimeZoneObj
+from pslx.util.timezone_util import TimezoneObj, TimeSleepObj
 
 
 class DefaultStreamingContainer(ContainerBase):
@@ -47,7 +47,7 @@ class CronStreamingContainer(DefaultStreamingContainer):
         self.sys_log("Spec sets to " + str(self._scheduler_spec))
 
     def execute(self, is_backfill=False, num_process=1):
-        background_scheduler = BackgroundScheduler(timezone=TimeZoneObj.WESTERN_TIMEZONE)
+        background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
         background_scheduler.add_job(
             super().execute,
             'cron',
@@ -58,6 +58,11 @@ class CronStreamingContainer(DefaultStreamingContainer):
             second=self._scheduler_spec['second']
         )
         background_scheduler.start()
+        try:
+            while True:
+                time.sleep(TimeSleepObj.ONE_SECOND)
+        except (KeyboardInterrupt, SystemExit):
+            background_scheduler.shutdown()
 
 
 class IntervalStreamingContainer(DefaultStreamingContainer):
@@ -83,7 +88,7 @@ class IntervalStreamingContainer(DefaultStreamingContainer):
         self.sys_log("Spec sets to " + str(self._scheduler_spec))
 
     def execute(self, is_backfill=False, num_process=1):
-        background_scheduler = BackgroundScheduler(timezone=TimeZoneObj.WESTERN_TIMEZONE)
+        background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
         background_scheduler.add_job(
             super().execute,
             'interval',
@@ -94,3 +99,8 @@ class IntervalStreamingContainer(DefaultStreamingContainer):
             seconds=self._scheduler_spec['seconds']
         )
         background_scheduler.start()
+        try:
+            while True:
+                time.sleep(TimeSleepObj.ONE_SECOND)
+        except (KeyboardInterrupt, SystemExit):
+            background_scheduler.shutdown()

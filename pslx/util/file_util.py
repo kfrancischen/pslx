@@ -1,6 +1,7 @@
 import datetime
 import glob
 import os
+import shutil
 from pslx.core.exception import FileNotExistException, DirNotExistException
 from pslx.schema.enums_pb2 import ModeType
 from pslx.util.proto_util import ProtoUtil
@@ -92,10 +93,61 @@ class FileUtil(object):
         return [cls.normalize_dir_name(item) for item in everything if os.path.isdir(item)]
 
     @classmethod
+    def list_files_in_dir_recursively(cls, dir_name):
+        dir_name = cls.normalize_dir_name(dir_name=dir_name)
+        result = []
+        if not cls.does_dir_exist(dir_name=dir_name):
+            return result
+        for sub_dir, _, file_names in os.walk(dir_name):
+            for file_name in file_names:
+                result.append(cls.join_paths_to_file(root_dir=sub_dir, base_name=file_name))
+
+        return result
+
+    @classmethod
+    def list_dirs_in_dir_recursively(cls, dir_name):
+        dir_name = cls.normalize_dir_name(dir_name=dir_name)
+        result = []
+        if not cls.does_dir_exist(dir_name=dir_name):
+            return result
+        for sub_dir, _, file_names in os.walk(dir_name):
+            result.append(sub_dir)
+
+        return result
+
+    @classmethod
     def remove_file(cls, file_name):
         file_name = cls.normalize_file_name(file_name=file_name)
         if cls.does_file_exist(file_name=file_name):
             os.remove(file_name)
+
+    @classmethod
+    def remove_dir(cls, dir_name):
+        dir_name = cls.normalize_dir_name(dir_name=dir_name)
+        if cls.does_dir_exist(dir_name=dir_name):
+            shutil.rmtree(dir_name)
+
+    @classmethod
+    def get_file_modified_time(cls, file_name):
+        if not cls.does_file_exist(file_name=file_name):
+            return None
+        mod_time = os.path.getmtime(file_name)
+        return datetime.datetime.fromtimestamp(mod_time)
+
+    @classmethod
+    def get_ttl_from_path(cls, path):
+        for item in path.split('/'):
+            if 'ttl=' in item:
+                item = item.replace('ttl=', '').lower()
+                if 'd' == item[-1]:
+                    return datetime.timedelta(days=int(item.replace('d', '')))
+                elif 'h' == item[-1]:
+                    return datetime.timedelta(hours=int(item.replace('h', '')))
+                elif 'm' == item[-1]:
+                    return datetime.timedelta(minutes=int(item.replace('m', '')))
+                elif int(item) > 0:
+                    return datetime.timedelta(days=int(item))
+        return None
 
     @classmethod
     def join_paths_to_file_with_mode(cls, root_dir, base_name, ttl=-1):

@@ -2,7 +2,7 @@ import datetime
 import pytz
 
 
-class TimeZoneObj(object):
+class TimezoneObj(object):
     EASTERN_TIMEZONE = pytz.timezone('US/Eastern')
     WESTERN_TIMEZONE = pytz.timezone('US/Pacific')
     UTC_TIMEZONE = pytz.timezone('UTC')
@@ -29,38 +29,42 @@ class TimezoneUtil(object):
     @classmethod
     def utc_to_pst(cls, utc_time):
         if utc_time.tzinfo is None:
-            utc_time = utc_time.replace(tzinfo=TimeZoneObj.UTC_TIMEZONE)
-        return utc_time.astimezone(TimeZoneObj.WESTERN_TIMEZONE)
+            utc_time = utc_time.replace(tzinfo=TimezoneObj.UTC_TIMEZONE)
+        return utc_time.astimezone(TimezoneObj.WESTERN_TIMEZONE)
 
     @classmethod
     def utc_to_est(cls, utc_time):
         if utc_time.tzinfo is None:
-            utc_time = utc_time.replace(tzinfo=TimeZoneObj.UTC_TIMEZONE)
-        return utc_time.astimezone(TimeZoneObj.EASTERN_TIMEZONE)
+            utc_time = utc_time.replace(tzinfo=TimezoneObj.UTC_TIMEZONE)
+        return utc_time.astimezone(TimezoneObj.EASTERN_TIMEZONE)
 
     @classmethod
     def pst_to_est(cls, western_time):
         if western_time.tzinfo is None:
-            western_time = western_time.replace(tzinfo=TimeZoneObj.WESTERN_TIMEZONE)
-        return western_time.astimezone(TimeZoneObj.EASTERN_TIMEZONE)
+            western_time = western_time.replace(tzinfo=TimezoneObj.WESTERN_TIMEZONE)
+        return western_time.astimezone(TimezoneObj.EASTERN_TIMEZONE)
 
     @classmethod
     def est_to_pst(cls, eastern_time):
         if eastern_time.tzinfo is None:
-            eastern_time = eastern_time.replace(tzinfo=TimeZoneObj.EASTERN_TIMEZONE)
-        return eastern_time.astimezone(TimeZoneObj.WESTERN_TIMEZONE)
+            eastern_time = eastern_time.replace(tzinfo=TimezoneObj.EASTERN_TIMEZONE)
+        return eastern_time.astimezone(TimezoneObj.WESTERN_TIMEZONE)
+
+    @classmethod
+    def cur_time_in_local(cls):
+        return datetime.datetime.now()
 
     @classmethod
     def cur_time_in_utc(cls):
-        return datetime.datetime.now(tz=TimeZoneObj.UTC_TIMEZONE)
+        return datetime.datetime.now(tz=TimezoneObj.UTC_TIMEZONE)
 
     @classmethod
     def cur_time_in_pst(cls):
-        return datetime.datetime.now(tz=TimeZoneObj.WESTERN_TIMEZONE)
+        return datetime.datetime.now(tz=TimezoneObj.WESTERN_TIMEZONE)
 
     @classmethod
     def cur_time_in_est(cls):
-        return datetime.datetime.now(tz=TimeZoneObj.WESTERN_TIMEZONE)
+        return datetime.datetime.now(tz=TimezoneObj.WESTERN_TIMEZONE)
 
     @classmethod
     def cur_time_from_str(cls, time_str):

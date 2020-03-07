@@ -21,7 +21,7 @@ class InstantMessagingRPC(RPCBase):
         }
         self._logger = LoggingTool(
             name=self.get_rpc_service_name(),
-            ttl=os.getenv('PSLX_RPC_TTL', 7)
+            ttl=os.getenv('PSLX_INTERNAL_TTL', 7)
         )
 
     def send_request_impl(self, request):

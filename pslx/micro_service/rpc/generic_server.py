@@ -15,7 +15,7 @@ class GenericServer(Base):
         self._server_name = server_name
         self._logger = LoggingTool(
             name=self.get_server_name(),
-            ttl=os.getenv('PSLX_RPC_TTL', 7)
+            ttl=os.getenv('PSLX_INTERNAL_TTL', 7)
         )
         self._url = None
         self._rpc_server = None

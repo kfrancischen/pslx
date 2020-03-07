@@ -36,7 +36,7 @@ class DummyUtil(object):
         return op
 
     @classmethod
-    def dummy_bach_operator(cls, operator_name='dummy_batch_operator'):
+    def dummy_batch_operator(cls, operator_name='dummy_batch_operator'):
         op = DummyOperator(operator_name=operator_name)
         op.set_data_model(model=DataModelType.BATCH)
         return op

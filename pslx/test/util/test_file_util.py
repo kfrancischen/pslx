@@ -138,3 +138,14 @@ class FileUtilTest(unittest.TestCase):
         dir_name = "pslx/test/"
         self.assertTrue("pslx/test/util/" in FileUtil.list_dirs_in_dir(dir_name=dir_name))
 
+    def test_get_ttl_from_path(self):
+        path = "pslx/test/util/"
+        self.assertTrue(FileUtil.get_ttl_from_path(path=path) is None)
+        path = "pslx/ttl=-1/test/util/"
+        self.assertTrue(FileUtil.get_ttl_from_path(path=path) is None)
+        path = "pslx/ttl=1/test/util/"
+        self.assertEqual(FileUtil.get_ttl_from_path(path=path), datetime.timedelta(days=1))
+        path = "pslx/ttl=1d/test/util/"
+        self.assertEqual(FileUtil.get_ttl_from_path(path=path), datetime.timedelta(days=1))
+        path = "pslx/ttl=1h/test/util/"
+        self.assertEqual(FileUtil.get_ttl_from_path(path=path), datetime.timedelta(hours=1))

@@ -116,7 +116,7 @@ class OperatorBase(OrderedNodeBase):
             snapshot.start_time = str(self._start_time)
         if self._end_time:
             snapshot.end_time = str(self._end_time)
-        if output_file and self._config['save_snapshot']:
+        if output_file and self._config['save_snapshot'] and 'Dummy' not in self.get_class_name():
             self.sys_log("Saved to file " + output_file + '.')
             with FileLockTool(output_file, read_mode=False):
                 FileUtil.write_proto_to_file(
