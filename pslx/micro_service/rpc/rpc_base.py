@@ -28,7 +28,7 @@ class RPCBase(GenericRPCServiceServicer, Base):
     def SendRequest(self, request, context):
         self.sys_log("Get request with uuid " + request.uuid)
         decomposed_request = self.request_decomposer(request=request)
-        response, status = self.impl(request=decomposed_request)
+        response, status = self.send_request_impl(request=decomposed_request)
         generic_response = self.response_composer(response=response)
         generic_response.request_uuid = request.uuid
         generic_response.status = status
@@ -71,5 +71,5 @@ class RPCBase(GenericRPCServiceServicer, Base):
 
         return generic_response
 
-    def impl(self, request):
+    def send_request_impl(self, request):
         raise NotImplementedError

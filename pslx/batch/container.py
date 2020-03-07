@@ -50,7 +50,8 @@ class CronBatchContainer(DefaultBatchContainer):
             day_of_week=self._scheduler_spec['day_of_week'],
             hour=self._scheduler_spec['hour'],
             minute=self._scheduler_spec['minute'],
-            second=self._scheduler_spec['second']
+            second=self._scheduler_spec['second'],
+            misfire_grace_time=None
         )
         background_scheduler.start()
 
@@ -86,7 +87,8 @@ class IntervalBatchContainer(DefaultBatchContainer):
             days=self._scheduler_spec['days'],
             hours=self._scheduler_spec['hours'],
             minutes=self._scheduler_spec['minutes'],
-            seconds=self._scheduler_spec['seconds']
+            seconds=self._scheduler_spec['seconds'],
+            misfire_grace_time=None
         )
         background_scheduler.start()
 

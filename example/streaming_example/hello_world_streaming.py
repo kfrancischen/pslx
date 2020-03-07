@@ -8,7 +8,7 @@ class HelloWorldOp(StreamingOperator):
     def __init__(self):
         super().__init__(operator_name='hello_world_op')
 
-    def _execute(self):
+    def execute_impl(self):
         print('hello world')
         return True
 

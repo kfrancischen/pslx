@@ -149,7 +149,7 @@ class OperatorBase(OrderedNodeBase):
         while self._config['slo'] < 0 or (self._config['slo'] > 0 and TimezoneUtil.cur_time_in_pst() -
                                           self._start_time > datetime.timedelta(self._config['slo'])):
             try:
-                if self._execute():
+                if self.execute_impl():
                     self._end_time = TimezoneUtil.cur_time_in_pst()
                     self.set_status(status=Status.SUCCEEDED)
                     return
@@ -158,5 +158,5 @@ class OperatorBase(OrderedNodeBase):
 
         self.set_status(status=Status.FAILED)
 
-    def _execute(self):
+    def execute_impl(self):
         raise NotImplementedError

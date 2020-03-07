@@ -1,10 +1,11 @@
 from concurrent import futures
 import grpc
+import os
 
 from pslx.core.base import Base
 from pslx.core.exception import RPCAlreadyExistException, RPCServerNotInitializedException
 from pslx.schema.rpc_pb2_grpc import add_GenericRPCServiceServicer_to_server
-from pslx.util.dummy_util import DummyUtil
+from pslx.tool.logging_tool import LoggingTool
 
 
 class GenericServer(Base):
@@ -12,7 +13,10 @@ class GenericServer(Base):
     def __init__(self, server_name):
         super().__init__()
         self._server_name = server_name
-        self._logger = DummyUtil.dummy_logging()
+        self._logger = LoggingTool(
+            name=self.get_server_name(),
+            ttl=os.getenv('PSLX_RPC_TTL', 7)
+        )
         self._url = None
         self._rpc_server = None
         self._has_added_rpc = False

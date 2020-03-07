@@ -18,5 +18,5 @@ class BatchOperator(OperatorBase):
     def convert_to_streaming_operator(self):
         self.DATA_MODEL = DataModelType.STREAMING
 
-    def _execute(self):
+    def execute_impl(self):
         raise NotImplementedError

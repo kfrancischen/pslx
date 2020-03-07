@@ -15,7 +15,7 @@ class DummyOperator(OperatorBase):
     def __init__(self, operator_name):
         super().__init__(operator_name=operator_name)
 
-    def _execute(self, **kwargs):
+    def execute_impl(self):
         return True
 
 

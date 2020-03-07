@@ -92,6 +92,12 @@ class FileUtil(object):
         return [cls.normalize_dir_name(item) for item in everything if os.path.isdir(item)]
 
     @classmethod
+    def remove_file(cls, file_name):
+        file_name = cls.normalize_file_name(file_name=file_name)
+        if cls.does_file_exist(file_name=file_name):
+            os.remove(file_name)
+
+    @classmethod
     def join_paths_to_file_with_mode(cls, root_dir, base_name, ttl=-1):
         if 'PSLX_TEST' not in os.environ or not os.environ['PSLX_TEST']:
             pre_path = os.path.join(root_dir, ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.PROD))

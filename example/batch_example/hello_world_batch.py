@@ -8,7 +8,7 @@ class HelloWorldOp(BatchOperator):
     def __init__(self, operator_name='hello_world_op'):
         super().__init__(operator_name=operator_name)
 
-    def _execute(self):
+    def execute_impl(self):
         print(self.get_node_name())
         return True
 
