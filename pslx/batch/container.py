@@ -1,5 +1,4 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-import os
 
 from pslx.core.container_base import ContainerBase
 from pslx.schema.enums_pb2 import DataModelType

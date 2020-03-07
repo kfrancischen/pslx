@@ -11,7 +11,7 @@ from pslx.util.timezone_util import TimezoneUtil
 class RPCBase(GenericRPCServiceServicer, Base):
     REQUEST_MESSAGE_TYPE = None
 
-    def __init(self, service_name, request_storage=None):
+    def __init__(self, service_name, request_storage=None):
         Base.__init__(self)
         self._logger = DummyUtil.dummy_logging()
         self._service_name = service_name

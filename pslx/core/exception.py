@@ -73,9 +73,5 @@ class RPCAlreadyExistException(ExceptionBase):
     pass
 
 
-class RPCChannelCloseException(ExceptionBase):
-    pass
-
-
 class RPCServerNotInitializedException(ExceptionBase):
     pass

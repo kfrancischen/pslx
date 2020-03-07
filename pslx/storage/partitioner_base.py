@@ -171,7 +171,7 @@ class PartitionerBase(StorageBase):
             self._logger.write_log(str(err))
             raise StorageReadException
 
-    def _make_new_partition(self, timestamp):
+    def make_new_partition(self, timestamp):
         new_dir_list = FileUtil.parse_timestamp_to_dir(timestamp=timestamp).split('/')
         new_dir = '/'.join(new_dir_list[:self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]])
         child_node = OrderedNodeBase(
@@ -215,7 +215,7 @@ class PartitionerBase(StorageBase):
 
         self._writer_status = Status.RUNNING
         if to_make_partition:
-            self._make_new_partition(timestamp=TimezoneUtil.cur_time_in_pst())
+            self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_pst())
 
         self.initialize_from_dir(dir_name=self._file_tree.get_root_name())
 
