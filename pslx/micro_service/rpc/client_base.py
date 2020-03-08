@@ -16,7 +16,7 @@ class ClientBase(Base):
         super().__init__()
         self._client_name = client_name
         self._logger = DummyUtil.dummy_logging()
-        self._server_url = server_url
+        self._server_url = server_url.replace('http://', '').replace('https://', '')
         self._channel = None
 
     def get_client_name(self):

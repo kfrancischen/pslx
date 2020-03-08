@@ -28,6 +28,7 @@ class GenericServer(Base):
         return self._url
 
     def create_server(self, max_worker, server_url):
+        server_url = server_url.replace('http://', '').replace('https://', '')
         self.sys_log("Create server with num of workers = " + str(max_worker) + " and url = " + server_url + '.')
         self._logger.write_log("Create server with num of workers = " + str(max_worker) + " and url = " +
                                server_url + '.')

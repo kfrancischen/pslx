@@ -155,7 +155,7 @@ class FileUtil(object):
             pre_path = os.path.join(root_dir, ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.PROD))
         else:
             pre_path = os.path.join(root_dir, ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.TEST))
-        if ttl < 0:
+        if isinstance(ttl, int) and ttl < 0:
             return os.path.join(pre_path, base_name)
         else:
             return os.path.join(pre_path, 'ttl=' + str(ttl), base_name)
@@ -166,7 +166,7 @@ class FileUtil(object):
 
     @classmethod
     def join_paths_to_file(cls, root_dir, base_name, ttl=-1):
-        if ttl < 0:
+        if isinstance(ttl, int) and ttl < 0:
             return os.path.join(root_dir, base_name)
         else:
             return os.path.join(root_dir, 'ttl=' + str(ttl), base_name)
