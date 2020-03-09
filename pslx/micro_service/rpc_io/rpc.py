@@ -28,7 +28,7 @@ class RPCIO(RPCBase):
     def __init__(self, request_storage):
         super().__init__(service_name=self.get_class_name(), request_storage=request_storage)
         self._lru_cache_tool = LRUCacheTool(
-            max_capacity=os.getenv('PSLX_INTERNAL_CAPACITY', 100)
+            max_capacity=os.getenv('PSLX_INTERNAL_CACHE', 100)
         )
 
     def send_request_impl(self, request):

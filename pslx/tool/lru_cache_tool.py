@@ -31,11 +31,11 @@ class LRUCacheTool(Base):
             self._key_value_store.pop(tail_node.get_node_name(), None)
 
         self._linked_list.delete_by_node(node=self._key_value_store.pop(key, None))
-        if isinstance(key, str):
-            new_node = OrderedNodeBase(node_name=key)
-        else:
-            assert isinstance(key, tuple)
+        if isinstance(key, tuple):
             new_node = OrderedNodeBase(node_name='_'.join([str(val) for val in key]))
+
+        else:
+            new_node = OrderedNodeBase(node_name=str(key))
         new_node.set_content(content=value)
         self._key_value_store[key] = new_node
         self._linked_list.add_to_head(node=new_node)
