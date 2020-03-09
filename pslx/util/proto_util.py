@@ -106,3 +106,7 @@ class ProtoUtil(object):
             except AttributeError as _:
                 pass
         raise ProtobufMessageTypeNotExistException
+
+    @classmethod
+    def infer_str_from_message_type(cls, message_type):
+        return message_type.__name__

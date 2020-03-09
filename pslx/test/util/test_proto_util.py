@@ -51,3 +51,7 @@ class ProtoUtilTest(unittest.TestCase):
     def test_infer_message_type_from_str(self):
         message_type_str = 'NodeSnapshot'
         self.assertEqual(ProtoUtil.infer_message_type_from_str(message_type_str=message_type_str), NodeSnapshot)
+
+    def test_infer_str_from_message_type(self):
+        message_type = NodeSnapshot
+        self.assertEqual(ProtoUtil.infer_str_from_message_type(message_type=message_type), 'NodeSnapshot')

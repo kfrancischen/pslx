@@ -41,7 +41,7 @@ class ClientBase(Base):
                 else:
                     return ProtoUtil.any_to_message(
                         message_type=self.RESPONSE_MESSAGE_TYPE,
-                        any_message=response.request_data
+                        any_message=response.response_data
                     )
         except Exception as err:
             self._logger.write_log(self.get_client_name() + " send request with error " + str(err) + '.')

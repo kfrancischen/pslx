@@ -7,9 +7,9 @@ from pslx.storage.partitioner_storage import YearlyPartitionerStorage, MonthlyPa
 
 class PartitionerStorageTest(unittest.TestCase):
     YEARLY_PATITIONER_TEST_DATA = "pslx/test/storage/test_data/yearly_partitioner_1/"
-    YEARLY_PATITIONER_TEST_DATA_2= "pslx/test/storage/test_data/yearly_partitioner_2/"
+    YEARLY_PATITIONER_TEST_DATA_2 = "pslx/test/storage/test_data/yearly_partitioner_2/"
     MONTHLY_PATITIONER_TEST_DATA = "pslx/test/storage/test_data/monthly_partitioner_1/"
-    MONTHLY_PATITIONER_TEST_DATA_2= "pslx/test/storage/test_data/monthly_partitioner_2/"
+    MONTHLY_PATITIONER_TEST_DATA_2 = "pslx/test/storage/test_data/monthly_partitioner_2/"
 
     def test_initialize_from_dir(self):
         partitioner = YearlyPartitionerStorage()
