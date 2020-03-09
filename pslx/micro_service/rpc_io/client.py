@@ -12,6 +12,8 @@ class RPCIOClient(ClientBase):
         'fixed_size',
         'force_load',
         'num_line',
+        'start_time',
+        'end_time'
     ]
 
     def __init__(self, server_url):
@@ -81,7 +83,7 @@ class ProtoTableStorageRPC(RPCIOClient):
 class PartitionerStorageRPC(RPCIOClient):
 
     def read(self, file_or_dir_path, params=None, is_test=False):
-        assert 'PartitionerStorageType' in params
+        assert 'PartitionerStorageType' in params and 'start_time' not in params and 'end_time' not in params
 
         request = RPCIORequest()
         request.is_test = is_test
@@ -102,3 +104,28 @@ class PartitionerStorageRPC(RPCIOClient):
             return list(response.list_data.data)
         else:
             return []
+
+    def read_range(self, file_or_dir_path, params=None, is_test=False):
+        assert 'PartitionerStorageType' in params and 'start_time' in params and 'end_time' in params
+
+        request = RPCIORequest()
+        request.is_test = is_test
+        request.type = StorageType.PARTITIONER_STORAGE
+        request.dir_name = file_or_dir_path
+
+        for key, val in params.items():
+            if isinstance(val, str) or key in self.WHITELISTED_KEY:
+                request.params[key] = str(val)
+
+        request.params['PartitionerStorageType'] = ProtoUtil.get_name_by_value(
+            enum_type=PartitionerStorageType,
+            value=params['PartitionerStorageType']
+        )
+
+        response = self.send_request(request=request)
+        result = {}
+        if response:
+            for key, val in response.dict_data.items():
+                result[key] = list(val.data)
+
+        return result

@@ -10,6 +10,7 @@ import pslx.storage.partitioner_storage as partitioner
 from pslx.tool.logging_tool import LoggingTool
 from pslx.tool.lru_cache_tool import LRUCacheTool
 from pslx.util.proto_util import ProtoUtil
+from pslx.util.timezone_util import TimezoneUtil
 
 
 class RPCIO(RPCBase):
@@ -149,12 +150,30 @@ class RPCIO(RPCBase):
 
         self._logger.write_log('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
         read_params.pop('PartitionerStorageType', None)
-        data = storage.read(params=read_params)
+
         response = RPCIOResponse()
-        rpc_list_data = RPCIOResponse.RPCListData()
-        for item in data:
-            rpc_list_data.data.append(item)
-        response.list_data.CopyFrom(rpc_list_data)
+        if 'start_time' not in read_params:
+            data = storage.read(params=read_params)
+            rpc_list_data = RPCIOResponse.RPCListData()
+            for item in data:
+                rpc_list_data.data.append(item)
+            response.list_data.CopyFrom(rpc_list_data)
+        else:
+            if 'start_time' in read_params:
+                read_params['start_time'] = TimezoneUtil.cur_time_from_str(
+                    time_str=read_params['start_time']
+                )
+            if 'end_time' in read_params:
+                read_params['end_time'] = TimezoneUtil.cur_time_from_str(
+                    time_str=read_params['end_time']
+                )
+            data = storage.read_range(params=read_params)
+            for key, vals in data.items():
+                rpc_list_data = RPCIOResponse.RPCListData()
+                for val in vals:
+                    rpc_list_data.data.append(val)
+                response.dict_data[key].CopyFrom(rpc_list_data)
+
         return response
 
     def send_request_impl(self, request):

@@ -68,4 +68,14 @@ class TimezoneUtil(object):
 
     @classmethod
     def cur_time_from_str(cls, time_str):
-        return datetime.datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S.%f%z")
+        string_formats = [
+            "%Y-%m-%d %H:%M:%S.%f%z",
+            "%Y-%m-%d %H:%M:%S.%f",
+            "%Y-%m-%d %H:%M:%S"
+        ]
+        for str_format in string_formats:
+            try:
+                return datetime.datetime.strptime(time_str, str_format)
+            except Exception as _:
+                pass
+        return None

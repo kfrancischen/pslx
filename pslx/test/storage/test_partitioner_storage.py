@@ -1,3 +1,4 @@
+import datetime
 from shutil import copytree, rmtree
 import unittest
 from pslx.schema.enums_pb2 import WriteRuleType
@@ -8,6 +9,7 @@ from pslx.storage.partitioner_storage import YearlyPartitionerStorage, MonthlyPa
 class PartitionerStorageTest(unittest.TestCase):
     YEARLY_PATITIONER_TEST_DATA = "pslx/test/storage/test_data/yearly_partitioner_1/"
     YEARLY_PATITIONER_TEST_DATA_2 = "pslx/test/storage/test_data/yearly_partitioner_2/"
+    YEARLY_PATITIONER_TEST_DATA_3 = "pslx/test/storage/test_data/yearly_partitioner_3/"
     MONTHLY_PATITIONER_TEST_DATA = "pslx/test/storage/test_data/monthly_partitioner_1/"
     MONTHLY_PATITIONER_TEST_DATA_2 = "pslx/test/storage/test_data/monthly_partitioner_2/"
 
@@ -29,6 +31,18 @@ class PartitionerStorageTest(unittest.TestCase):
             }
         )
         self.assertListEqual(data, ['1,2,3', '2,3,4'])
+
+    def test_read_range(self):
+        partitioner = YearlyPartitionerStorage()
+        partitioner.initialize_from_dir(dir_name=self.YEARLY_PATITIONER_TEST_DATA_3)
+        start_time = datetime.datetime(2019, 1, 5)
+        end_time = datetime.datetime(2020, 1, 5)
+        data = partitioner.read_range(params={
+            'start_time': start_time,
+            'end_time': end_time,
+        })
+        self.assertDictEqual(data, {self.YEARLY_PATITIONER_TEST_DATA_3 + '2019/data': ['1,2,3', '2,3,4'],
+                                    self.YEARLY_PATITIONER_TEST_DATA_3 + '2020/data': ['1,2,3', '2,3,4']})
 
     def test_write_1(self):
         partitioner = YearlyPartitionerStorage()

@@ -1,3 +1,4 @@
+import datetime
 from pslx.micro_service.rpc_io.client import DefaultStorageRPC, FixedSizeStorageRPC, ProtoTableStorageRPC,\
     PartitionerStorageRPC
 from pslx.schema.enums_pb2 import PartitionerStorageType
@@ -39,5 +40,16 @@ if __name__ == "__main__":
         file_or_dir_path=dir_name,
         params={
             'PartitionerStorageType': PartitionerStorageType.YEARLY,
+        }
+    ))
+
+    dir_name = "pslx/test/storage/test_data/yearly_partitioner_3/"
+    example_client = PartitionerStorageRPC(server_url=server_url)
+    print(example_client.read_range(
+        file_or_dir_path=dir_name,
+        params={
+            'PartitionerStorageType': PartitionerStorageType.YEARLY,
+            'start_time': datetime.datetime(2019, 1, 5),
+            'end_time': datetime.datetime(2020, 1, 5),
         }
     ))
