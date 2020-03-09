@@ -60,3 +60,8 @@ message RPCIORequest {
     }
     map<string, string> params = 5;
 }
+
+// the next will be 2
+message RPCIOResponse {
+    repeated string data = 1;
+}

@@ -24,7 +24,7 @@ class OperatorBase(OrderedNodeBase):
         }
         self._start_time = None
         self._end_time = None
-        self._data = None
+        self._persistent = False
 
     def set_data_model(self, model):
         self.sys_log("Switching to " + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=model) +
@@ -51,14 +51,17 @@ class OperatorBase(OrderedNodeBase):
     def mark_as_done(self):
         self.set_status(status=Status.SUCCEEDED)
 
+    def mark_as_persistent(self):
+        self._persistent = True
+
     def is_done(self):
         return self.STATUS == Status.SUCCEEDED
 
-    def get_data_from_dependency(self, dependency_name):
+    def get_content_from_dependency(self, dependency_name):
         if not self.get_parent(parent_name=dependency_name):
             return None
         else:
-            return self.get_parent(parent_name=dependency_name).get_data()
+            return self.get_parent(parent_name=dependency_name).get_content()
 
     @classmethod
     def get_status_from_snapshot(cls, snapshot_file):
@@ -71,9 +74,6 @@ class OperatorBase(OrderedNodeBase):
             return snapshot.status
         except FileNotExistException as _:
             return Status.IDLE
-
-    def get_data(self):
-        return self._data
 
     def wait_for_upstream_status(self):
         if self.DATA_MODEL != DataModelType.DEFAULT:
@@ -116,6 +116,8 @@ class OperatorBase(OrderedNodeBase):
             snapshot.start_time = str(self._start_time)
         if self._end_time:
             snapshot.end_time = str(self._end_time)
+        if self._persistent:
+            snapshot.content.CopyFrom(ProtoUtil.message_to_any(message=self._content))
         if output_file and self._config['save_snapshot'] and 'Dummy' not in self.get_class_name():
             self.sys_log("Saved to file " + output_file + '.')
             with FileLockTool(output_file, read_mode=False):

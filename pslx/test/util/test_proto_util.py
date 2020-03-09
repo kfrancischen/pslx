@@ -31,3 +31,23 @@ class ProtoUtilTest(unittest.TestCase):
 
         any_message = ProtoUtil.message_to_any(message=node_snapshot)
         self.assertEqual(ProtoUtil.any_to_message(message_type=NodeSnapshot, any_message=any_message), node_snapshot)
+
+    def test_get_name_by_value_and_enum_name(self):
+        enum_type_str = 'ModeType'
+        value = ModeType.TEST
+        self.assertEqual(ProtoUtil.get_name_by_value_and_enum_name(
+            enum_type_str=enum_type_str,
+            value=value
+        ), 'TEST')
+
+    def test_get_value_by_name_and_enum_name(self):
+        enum_type_str = 'ModeType'
+        name = 'TEST'
+        self.assertEqual(ProtoUtil.get_value_by_name_and_enum_name(
+            enum_type_str=enum_type_str,
+            name=name
+        ), ModeType.TEST)
+
+    def test_infer_message_type_from_str(self):
+        message_type_str = 'NodeSnapshot'
+        self.assertEqual(ProtoUtil.infer_message_type_from_str(message_type_str=message_type_str), NodeSnapshot)

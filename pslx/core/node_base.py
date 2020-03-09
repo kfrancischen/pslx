@@ -14,6 +14,13 @@ class NodeBase(Base):
         self._node_name = node_name
         self._children = self.CHILDREN_DATA_STRUCT()
         self._parents = self.PARENTS_DATA_STRUCT()
+        self._content = None
+
+    def set_content(self, content):
+        self._content = content
+
+    def get_content(self):
+        return self._content
 
     @classmethod
     def is_children_ordered(cls):

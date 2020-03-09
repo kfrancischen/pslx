@@ -75,6 +75,9 @@ class DefaultStorage(StorageBase):
                 lines = infile.readlines()
                 if 'read_rule_type' in self._config and self._config['read_rule_type'] == ReadRuleType.READ_FROM_END:
                     lines = lines[::-1]
+                if params['num_line'] < 0:
+                    self._reader_status = Status.IDLE
+                    return [line.strip() for line in lines]
 
                 new_line_number = self._last_read_line + params['num_line']
                 if new_line_number > len(lines):

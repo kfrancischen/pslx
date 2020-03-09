@@ -17,6 +17,14 @@ class ProtobufValueNotExistException(ProtobufException):
     pass
 
 
+class ProtobufEnumTypeNotExistException(ProtobufException):
+    pass
+
+
+class ProtobufMessageTypeNotExistException(ProtobufException):
+    pass
+
+
 class OperatorFailureException(ExceptionBase):
     pass
 
