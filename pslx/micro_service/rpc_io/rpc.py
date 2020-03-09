@@ -60,8 +60,10 @@ class RPCIO(RPCBase):
 
         response = RPCIOResponse()
         data = storage.read(params=read_params)
+        rpc_list_data = RPCIOResponse.RPCListData()
         for item in data:
-            response.data.append(item)
+            rpc_list_data.data.append(item)
+        response.list_data.CopyFrom(rpc_list_data)
         return response
 
     def _fixed_size_storage_impl(self, request):
@@ -94,8 +96,10 @@ class RPCIO(RPCBase):
         read_params.pop('fixed_size', None)
         response = RPCIOResponse()
         data = storage.read(params=read_params)
+        rpc_list_data = RPCIOResponse.RPCListData()
         for item in data:
-            response.data.append(item)
+            rpc_list_data.data.append(item)
+        response.list_data.CopyFrom(rpc_list_data)
         return response
 
     def _proto_table_storage_impl(self, request):
@@ -144,12 +148,13 @@ class RPCIO(RPCBase):
             self.sys_log("Found key in LRU cache.")
 
         self._logger.write_log('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
-        data = storage.read(params=read_params)
-
         read_params.pop('PartitionerStorageType', None)
+        data = storage.read(params=read_params)
         response = RPCIOResponse()
+        rpc_list_data = RPCIOResponse.RPCListData()
         for item in data:
-            response.data.append(item)
+            rpc_list_data.data.append(item)
+        response.list_data.CopyFrom(rpc_list_data)
         return response
 
     def send_request_impl(self, request):

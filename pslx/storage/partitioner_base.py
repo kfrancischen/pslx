@@ -1,3 +1,4 @@
+import datetime
 import time
 
 from pslx.core.exception import StorageReadException, StorageWriteException
@@ -170,6 +171,52 @@ class PartitionerBase(StorageBase):
             self.sys_log(str(err))
             self._logger.write_log(str(err))
             raise StorageReadException
+
+    def read_range(self, params):
+        assert 'start_time' in params and 'end_time' in params and params['start_time'] <= params['end_time']
+        assert self._underlying_storage.get_storage_type() == StorageType.DEFAULT_STORAGE
+        while self._writer_status != Status.IDLE:
+            self.sys_log("Waiting for writer to finish.")
+            time.sleep(TimeSleepObj.ONE_SECOND)
+
+        self._reader_status = Status.RUNNING
+        self.initialize_from_dir(dir_name=self._file_tree.get_root_name())
+        if self.is_empty():
+            self.sys_log("Current partitioner is empty, cannot read anything.")
+            return []
+
+        oldest_dir, latest_dir = self.get_oldest_dir(), self.get_latest_dir()
+        oldest_timestamp = FileUtil.parse_dir_to_timestamp(dir_name=oldest_dir)
+        latest_timestamp = FileUtil.parse_dir_to_timestamp(dir_name=latest_dir)
+        start_time = max(params['start_time'], oldest_timestamp)
+        end_time = min(params['end_time'], latest_timestamp)
+        result = {}
+        while start_time <= end_time:
+            dir_list = FileUtil.parse_timestamp_to_dir(timestamp=start_time).split('/')
+            dir_name = '/'.join(dir_list[:self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]])
+            if FileUtil.does_dir_exist(dir_name=dir_name):
+                files = FileUtil.list_files_in_dir(dir_name=dir_name)
+                for file in files:
+                    storage = DefaultStorage()
+                    result[file] = storage.read(params={
+                        'num_line': -1
+                    })
+
+            if self.PARTITIONER_TYPE == PartitionerStorageType.YEARLY:
+                start_time = start_time.replace(year=start_time.year + 1, month=1, day=1)
+            elif self.PARTITIONER_TYPE == PartitionerStorageType.MONTHLY:
+                if start_time.month == 12:
+                    start_time = start_time.replace(year=start_time.year + 1, month=1, day=1)
+                else:
+                    start_time = start_time.replace(month=start_time.month + 1)
+            elif self.PARTITIONER_TYPE == PartitionerStorageType.DAILY:
+                start_time += datetime.timedelta(days=1)
+            elif self.PARTITIONER_TYPE == PartitionerStorageType.HOURLY:
+                start_time += datetime.timedelta(hours=1)
+            else:
+                start_time += datetime.timedelta(minutes=1)
+
+        return result
 
     def make_new_partition(self, timestamp):
         new_dir_list = FileUtil.parse_timestamp_to_dir(timestamp=timestamp).split('/')

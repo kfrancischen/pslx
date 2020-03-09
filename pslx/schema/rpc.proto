@@ -61,7 +61,11 @@ message RPCIORequest {
     map<string, string> params = 5;
 }
 
-// the next will be 2
+// the next will be 4
 message RPCIOResponse {
-    repeated string data = 1;
+    message RPCListData {
+        repeated string data = 1;
+    }
+    RPCListData list_data = 2;
+    map<string, RPCListData> dict_data = 3;
 }

@@ -32,7 +32,7 @@ class DefaultStorageRPC(RPCIOClient):
         request.params['num_line'] = '-1'
         response = self.send_request(request=request)
         if response:
-            return list(response.data)
+            return list(response.list_data.data)
         else:
             return []
 
@@ -51,7 +51,7 @@ class FixedSizeStorageRPC(RPCIOClient):
 
         response = self.send_request(request=request)
         if response:
-            return list(response.data)
+            return list(response.list_data.data)
         else:
             return []
 
@@ -99,6 +99,6 @@ class PartitionerStorageRPC(RPCIOClient):
 
         response = self.send_request(request=request)
         if response:
-            return list(response.data)
+            return list(response.list_data.data)
         else:
             return []
