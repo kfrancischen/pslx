@@ -36,6 +36,9 @@ class PartitionerBase(StorageBase):
         assert storage.STORAGE_TYPE != StorageType.PARTITIONER_STORAGE
         self._underlying_storage = storage
 
+    def set_max_size(self, max_size):
+        self._max_size = max_size
+
     def initialize_from_file(self, file_name):
         self.sys_log("Initialize_from_file function is not implemented for storage type "
                      + ProtoUtil.get_name_by_value(enum_type=StorageType, value=self.STORAGE_TYPE) + '.')
@@ -263,6 +266,7 @@ class PartitionerBase(StorageBase):
         else:
             self.sys_log(child_node.get_node_name() + " doesn't exist. Make new partition.")
             self._logger.write_log(child_node.get_node_name() + " doesn't exist. Make new partition.")
+            FileUtil.create_dir_if_not_exist(dir_name=child_node.get_node_name())
             parent_node = self._file_tree.find_node(node_name=self._file_tree.get_rightmost_leaf())
             self._file_tree.add_node(
                 parent_node=parent_node,

@@ -1,8 +1,10 @@
+import os
 from pslx.core.base import Base
 from pslx.schema.enums_pb2 import StorageType
 from pslx.schema.common_pb2 import EmptyMessage
 from pslx.schema.rpc_pb2 import GenericRPCResponse, GenericRPCRequestResponsePair
 from pslx.schema.rpc_pb2_grpc import GenericRPCServiceServicer
+from pslx.storage.proto_table_storage import ProtoTableStorage
 from pslx.util.dummy_util import DummyUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil
@@ -16,7 +18,10 @@ class RPCBase(GenericRPCServiceServicer, Base):
         self._logger = DummyUtil.dummy_logging()
         self._service_name = service_name
         if request_storage:
-            assert request_storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE
+            assert request_storage.get_storage_type() == StorageType.PARTITIONER_STORAGE
+            underlying_storage = ProtoTableStorage()
+            request_storage.set_underlying_storage(storage=underlying_storage)
+            request_storage.set_max_size(max_size=os.getenv('PSLX_INTERNAL_CACHE', 100))
         self._request_storage = request_storage
 
     def get_rpc_service_name(self):
@@ -35,18 +40,19 @@ class RPCBase(GenericRPCServiceServicer, Base):
         request.status = status
 
         if self._request_storage:
-            request_response_pair = GenericRPCRequestResponsePair
+            request_response_pair = GenericRPCRequestResponsePair()
             request_response_pair.uuid = request.uuid
             request_response_pair.generic_rpc_request.CopyFrom(request)
             request_response_pair.generic_rpc_response.CopyFrom(generic_response)
-            self.sys_log("Save to " + self._request_storage.get_file_name())
 
             self._request_storage.write(
                 data=[request.uuid, request_response_pair],
                 params={
                     'overwrite': True,
+                    'make_partition': True,
                 }
             )
+            self.sys_log("Save to " + self._request_storage.get_latest_dir())
 
         return generic_response
 
