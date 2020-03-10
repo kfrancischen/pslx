@@ -97,8 +97,12 @@ class ProtoUtil(object):
         return proto_message
 
     @classmethod
-    def infer_message_type_from_str(cls, message_type_str):
-        for module_name in cls.MESSAGE_MODULE:
+    def infer_message_type_from_str(cls, message_type_str, modules=None):
+        if not modules:
+            modules = cls.MESSAGE_MODULE
+        elif not isinstance(modules, list):
+            modules = [modules]
+        for module_name in modules:
             try:
                 module = importlib.import_module(module_name)
                 message_type = getattr(module, message_type_str)
