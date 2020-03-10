@@ -12,8 +12,8 @@ from pslx.util.timezone_util import TimezoneUtil
 class InstantMessagingRPC(RPCBase):
     REQUEST_MESSAGE_TYPE = InstantMessagingRPCRequest
 
-    def __init__(self, request_storage):
-        super().__init__(service_name=self.get_class_name(), request_storage=request_storage)
+    def __init__(self, rpc_storage):
+        super().__init__(service_name=self.get_class_name(), rpc_storage=rpc_storage)
         self._type_to_sender_map = {
             InstantMessagingType.SLACK: self._send_by_slack,
             InstantMessagingType.ROCKETCHAT: self._send_by_rocketchat,

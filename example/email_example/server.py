@@ -6,7 +6,7 @@ from pslx.util.common_util import CommonUtil
 
 if __name__ == "__main__":
     server_url = "localhost:11443"
-    example_rpc = EmailRPC(request_storage=None)
+    example_rpc = EmailRPC(rpc_storage=None)
     credentials = CommonUtil.make_email_credentials(
         email_addr='alphahunter2019@gmail.com',
         password=os.getenv('PSLX_EMAIL_PWD', '')

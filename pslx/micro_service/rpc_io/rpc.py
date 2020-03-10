@@ -23,8 +23,8 @@ class RPCIO(RPCBase):
         PartitionerStorageType.MINUTELY: partitioner.MinutelyPartitionerStorage,
     }
 
-    def __init__(self, request_storage):
-        super().__init__(service_name=self.get_class_name(), request_storage=request_storage)
+    def __init__(self, rpc_storage):
+        super().__init__(service_name=self.get_class_name(), rpc_storage=rpc_storage)
         self._lru_cache_tool = LRUCacheTool(
             max_capacity=os.getenv('PSLX_INTERNAL_CACHE', 100)
         )

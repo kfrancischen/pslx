@@ -99,6 +99,12 @@ class PartitionerBase(StorageBase):
     def set_config(self, config):
         self._underlying_storage.set_config(config=config)
 
+    def get_dir_name(self):
+        if self._file_tree:
+            return self._file_tree.get_root_name()
+        else:
+            return None
+
     def get_size(self):
         if not self._file_tree:
             return 0

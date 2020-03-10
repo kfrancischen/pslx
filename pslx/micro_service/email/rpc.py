@@ -10,8 +10,8 @@ from pslx.tool.logging_tool import LoggingTool
 class EmailRPC(RPCBase):
     REQUEST_MESSAGE_TYPE = EmailPRCRequest
 
-    def __init__(self, request_storage):
-        super().__init__(service_name=self.get_class_name(), request_storage=request_storage)
+    def __init__(self, rpc_storage):
+        super().__init__(service_name=self.get_class_name(), rpc_storage=rpc_storage)
 
         self._logger = LoggingTool(
             name=self.get_rpc_service_name(),

@@ -13,22 +13,24 @@ from pslx.util.timezone_util import TimezoneUtil
 class RPCBase(GenericRPCServiceServicer, Base):
     REQUEST_MESSAGE_TYPE = None
 
-    def __init__(self, service_name, request_storage=None):
+    def __init__(self, service_name, rpc_storage=None):
         Base.__init__(self)
         self._logger = DummyUtil.dummy_logging()
         self._service_name = service_name
-        if request_storage:
-            assert request_storage.get_storage_type() == StorageType.PARTITIONER_STORAGE
+        if rpc_storage:
+            assert rpc_storage.get_storage_type() == StorageType.PARTITIONER_STORAGE
+            if 'ttl' not in rpc_storage.get_dir_name():
+                self.sys_log("Warning. Please ttl the request log table.")
             underlying_storage = ProtoTableStorage()
-            request_storage.set_underlying_storage(storage=underlying_storage)
-            request_storage.set_max_size(max_size=os.getenv('PSLX_INTERNAL_CACHE', 100))
-        self._request_storage = request_storage
+            rpc_storage.set_underlying_storage(storage=underlying_storage)
+            rpc_storage.set_max_size(max_size=os.getenv('PSLX_INTERNAL_CACHE', 100))
+        self._rpc_storage = rpc_storage
 
     def get_rpc_service_name(self):
         return self._service_name
 
     def get_storage(self):
-        return self._request_storage
+        return self._rpc_storage
 
     def SendRequest(self, request, context):
         self.sys_log("Get request with uuid " + request.uuid)
@@ -38,21 +40,25 @@ class RPCBase(GenericRPCServiceServicer, Base):
         generic_response.request_uuid = request.uuid
         generic_response.status = status
         request.status = status
+        generic_response.message_type = request.message_type
+        request.message_type = ProtoUtil.infer_str_from_message_type(
+            message_type=self.REQUEST_MESSAGE_TYPE
+        )
 
-        if self._request_storage:
+        if self._rpc_storage:
             request_response_pair = GenericRPCRequestResponsePair()
             request_response_pair.uuid = request.uuid
             request_response_pair.generic_rpc_request.CopyFrom(request)
             request_response_pair.generic_rpc_response.CopyFrom(generic_response)
 
-            self._request_storage.write(
+            self._rpc_storage.write(
                 data=[request.uuid, request_response_pair],
                 params={
                     'overwrite': True,
                     'make_partition': True,
                 }
             )
-            self.sys_log("Save to " + self._request_storage.get_latest_dir())
+            self.sys_log("Save to " + self._rpc_storage.get_latest_dir())
 
         return generic_response
 

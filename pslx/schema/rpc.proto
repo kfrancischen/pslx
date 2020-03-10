@@ -10,20 +10,22 @@ service GenericRPCService {
     rpc SendRequest (GenericRPCRequest)  returns (GenericRPCResponse) {}
 }
 
-// the next will be 5
+// the next will be 6
 message GenericRPCRequest {
     string timestamp = 1;
     string uuid = 2;
     google.protobuf.Any request_data = 3;
-    Status status = 4;
+    string message_type = 4;
+    Status status = 5;
 }
 
-// the next will be 5
+// the next will be 6
 message GenericRPCResponse {
     string timestamp = 1;
     string request_uuid = 2;
     google.protobuf.Any response_data = 3;
-    Status status = 4;
+    string message_type = 4;
+    Status status = 5;
 }
 
 // the next will be 4

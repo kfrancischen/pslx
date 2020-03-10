@@ -34,6 +34,10 @@ class ClientBase(Base):
         generic_request.request_data.CopyFrom(ProtoUtil.message_to_any(message=request))
         generic_request.timestamp = str(TimezoneUtil.cur_time_in_pst())
         generic_request.uuid = str(uuid.uuid4())
+        if self.RESPONSE_MESSAGE_TYPE:
+            generic_request.message_type = ProtoUtil.infer_str_from_message_type(
+                    message_type=self.RESPONSE_MESSAGE_TYPE
+                )
         self.sys_log("Getting request of uuid " + generic_request.uuid + '.')
         try:
             with grpc.insecure_channel(self._server_url) as channel:
