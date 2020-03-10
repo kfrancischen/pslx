@@ -83,7 +83,7 @@ class InstantMessagingRPC(RPCBase):
                     headers=headers
                 )
             except Exception as err:
-                self._logger.write_log("Rocketchat failed to send message with err " + str(err))
+                self._logger.write_log("Teams failed to send message with err " + str(err))
                 status = Status.FAILED
 
         return None, status

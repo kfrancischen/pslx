@@ -25,6 +25,10 @@ class ClientBase(Base):
     def get_server_url(self):
         return self._server_url
 
+    @classmethod
+    def get_response_type(cls):
+        return cls.RESPONSE_MESSAGE_TYPE
+
     def send_request(self, request):
         generic_request = GenericRPCRequest()
         generic_request.request_data.CopyFrom(ProtoUtil.message_to_any(message=request))

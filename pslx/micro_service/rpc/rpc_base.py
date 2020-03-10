@@ -51,6 +51,10 @@ class RPCBase(GenericRPCServiceServicer, Base):
         return generic_response
 
     @classmethod
+    def get_request_message_type(cls):
+        return cls.REQUEST_MESSAGE_TYPE
+
+    @classmethod
     def request_decomposer(cls, request):
         assert cls.REQUEST_MESSAGE_TYPE is not None
         return ProtoUtil.any_to_message(

@@ -19,17 +19,21 @@ class RPCIOClient(ClientBase):
     def __init__(self, server_url):
         super().__init__(client_name=self.get_class_name(), server_url=server_url)
 
+    def get_storage_type(self):
+        return self.STORAGE_TYPE
+
     def read(self, file_or_dir_path, params=None, is_test=False):
         raise NotImplementedError
 
 
 class DefaultStorageRPC(RPCIOClient):
+    STORAGE_TYPE = StorageType.DEFAULT_STORAGE
 
     def read(self, file_or_dir_path, params=None, is_test=False):
         self.sys_log("Only support reading the whole file in RPC IO for DEFAULT_STORAGE type.")
         request = RPCIORequest()
         request.is_test = is_test
-        request.type = StorageType.DEFAULT_STORAGE
+        request.type = self.STORAGE_TYPE
         request.file_name = file_or_dir_path
         request.params['num_line'] = '-1'
         response = self.send_request(request=request)
@@ -40,11 +44,12 @@ class DefaultStorageRPC(RPCIOClient):
 
 
 class FixedSizeStorageRPC(RPCIOClient):
+    STORAGE_TYPE = StorageType.FIXED_SIZE_STORAGE
 
     def read(self, file_or_dir_path, params=None, is_test=False):
         request = RPCIORequest()
         request.is_test = is_test
-        request.type = StorageType.FIXED_SIZE_STORAGE
+        request.type = self.STORAGE_TYPE
         request.file_name = file_or_dir_path
 
         for key, val in params.items():
@@ -59,12 +64,13 @@ class FixedSizeStorageRPC(RPCIOClient):
 
 
 class ProtoTableStorageRPC(RPCIOClient):
+    STORAGE_TYPE = StorageType.PROTO_TABLE_STORAGE
 
     def read(self, file_or_dir_path, params=None, is_test=False):
         assert 'message_type' in params
         request = RPCIORequest()
         request.is_test = is_test
-        request.type = StorageType.PROTO_TABLE_STORAGE
+        request.type = self.STORAGE_TYPE
         request.file_name = file_or_dir_path
         self.RESPONSE_MESSAGE_TYPE = params['message_type']
 
@@ -81,13 +87,14 @@ class ProtoTableStorageRPC(RPCIOClient):
 
 
 class PartitionerStorageRPC(RPCIOClient):
+    STORAGE_TYPE = StorageType.PARTITIONER_STORAGE
 
     def read(self, file_or_dir_path, params=None, is_test=False):
         assert 'PartitionerStorageType' in params and 'start_time' not in params and 'end_time' not in params
 
         request = RPCIORequest()
         request.is_test = is_test
-        request.type = StorageType.PARTITIONER_STORAGE
+        request.type = self.STORAGE_TYPE
         request.dir_name = file_or_dir_path
 
         for key, val in params.items():
