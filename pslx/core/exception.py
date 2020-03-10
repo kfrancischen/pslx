@@ -88,5 +88,6 @@ class RPCServerNotInitializedException(ExceptionBase):
 class QueueAlreadyExistException(ExceptionBase):
     pass
 
+
 class QueueConsumerNotInitializedException(ExceptionBase):
     pass
