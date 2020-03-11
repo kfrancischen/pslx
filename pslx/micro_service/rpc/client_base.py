@@ -29,7 +29,7 @@ class ClientBase(Base):
     def get_response_type(cls):
         return cls.RESPONSE_MESSAGE_TYPE
 
-    def send_request(self, request):
+    def send_request(self, request, root_certificate=None):
         generic_request = GenericRPCRequest()
         generic_request.request_data.CopyFrom(ProtoUtil.message_to_any(message=request))
         generic_request.timestamp = str(TimezoneUtil.cur_time_in_pst())
@@ -40,17 +40,27 @@ class ClientBase(Base):
                 )
         self.sys_log("Getting request of uuid " + generic_request.uuid + '.')
         try:
-            with grpc.insecure_channel(self._server_url) as channel:
-                self._logger.write_log("Channel created with url " + self._server_url)
-                stub = GenericRPCServiceStub(channel=channel)
-                response = stub.SendRequest(request=generic_request)
-                if not self.RESPONSE_MESSAGE_TYPE:
-                    return None
-                else:
-                    return ProtoUtil.any_to_message(
-                        message_type=self.RESPONSE_MESSAGE_TYPE,
-                        any_message=response.response_data
-                    )
+            if not root_certificate:
+                self._logger.write_log("Start with insecure channel.")
+                with grpc.insecure_channel(self._server_url) as channel:
+                    self._logger.write_log("Channel created with url " + self._server_url)
+                    stub = GenericRPCServiceStub(channel=channel)
+                    response = stub.SendRequest(request=generic_request)
+            else:
+                self._logger.write_log("Start with secure channel.")
+                channel_credential = grpc.ssl_channel_credentials(root_certificate)
+                with grpc.secure_channel(self._server_url, channel_credential) as channel:
+                    self._logger.write_log("Channel created with url " + self._server_url)
+                    stub = GenericRPCServiceStub(channel=channel)
+                    response = stub.SendRequest(request=generic_request)
+
+            if not self.RESPONSE_MESSAGE_TYPE:
+                return None
+            else:
+                return ProtoUtil.any_to_message(
+                    message_type=self.RESPONSE_MESSAGE_TYPE,
+                    any_message=response.response_data
+                )
         except Exception as err:
             self._logger.write_log(self.get_client_name() + " send request with error " + str(err) + '.')
             self.sys_log(self.get_client_name() + " send request with error " + str(err) + '.')
