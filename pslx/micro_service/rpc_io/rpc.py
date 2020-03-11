@@ -107,7 +107,8 @@ class RPCIO(RPCBase):
         self._logger.write_log("Getting request of proto table storage read.")
         read_params = dict(request.params)
         read_params['message_type'] = ProtoUtil.infer_message_type_from_str(
-            message_type_str=read_params['message_type']
+            message_type_str=read_params['message_type'],
+            modules=read_params['proto_module']
         )
 
         lru_key = (request.type, request.file_name)
@@ -123,6 +124,7 @@ class RPCIO(RPCBase):
         else:
             self.sys_log("Found key in LRU cache.")
         self._logger.write_log('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
+        read_params.pop('proto_module', None)
         return storage.read(params=read_params)
 
     def _partitioner_storage_impl(self, request):

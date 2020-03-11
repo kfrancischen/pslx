@@ -67,7 +67,7 @@ class ProtoTableStorageRPC(RPCIOClient):
     STORAGE_TYPE = StorageType.PROTO_TABLE_STORAGE
 
     def read(self, file_or_dir_path, params=None, is_test=False):
-        assert 'message_type' in params
+        assert 'message_type' in params and 'proto_module' in params
         request = RPCIORequest()
         request.is_test = is_test
         request.type = self.STORAGE_TYPE

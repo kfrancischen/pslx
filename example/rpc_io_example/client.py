@@ -31,6 +31,7 @@ if __name__ == "__main__":
         params={
             'key': 'test',
             'message_type': NodeSnapshot,
+            'proto_module': 'pslx.schema.snapshots_pb2',
         }
     ))
 

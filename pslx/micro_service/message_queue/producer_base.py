@@ -2,7 +2,7 @@ import datetime
 import pika
 import uuid
 from pslx.core.base import Base
-from pslx.schema.rpc_pb2 import GenericRPCRequest
+from pslx.schema.rpc_pb2 import GenericRPCRequest, GenericRPCResponse
 from pslx.util.dummy_util import DummyUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil, TimeSleepObj
@@ -31,7 +31,10 @@ class ProducerBase(Base):
 
     def on_response(self, ch, method, props, body):
         if self._corr_id == props.correlation_id:
-            self._response = body
+            self._response = ProtoUtil.json_to_message(
+                message_type=GenericRPCResponse,
+                json_str=body
+            )
 
     def get_queue_name(self):
         return self._queue_name
@@ -51,6 +54,9 @@ class ProducerBase(Base):
                 )
         self.sys_log("Getting request of uuid " + generic_request.uuid + '.')
         try:
+            generic_request_str = ProtoUtil.message_to_json(
+                proto_message=generic_request
+            )
             self._channel.basic_publish(
                 exchange=self._exchange,
                 routing_key=self._queue_name,
@@ -59,7 +65,7 @@ class ProducerBase(Base):
                     correlation_id=self._corr_id,
                     delivery_mode=2
                 ),
-                body=request)
+                body=generic_request_str)
             wait_start_time = TimezoneUtil.cur_time_in_pst()
             while not self._response:
                 self._connection.process_data_events(time_limit=TimeSleepObj.ONE_MINUTE * 3)

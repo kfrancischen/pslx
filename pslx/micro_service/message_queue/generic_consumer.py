@@ -4,7 +4,9 @@ import threading
 import time
 from pslx.core.base import Base
 from pslx.core.exception import QueueAlreadyExistException, QueueConsumerNotInitializedException
+from pslx.schema.rpc_pb2 import GenericRPCResponse, GenericRPCRequest
 from pslx.tool.logging_tool import LoggingTool
+from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimeSleepObj
 
 
@@ -14,7 +16,7 @@ class GenericQueueConsumer(Base):
         super().__init__()
         self._consumer_name = consumer_name
         self._logger = LoggingTool(
-            name=self.get_queue_name(),
+            name=consumer_name,
             ttl=os.getenv('PSLX_INTERNAL_TTL', 7)
         )
         self._connection_str = ''
@@ -59,13 +61,17 @@ class GenericQueueConsumer(Base):
 
     def _process_message(self, ch, method, props, body):
         try:
-            self._logger.write_log("Getting request with uuid " + body.uuid)
-            response = self._queue.send_request(request=body)
-
+            generic_request = ProtoUtil.json_to_message(
+                message_type=GenericRPCRequest,
+                json_str=body
+            )
+            self._logger.write_log("Getting request with uuid " + generic_request.uuid)
+            response = self._queue.send_request(request=generic_request)
+            response_str = ProtoUtil.message_to_json(proto_message=response)
             ch.basic_publish(exchange=self._exchange,
                              routing_key=props.reply_to,
                              properties=pika.BasicProperties(correlation_id=props.correlation_id),
-                             body=response)
+                             body=response_str)
         except Exception as err:
             self._logger.write_log("Error: " + str(err))
 
