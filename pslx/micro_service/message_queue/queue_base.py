@@ -13,5 +13,5 @@ class QueueBase(RPCBase):
     def send_request(self, request):
         return self.SendRequest(request=request, context=None)
 
-    def send_request_impl(self, request):
+    def get_response_and_status_impl(self, request):
         raise NotImplementedError

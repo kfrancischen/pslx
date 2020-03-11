@@ -178,7 +178,7 @@ class RPCIO(RPCBase):
 
         return response
 
-    def send_request_impl(self, request):
+    def get_response_and_status_impl(self, request):
         if request.is_test:
             return self.REQUEST_MESSAGE_TYPE(), Status.SUCCEEDED
 

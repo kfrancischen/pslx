@@ -12,7 +12,7 @@ from pslx.util.timezone_util import TimezoneUtil
 class SlackQueue(QueueBase):
     REQUEST_MESSAGE_TYPE = InstantMessagingRPCRequest
 
-    def send_request_impl(self, request):
+    def get_response_and_status_impl(self, request):
         header = {
             'Content-Type': "application/x-www-form-urlencoded",
             'Cache-Control': "no-cache",

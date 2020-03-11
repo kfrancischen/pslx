@@ -24,7 +24,7 @@ class InstantMessagingRPC(RPCBase):
             ttl=os.getenv('PSLX_INTERNAL_TTL', 7)
         )
 
-    def send_request_impl(self, request):
+    def get_response_and_status_impl(self, request):
         return self._type_to_sender_map[request.type](
             is_test=request.is_test,
             webhook_url=request.webhook_url,

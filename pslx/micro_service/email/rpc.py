@@ -41,7 +41,7 @@ class EmailRPC(RPCBase):
         self._credentials[credentials.user_name] = credentials
         self._login(credentials)
 
-    def send_request_impl(self, request):
+    def get_response_and_status_impl(self, request):
         if request.from_email not in self._credentials:
             self._logger.write_log("Email address is not logged in at all.")
             return None, Status.FAILED
