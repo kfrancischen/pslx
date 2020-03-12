@@ -1,13 +1,11 @@
 import os
 from pslx.core.base import Base
 from pslx.schema.enums_pb2 import StorageType
-from pslx.schema.common_pb2 import EmptyMessage
-from pslx.schema.rpc_pb2 import GenericRPCResponse, GenericRPCRequestResponsePair
+from pslx.schema.rpc_pb2 import GenericRPCRequestResponsePair
 from pslx.schema.rpc_pb2_grpc import GenericRPCServiceServicer
 from pslx.storage.proto_table_storage import ProtoTableStorage
 from pslx.util.dummy_util import DummyUtil
 from pslx.util.proto_util import ProtoUtil
-from pslx.util.timezone_util import TimezoneUtil
 
 
 class RPCBase(GenericRPCServiceServicer, Base):
@@ -35,8 +33,8 @@ class RPCBase(GenericRPCServiceServicer, Base):
     def SendRequest(self, request, context):
         self.sys_log("Get request with uuid " + request.uuid)
         decomposed_request = self.request_decomposer(request=request)
-        response, status = self.get_response_and_status_imp(request=decomposed_request)
-        generic_response = self.response_composer(response=response)
+        response, status = self.get_response_and_status_impl(request=decomposed_request)
+        generic_response = ProtoUtil.compose_generic_response(response=response)
         generic_response.request_uuid = request.uuid
         generic_response.status = status
         request.status = status
@@ -73,19 +71,6 @@ class RPCBase(GenericRPCServiceServicer, Base):
             message_type=cls.REQUEST_MESSAGE_TYPE,
             any_message=request.request_data
         )
-
-    @classmethod
-    def response_composer(cls, response):
-        generic_response = GenericRPCResponse()
-        if not response:
-            empty_message = EmptyMessage()
-            generic_response.response_data.CopyFrom(ProtoUtil.message_to_any(empty_message))
-            generic_response.timestamp = str(TimezoneUtil.cur_time_in_pst())
-        else:
-            generic_response.response_data.CopyFrom(ProtoUtil.message_to_any(response))
-        generic_response.timestamp = str(TimezoneUtil.cur_time_in_pst())
-
-        return generic_response
 
     def get_response_and_status_impl(self, request):
         raise NotImplementedError

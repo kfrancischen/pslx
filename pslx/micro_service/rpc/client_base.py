@@ -1,12 +1,9 @@
 import grpc
-import uuid
 
 from pslx.core.base import Base
-from pslx.schema.rpc_pb2 import GenericRPCRequest
 from pslx.schema.rpc_pb2_grpc import GenericRPCServiceStub
 from pslx.util.dummy_util import DummyUtil
 from pslx.util.proto_util import ProtoUtil
-from pslx.util.timezone_util import TimezoneUtil
 
 
 class ClientBase(Base):
@@ -30,10 +27,7 @@ class ClientBase(Base):
         return cls.RESPONSE_MESSAGE_TYPE
 
     def send_request(self, request, root_certificate=None):
-        generic_request = GenericRPCRequest()
-        generic_request.request_data.CopyFrom(ProtoUtil.message_to_any(message=request))
-        generic_request.timestamp = str(TimezoneUtil.cur_time_in_pst())
-        generic_request.uuid = str(uuid.uuid4())
+        generic_request = ProtoUtil.compose_generic_request(request=request)
         if self.RESPONSE_MESSAGE_TYPE:
             generic_request.message_type = ProtoUtil.infer_str_from_message_type(
                     message_type=self.RESPONSE_MESSAGE_TYPE

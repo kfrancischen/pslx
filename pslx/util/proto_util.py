@@ -2,8 +2,13 @@ from google.protobuf.any_pb2 import Any
 import google.protobuf.text_format as text_format
 import google.protobuf.json_format as json_format
 import importlib
+import uuid
+
 from pslx.core.exception import ProtobufNameNotExistException, ProtobufValueNotExistException,\
     ProtobufEnumTypeNotExistException, ProtobufMessageTypeNotExistException
+from pslx.schema.rpc_pb2 import GenericRPCRequest, GenericRPCResponse
+from pslx.schema.common_pb2 import EmptyMessage
+from pslx.util.timezone_util import TimezoneUtil
 
 
 class ProtoUtil(object):
@@ -114,3 +119,23 @@ class ProtoUtil(object):
     @classmethod
     def infer_str_from_message_type(cls, message_type):
         return message_type.__name__
+
+    @classmethod
+    def compose_generic_response(cls, response):
+        generic_response = GenericRPCResponse()
+        if not response:
+            empty_message = EmptyMessage()
+            generic_response.response_data.CopyFrom(cls.message_to_any(empty_message))
+        else:
+            generic_response.response_data.CopyFrom(cls.message_to_any(response))
+        generic_response.timestamp = str(TimezoneUtil.cur_time_in_pst())
+
+        return generic_response
+
+    @classmethod
+    def compose_generic_request(cls, request):
+        generic_request = GenericRPCRequest()
+        generic_request.request_data.CopyFrom(cls.message_to_any(message=request))
+        generic_request.timestamp = str(TimezoneUtil.cur_time_in_pst())
+        generic_request.uuid = str(uuid.uuid4())
+        return generic_request
