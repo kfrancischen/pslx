@@ -5,23 +5,19 @@ class ExceptionBase(Base, Exception):
     pass
 
 
-class ProtobufException(ExceptionBase):
+class ProtobufNameNotExistException(ExceptionBase):
     pass
 
 
-class ProtobufNameNotExistException(ProtobufException):
+class ProtobufValueNotExistException(ExceptionBase):
     pass
 
 
-class ProtobufValueNotExistException(ProtobufException):
+class ProtobufEnumTypeNotExistException(ExceptionBase):
     pass
 
 
-class ProtobufEnumTypeNotExistException(ProtobufException):
-    pass
-
-
-class ProtobufMessageTypeNotExistException(ProtobufException):
+class ProtobufMessageTypeNotExistException(ExceptionBase):
     pass
 
 
@@ -90,4 +86,16 @@ class QueueAlreadyExistException(ExceptionBase):
 
 
 class QueueConsumerNotInitializedException(ExceptionBase):
+    pass
+
+
+class SQLConnectionException(ExceptionBase):
+    pass
+
+
+class SQLNotInitializedException(ExceptionBase):
+    pass
+
+
+class SQLExecutionException(ExceptionBase):
     pass

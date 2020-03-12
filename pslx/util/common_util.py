@@ -10,3 +10,12 @@ class CommonUtil(object):
         credential.others['email_server'] = email_server
         credential.others['email_server_port'] = str(email_server_port)
         return credential
+
+    @classmethod
+    def make_sql_server_credentials(cls, sql_host_ip, sql_port, user_name, password):
+        credential = Credentials()
+        credential.user_name = user_name
+        credential.password = password
+        credential.others['sql_host_ip'] = sql_host_ip
+        credential.others['sql_port'] = sql_port
+        return credential
