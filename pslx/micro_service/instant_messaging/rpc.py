@@ -1,11 +1,11 @@
 import json
-import os
 import requests
 
 from pslx.micro_service.rpc.rpc_base import RPCBase
 from pslx.schema.enums_pb2 import InstantMessagingType, Status
 from pslx.schema.rpc_pb2 import InstantMessagingRPCRequest
 from pslx.tool.logging_tool import LoggingTool
+from pslx.util.env_util import EnvUtil
 from pslx.util.timezone_util import TimezoneUtil
 
 
@@ -21,7 +21,7 @@ class InstantMessagingRPC(RPCBase):
         }
         self._logger = LoggingTool(
             name=self.get_rpc_service_name(),
-            ttl=os.getenv('PSLX_INTERNAL_TTL', 7)
+            ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
         )
 
     def get_response_and_status_impl(self, request):

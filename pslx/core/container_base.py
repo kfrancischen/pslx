@@ -8,6 +8,7 @@ from pslx.schema.enums_pb2 import Signal
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.snapshots_pb2 import ContainerSnapshot
 from pslx.tool.filelock_tool import FileLockTool
+from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil
@@ -23,7 +24,10 @@ class ContainerBase(GraphBase):
         self._container_name = container_name
         self._is_initialized = False
         self._snapshot_file_folder = FileUtil.join_paths_to_dir_with_mode(
-            root_dir=FileUtil.join_paths_to_dir(root_dir=self.DATABASE_DIR, base_name='snapshots'),
+            root_dir=FileUtil.join_paths_to_dir(
+                root_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DATABASE'),
+                base_name='snapshots'
+            ),
             base_name=self.get_class_name() + '__' + container_name,
             ttl=ttl
         )

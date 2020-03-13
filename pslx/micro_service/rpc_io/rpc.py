@@ -1,5 +1,4 @@
 import ast
-import os
 from pslx.micro_service.rpc.rpc_base import RPCBase
 from pslx.schema.enums_pb2 import Status, StorageType, PartitionerStorageType
 from pslx.schema.rpc_pb2 import RPCIORequest, RPCIOResponse
@@ -9,6 +8,7 @@ from pslx.storage.proto_table_storage import ProtoTableStorage
 import pslx.storage.partitioner_storage as partitioner
 from pslx.tool.logging_tool import LoggingTool
 from pslx.tool.lru_cache_tool import LRUCacheTool
+from pslx.util.env_util import EnvUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil
 
@@ -26,7 +26,7 @@ class RPCIO(RPCBase):
     def __init__(self, rpc_storage):
         super().__init__(service_name=self.get_class_name(), rpc_storage=rpc_storage)
         self._lru_cache_tool = LRUCacheTool(
-            max_capacity=os.getenv('PSLX_INTERNAL_CACHE', 100)
+            max_capacity=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_CACHE')
         )
         self._storage_type_to_impl_func = {
             StorageType.DEFAULT_STORAGE: self._default_storage_impl,
@@ -36,7 +36,7 @@ class RPCIO(RPCBase):
         }
         self._logger = LoggingTool(
             name=self.get_rpc_service_name(),
-            ttl=os.getenv('PSLX_INTERNAL_TTL', 7)
+            ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
         )
 
     def _default_storage_impl(self, request):

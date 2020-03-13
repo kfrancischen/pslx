@@ -3,6 +3,7 @@ import datetime
 import os
 from pslx.core.base import Base
 from pslx.schema.enums_pb2 import DiskLoggerLevel
+from pslx.util.env_util import EnvUtil
 from pslx.util.color_util import ColorsUtil
 from pslx.util.timezone_util import TimezoneUtil
 from pslx.util.file_util import FileUtil
@@ -35,7 +36,10 @@ class LoggingTool(Base):
                 self._bg_color = ColorsUtil.Background.PURPLE
 
             self._log_file_dir = FileUtil.join_paths_to_file_with_mode(
-                root_dir=FileUtil.join_paths_to_dir(root_dir=self.DATABASE_DIR, base_name='log'),
+                root_dir=FileUtil.join_paths_to_dir(
+                    root_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DATABASE'),
+                    base_name='log'
+                ),
                 base_name=name,
                 ttl=ttl
             )

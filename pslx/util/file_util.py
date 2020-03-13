@@ -251,3 +251,16 @@ class FileUtil(object):
             root_dir=FileUtil.join_paths_to_dir(FileUtil.dir_name(contain_snapshot_dir), 'operators'),
             base_name='SNAPSHOT_*_' + operator_name + '.pb'
         )
+
+    @classmethod
+    def get_file_size(cls, file_name):
+        block_size = 1024
+        file_name = cls.die_if_file_not_exist(file_name=file_name)
+        file_size = os.path.getsize(file_name)
+
+        if file_size < block_size ** 2:
+            return str(round(1.0 * file_size / block_size, 3)) + ' KB'
+        elif block_size ** 2 <= file_size < block_size ** 3:
+            return str(round(1.0 * file_size / block_size ** 2, 3)) + ' MB'
+        else:
+            return str(round(1.0 * file_size / block_size ** 3, 3)) + ' GB'

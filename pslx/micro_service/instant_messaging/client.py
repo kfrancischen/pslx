@@ -18,7 +18,7 @@ class InstantMessagingClient(ClientBase):
     def get_webhook_url(self):
         return self._webhook_url
 
-    def send_message(self, message, is_test=False):
+    def send_message(self, message, is_test=False, root_certificate=None):
         assert isinstance(message, str)
         request = InstantMessagingRPCRequest()
         request.is_test = is_test
@@ -26,7 +26,7 @@ class InstantMessagingClient(ClientBase):
         request.channel_name = self._channel_name
         request.webhook_url = self._webhook_url
         request.message = message
-        self.send_request(request=request)
+        self.send_request(request=request, root_certificate=root_certificate)
 
 
 class SlackClient(InstantMessagingClient):

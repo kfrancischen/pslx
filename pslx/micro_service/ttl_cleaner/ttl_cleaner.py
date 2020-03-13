@@ -1,10 +1,10 @@
-import os
 from pslx.core.base import Base
 from pslx.batch.operator import BatchOperator
 from pslx.batch.container import CronBatchContainer
 from pslx.tool.filelock_tool import FileLockTool
 from pslx.tool.logging_tool import LoggingTool
 from pslx.util.dummy_util import DummyUtil
+from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
 from pslx.util.timezone_util import TimezoneUtil
 
@@ -14,14 +14,14 @@ class TTLCleanerOp(BatchOperator):
         super().__init__(operator_name='ttl_cleaner_op')
         self._logger = LoggingTool(
             name=self.get_class_name(),
-            ttl=os.getenv('PSLX_INTERNAL_TTL', 7)
+            ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
         )
 
     def execute_impl(self):
         start_time = TimezoneUtil.cur_time_in_local()
         self._logger.write_log("TTL cleaner started at " + str(start_time) + '.')
         all_files_under_dir = FileUtil.list_files_in_dir_recursively(
-            dir_name=self.DATABASE_DIR
+            dir_name=EnvUtil.get_pslx_env_variable(var='PSLX_DATABASE')
         )
         num_file_removed,  num_file_failed = 0, 0
         for file_name in all_files_under_dir:
@@ -50,7 +50,7 @@ class TTLCleaner(Base):
         super().__init__()
         self._container = CronBatchContainer(
             container_name='ttl_cleaner_container',
-            ttl=os.getenv('PSLX_INTERNAL_TTL', 7)
+            ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
         )
 
     def set_schedule(self, hour, minute):

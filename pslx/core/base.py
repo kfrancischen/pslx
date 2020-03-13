@@ -1,13 +1,12 @@
 import os
 import inspect
 from pslx.schema.enums_pb2 import ModeType
+from pslx.util.env_util import EnvUtil
 from pslx.util.timezone_util import TimezoneUtil
 from pslx.util.color_util import ColorsUtil
 
 
 class Base(object):
-    LOG_EVERYTHING = os.getenv('PSLX_LOG', False)
-    DATABASE_DIR = os.getenv('DATABASE', 'database/')
 
     def __init__(self):
         if 'PSLX_TEST' not in os.environ or not os.environ['PSLX_TEST']:
@@ -42,7 +41,7 @@ class Base(object):
 
     @classmethod
     def sys_log(cls, string):
-        if cls.LOG_EVERYTHING:
+        if EnvUtil.get_pslx_env_variable(var='PSLX_LOG'):
             print('[SYS-LOG]' + ColorsUtil.BOLD + ' class' + ColorsUtil.RESET + ' ' +
                   ColorsUtil.Foreground.GREEN + '[%s]' % cls.get_class_name() + ColorsUtil.RESET + ' & ' +
                   ColorsUtil.BOLD + 'Timestamp' + ColorsUtil.RESET + ' ' +

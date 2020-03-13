@@ -1,10 +1,10 @@
-import os
 import smtplib
 
 from pslx.micro_service.rpc.rpc_base import RPCBase
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.rpc_pb2 import EmailPRCRequest
 from pslx.tool.logging_tool import LoggingTool
+from pslx.util.env_util import EnvUtil
 
 
 class EmailRPC(RPCBase):
@@ -15,7 +15,7 @@ class EmailRPC(RPCBase):
 
         self._logger = LoggingTool(
             name=self.get_rpc_service_name(),
-            ttl=os.getenv('PSLX_INTERNAL_TTL', 7)
+            ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
         )
         self._credentials = {}
         self._email_servers = {}

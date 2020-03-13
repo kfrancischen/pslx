@@ -1,7 +1,4 @@
-from pslx.core.base import Base
-
-
-class ExceptionBase(Base, Exception):
+class ExceptionBase(Exception):
     pass
 
 
@@ -98,4 +95,8 @@ class SQLNotInitializedException(ExceptionBase):
 
 
 class SQLExecutionException(ExceptionBase):
+    pass
+
+
+class EnvNotExistException(ExceptionBase):
     pass

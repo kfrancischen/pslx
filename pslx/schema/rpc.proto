@@ -71,3 +71,18 @@ message RPCIOResponse {
     RPCListData list_data = 2;
     map<string, RPCListData> dict_data = 3;
 }
+
+// the next will be 4
+message ProtoViewerRPCRequest {
+    string proto_file_path = 1;
+    string message_type = 2;
+    string proto_module = 3;
+}
+
+// the next will be 5
+message ProtoViewerRPCResponse {
+    string proto_content = 1;
+    string proto_file_path = 2;
+    string file_size = 3;
+    string modified_time = 4;
+}
