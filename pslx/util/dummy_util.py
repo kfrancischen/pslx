@@ -16,7 +16,7 @@ class DummyOperator(OperatorBase):
         super().__init__(operator_name=operator_name)
 
     def execute_impl(self):
-        return True
+        pass
 
 
 class DummyUtil(object):

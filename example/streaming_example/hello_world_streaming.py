@@ -10,7 +10,6 @@ class HelloWorldOp(StreamingOperator):
 
     def execute_impl(self):
         print('hello world')
-        return True
 
 
 class HelloWorldContainer(DefaultStreamingContainer):

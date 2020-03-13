@@ -2,9 +2,7 @@ import datetime
 
 from pslx.core.exception import OperatorFailureException, FileNotExistException
 from pslx.core.node_base import OrderedNodeBase
-from pslx.schema.enums_pb2 import DataModelType
-from pslx.schema.enums_pb2 import SortOrder
-from pslx.schema.enums_pb2 import Status
+from pslx.schema.enums_pb2 import DataModelType, SortOrder, Status, Signal
 from pslx.schema.snapshots_pb2 import OperatorSnapshot
 from pslx.tool.filelock_tool import FileLockTool
 from pslx.util.file_util import FileUtil
@@ -151,7 +149,7 @@ class OperatorBase(OrderedNodeBase):
         while self._config['slo'] < 0 or (self._config['slo'] > 0 and TimezoneUtil.cur_time_in_pst() -
                                           self._start_time > datetime.timedelta(self._config['slo'])):
             try:
-                if self.execute_impl():
+                if self._execute_impl() == Signal.STOP:
                     self._end_time = TimezoneUtil.cur_time_in_pst()
                     self.set_status(status=Status.SUCCEEDED)
                     return
@@ -159,6 +157,10 @@ class OperatorBase(OrderedNodeBase):
                 self.sys_log(str(err))
 
         self.set_status(status=Status.FAILED)
+
+    def _execute_impl(self):
+        self.execute_impl()
+        return Signal.STOP
 
     def execute_impl(self):
         raise NotImplementedError

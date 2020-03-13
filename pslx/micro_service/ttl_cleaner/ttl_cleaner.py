@@ -17,6 +17,17 @@ class TTLCleanerOp(BatchOperator):
             ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
         )
 
+    def _recursively_check_dir_deletable(self, dir_name):
+        if FileUtil.list_files_in_dir(dir_name=dir_name):
+            return False
+        sub_dirs = FileUtil.list_dirs_in_dir(dir_name=dir_name)
+        if sub_dirs:
+            for sub_dir in sub_dirs:
+                if not self._recursively_check_dir_deletable(dir_name=sub_dir):
+                    return False
+
+        return True
+
     def execute_impl(self):
         start_time = TimezoneUtil.cur_time_in_local()
         self._logger.write_log("TTL cleaner started at " + str(start_time) + '.')
@@ -41,7 +52,23 @@ class TTLCleanerOp(BatchOperator):
         self._logger.write_log("Total number of file removed in this round is " + str(num_file_removed) + '.')
         self._logger.write_log("Total number of file failed to be removed in this round is " +
                                str(num_file_failed) + '.')
-        return True
+        num_dir_removed, num_dir_failed = 0, 0
+        all_dirs_under_dir = FileUtil.list_dirs_in_dir_recursively(
+            dir_name=EnvUtil.get_pslx_env_variable(var='PSLX_DATABASE')
+        )
+        for dir_name in all_dirs_under_dir:
+            if FileUtil.does_dir_exist(dir_name=dir_name) and self._recursively_check_dir_deletable(dir_name=dir_name):
+                self._logger.write_log("Removing directory " + dir_name + '...')
+                try:
+                    FileUtil.remove_dir_recursively(dir_name=dir_name)
+                    num_dir_removed += 1
+                except Exception as err:
+                    num_dir_failed += 1
+                    self._logger.write_log("Removing directory " + dir_name + ' failed with err ' + str(err) + '.')
+
+        self._logger.write_log("Total number of directory removed in this round is " + str(num_dir_removed) + '.')
+        self._logger.write_log("Total number of directory failed to be removed in this round is " +
+                               str(num_dir_failed) + '.')
 
 
 class TTLCleaner(Base):

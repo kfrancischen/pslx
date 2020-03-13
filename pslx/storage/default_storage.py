@@ -128,11 +128,11 @@ class DefaultStorage(StorageBase):
         try:
             if self._config['write_rule_type'] == WriteRuleType.WRITE_FROM_END:
                 with FileLockTool(self._file_name, read_mode=False):
-                    with open(self._file_name, 'a') as outfile:
+                    with open(FileUtil.create_file_if_not_exist(file_name=self._file_name), 'a') as outfile:
                         outfile.write(data_to_write + '\n')
             else:
                 with FileLockTool(self._file_name, read_mode=False):
-                    with open(self._file_name, 'r+') as outfile:
+                    with open(FileUtil.create_file_if_not_exist(file_name=self._file_name), 'r+') as outfile:
                         file_data = outfile.read()
                         outfile.seek(0, 0)
                         outfile.write(data_to_write + '\n' + file_data)

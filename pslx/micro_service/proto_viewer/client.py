@@ -20,4 +20,3 @@ class ProtoViewerRPCClient(ClientBase):
             'file_size': response.file_size,
             'modified_time': response.modified_time,
         }
-

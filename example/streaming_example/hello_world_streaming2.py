@@ -10,7 +10,6 @@ class HelloWorldOp(StreamingOperator):
 
     def execute_impl(self):
         print(self.get_node_name())
-        return True
 
 
 class HelloWorldContainer(DefaultStreamingContainer):

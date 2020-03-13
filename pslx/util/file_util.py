@@ -122,7 +122,7 @@ class FileUtil(object):
             os.remove(file_name)
 
     @classmethod
-    def remove_dir(cls, dir_name):
+    def remove_dir_recursively(cls, dir_name):
         dir_name = cls.normalize_dir_name(dir_name=dir_name)
         if cls.does_dir_exist(dir_name=dir_name):
             shutil.rmtree(dir_name)
