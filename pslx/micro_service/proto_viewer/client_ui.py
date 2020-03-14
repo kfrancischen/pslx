@@ -1,4 +1,5 @@
 import argparse
+import json
 from flask import Flask, render_template, request
 from pslx.micro_service.proto_viewer.client import ProtoViewerRPCClient
 from pslx.util.file_util import FileUtil
@@ -12,18 +13,25 @@ proto_viewer_rpc_client_ui.config.update(
     SECRET_KEY='PSLX_PROTO_VIEWER_UI'
 )
 parser = argparse.ArgumentParser()
-parser.add_argument('--server_url', dest='server_url', default="", type=str,
-                    help='URL to the server.')
-parser.add_argument('--root_certificate_path', dest='root_certificate_path', default="", type=str,
-                    help='Path to the root certificate for SSL.')
+parser.add_argument('--server_url_and_root_certificate_dict', dest='server_url_and_root_certificate_dict',
+                    default="{}", type=json.loads,
+                    help='json string containing url to root certificate dictionary.')
 args = parser.parse_args()
-proto_viewer_client = ProtoViewerRPCClient(
-    server_url=args.server_url
-)
-root_certificate = None
-if args.root_certificate_path:
-    with open(FileUtil.die_if_file_not_exist(file_name=args.root_certificate_path), 'r') as infile:
-        root_certificate = infile.read()
+url_and_certificate_dict = args.server_url_and_root_certificate_dict
+client_map = {}
+for url, certificate_path in url_and_certificate_dict.items():
+    root_certificate = None
+    if certificate_path:
+        with open(FileUtil.die_if_file_not_exist(file_name=certificate_path), 'r') as infile:
+            root_certificate = infile.read()
+
+    proto_viewer_client = ProtoViewerRPCClient(
+        server_url=url
+    )
+    client_map[url] = {
+        'client': proto_viewer_client,
+        'root_certificate': root_certificate,
+    }
 
 
 @proto_viewer_rpc_client_ui.route("/", methods=['GET', 'POST'])
@@ -39,14 +47,15 @@ def index():
 def view_proto():
     if request.method == 'POST':
         try:
+            server_url = request.form['server_url']
             proto_file_path = request.form['proto_file_path']
             message_type = request.form['message_type']
             module = request.form['module']
-            result = proto_viewer_client.view_proto(
+            result = client_map[server_url]['client'].view_proto(
                 proto_file_path=proto_file_path,
                 message_type=message_type,
                 module=module,
-                root_certificate=root_certificate
+                root_certificate=client_map[server_url]['root_certificate']
             )
             result_ui = ''
             for key, val in result.items():
