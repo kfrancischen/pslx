@@ -33,3 +33,22 @@ message ContainerSnapshot {
     string start_time = 5;
     string end_time = 6;
 }
+
+// the next will be 4
+message OperatorContentPlain {
+    oneof plan_content {
+        string string_val = 1;
+        int32 int_val = 2;
+        float float_val = 3;
+    }
+}
+
+// the next will be 2
+message OperatorContentList {
+    repeated OperatorContentPlain list_content = 1;
+}
+
+// the next will be 2
+message OperatorContentDict {
+    map<string, OperatorContentPlain> dict_content = 1;
+}

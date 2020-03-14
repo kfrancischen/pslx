@@ -1,0 +1,3 @@
+include README.md
+include pslx/micro_service/proto_viewer/templates/index.html
+recursive-include pslx/ui/ *

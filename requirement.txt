@@ -1,0 +1,17 @@
+APScheduler==3.6.3
+certifi==2019.11.28
+Click==7.0
+dnspython==1.16.0
+Flask==1.1.1
+grpcio==1.27.2
+grpcio-tools==1.27.2
+itsdangerous==1.1.0
+Jinja2==2.11.1
+MarkupSafe==1.1.1
+mysql-connector-python==8.0.19
+pika==1.1.0
+protobuf==3.11.3
+pytz==2019.3
+six==1.14.0
+tzlocal==2.0.0
+Werkzeug==1.0.0

@@ -32,7 +32,8 @@ class ClientBase(Base):
             generic_request.message_type = ProtoUtil.infer_str_from_message_type(
                     message_type=self.RESPONSE_MESSAGE_TYPE
                 )
-        self.sys_log("Getting request of uuid " + generic_request.uuid + '.')
+        self._logger.write_log("Client getting request of uuid " + generic_request.uuid + '.')
+        self.sys_log("Client getting request of uuid " + generic_request.uuid + '.')
         try:
             if not root_certificate:
                 self._logger.write_log("Start with insecure channel.")

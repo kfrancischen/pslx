@@ -9,10 +9,12 @@ setuptools.setup(
     author="Francis Chen",
     author_email="kfrancischen@gmail.com",
     description="Python Standard Library eXtension",
-    long_description="This package is aimed to provide libraries for customized functions.",
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/kfrancischen/pslx",
     packages=setuptools.find_packages(),
+    include_package_data=True,
+    zip_safe=False,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: GNU GENERAL PUBLIC LICENSE",
