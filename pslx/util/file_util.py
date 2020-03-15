@@ -68,6 +68,14 @@ class FileUtil(object):
             return dir_name
 
     @classmethod
+    def is_file(cls, path_name):
+        return os.path.isfile(path_name)
+
+    @classmethod
+    def is_dir(cls, path_name):
+        return os.path.isdir(path_name)
+
+    @classmethod
     def _list_dir(cls, dir_name):
         cls.normalize_dir_name(dir_name=dir_name)
         cls.die_if_dir_not_exist(dir_name=dir_name)
@@ -85,12 +93,12 @@ class FileUtil(object):
     @classmethod
     def list_files_in_dir(cls, dir_name):
         everything = cls._list_dir(dir_name=dir_name)
-        return [cls.normalize_file_name(item) for item in everything if os.path.isfile(item)]
+        return [cls.normalize_file_name(item) for item in everything if cls.is_file(item)]
 
     @classmethod
     def list_dirs_in_dir(cls, dir_name):
         everything = cls._list_dir(dir_name=dir_name)
-        return [cls.normalize_dir_name(item) for item in everything if os.path.isdir(item)]
+        return [cls.normalize_dir_name(item) for item in everything if cls.is_dir(item)]
 
     @classmethod
     def list_files_in_dir_recursively(cls, dir_name):

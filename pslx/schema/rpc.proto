@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/any.proto";
 import "enums.proto";
+import "common.proto";
 
 package pslx;
 
@@ -79,10 +80,20 @@ message ProtoViewerRPCRequest {
     string proto_module = 3;
 }
 
-// the next will be 5
+
+// the next will be
 message ProtoViewerRPCResponse {
     string proto_content = 1;
-    string proto_file_path = 2;
-    string file_size = 3;
-    string modified_time = 4;
+    FileInfo file_info = 2;
+}
+
+// the next will be 2
+message FileViewerRPCRequest {
+    string file_path = 1;
+}
+
+// the next will be 3
+message FileViewerRPCResponse {
+    repeated FileInfo files_info = 1;
+    repeated FileInfo directories_info = 2;
 }

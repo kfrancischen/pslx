@@ -1,6 +1,6 @@
-
 from pslx.micro_service.rpc.rpc_base import RPCBase
 from pslx.schema.enums_pb2 import Status
+from pslx.schema.common_pb2 import FileInfo
 from pslx.schema.rpc_pb2 import ProtoViewerRPCRequest, ProtoViewerRPCResponse
 from pslx.tool.logging_tool import LoggingTool
 from pslx.util.env_util import EnvUtil
@@ -27,7 +27,9 @@ class ProtoViewerRPC(RPCBase):
         response = ProtoViewerRPCResponse()
         proto_message = FileUtil.read_proto_from_file(proto_type=message_type, file_name=proto_file)
         response.proto_content = ProtoUtil.message_to_text(proto_message=proto_message)
-        response.proto_file_path = request.proto_file_path
-        response.file_size = FileUtil.get_file_size(file_name=proto_file)
-        response.modified_time = str(FileUtil.get_file_modified_time(file_name=proto_file))
+        file_info = FileInfo()
+        file_info.file_path = request.proto_file_path
+        file_info.file_size = FileUtil.get_file_size(file_name=proto_file)
+        file_info.modified_time = str(FileUtil.get_file_modified_time(file_name=proto_file))
+        response.file_info.CopyFrom(file_info)
         return response, Status.SUCCEEDED

@@ -16,7 +16,7 @@ class ProtoViewerRPCClient(ClientBase):
         response = self.send_request(request=request, root_certificate=root_certificate)
         return {
             'proto_content': response.proto_content,
-            'proto_file_path': response.proto_file_path,
-            'file_size': response.file_size,
-            'modified_time': response.modified_time,
+            'proto_file_path': response.file_info.file_path,
+            'file_size': response.file_info.file_size,
+            'modified_time': response.file_info.modified_time,
         }

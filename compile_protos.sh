@@ -14,4 +14,5 @@ for file in pslx/schema/*; do
 done
 sed -i -e 's/import enums_pb2 as enums__pb2/import pslx.schema.enums_pb2 as enums__pb2/g' pslx/schema/snapshots_pb2.py
 sed -i -e 's/import enums_pb2 as enums__pb2/import pslx.schema.enums_pb2 as enums__pb2/g' pslx/schema/rpc_pb2.py
+sed -i -e 's/import common_pb2 as common__pb2/import pslx.schema.common_pb2 as common__pb2/g' pslx/schema/rpc_pb2.py
 sed -i -e 's/import rpc_pb2 as rpc__pb2/import pslx.schema.rpc_pb2 as rpc__pb2/g' pslx/schema/rpc_pb2_grpc.py

@@ -3,7 +3,8 @@ Example:
 PYTHONPATH=. python example/proto_viewer_example/cmd_line.py \
 --proto_file_path=database/rpc_io/PROD/ttl=1/rpc_io_example/2020/03/12/22/04/data.pb \
 --message_type=ProtoTable \
---module=pslx.schema.storage_pb2
+--module=pslx.schema.storage_pb2 \
+--server_url=localhost:11443
 """
 import argparse
 from pslx.micro_service.proto_viewer.client import ProtoViewerRPCClient
