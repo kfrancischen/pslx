@@ -7,6 +7,7 @@ from pslx.core.tree_base import TreeBase
 from pslx.schema.enums_pb2 import StorageType, PartitionerStorageType, SortOrder, Status
 from pslx.storage.default_storage import DefaultStorage
 from pslx.storage.storage_base import StorageBase
+from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimeSleepObj, TimezoneUtil
@@ -23,10 +24,10 @@ class PartitionerBase(StorageBase):
         PartitionerStorageType.MINUTELY: 5,
     }
 
-    def __init__(self, logger=None, max_size=-1):
+    def __init__(self, logger=None, max_capacity=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE')):
         super().__init__(logger=logger)
         self._file_tree = None
-        self._max_size = max_size
+        self._max_capacity = max_capacity
         self._underlying_storage = DefaultStorage(logger=logger)
 
     def get_partitioner_type(self):
@@ -36,8 +37,8 @@ class PartitionerBase(StorageBase):
         assert storage.STORAGE_TYPE != StorageType.PARTITIONER_STORAGE
         self._underlying_storage = storage
 
-    def set_max_size(self, max_size):
-        self._max_size = max_size
+    def set_max_capacity(self, max_capacity):
+        self._max_capacity = max_capacity
 
     def initialize_from_file(self, file_name):
         self.sys_log("Initialize_from_file function is not implemented for storage type "
@@ -55,8 +56,8 @@ class PartitionerBase(StorageBase):
 
             node_name = node.get_node_name()
             for child_node_name in sorted(FileUtil.list_dirs_in_dir(dir_name=node_name), reverse=from_scratch):
-                if from_scratch and self._file_tree.get_num_nodes() >= self._max_size > 0:
-                    self.sys_log("Reach the max number of node: " + str(self._max_size))
+                if from_scratch and self._file_tree.get_num_nodes() >= self._max_capacity > 0:
+                    self.sys_log("Reach the max number of node: " + str(self._max_capacity))
                     return
 
                 if not from_scratch and self._cmp_dir_by_timestamp(
@@ -77,7 +78,7 @@ class PartitionerBase(StorageBase):
                     self._logger.write_log("Adding new node with name " + child_node_name)
 
                 if not from_scratch:
-                    self._file_tree.trim_tree(max_capacity=self._max_size)
+                    self._file_tree.trim_tree(max_capacity=self._max_capacity)
 
                 _recursive_initialize_from_dir(node=child_node, max_recursion=max_recursion - 1)
 
@@ -88,7 +89,7 @@ class PartitionerBase(StorageBase):
                 node_name=FileUtil.normalize_dir_name(dir_name=dir_name),
                 order=SortOrder.REVERSE
             )
-            self._file_tree = TreeBase(root=root_node, max_dict_size=self._max_size)
+            self._file_tree = TreeBase(root=root_node, max_dict_size=self._max_capacity)
             from_scratch = True
 
         _recursive_initialize_from_dir(
@@ -278,7 +279,7 @@ class PartitionerBase(StorageBase):
                 parent_node=parent_node,
                 child_node=child_node
             )
-            self._file_tree.trim_tree(max_capacity=self._max_size)
+            self._file_tree.trim_tree(max_capacity=self._max_capacity)
             return child_node.get_node_name()
 
     def write(self, data, params=None):
@@ -300,6 +301,11 @@ class PartitionerBase(StorageBase):
             time.sleep(TimeSleepObj.ONE_SECOND)
 
         self._writer_status = Status.RUNNING
+        root_dir = self.get_dir_name()
+        if root_dir and not FileUtil.does_dir_exist(dir_name=root_dir):
+            self._file_tree = None
+            self.initialize_from_dir(dir_name=root_dir)
+
         if to_make_partition:
             self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_pst())
 

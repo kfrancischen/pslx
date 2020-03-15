@@ -1,8 +1,10 @@
-import multiprocessing
+from queue import Queue
+import threading
 
 from pslx.core.graph_base import GraphBase
 import pslx.core.exception as exception
 from pslx.core.operator_base import OperatorBase
+from pslx.micro_service.container_backend.client import ContainerBackendClient
 from pslx.schema.enums_pb2 import DataModelType
 from pslx.schema.enums_pb2 import Signal
 from pslx.schema.enums_pb2 import Status
@@ -17,7 +19,6 @@ from pslx.util.dummy_util import DummyUtil
 
 class ContainerBase(GraphBase):
     DATA_MODEL = DataModelType.DEFAULT
-    STATUS = Status.IDLE
 
     def __init__(self, container_name, ttl=-1):
         super().__init__()
@@ -35,15 +36,26 @@ class ContainerBase(GraphBase):
         self._end_time = None
         self._logger = DummyUtil.dummy_logging()
         self._upstream_ops = []
+        self._backend = None
+        self._status = Status.IDLE
+
+    def bind_backend(self, server_url, root_certificate=None):
+        self._backend = ContainerBackendClient(
+            client_name=self._container_name + '_BACKEND',
+            server_url=server_url,
+            root_certificate=root_certificate
+        )
+        self._logger.write_log("Bind to backend with name " + self._backend.get_client_name() + " at server url " +
+                               server_url + '.')
 
     def initialize(self, force=False):
         for operator in self._node_name_to_node_dict.values():
-            if operator.get_status() != self.STATUS:
+            if operator.get_status() != self._status:
                 self.sys_log("Status of " + operator.get_node_name() + " is not consistent.")
                 if not force:
                     raise exception.OperatorStatusInconsistentException
                 else:
-                    operator.set_status(self.STATUS)
+                    operator.set_status(self._status)
             if operator.get_data_model() != self.DATA_MODEL:
                 self.sys_log("Data model of " + operator.get_node_name() + " is not consistent.")
                 if not force:
@@ -54,9 +66,10 @@ class ContainerBase(GraphBase):
         self._is_initialized = True
 
     def set_status(self, status):
-        self.sys_log("Switching to " + ProtoUtil.get_name_by_value(enum_type=Status, value=status) +
-                     " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
-        self.STATUS = status
+        self.sys_log(self.get_class_name() + "Switching to " +
+                     ProtoUtil.get_name_by_value(enum_type=Status, value=status) +
+                     " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self._status) + '.')
+        self._status = status
 
     def unset_status(self):
         self.set_status(status=Status.IDLE)
@@ -80,7 +93,10 @@ class ContainerBase(GraphBase):
         snapshot = ContainerSnapshot()
         snapshot.container_name = self._container_name
         snapshot.is_initialized = self._is_initialized
-        snapshot.status = self.STATUS
+        snapshot.status = self._status
+        snapshot.class_name = self.get_full_class_name()
+        snapshot.mode = self._mode
+        snapshot.data_model = self.DATA_MODEL
         if self._start_time:
             snapshot.start_time = str(self._start_time)
         if self._end_time:
@@ -106,6 +122,8 @@ class ContainerBase(GraphBase):
                 proto=snapshot,
                 file_name=output_file_name
             )
+        if self._backend:
+            self._backend.send_to_backend(snapshot=snapshot)
         return snapshot
 
     def _execute(self, task_queue, finished_queue):
@@ -119,8 +137,10 @@ class ContainerBase(GraphBase):
             finished_queue.put(operator_name)
             self.sys_log("Finished task: " + operator_name)
             self._logger.write_log("Finished task: " + operator_name)
+            task_queue.task_done()
+        task_queue.task_done()
 
-    def execute(self, is_backfill=False, num_process=1):
+    def execute(self, is_backfill=False, num_threads=1):
         if not self._is_initialized:
             self.sys_log("Cannot execute if the container is not initialized.")
             raise exception.ContainerUninitializedException
@@ -146,12 +166,13 @@ class ContainerBase(GraphBase):
             operator_status = self._get_latest_status_of_operators()
 
         self._start_time = TimezoneUtil.cur_time_in_pst()
-        task_queue, finished_queue, num_tasks = multiprocessing.Queue(), multiprocessing.Queue(), 0
-        process_list = []
-        for _ in range(num_process):
-            process = multiprocessing.Process(target=self._execute, args=(task_queue, finished_queue))
-            process.start()
-            process_list.append(process)
+        task_queue, finished_queue, num_tasks = Queue(), Queue(), 0
+        thread_list = []
+        for _ in range(num_threads):
+            thread = threading.Thread(target=self._execute, args=(task_queue, finished_queue))
+            thread.daemon = True
+            thread.start()
+            thread_list.append(thread)
 
         node_levels = self.get_node_levels()
         max_level = max(node_levels.keys())
@@ -162,11 +183,13 @@ class ContainerBase(GraphBase):
                     continue
                 task_queue.put(operator_name)
                 num_tasks += 1
-        for _ in range(num_process):
+        for _ in range(num_threads):
             task_queue.put(Signal.STOP)
 
-        for process in process_list:
-            process.join()
+        self.sys_log("Joining all threads.")
+        for thread in thread_list:
+            thread.join()
+        self.sys_log("Done Joining all threads.")
 
         self._end_time = TimezoneUtil.cur_time_in_pst()
 

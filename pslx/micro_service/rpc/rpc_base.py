@@ -1,9 +1,9 @@
-import os
 from pslx.core.base import Base
 from pslx.schema.enums_pb2 import StorageType
 from pslx.schema.rpc_pb2 import GenericRPCRequestResponsePair
 from pslx.schema.rpc_pb2_grpc import GenericRPCServiceServicer
 from pslx.storage.proto_table_storage import ProtoTableStorage
+from pslx.util.env_util import EnvUtil
 from pslx.util.dummy_util import DummyUtil
 from pslx.util.proto_util import ProtoUtil
 
@@ -21,7 +21,7 @@ class RPCBase(GenericRPCServiceServicer, Base):
                 self.sys_log("Warning. Please ttl the request log table.")
             underlying_storage = ProtoTableStorage()
             rpc_storage.set_underlying_storage(storage=underlying_storage)
-            rpc_storage.set_max_size(max_size=os.getenv('PSLX_INTERNAL_CACHE', 100))
+            rpc_storage.set_max_capacity(max_capacity=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE'))
         self._rpc_storage = rpc_storage
 
     def get_rpc_service_name(self):

@@ -17,6 +17,7 @@ class ProtoTableStorage(StorageBase):
         super().__init__(logger=logger)
         self._file_name = None
         self._table_message = None
+        self._deleter_status = Status.IDLE
 
     def initialize_from_dir(self, dir_name):
         self.sys_log("Initialize_from_dir function is not implemented for storage type "
@@ -56,6 +57,10 @@ class ProtoTableStorage(StorageBase):
             self.sys_log("Waiting for writer to finish.")
             time.sleep(TimeSleepObj.ONE_SECOND)
 
+        while self._deleter_status != Status.IDLE:
+            self.sys_log("Waiting for deleter to finish.")
+            time.sleep(TimeSleepObj.ONE_SECOND)
+
         self._reader_status = Status.RUNNING
         if params['key'] in self._table_message.data:
             try:
@@ -72,6 +77,31 @@ class ProtoTableStorage(StorageBase):
         else:
             return None
 
+    def delete(self, key):
+        while self._reader_status != Status.IDLE:
+            self.sys_log("Waiting for reader to finish.")
+            time.sleep(TimeSleepObj.ONE_SECOND)
+
+        while self._writer_status != Status.IDLE:
+            self.sys_log("Waiting for writer to finish.")
+            time.sleep(TimeSleepObj.ONE_SECOND)
+
+        if key in self._table_message.data:
+            self._reader_status = Status.RUNNING
+            del self._table_message.data[key]
+            try:
+                self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
+                with FileLockTool(self._file_name, read_mode=False):
+                    FileUtil.write_proto_to_file(
+                        proto=self._table_message,
+                        file_name=self._file_name
+                    )
+                    self._reader_status = Status.IDLE
+            except Exception as err:
+                self.sys_log("Got exception: " + str(err))
+                self._logger.write_log("Got exception: " + str(err))
+                raise StorageWriteException
+
     def write(self, data, params=None):
         if not params:
             params = {}
@@ -80,6 +110,10 @@ class ProtoTableStorage(StorageBase):
 
         while self._reader_status != Status.IDLE:
             self.sys_log("Waiting for reader to finish.")
+            time.sleep(TimeSleepObj.ONE_SECOND)
+
+        while self._deleter_status != Status.IDLE:
+            self.sys_log("Waiting for deleter to finish.")
             time.sleep(TimeSleepObj.ONE_SECOND)
 
         self._writer_status = Status.RUNNING

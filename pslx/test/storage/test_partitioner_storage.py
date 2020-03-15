@@ -94,7 +94,7 @@ class PartitionerStorageTest(unittest.TestCase):
         copytree(self.YEARLY_PATITIONER_TEST_DATA_2, self.YEARLY_PATITIONER_TEST_DATA)
 
     def test_incremental_build(self):
-        partitioner = MonthlyPartitionerStorage(max_size=4)
+        partitioner = MonthlyPartitionerStorage(max_capacity=4)
         partitioner.initialize_from_dir(dir_name=self.MONTHLY_PATITIONER_TEST_DATA)
         self.assertEqual(partitioner.get_size(), 4)
         rmtree(self.MONTHLY_PATITIONER_TEST_DATA)

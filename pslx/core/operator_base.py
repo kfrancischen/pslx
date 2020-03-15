@@ -1,4 +1,5 @@
 import datetime
+import time
 
 from pslx.core.exception import OperatorFailureException, FileNotExistException
 from pslx.core.node_base import OrderedNodeBase
@@ -7,12 +8,11 @@ from pslx.schema.snapshots_pb2 import OperatorSnapshot
 from pslx.tool.filelock_tool import FileLockTool
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
-from pslx.util.timezone_util import TimezoneUtil
+from pslx.util.timezone_util import TimezoneUtil, TimeSleepObj
 
 
 class OperatorBase(OrderedNodeBase):
     DATA_MODEL = DataModelType.DEFAULT
-    STATUS = Status.IDLE
 
     def __init__(self, operator_name, order=SortOrder.ORDER):
         super().__init__(node_name=operator_name, order=order)
@@ -23,6 +23,7 @@ class OperatorBase(OrderedNodeBase):
         self._start_time = None
         self._end_time = None
         self._persistent = False
+        self._status = Status.IDLE
 
     def set_data_model(self, model):
         self.sys_log("Switching to " + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=model) +
@@ -37,14 +38,14 @@ class OperatorBase(OrderedNodeBase):
 
     def set_status(self, status):
         self.sys_log(self._node_name + " switching to " + ProtoUtil.get_name_by_value(enum_type=Status, value=status)
-                     + " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self.STATUS) + '.')
-        self.STATUS = status
+                     + " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self._status) + '.')
+        self._status = status
 
     def unset_status(self):
         self.set_status(status=Status.IDLE)
 
     def get_status(self):
-        return self.STATUS
+        return self._status
 
     def mark_as_done(self):
         self.set_status(status=Status.SUCCEEDED)
@@ -53,7 +54,7 @@ class OperatorBase(OrderedNodeBase):
         self._persistent = True
 
     def is_done(self):
-        return self.STATUS == Status.SUCCEEDED
+        return self._status == Status.SUCCEEDED
 
     def get_content_from_dependency(self, dependency_name):
         if not self.get_parent(parent_name=dependency_name):
@@ -74,17 +75,20 @@ class OperatorBase(OrderedNodeBase):
             return Status.IDLE
 
     def wait_for_upstream_status(self):
+        unfinished_op = []
         if self.DATA_MODEL != DataModelType.DEFAULT:
             for parent in self.get_parents_nodes():
-                if parent.get_status() in [Status.WAITING, Status.RUNNING]:
+                if parent.get_status() in [Status.IDLE, Status.WAITING, Status.RUNNING]:
                     self.sys_log("Upstream operator " + parent.get_node_name() + " is still in status: " +
                                  ProtoUtil.get_name_by_value(enum_type=Status, value=parent.get_status()) + '.')
-                    return False
+                    unfinished_op.append(parent.get_node_name())
                 elif parent.get_status() == Status.FAILED:
                     self.set_status(status=Status.FAILED)
                     self.sys_log("Upstream operator " + parent.get_node_name() + " failed.")
+                    unfinished_op = []
                     break
-        return True
+
+        return unfinished_op
 
     def is_data_model_consistent(self):
         for parent_node in self.get_parents_nodes():
@@ -95,10 +99,10 @@ class OperatorBase(OrderedNodeBase):
     def is_status_consistent(self):
         for parent_node in self.get_parents_nodes():
             if (parent_node.get_status() in [Status.IDLE, Status.WAITING, Status.RUNNING] and
-                    self.STATUS in [Status.RUNNING, Status.SUCCEEDED, Status.FAILED]):
+                    self._status in [Status.RUNNING, Status.SUCCEEDED, Status.FAILED]):
                 return False
             if (parent_node.get_status() == Status.FAILED and
-                    self.STATUS in [Status.RUNNING, Status.SUCCEEDED]):
+                    self._status in [Status.RUNNING, Status.SUCCEEDED]):
                 return False
 
         return True
@@ -110,6 +114,7 @@ class OperatorBase(OrderedNodeBase):
         snapshot.status = self.get_status()
         snapshot.node_snapshot.CopyFrom(self.get_node_snapshot())
         snapshot.slo = self._config['slo']
+        snapshot.class_name = self.get_full_class_name()
         if self._start_time:
             snapshot.start_time = str(self._start_time)
         if self._end_time:
@@ -136,6 +141,12 @@ class OperatorBase(OrderedNodeBase):
                              " failed. This results in failure of all the following descendant operators.")
                 self.set_status(status=Status.FAILED)
                 return
+
+        unfinished_parent_ops = self.wait_for_upstream_status()
+        while unfinished_parent_ops:
+            self.sys_log("Waiting for parent process to finish: " + ','.join(unfinished_parent_ops))
+            time.sleep(TimeSleepObj.ONE_SECOND)
+            unfinished_parent_ops = self.wait_for_upstream_status()
 
         self.set_status(status=Status.RUNNING)
         self._start_time = TimezoneUtil.cur_time_in_pst()

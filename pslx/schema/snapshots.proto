@@ -12,7 +12,7 @@ message NodeSnapshot {
     repeated string parents_names = 3;
 }
 
-// the next will be 9
+// the next will be 10
 message OperatorSnapshot {
     string operator_name = 1;
     DataModelType data_model = 2;
@@ -22,9 +22,10 @@ message OperatorSnapshot {
     string end_time = 6;
     int32 slo = 7;
     google.protobuf.Any content = 8;
+    string class_name = 9;
 }
 
-// the next will be 7
+// the next will be 10
 message ContainerSnapshot {
     string container_name = 1;
     map<string, OperatorSnapshot> operator_snapshot_map = 2;
@@ -32,14 +33,18 @@ message ContainerSnapshot {
     Status status = 4;
     string start_time = 5;
     string end_time = 6;
+    string class_name = 7;
+    ModeType mode = 8;
+    DataModelType data_model = 9;
 }
 
-// the next will be 4
+// the next will be 5
 message OperatorContentPlain {
     oneof plan_content {
         string string_val = 1;
         int32 int_val = 2;
         float float_val = 3;
+        bool bool_val = 4;
     }
 }
 

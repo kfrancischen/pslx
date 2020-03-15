@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/any.proto";
+import "enums.proto";
 
 package pslx;
 
@@ -11,4 +12,14 @@ message ProtoTable {
     string created_time = 3;
     map<string, google.protobuf.Any> data = 4;
     string updated_time = 5;
+}
+
+// the next will be 7
+message ContainerBackendValue {
+    string container_name = 1;
+    map<string, Status> operator_status_map = 2;
+    Status container_status = 3;
+    ModeType mode = 4;
+    DataModelType data_model = 5;
+    string updated_time = 6;
 }
