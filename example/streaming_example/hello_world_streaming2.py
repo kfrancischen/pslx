@@ -13,7 +13,7 @@ class HelloWorldOp(StreamingOperator):
 
 
 class HelloWorldContainer(DefaultStreamingContainer):
-    def __init__(self, container_name='hello_world_container', ttl=-1):
+    def __init__(self, container_name='hello_world_container', ttl=7):
         super().__init__(container_name=container_name, ttl=ttl)
 
 

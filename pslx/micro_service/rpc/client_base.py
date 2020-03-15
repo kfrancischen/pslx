@@ -2,6 +2,7 @@ import grpc
 
 from pslx.core.base import Base
 from pslx.schema.rpc_pb2_grpc import GenericRPCServiceStub
+from pslx.util.env_util import EnvUtil
 from pslx.util.dummy_util import DummyUtil
 from pslx.util.proto_util import ProtoUtil
 
@@ -35,16 +36,20 @@ class ClientBase(Base):
         self._logger.write_log("Client getting request of uuid " + generic_request.uuid + '.')
         self.sys_log("Client getting request of uuid " + generic_request.uuid + '.')
         try:
+            options = [
+                ('grpc.max_receive_message_length', EnvUtil.get_pslx_env_variable(var='PSLX_GRPC_MAX_MESSAGE_LENGTH')),
+                ('grpc.max_send_message_length', EnvUtil.get_pslx_env_variable(var='PSLX_GRPC_MAX_MESSAGE_LENGTH')),
+            ]
             if not root_certificate:
                 self._logger.write_log("Start with insecure channel.")
-                with grpc.insecure_channel(self._server_url) as channel:
+                with grpc.insecure_channel(self._server_url, options=options) as channel:
                     self._logger.write_log("Channel created with url " + self._server_url)
                     stub = GenericRPCServiceStub(channel=channel)
                     response = stub.SendRequest(request=generic_request)
             else:
                 self._logger.write_log("Start with secure channel.")
                 channel_credential = grpc.ssl_channel_credentials(root_certificate)
-                with grpc.secure_channel(self._server_url, channel_credential) as channel:
+                with grpc.secure_channel(self._server_url, channel_credential, options=options) as channel:
                     self._logger.write_log("Channel created with url " + self._server_url)
                     stub = GenericRPCServiceStub(channel=channel)
                     response = stub.SendRequest(request=generic_request)

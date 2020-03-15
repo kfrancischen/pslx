@@ -10,6 +10,7 @@ class EnvUtil(object):
         'PSLX_TEST': False,
         'PSLX_LOG': False,
         'PSLX_DATABASE': 'database/',
+        'PSLX_GRPC_MAX_MESSAGE_LENGTH': 512 * 1024 * 1024,  # 512MB
     }
 
     @classmethod

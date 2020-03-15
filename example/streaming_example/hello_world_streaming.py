@@ -14,7 +14,7 @@ class HelloWorldOp(StreamingOperator):
 
 class HelloWorldContainer(DefaultStreamingContainer):
     def __init__(self):
-        super().__init__(container_name='hello_world_container')
+        super().__init__(container_name='hello_world_container', ttl=7)
 
 
 if __name__ == "__main__":

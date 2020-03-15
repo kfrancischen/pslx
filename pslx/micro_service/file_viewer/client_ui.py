@@ -60,8 +60,8 @@ def view_file():
             )
             return render_template(
                 'index.html',
-                files_info=result['files_info'].values(),
-                directories_info=result['directories_info'],
+                files_info=sorted(result['files_info'].values(), key=lambda item: item['file_path']),
+                directories_info=sorted(result['directories_info']),
                 file_path=file_path,
                 server_url=server_url
             )
