@@ -50,7 +50,7 @@
                                   <tr>
                                     <td>{{ container_info['mode'] }}</td>
                                     <td>{{ container_info['data_model'] }}</td>
-                                    <td><a href="{{ url_for('view_container', container_name=container_info['container_name'], operators_info=container_info['operators_info']) }}">{{ container_info['container_name'] }}</a></td>
+                                    <td><a href="{{ url_for('view_container', container_name=container_info['container_name'], mode=container_info['mode'], data_model=container_info['data_model']) }}">{{ container_info['container_name'] }}</a></td>
                                     <td>{{ container_info['status'] }}</td>
                                     <td>{{ container_info['updated_time'] }}</td>
                                   </tr>

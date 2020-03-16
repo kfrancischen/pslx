@@ -19,9 +19,9 @@ class DefaultStreamingContainer(ContainerBase):
             ttl=ttl
         )
 
-    def execute(self, is_backfill=False, num_process=1):
+    def execute(self, is_backfill=False, num_threads=1):
         self.sys_log(string='Streaming Container does not allow multi-processing.')
-        super().execute(is_backfill=is_backfill, num_process=1)
+        super().execute(is_backfill=is_backfill, num_threads=1)
 
 
 class CronStreamingContainer(DefaultStreamingContainer):
@@ -46,7 +46,7 @@ class CronStreamingContainer(DefaultStreamingContainer):
         self._logger.write_log("Spec sets to " + str(self._scheduler_spec))
         self.sys_log("Spec sets to " + str(self._scheduler_spec))
 
-    def execute(self, is_backfill=False, num_process=1):
+    def execute(self, is_backfill=False, num_threads=1):
         background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
         background_scheduler.add_job(
             super().execute,
@@ -87,7 +87,7 @@ class IntervalStreamingContainer(DefaultStreamingContainer):
         self._logger.write_log("Spec sets to " + str(self._scheduler_spec))
         self.sys_log("Spec sets to " + str(self._scheduler_spec))
 
-    def execute(self, is_backfill=False, num_process=1):
+    def execute(self, is_backfill=False, num_threads=1):
         background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
         background_scheduler.add_job(
             super().execute,

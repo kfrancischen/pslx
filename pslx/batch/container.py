@@ -45,12 +45,12 @@ class CronBatchContainer(DefaultBatchContainer):
         self._logger.write_log("Spec sets to " + str(self._scheduler_spec))
         self.sys_log("Spec sets to " + str(self._scheduler_spec))
 
-    def execute(self, is_backfill=False, num_process=1):
+    def execute(self, is_backfill=False, num_threads=1):
         background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
         background_scheduler.add_job(
             super().execute,
             'cron',
-            args=[is_backfill, num_process],
+            args=[is_backfill, num_threads],
             day_of_week=self._scheduler_spec['day_of_week'],
             hour=self._scheduler_spec['hour'],
             minute=self._scheduler_spec['minute'],
@@ -88,12 +88,12 @@ class IntervalBatchContainer(DefaultBatchContainer):
         self._logger.write_log("Spec sets to " + str(self._scheduler_spec))
         self.sys_log("Spec sets to " + str(self._scheduler_spec))
 
-    def execute(self, is_backfill=False, num_process=1):
+    def execute(self, is_backfill=False, num_threads=1):
         background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
         background_scheduler.add_job(
             super().execute,
             'interval',
-            args=[is_backfill, num_process],
+            args=[is_backfill, num_threads],
             days=self._scheduler_spec['days'],
             hours=self._scheduler_spec['hours'],
             minutes=self._scheduler_spec['minutes'],
