@@ -29,6 +29,7 @@
             <div class="well well-sm">
                 <form class="form-horizontal">
                     <fieldset>
+                      <legend class="text-center header">{{ container_name }} information</legend>
                       <div class="card mb-3">
                         <div class="card-header">
                           <i class="fa fa-table bigicon"></i>
@@ -38,21 +39,17 @@
                             <table class="table table-bordered" id="file_tree_table" width="100%" cellspacing="0">
                               <thead>
                                 <tr>
-                                  <th>Mode</th>
-                                  <th>Data Model</th>
-                                  <th>Container</th>
+                                  <th>Operator Name</th>
                                   <th>Status</th>
                                   <th>Updated Time</th>
                                 </tr>
                               </thead>
-                              {% for container_info in containers_info %}
+                              {% for operator_info in operators_info %}
                                 <tbody>
                                   <tr>
-                                    <td>{{ container_info['mode'] }}</td>
-                                    <td>{{ container_info['data_model'] }}</td>
-                                    <td><a href="{{ url_for('view_container', container_name=container_info['container_name'], operators_info=container_info['operators_info']) }}">{{ container_info['container_name'] }}</a></td>
-                                    <td>{{ container_info['status'] }}</td>
-                                    <td>{{ container_info['updated_time'] }}</td>
+                                    <td>{{ operator_info['operator_name'] }}</td>
+                                    <td>{{ operator_info['status'] }}</td>
+                                    <td>{{ operator_info['updated_time'] }}</td>
                                   </tr>
                                 </tbody>
                               {% endfor %}

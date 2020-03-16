@@ -10,7 +10,7 @@ file_viewer_rpc_client_ui = Flask(
     static_folder='../../ui'
 )
 file_viewer_rpc_client_ui.config.update(
-    SECRET_KEY='PSLX_PROTO_VIEWER_UI'
+    SECRET_KEY='PSLX_FILE_VIEWER_UI'
 )
 parser = argparse.ArgumentParser()
 parser.add_argument('--server_url_and_root_certificate_dict', dest='server_url_and_root_certificate_dict',
