@@ -1,4 +1,6 @@
 import argparse
+import datetime
+
 from flask import Flask, render_template, request
 from pslx.micro_service.container_backend.client import ContainerBackendClient
 from pslx.micro_service.container_backend.rpc import ContainerBackendRPC
@@ -11,6 +13,7 @@ from pslx.tool.lru_cache_tool import LRUCacheTool
 from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
+from pslx.util.timezone_util import TimezoneUtil
 
 CLIENT_NAME = 'PSLX_CONTAINER_BACKEND_UI'
 container_backend_rpc_client_ui = Flask(
@@ -49,7 +52,7 @@ logger = LoggingTool(
 )
 
 
-def read_container_info():
+def get_containers_info():
     backend_folder = FileUtil.join_paths_to_dir(
         root_dir=EnvUtil.get_pslx_env_variable('PSLX_DATABASE'),
         base_name=ContainerBackendRPC.get_class_name()
@@ -68,6 +71,7 @@ def read_container_info():
                 break
             if dir_to_containers:
                 for dir_name in FileUtil.list_dirs_in_dir(dir_name=dir_to_containers):
+                    logger.write_log("Checking folder " + dir_name + '.')
                     container_name = dir_name.strip('/').split('/')[-1]
                     partitioner_storage = partitioner_lru_cache.get(key=dir_name)
                     if not partitioner_storage:
@@ -90,6 +94,10 @@ def read_container_info():
                             'message_type': ContainerBackendValue,
                         }
                     )
+                    if TimezoneUtil.cur_time_in_pst() - TimezoneUtil.cur_time_from_str(
+                            time_str=result_proto.updated_time) > \
+                            datetime.timedelta(days=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')):
+                        continue
                     container_info = {
                         'container_name': result_proto.container_name,
                         'status': ProtoUtil.get_name_by_value(
@@ -114,16 +122,84 @@ def read_container_info():
     return containers_info
 
 
+def get_operators_info(container_name, mode, data_model):
+    operators_info = []
+    backend_folder = FileUtil.join_paths_to_dir(
+        root_dir=EnvUtil.get_pslx_env_variable('PSLX_DATABASE'),
+        base_name=ContainerBackendRPC.get_class_name()
+    )
+    backend_folder = FileUtil.create_dir_if_not_exist(dir_name=backend_folder)
+    container_folder = FileUtil.join_paths_to_dir(
+        root_dir=backend_folder,
+        base_name=data_model + '/' + mode
+    )
+    logger.write_log("Checking folder " + container_folder + '.')
+    if not FileUtil.does_dir_exist(dir_name=container_folder):
+        return operators_info
+
+    sub_dirs = FileUtil.list_dirs_in_dir(dir_name=container_folder)
+    if sub_dirs and 'ttl' in sub_dirs[0]:
+        dir_name = FileUtil.join_paths_to_dir(
+            root_dir=sub_dirs[0],
+            base_name=container_name
+        )
+    else:
+        dir_name = FileUtil.join_paths_to_dir(
+            root_dir=container_folder,
+            base_name=container_name
+        )
+    logger.write_log("Checking folder " + container_folder + '.')
+    if not FileUtil.does_dir_exist(dir_name=dir_name):
+        return operators_info
+
+    partitioner_storage = partitioner_lru_cache.get(key=dir_name)
+    if not partitioner_storage:
+        partitioner_storage = MinutelyPartitionerStorage()
+        partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
+
+    logger.write_log("Checking folder " + dir_name + '.')
+    partitioner_storage.initialize_from_dir(dir_name=dir_name)
+    latest_dir = partitioner_storage.get_latest_dir()
+    files = FileUtil.list_files_in_dir(dir_name=latest_dir)
+
+    logger.write_log("Checking folder " + latest_dir + '.')
+    if not files:
+        return operators_info
+
+    proto_table_storage = proto_table_lru_cache.get(key=files[0])
+    if not proto_table_storage:
+        proto_table_storage = ProtoTableStorage()
+        proto_table_lru_cache.set(key=files[0], value=proto_table_storage)
+
+    proto_table_storage.initialize_from_file(file_name=files[0])
+    result_proto = proto_table_storage.read(
+        params={
+            'key': container_name,
+            'message_type': ContainerBackendValue,
+        }
+    )
+
+    for key, val in dict(result_proto.operator_status_map).items():
+        operators_info.append({
+            'operator_name': key,
+            'status': ProtoUtil.get_name_by_value(
+                enum_type=Status, value=val),
+            'updated_time': result_proto.updated_time,
+        })
+    return operators_info
+
+
 @container_backend_rpc_client_ui.route("/", methods=['GET', 'POST'])
 @container_backend_rpc_client_ui.route("/index.html", methods=['GET', 'POST'])
 def index():
-    containers_info = read_container_info()
+    containers_info = get_containers_info()
     try:
         return render_template(
             'index.html',
             containers_info=sorted(containers_info.values(), key=lambda x: x['updated_time'], reverse=True)
         )
-    except Exception as _:
+    except Exception as err:
+        logger.write_log("Got error rendering index.html: " + str(err))
         return render_template(
             'index.html',
             containers_info=[]
@@ -132,17 +208,22 @@ def index():
 
 @container_backend_rpc_client_ui.route('/view_container', methods=['GET', 'POST'])
 def view_container():
-    containers_info = read_container_info()
     container_name = request.args.get('container_name')
     mode = request.args.get('mode')
     data_model = request.args.get('data_model')
+    operators_info = get_operators_info(
+        container_name=container_name,
+        mode=mode,
+        data_model=data_model
+    )
     try:
         return render_template(
             'view_container.html',
             container_name=container_name,
-            operators_info=containers_info[(container_name, mode, data_model)]['operators_info']
+            operators_info=operators_info
         )
     except Exception as err:
+        logger.write_log("Got error: " + str(err))
         return render_template(
             'view_container.html',
             container_name=str(err),

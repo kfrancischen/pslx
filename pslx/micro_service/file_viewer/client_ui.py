@@ -27,6 +27,7 @@ logger = LoggingTool(
     ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
 )
 for url, certificate_path in url_and_certificate_dict.items():
+    logger.write_log("Getting url of " + url + " and certificate path " + certificate_path + '.')
     root_certificate = None
     if certificate_path:
         with open(FileUtil.die_if_file_not_exist(file_name=certificate_path), 'r') as infile:
@@ -73,6 +74,7 @@ def view_file():
                 server_url=server_url
             )
         except Exception as err:
+            logger.write_log("Got error: " + str(err))
             return render_template(
                 'index.html',
                 files_info={},
