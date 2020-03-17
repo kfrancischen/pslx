@@ -40,16 +40,22 @@
                               <thead>
                                 <tr>
                                   <th>Operator Name</th>
+                                  <th>Num Dependencies</th>
+                                  <th>Dependencies</th>
                                   <th>Status</th>
-                                  <th>Updated Time</th>
+                                  <th>Start Time</th>
+                                  <th>End Time</th>
                                 </tr>
                               </thead>
                               {% for operator_info in operators_info %}
                                 <tbody>
                                   <tr>
                                     <td>{{ operator_info['operator_name'] }}</td>
+                                    <td>{{ operator_info['num_of_dependencies'] }}</td>
+                                    <td>{{ operator_info['dependencies'] }}</td>
                                     <td>{{ operator_info['status'] }}</td>
-                                    <td>{{ operator_info['updated_time'] }}</td>
+                                    <td>{{ operator_info['start_time'] }}</td>
+                                    <td>{{ operator_info['end_time'] }}</td>
                                   </tr>
                                 </tbody>
                               {% endfor %}

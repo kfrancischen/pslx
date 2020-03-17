@@ -17,7 +17,16 @@ message ProtoTable {
 // the next will be 7
 message ContainerBackendValue {
     string container_name = 1;
-    map<string, Status> operator_status_map = 2;
+
+    message OperatorInfo {
+        repeated string parents = 2;
+        string start_time = 3;
+        string end_time = 4;
+        Status status = 5;
+    }
+
+    map<string, OperatorInfo> operator_info_map = 2;
+
     Status container_status = 3;
     ModeType mode = 4;
     DataModelType data_model = 5;

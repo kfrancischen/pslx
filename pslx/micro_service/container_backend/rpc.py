@@ -34,7 +34,15 @@ class ContainerBackendRPC(RPCBase):
         storage_value.container_name = request.container_name
         storage_value.container_status = request.status
         for operator_name, operator_snapshot in dict(request.operator_snapshot_map).items():
-            storage_value.operator_status_map[operator_name] = operator_snapshot.status
+            operator_info = ContainerBackendValue.OperatorInfo()
+            operator_info.status = operator_snapshot.status
+            for parent in operator_snapshot.node_snapshot.parents_names:
+                operator_info.parents.append(parent)
+
+            operator_info.start_time = operator_snapshot.start_time
+            operator_info.end_time = operator_snapshot.end_time
+            storage_value.operator_info_map[operator_name].CopyFrom(operator_info)
+
         storage_value.mode = request.mode
         storage_value.data_model = request.data_model
         storage_value.updated_time = str(TimezoneUtil.cur_time_in_pst())

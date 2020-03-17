@@ -45,8 +45,7 @@ class PartitionerBase(StorageBase):
                      + ProtoUtil.get_name_by_value(enum_type=StorageType, value=self.STORAGE_TYPE) + '.')
         pass
 
-    def initialize_from_dir(self, dir_name):
-        dir_name = FileUtil.normalize_dir_name(dir_name=dir_name)
+    def initialize_from_dir(self, dir_name, force=False):
 
         def _recursive_initialize_from_dir(node, max_recursion):
             if max_recursion == 0:
@@ -83,8 +82,9 @@ class PartitionerBase(StorageBase):
                 _recursive_initialize_from_dir(node=child_node, max_recursion=max_recursion - 1)
 
         from_scratch = False
+        dir_name = FileUtil.normalize_dir_name(dir_name=dir_name)
         FileUtil.create_dir_if_not_exist(dir_name=dir_name)
-        if not self._file_tree:
+        if not self._file_tree or self.is_updated() or force:
             root_node = OrderedNodeBase(
                 node_name=FileUtil.normalize_dir_name(dir_name=dir_name),
                 order=SortOrder.REVERSE
@@ -113,8 +113,19 @@ class PartitionerBase(StorageBase):
             return self._file_tree.get_num_nodes()
 
     def is_empty(self):
+        if self.is_updated():
+            self.sys_log("Tree updated, need force rebuilding the tree.")
+            self.initialize_from_dir(dir_name=self.get_dir_name(), force=True)
+
         leftmost_leaf_name = self._file_tree.get_leftmost_leaf()
         if FileUtil.is_dir_empty(dir_name=leftmost_leaf_name):
+            return True
+        else:
+            return False
+
+    def is_updated(self):
+        leftmost_leaf_name = self._file_tree.get_leftmost_leaf()
+        if not FileUtil.does_dir_exist(dir_name=leftmost_leaf_name):
             return True
         else:
             return False
@@ -301,10 +312,6 @@ class PartitionerBase(StorageBase):
             time.sleep(TimeSleepObj.ONE_SECOND)
 
         self._writer_status = Status.RUNNING
-        root_dir = self.get_dir_name()
-        if root_dir and not FileUtil.does_dir_exist(dir_name=root_dir):
-            self._file_tree = None
-            self.initialize_from_dir(dir_name=root_dir)
 
         if to_make_partition:
             self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_pst())

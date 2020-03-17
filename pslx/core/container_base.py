@@ -128,6 +128,7 @@ class ContainerBase(GraphBase):
 
     def _execute(self, task_queue, finished_queue):
         for operator_name in iter(task_queue.get, Signal.STOP):
+            self.set_status(status=Status.RUNNING)
             self.sys_log("Starting task: " + operator_name)
             self._logger.write_log("Starting task: " + operator_name)
             op = self._node_name_to_node_dict[operator_name]

@@ -58,7 +58,7 @@ def get_containers_info():
         base_name=ContainerBackendRPC.get_class_name()
     )
     backend_folder = FileUtil.create_dir_if_not_exist(dir_name=backend_folder)
-    containers_info = {}
+    containers_info = []
     for dir_to_data_model in FileUtil.list_dirs_in_dir(dir_name=backend_folder):
         for sub_dir in FileUtil.list_dirs_in_dir(dir_name=dir_to_data_model):
             sub_sub_dirs = FileUtil.list_dirs_in_dir(dir_name=sub_dir)
@@ -107,17 +107,7 @@ def get_containers_info():
                         'data_model': ProtoUtil.get_name_by_value(
                             enum_type=DataModelType, value=result_proto.data_model),
                     }
-                    operators_info = []
-                    for key, val in dict(result_proto.operator_status_map).items():
-                        operators_info.append({
-                            'operator_name': key,
-                            'status': ProtoUtil.get_name_by_value(
-                                enum_type=Status, value=val),
-                            'updated_time': result_proto.updated_time,
-                        })
-                    container_info['operators_info'] = operators_info
-                    containers_info[(container_info['container_name'], container_info['mode'],
-                                     container_info['data_model'])] = container_info
+                    containers_info.append(container_info)
 
     return containers_info
 
@@ -179,14 +169,17 @@ def get_operators_info(container_name, mode, data_model):
         }
     )
 
-    for key, val in dict(result_proto.operator_status_map).items():
+    for key, val in dict(result_proto.operator_info_map).items():
         operators_info.append({
             'operator_name': key,
             'status': ProtoUtil.get_name_by_value(
-                enum_type=Status, value=val),
-            'updated_time': result_proto.updated_time,
+                enum_type=Status, value=val.status),
+            'start_time': val.start_time,
+            'end_time': val.end_time,
+            'num_of_dependencies': len(val.parents),
+            'dependencies': ','.join(val.parents)
         })
-    return operators_info
+    return sorted(operators_info, key=lambda x: (x['num_of_dependencies'], x['operator_name']))
 
 
 @container_backend_rpc_client_ui.route("/", methods=['GET', 'POST'])
@@ -196,7 +189,7 @@ def index():
     try:
         return render_template(
             'index.html',
-            containers_info=sorted(containers_info.values(), key=lambda x: x['updated_time'], reverse=True)
+            containers_info=sorted(containers_info, key=lambda x: x['container_name'])
         )
     except Exception as err:
         logger.write_log("Got error rendering index.html: " + str(err))
