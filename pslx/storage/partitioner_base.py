@@ -48,9 +48,10 @@ class PartitionerBase(StorageBase):
     def initialize_from_dir(self, dir_name, force=False):
 
         def _recursive_initialize_from_dir(node, max_recursion):
+            self.sys_log("Starting recursion of " + str(max_recursion) + '.')
             if max_recursion == 0:
-                self.sys_log("Exhausted all recursions")
-                self._logger.write_log("Exhausted all recursions")
+                self.sys_log("Exhausted all recursions.")
+                self._logger.write_log("Exhausted all recursions.")
                 return
 
             node_name = node.get_node_name()
@@ -115,6 +116,7 @@ class PartitionerBase(StorageBase):
     def is_empty(self):
         if self.is_updated():
             self.sys_log("Tree updated, need force rebuilding the tree.")
+            self._logger.write_log("Tree updated, need force rebuilding the tree.")
             self.initialize_from_dir(dir_name=self.get_dir_name(), force=True)
 
         leftmost_leaf_name = self._file_tree.get_leftmost_leaf()
@@ -189,8 +191,8 @@ class PartitionerBase(StorageBase):
             self._reader_status = Status.IDLE
             return result
         except Exception as err:
-            self.sys_log(str(err))
-            self._logger.write_log(str(err))
+            self.sys_log(str(err) + '.')
+            self._logger.write_log(str(err) + '.')
             raise StorageReadException
 
     def read_range(self, params):
@@ -264,8 +266,8 @@ class PartitionerBase(StorageBase):
             self._reader_status = Status.IDLE
             return result
         except Exception as err:
-            self.sys_log(str(err))
-            self._logger.write_log(str(err))
+            self.sys_log("Read got exception " + str(err) + '.')
+            self._logger.write_log("Read got exception " + str(err) + '.')
             raise StorageReadException
 
     def make_new_partition(self, timestamp):
@@ -332,8 +334,8 @@ class PartitionerBase(StorageBase):
             self._underlying_storage.write(data=data, params=params)
             self._writer_status = Status.IDLE
         except Exception as err:
-            self.sys_log(str(err))
-            self._logger.write_log(str(err))
+            self.sys_log("Write got exception " + str(err) + '.')
+            self._logger.write_log("Write got exception " + str(err) + '.')
             raise StorageWriteException
 
     def print_self(self):

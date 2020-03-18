@@ -98,8 +98,8 @@ class ProtoTableStorage(StorageBase):
                     )
                     self._reader_status = Status.IDLE
             except Exception as err:
-                self.sys_log("Got exception: " + str(err))
-                self._logger.write_log("Got exception: " + str(err))
+                self.sys_log("Read got exception: " + str(err))
+                self._logger.write_log("Read got exception: " + str(err))
                 raise StorageWriteException
 
     def write(self, data, params=None):
@@ -134,6 +134,6 @@ class ProtoTableStorage(StorageBase):
                     )
                     self._writer_status = Status.IDLE
             except Exception as err:
-                self.sys_log("Got exception: " + str(err))
-                self._logger.write_log("Got exception: " + str(err))
+                self.sys_log("Write got exception: " + str(err) + '.')
+                self._logger.write_log("Write got exception: " + str(err) + '.')
                 raise StorageWriteException

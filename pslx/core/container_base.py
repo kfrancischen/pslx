@@ -72,6 +72,7 @@ class ContainerBase(GraphBase):
         self._status = status
 
     def unset_status(self):
+        self.sys_log("Unset status.")
         self.set_status(status=Status.IDLE)
 
     def uninitialize(self):
@@ -128,7 +129,6 @@ class ContainerBase(GraphBase):
 
     def _execute(self, task_queue, finished_queue):
         for operator_name in iter(task_queue.get, Signal.STOP):
-            self.set_status(status=Status.RUNNING)
             self.sys_log("Starting task: " + operator_name)
             self._logger.write_log("Starting task: " + operator_name)
             op = self._node_name_to_node_dict[operator_name]
@@ -142,8 +142,13 @@ class ContainerBase(GraphBase):
         task_queue.task_done()
 
     def execute(self, is_backfill=False, num_threads=1):
+        if is_backfill:
+            self.sys_log("Running in backfill mode.")
+            self._logger.write_log("Running in backfill mode.")
+
         if not self._is_initialized:
             self.sys_log("Cannot execute if the container is not initialized.")
+            self._logger.write_log("Cannot execute if the container is not initialized.")
             raise exception.ContainerUninitializedException
 
         self.sys_log('Upstream operators are: ' + ', '.join(self._upstream_ops))
@@ -164,6 +169,7 @@ class ContainerBase(GraphBase):
         self.set_status(status=Status.RUNNING)
         operator_status = {}
         if is_backfill:
+            self.sys_log("Updating the status of operators from previous snapshots.")
             operator_status = self._get_latest_status_of_operators()
 
         self._start_time = TimezoneUtil.cur_time_in_pst()
@@ -182,6 +188,8 @@ class ContainerBase(GraphBase):
                 if is_backfill and operator_status[operator_name] == Status.SUCCEEDED:
                     self._node_name_to_node_dict[operator_name].set_status(status=Status.SUCCEEDED)
                     continue
+                self.sys_log("Adding " + operator_name + " to task queue.")
+                self._logger.write_log("Adding " + operator_name + " to task queue.")
                 task_queue.put(operator_name)
                 num_tasks += 1
         for _ in range(num_threads):
@@ -207,8 +215,8 @@ class ContainerBase(GraphBase):
 
         log_str += ', '.join(tasks_list)
             
-        self._logger.write_log(log_str)
-        self.sys_log(log_str)
+        self._logger.write_log(log_str + '.')
+        self.sys_log(log_str + '.')
 
         self.get_container_snapshot()
         self.sys_log("Taking snapshot in the end.")
@@ -220,6 +228,7 @@ class ContainerBase(GraphBase):
         for snapshot_file in snapshot_files[::-1]:
             operator_name = snapshot_file.split('_')[1]
             if operator_name not in operator_status:
+                self.sys_log("Getting status for operator " + operator_name + '.')
                 operator_status[operator_name] = self._node_name_to_node_dict[operator_name].get_status_from_snapshot(
                     snapshot_file=snapshot_file
                 )

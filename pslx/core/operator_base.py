@@ -13,6 +13,7 @@ from pslx.util.timezone_util import TimezoneUtil, TimeSleepObj
 
 class OperatorBase(OrderedNodeBase):
     DATA_MODEL = DataModelType.DEFAULT
+    CONTENT_MESSAGE_TYPE = None
 
     def __init__(self, operator_name, order=SortOrder.ORDER):
         super().__init__(node_name=operator_name, order=order)
@@ -42,12 +43,14 @@ class OperatorBase(OrderedNodeBase):
         self._status = status
 
     def unset_status(self):
+        self.sys_log("Unset status.")
         self.set_status(status=Status.IDLE)
 
     def get_status(self):
         return self._status
 
     def mark_as_done(self):
+        self.sys_log("Mark status as done.")
         self.set_status(status=Status.SUCCEEDED)
 
     def mark_as_persistent(self):
@@ -120,6 +123,7 @@ class OperatorBase(OrderedNodeBase):
         if self._end_time:
             snapshot.end_time = str(self._end_time)
         if self._persistent:
+            assert self.CONTENT_MESSAGE_TYPE is not None
             snapshot.content.CopyFrom(ProtoUtil.message_to_any(message=self._content))
         if output_file and self._config['save_snapshot'] and 'Dummy' not in self.get_class_name():
             self.sys_log("Saved to file " + output_file + '.')
@@ -144,7 +148,7 @@ class OperatorBase(OrderedNodeBase):
 
         unfinished_parent_ops = self.wait_for_upstream_status()
         while unfinished_parent_ops:
-            self.sys_log("Waiting for parent process to finish: " + ','.join(unfinished_parent_ops))
+            self.sys_log("Waiting for parent process to finish: " + ','.join(unfinished_parent_ops) + '.')
             time.sleep(TimeSleepObj.ONE_SECOND)
             unfinished_parent_ops = self.wait_for_upstream_status()
 
@@ -165,7 +169,7 @@ class OperatorBase(OrderedNodeBase):
                     self.set_status(status=Status.SUCCEEDED)
                     return
             except OperatorFailureException as err:
-                self.sys_log(str(err))
+                self.sys_log("Execute with err: " + str(err) + '.')
 
         self.set_status(status=Status.FAILED)
 

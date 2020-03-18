@@ -27,19 +27,22 @@ class TreeBase(Base):
         return
 
     def add_node(self, parent_node, child_node):
+        self.sys_log("Adding parent node " + parent_node.get_node_name() + " to " + child_node.get_node_name() + '.')
         assert child_node.get_num_parents() == 0 and parent_node != child_node
         if parent_node != self._root:
             assert parent_node.get_num_parents() != 0
 
         parent_node.add_child(child_node)
-        if parent_node.get_node_name() in self._node_name_to_node_dict or \
-                child_node.get_node_name() in self._node_name_to_node_dict:
-            self.sys_log(string='Attention: node names need to be unique.')
-
-        if parent_node.get_node_name() not in self._node_name_to_node_dict:
+        if parent_node.get_node_name() in self._node_name_to_node_dict:
+            self.sys_log(string=parent_node.get_node_name() + " already exists.")
+        else:
             self._node_name_to_node_dict[parent_node.get_node_name()] = parent_node
-        if child_node.get_node_name() not in self._node_name_to_node_dict:
+
+        if child_node.get_node_name() in self._node_name_to_node_dict:
+            self.sys_log(string=child_node.get_node_name() + " already exists.")
+        else:
             self._node_name_to_node_dict[child_node.get_node_name()] = child_node
+
         self._clean_dict()
 
     def _clean_dict(self):
@@ -78,6 +81,7 @@ class TreeBase(Base):
         search_queue.append((self._root, 0))
         while search_queue:
             if num_result_nodes >= max_num_node > 0:
+                self.sys_log("Reaching maximum number of nodes in bfs search.")
                 break
             search_node, dist_to_root = search_queue.popleft()
             result.append((search_node.get_node_name(), dist_to_root))
@@ -92,6 +96,7 @@ class TreeBase(Base):
         search_stack = [(self._root, 0)]
         while search_stack:
             if num_result_nodes >= max_num_node > 0:
+                self.sys_log("Reaching maximum number of nodes in dfs search.")
                 break
             search_node, dist_to_root = search_stack.pop()
             result.append((search_node.get_node_name(), dist_to_root))
@@ -102,6 +107,7 @@ class TreeBase(Base):
         return result
 
     def _trim_tree(self, node, max_capacity=-1):
+        self.sys_log("Trimming with capacity " + str(max_capacity) + " from node " + node.get_node_name() + '.')
         if not node.is_children_ordered():
             self.sys_log(string=node.get_node_name() + ' is not ordered. Be careful when you trim the tree.')
 

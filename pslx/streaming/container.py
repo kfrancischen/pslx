@@ -46,10 +46,16 @@ class CronStreamingContainer(DefaultStreamingContainer):
         self._logger.write_log("Spec sets to " + str(self._scheduler_spec))
         self.sys_log("Spec sets to " + str(self._scheduler_spec))
 
+    def _execute_wrapper(self, is_backfill, num_threads):
+        self.unset_status()
+        for node in self.get_nodes():
+            node.unset_status()
+        super().execute(is_backfill=is_backfill, num_threads=num_threads)
+
     def execute(self, is_backfill=False, num_threads=1):
         background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
         background_scheduler.add_job(
-            super().execute,
+            self._execute_wrapper,
             'cron',
             args=[is_backfill, 1],
             day_of_week=self._scheduler_spec['day_of_week'],
@@ -87,10 +93,16 @@ class IntervalStreamingContainer(DefaultStreamingContainer):
         self._logger.write_log("Spec sets to " + str(self._scheduler_spec))
         self.sys_log("Spec sets to " + str(self._scheduler_spec))
 
+    def _execute_wrapper(self, is_backfill, num_threads):
+        self.unset_status()
+        for node in self.get_nodes():
+            node.unset_status()
+        super().execute(is_backfill=is_backfill, num_threads=num_threads)
+
     def execute(self, is_backfill=False, num_threads=1):
         background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
         background_scheduler.add_job(
-            super().execute,
+            self._execute_wrapper,
             'interval',
             args=[is_backfill, 1],
             days=self._scheduler_spec['days'],

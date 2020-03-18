@@ -16,6 +16,7 @@ class LinkedListBase(Base):
         return self._tail
 
     def add_to_head(self, node):
+        self.sys_log("Adding " + node.get_node_name() + " to head.")
         if node.get_node_name() in self._node_dict:
             self.delete_by_node(node=node)
 
@@ -31,6 +32,7 @@ class LinkedListBase(Base):
         self.check_valid()
 
     def delete_by_node(self, node):
+        self.sys_log("Deleting " + node.get_node_name() + ".")
         if not node or node.get_num_parents() == 0:
             return
 

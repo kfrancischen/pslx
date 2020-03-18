@@ -1,9 +1,10 @@
 import os
-import inspect
+from inspect import getmodule, getframeinfo, stack
 from pslx.schema.enums_pb2 import ModeType
-from pslx.util.env_util import EnvUtil
-from pslx.util.timezone_util import TimezoneUtil
 from pslx.util.color_util import ColorsUtil
+from pslx.util.env_util import EnvUtil
+from pslx.util.file_util import FileUtil
+from pslx.util.timezone_util import TimezoneUtil
 
 
 class Base(object):
@@ -28,7 +29,7 @@ class Base(object):
 
     @classmethod
     def get_full_class_name(cls):
-        file_path = inspect.getmodule(cls).__name__
+        file_path = getmodule(cls).__name__
         return '.'.join(file_path.replace('.py', '').split('/') + [cls.__name__])
 
     @classmethod
@@ -42,8 +43,8 @@ class Base(object):
     @classmethod
     def sys_log(cls, string):
         if EnvUtil.get_pslx_env_variable(var='PSLX_LOG'):
-            print('[SYS-LOG]' + ColorsUtil.BOLD + ' class' + ColorsUtil.RESET + ' ' +
-                  ColorsUtil.Foreground.GREEN + '[%s]' % cls.get_class_name() + ColorsUtil.RESET + ' & ' +
-                  ColorsUtil.BOLD + 'Timestamp' + ColorsUtil.RESET + ' ' +
-                  ColorsUtil.Foreground.RED + '[%s]' % str(TimezoneUtil.cur_time_in_pst()) + ColorsUtil.RESET +
-                  ': ' + string)
+            caller = getframeinfo(stack()[1][0])
+            print('[SYS-LOG] ' + ColorsUtil.Foreground.GREEN + '[file: %s]' % FileUtil.base_name(caller.filename) +
+                  ColorsUtil.RESET + ' ' + ColorsUtil.Foreground.YELLOW + '[line: %d]' % caller.lineno +
+                  ColorsUtil.RESET + ' ' + ColorsUtil.Foreground.RED + '[%s]' % str(TimezoneUtil.cur_time_in_pst()) +
+                  ColorsUtil.RESET + ': ' + string)

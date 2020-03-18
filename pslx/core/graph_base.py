@@ -12,6 +12,8 @@ class GraphBase(Base):
 
     def add_direct_edge(self, from_node, to_node):
         assert from_node != to_node
+        self.sys_log("Adding direct edge from " + from_node.get_node_name() + " to " +
+                     to_node.get_node_name() + '.')
         if from_node.get_node_name() not in self._node_name_to_node_dict:
             self._node_name_to_node_dict[from_node.get_node_name()] = from_node
         if to_node.get_node_name() not in self._node_name_to_node_dict:
@@ -20,6 +22,8 @@ class GraphBase(Base):
         self._num_edge += 1
 
     def add_indirect_edge(self, node_1, node_2):
+        self.sys_log("Adding indirect edge between " + node_1.get_node_name() + " and " +
+                     node_2.get_node_name() + '.')
         self.add_direct_edge(from_node=node_1, to_node=node_2)
         self.add_direct_edge(from_node=node_2, to_node=node_1)
         self._num_edge -= 1
@@ -29,6 +33,12 @@ class GraphBase(Base):
 
     def get_num_nodes(self):
         return len(self._node_name_to_node_dict)
+
+    def get_nodes(self):
+        return list(self._node_name_to_node_dict.values())
+
+    def get_node_names(self):
+        return list(self._node_name_to_node_dict.keys())
 
     def get_num_edges(self):
         return self._num_edge
@@ -82,6 +92,8 @@ class GraphBase(Base):
         return result
 
     def replace_node(self, old_node, new_node):
+        self.sys_log("Replacing old node: " + old_node.get_node_name() + " with new node: "
+                     + new_node.get_node_name() + '.')
         for parent in old_node.get_parents_nodes():
             new_node.add_parent(parent)
             old_node.delete_parent(parent)

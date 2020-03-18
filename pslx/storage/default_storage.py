@@ -28,6 +28,8 @@ class DefaultStorage(StorageBase):
         return
 
     def initialize_from_file(self, file_name):
+        self.sys_log("Initialize from file " + file_name + '.')
+        self._logger.write_log("Initialize from file " + file_name + '.')
         self._file_name = FileUtil.create_file_if_not_exist(file_name=file_name)
         self._last_read_line = 0
 
@@ -95,8 +97,8 @@ class DefaultStorage(StorageBase):
                         self._reader_status = Status.IDLE
                         return result
                     except Exception as err:
-                        self.sys_log(str(err))
-                        self._logger.write_log(str(err))
+                        self.sys_log("Read got exception " + str(err) + '.')
+                        self._logger.write_log("Read got exception " + str(err) + '.')
                         raise StorageReadException
 
     def write(self, data, params=None):
@@ -122,6 +124,7 @@ class DefaultStorage(StorageBase):
 
         self._writer_status = Status.RUNNING
         if not isinstance(data, str):
+            self.sys_log("Data is not str instance, joining them with preset delimiter.")
             data_to_write = params['delimiter'].join([str(val) for val in data])
         else:
             data_to_write = data
@@ -139,6 +142,6 @@ class DefaultStorage(StorageBase):
 
             self._writer_status = Status.IDLE
         except Exception as err:
-            self.sys_log(str(err))
-            self._logger.write_log(str(err))
+            self.sys_log("Write got exception: " + str(err) + '.')
+            self._logger.write_log("Write got exception: " + str(err) + '.')
             raise StorageWriteException

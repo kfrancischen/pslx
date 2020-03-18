@@ -97,6 +97,7 @@ class FixedSizeStorage(DefaultStorage):
         self._pre_load_data()
 
         if not isinstance(data, str):
+            self.sys_log("Data is not str instance, joining them with preset delimiter.")
             data_to_write = params['delimiter'].join([str(val) for val in data])
         else:
             data_to_write = data
@@ -118,6 +119,6 @@ class FixedSizeStorage(DefaultStorage):
             self._writer_status = Status.IDLE
 
         except Exception as err:
-            self.sys_log(str(err))
-            self._logger.write_log(str(err))
+            self.sys_log("Write got exception " + str(err) + '.')
+            self._logger.write_log("Write got exception " + str(err) + '.')
             raise StorageWriteException

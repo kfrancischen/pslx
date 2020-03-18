@@ -1,5 +1,6 @@
 import logging
 import datetime
+from inspect import getframeinfo, stack
 import os
 from pslx.core.base import Base
 from pslx.schema.enums_pb2 import DiskLoggerLevel
@@ -56,7 +57,7 @@ class LoggingTool(Base):
 
         fh = logging.FileHandler(file_name + '.log')
         fh.setLevel(self._logging_level)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        formatter = logging.Formatter('%(levelname)s - %(message)s')
         fh.setFormatter(formatter)
         self._logger.addHandler(fh)
 
@@ -65,5 +66,6 @@ class LoggingTool(Base):
         if now.date() != self._start_date.date():
             self._start_date = now
             self._new_logger()
-
-        self._logger.info('[PST: ' + str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + '] ' + string)
+        caller = getframeinfo(stack()[1][0])
+        self._logger.info(' [' + FileUtil.base_name(caller.filename) + ': ' + str(caller.lineno) + ', ' +
+                          str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + ']: ' + string)
