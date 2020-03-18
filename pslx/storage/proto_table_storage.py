@@ -72,7 +72,7 @@ class ProtoTableStorage(StorageBase):
                 return result
             except Exception as err:
                 self.sys_log("Got exception: " + str(err))
-                self._logger.write_log("Got exception: " + str(err))
+                self._logger.error("Got exception: " + str(err))
                 raise StorageReadException
         else:
             return None
@@ -99,7 +99,7 @@ class ProtoTableStorage(StorageBase):
                     self._reader_status = Status.IDLE
             except Exception as err:
                 self.sys_log("Read got exception: " + str(err))
-                self._logger.write_log("Read got exception: " + str(err))
+                self._logger.error("Read got exception: " + str(err))
                 raise StorageWriteException
 
     def write(self, data, params=None):
@@ -120,7 +120,7 @@ class ProtoTableStorage(StorageBase):
         assert isinstance(data, list) and len(data) == 2 and isinstance(data[0], str)
         if data[0] in self._table_message.data and not params['overwrite']:
             self.sys_log(data[0] + " already exist and will not be overwritten.")
-            self._logger.write_log(data[0] + " already exist and will not be overwritten.")
+            self._logger.info(data[0] + " already exist and will not be overwritten.")
             self._writer_status = Status.IDLE
         else:
             try:
@@ -135,5 +135,5 @@ class ProtoTableStorage(StorageBase):
                     self._writer_status = Status.IDLE
             except Exception as err:
                 self.sys_log("Write got exception: " + str(err) + '.')
-                self._logger.write_log("Write got exception: " + str(err) + '.')
+                self._logger.error("Write got exception: " + str(err) + '.')
                 raise StorageWriteException

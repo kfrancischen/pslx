@@ -30,7 +30,7 @@ class TTLCleanerOp(BatchOperator):
 
     def execute_impl(self):
         start_time = TimezoneUtil.cur_time_in_local()
-        self._logger.write_log("TTL cleaner started at " + str(start_time) + '.')
+        self._logger.info("TTL cleaner started at " + str(start_time) + '.')
         all_files_under_dir = FileUtil.list_files_in_dir_recursively(
             dir_name=EnvUtil.get_pslx_env_variable(var='PSLX_DATABASE')
         )
@@ -38,7 +38,7 @@ class TTLCleanerOp(BatchOperator):
         for file_name in all_files_under_dir:
             ttl = FileUtil.get_ttl_from_path(path=file_name)
             if ttl and start_time - FileUtil.get_file_modified_time(file_name=file_name) > ttl:
-                self._logger.write_log("Removing file " + file_name + '...')
+                self._logger.info("Removing file " + file_name + '...')
                 try:
                     with FileLockTool(protected_file_path=file_name, read_mode=True):
                         FileUtil.remove_file(
@@ -47,28 +47,28 @@ class TTLCleanerOp(BatchOperator):
                     num_file_removed += 1
                 except Exception as err:
                     num_file_failed += 1
-                    self._logger.write_log("Removing file " + file_name + ' failed with err ' + str(err) + '.')
+                    self._logger.error("Removing file " + file_name + ' failed with err ' + str(err) + '.')
 
-        self._logger.write_log("Total number of file removed in this round is " + str(num_file_removed) + '.')
-        self._logger.write_log("Total number of file failed to be removed in this round is " +
-                               str(num_file_failed) + '.')
+        self._logger.info("Total number of file removed in this round is " + str(num_file_removed) + '.')
+        self._logger.info("Total number of file failed to be removed in this round is " +
+                          str(num_file_failed) + '.')
         num_dir_removed, num_dir_failed = 0, 0
         all_dirs_under_dir = FileUtil.list_dirs_in_dir_recursively(
             dir_name=EnvUtil.get_pslx_env_variable(var='PSLX_DATABASE')
         )
         for dir_name in all_dirs_under_dir:
             if FileUtil.does_dir_exist(dir_name=dir_name) and self._recursively_check_dir_deletable(dir_name=dir_name):
-                self._logger.write_log("Removing directory " + dir_name + '...')
+                self._logger.info("Removing directory " + dir_name + '...')
                 try:
                     FileUtil.remove_dir_recursively(dir_name=dir_name)
                     num_dir_removed += 1
                 except Exception as err:
                     num_dir_failed += 1
-                    self._logger.write_log("Removing directory " + dir_name + ' failed with err ' + str(err) + '.')
+                    self._logger.error("Removing directory " + dir_name + ' failed with err ' + str(err) + '.')
 
-        self._logger.write_log("Total number of directory removed in this round is " + str(num_dir_removed) + '.')
-        self._logger.write_log("Total number of directory failed to be removed in this round is " +
-                               str(num_dir_failed) + '.')
+        self._logger.info("Total number of directory removed in this round is " + str(num_dir_removed) + '.')
+        self._logger.info("Total number of directory failed to be removed in this round is " +
+                          str(num_dir_failed) + '.')
 
 
 class TTLCleaner(Base):

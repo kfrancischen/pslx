@@ -127,7 +127,7 @@ class OrderedNodeBase(NodeBase):
         self._order = order
 
     def add_child(self, child_node):
-        self.sys_log("Adding child node" + child_node.get_node_name() + '.')
+        self.sys_log("Adding child node " + child_node.get_node_name() + '.')
         assert child_node != self
         if self.has_child(child_name=child_node.get_node_name()):
             self.sys_log("Child node name of " + child_node.get_node_name() +
@@ -139,7 +139,7 @@ class OrderedNodeBase(NodeBase):
             child_node.add_parent(parent_node=self)
 
     def add_parent(self, parent_node):
-        self.sys_log("Adding parent node" + parent_node.get_node_name() + '.')
+        self.sys_log("Adding parent node " + parent_node.get_node_name() + '.')
         assert parent_node != self
         if self.has_parent(parent_name=parent_node.get_node_name()):
             self.sys_log("Parent node name of " + parent_node.get_node_name() +

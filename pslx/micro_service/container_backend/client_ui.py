@@ -71,7 +71,7 @@ def get_containers_info():
                 break
             if dir_to_containers:
                 for dir_name in FileUtil.list_dirs_in_dir(dir_name=dir_to_containers):
-                    logger.write_log("Checking folder " + dir_name + '.')
+                    logger.info("Checking folder " + dir_name + '.')
                     container_name = dir_name.strip('/').split('/')[-1]
                     partitioner_storage = partitioner_lru_cache.get(key=dir_name)
                     if not partitioner_storage:
@@ -123,7 +123,7 @@ def get_operators_info(container_name, mode, data_model):
         root_dir=backend_folder,
         base_name=data_model + '/' + mode
     )
-    logger.write_log("Checking folder " + container_folder + '.')
+    logger.info("Checking folder " + container_folder + '.')
     if not FileUtil.does_dir_exist(dir_name=container_folder):
         return operators_info
 
@@ -138,7 +138,7 @@ def get_operators_info(container_name, mode, data_model):
             root_dir=container_folder,
             base_name=container_name
         )
-    logger.write_log("Checking folder " + container_folder + '.')
+    logger.info("Checking folder " + container_folder + '.')
     if not FileUtil.does_dir_exist(dir_name=dir_name):
         return operators_info
 
@@ -147,7 +147,7 @@ def get_operators_info(container_name, mode, data_model):
         partitioner_storage = MinutelyPartitionerStorage()
         partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
 
-    logger.write_log("Checking folder " + dir_name + '.')
+    logger.info("Checking folder " + dir_name + '.')
     partitioner_storage.initialize_from_dir(dir_name=dir_name)
     latest_dir = partitioner_storage.get_latest_dir()
     files = FileUtil.list_files_in_dir(dir_name=latest_dir)
@@ -192,7 +192,7 @@ def index():
             containers_info=sorted(containers_info, key=lambda x: x['container_name'])
         )
     except Exception as err:
-        logger.write_log("Got error rendering index.html: " + str(err))
+        logger.error("Got error rendering index.html: " + str(err))
         return render_template(
             'index.html',
             containers_info=[]
@@ -216,7 +216,7 @@ def view_container():
             operators_info=operators_info
         )
     except Exception as err:
-        logger.write_log("Got error: " + str(err))
+        logger.error("Got error: " + str(err))
         return render_template(
             'view_container.html',
             container_name=str(err),

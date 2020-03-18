@@ -25,11 +25,13 @@ class DefaultStorage(StorageBase):
     def initialize_from_dir(self, dir_name):
         self.sys_log("Initialize_from_dir function is not implemented for storage type "
                      + ProtoUtil.get_name_by_value(enum_type=StorageType, value=self.STORAGE_TYPE) + '.')
+        self._logger.warning("Initialize_from_dir function is not implemented for storage type "
+                             + ProtoUtil.get_name_by_value(enum_type=StorageType, value=self.STORAGE_TYPE) + '.')
         return
 
     def initialize_from_file(self, file_name):
         self.sys_log("Initialize from file " + file_name + '.')
-        self._logger.write_log("Initialize from file " + file_name + '.')
+        self._logger.info("Initialize from file " + file_name + '.')
         self._file_name = FileUtil.create_file_if_not_exist(file_name=file_name)
         self._last_read_line = 0
 
@@ -62,8 +64,8 @@ class DefaultStorage(StorageBase):
 
         for param in params:
             if param != 'num_line':
-                self._logger.write_log(param +
-                                       " will be omitted since it is not useful as an input argument in this function.")
+                self._logger.warning(param +
+                                     " will be omitted since it is not useful as an input argument in this function.")
                 self.sys_log(param + " will be omitted since it is not useful as an input argument in this function.")
 
         while self._writer_status != Status.IDLE:
@@ -85,8 +87,8 @@ class DefaultStorage(StorageBase):
                 if new_line_number > len(lines):
                     self.sys_log(str(new_line_number) + " exceeds the file limit. " + self.get_file_name() +
                                  " only has " + str(len(lines)) + " lines.")
-                    self._logger.write_log(str(new_line_number) + " exceeds the file limit. " + self.get_file_name() +
-                                           " only has " + str(len(lines)) + " lines.")
+                    self._logger.error(str(new_line_number) + " exceeds the file limit. " + self.get_file_name() +
+                                       " only has " + str(len(lines)) + " lines.")
                     raise StoragePastLineException
                 else:
                     try:
@@ -98,7 +100,7 @@ class DefaultStorage(StorageBase):
                         return result
                     except Exception as err:
                         self.sys_log("Read got exception " + str(err) + '.')
-                        self._logger.write_log("Read got exception " + str(err) + '.')
+                        self._logger.error("Read got exception " + str(err) + '.')
                         raise StorageReadException
 
     def write(self, data, params=None):
@@ -114,8 +116,8 @@ class DefaultStorage(StorageBase):
             for param in params:
                 if not isinstance(data, str) and param == 'delimiter':
                     continue
-                self._logger.write_log(param +
-                                       " will be omitted since it is not useful as an input argument in this function.")
+                self._logger.warning(param +
+                                     " will be omitted since it is not useful as an input argument in this function.")
                 self.sys_log(param + " will be omitted since it is not useful as an input argument in this function.")
 
         while self._reader_status != Status.IDLE:
@@ -143,5 +145,5 @@ class DefaultStorage(StorageBase):
             self._writer_status = Status.IDLE
         except Exception as err:
             self.sys_log("Write got exception: " + str(err) + '.')
-            self._logger.write_log("Write got exception: " + str(err) + '.')
+            self._logger.error("Write got exception: " + str(err) + '.')
             raise StorageWriteException

@@ -51,7 +51,7 @@ class PartitionerBase(StorageBase):
             self.sys_log("Starting recursion of " + str(max_recursion) + '.')
             if max_recursion == 0:
                 self.sys_log("Exhausted all recursions.")
-                self._logger.write_log("Exhausted all recursions.")
+                self._logger.info("Exhausted all recursions.")
                 return
 
             node_name = node.get_node_name()
@@ -75,7 +75,7 @@ class PartitionerBase(StorageBase):
                         child_node=child_node
                     )
                     self.sys_log("Adding new node with name " + child_node_name)
-                    self._logger.write_log("Adding new node with name " + child_node_name)
+                    self._logger.info("Adding new node with name " + child_node_name)
 
                 if not from_scratch:
                     self._file_tree.trim_tree(max_capacity=self._max_capacity)
@@ -116,7 +116,7 @@ class PartitionerBase(StorageBase):
     def is_empty(self):
         if self.is_updated():
             self.sys_log("Tree updated, need force rebuilding the tree.")
-            self._logger.write_log("Tree updated, need force rebuilding the tree.")
+            self._logger.info("Tree updated, need force rebuilding the tree.")
             self.initialize_from_dir(dir_name=self.get_dir_name(), force=True)
 
         leftmost_leaf_name = self._file_tree.get_leftmost_leaf()
@@ -192,7 +192,7 @@ class PartitionerBase(StorageBase):
             return result
         except Exception as err:
             self.sys_log(str(err) + '.')
-            self._logger.write_log(str(err) + '.')
+            self._logger.error(str(err) + '.')
             raise StorageReadException
 
     def read_range(self, params):
@@ -267,7 +267,7 @@ class PartitionerBase(StorageBase):
             return result
         except Exception as err:
             self.sys_log("Read got exception " + str(err) + '.')
-            self._logger.write_log("Read got exception " + str(err) + '.')
+            self._logger.error("Read got exception " + str(err) + '.')
             raise StorageReadException
 
     def make_new_partition(self, timestamp):
@@ -285,7 +285,7 @@ class PartitionerBase(StorageBase):
             return None
         else:
             self.sys_log(child_node.get_node_name() + " doesn't exist. Make new partition.")
-            self._logger.write_log(child_node.get_node_name() + " doesn't exist. Make new partition.")
+            self._logger.info(child_node.get_node_name() + " doesn't exist. Make new partition.")
             FileUtil.create_dir_if_not_exist(dir_name=child_node.get_node_name())
             parent_node = self._file_tree.find_node(node_name=self._file_tree.get_rightmost_leaf())
             self._file_tree.add_node(
@@ -335,7 +335,7 @@ class PartitionerBase(StorageBase):
             self._writer_status = Status.IDLE
         except Exception as err:
             self.sys_log("Write got exception " + str(err) + '.')
-            self._logger.write_log("Write got exception " + str(err) + '.')
+            self._logger.error("Write got exception " + str(err) + '.')
             raise StorageWriteException
 
     def print_self(self):

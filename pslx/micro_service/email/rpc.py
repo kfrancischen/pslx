@@ -22,7 +22,7 @@ class EmailRPC(RPCBase):
 
     def _login(self, credentials):
         if not credentials.password:
-            self._logger.write_log("Failed in logging to email " + credentials.user_name + '.')
+            self._logger.error("Failed in logging to email " + credentials.user_name + '.')
         else:
             self._credentials[credentials.user_name] = credentials
             email_server = smtplib.SMTP(
@@ -35,7 +35,7 @@ class EmailRPC(RPCBase):
                 credentials.password
             )
             self._email_servers[credentials.user_name] = email_server
-            self._logger.write_log("Successfully login to email " + credentials.user_name + '.')
+            self._logger.info("Successfully login to email " + credentials.user_name + '.')
 
     def add_email_credentials(self, credentials):
         self._credentials[credentials.user_name] = credentials
@@ -43,7 +43,7 @@ class EmailRPC(RPCBase):
 
     def get_response_and_status_impl(self, request):
         if request.from_email not in self._credentials:
-            self._logger.write_log("Email address is not logged in at all.")
+            self._logger.error("Email address is not logged in at all.")
             return None, Status.FAILED
 
         def _send_email():
@@ -55,10 +55,10 @@ class EmailRPC(RPCBase):
                 )
         try:
             _send_email()
-            self._logger.write_log("Succeeded in sending email directly to " + request.to_email + '.')
+            self._logger.info("Succeeded in sending email directly to " + request.to_email + '.')
         except (smtplib.SMTPSenderRefused, smtplib.SMTPServerDisconnected, smtplib.SMTPConnectError,
                 smtplib.SMTPAuthenticationError) as err:
-            self._logger.write_log("Sending email with exception: " + str(err) + '. Retry.')
+            self._logger.error("Sending email with exception: " + str(err) + '. Retry.')
             self._login(credentials=self._credentials[request.from_email])
             _send_email()
         return None, Status.SUCCEEDED

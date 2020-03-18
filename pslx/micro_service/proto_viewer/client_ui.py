@@ -28,7 +28,7 @@ logger = LoggingTool(
 )
 
 for url, certificate_path in url_and_certificate_dict.items():
-    logger.write_log("Getting url of " + url + " and certificate path " + certificate_path + '.')
+    logger.info("Getting url of " + url + " and certificate path " + certificate_path + '.')
     root_certificate = None
     if certificate_path:
         with open(FileUtil.die_if_file_not_exist(file_name=certificate_path), 'r') as infile:
@@ -77,7 +77,7 @@ def view_proto():
                 proto_content=result_ui
             )
         except Exception as err:
-            logger.write_log("Got error: " + str(err))
+            logger.error("Got error: " + str(err))
             return render_template(
                 'index.html',
                 proto_content="Got error: " + str(err)

@@ -42,7 +42,7 @@ class CronBatchContainer(DefaultBatchContainer):
             'minute': minute,
             'second': second,
         }
-        self._logger.write_log("Spec sets to " + str(self._scheduler_spec))
+        self._logger.info("Spec sets to " + str(self._scheduler_spec))
         self.sys_log("Spec sets to " + str(self._scheduler_spec))
 
     def _execute_wrapper(self, is_backfill, num_threads):
@@ -91,7 +91,7 @@ class IntervalBatchContainer(DefaultBatchContainer):
             'minutes': minutes,
             'seconds': seconds,
         }
-        self._logger.write_log("Spec sets to " + str(self._scheduler_spec))
+        self._logger.info("Spec sets to " + str(self._scheduler_spec))
         self.sys_log("Spec sets to " + str(self._scheduler_spec))
 
     def _execute_wrapper(self, is_backfill, num_threads):

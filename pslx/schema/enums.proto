@@ -28,12 +28,13 @@ enum InstantMessagingType {
     TEAMS = 2;
 }
 
-// the next will be 4
+// the next will be 5
 enum DiskLoggerLevel {
     INFO = 0;
     DEBUG = 1;
     WARNING = 2;
     NOTSET = 3;
+    ERROR = 4;
 }
 
 // the next will be 4

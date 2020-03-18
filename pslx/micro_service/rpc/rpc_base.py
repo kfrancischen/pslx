@@ -32,7 +32,7 @@ class RPCBase(GenericRPCServiceServicer, Base):
 
     def SendRequest(self, request, context):
         self.sys_log("rpc getting request with uuid " + request.uuid + '.')
-        self._logger.write_log("rpc getting request with uuid " + request.uuid + '.')
+        self._logger.info("rpc getting request with uuid " + request.uuid + '.')
         decomposed_request = self.request_decomposer(request=request)
         response, status = self.get_response_and_status_impl(request=decomposed_request)
         generic_response = ProtoUtil.compose_generic_response(response=response)

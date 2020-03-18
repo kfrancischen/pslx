@@ -40,7 +40,7 @@ class RPCIO(RPCBase):
         )
 
     def _default_storage_impl(self, request):
-        self._logger.write_log("Getting request of default storage read.")
+        self._logger.info("Getting request of default storage read.")
         read_params = dict(request.params)
         if 'num_line' in read_params:
             read_params['num_line'] = int(read_params['num_line'])
@@ -57,7 +57,7 @@ class RPCIO(RPCBase):
             )
         else:
             self.sys_log("Found key in LRU cache.")
-        self._logger.write_log('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
+        self._logger.info('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
 
         response = RPCIOResponse()
         data = storage.read(params=read_params)
@@ -68,7 +68,7 @@ class RPCIO(RPCBase):
         return response
 
     def _fixed_size_storage_impl(self, request):
-        self._logger.write_log("Getting request of fixed size storage read.")
+        self._logger.info("Getting request of fixed size storage read.")
         read_params = dict(request.params)
         if 'force_load' in read_params:
             read_params['force_load'] = ast.literal_eval(read_params['force_load'])
@@ -93,7 +93,7 @@ class RPCIO(RPCBase):
         else:
             self.sys_log("Found key in LRU cache.")
 
-        self._logger.write_log('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
+        self._logger.info('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
         read_params.pop('fixed_size', None)
         response = RPCIOResponse()
         data = storage.read(params=read_params)
@@ -104,7 +104,7 @@ class RPCIO(RPCBase):
         return response
 
     def _proto_table_storage_impl(self, request):
-        self._logger.write_log("Getting request of proto table storage read.")
+        self._logger.info("Getting request of proto table storage read.")
         read_params = dict(request.params)
         read_params['message_type'] = ProtoUtil.infer_message_type_from_str(
             message_type_str=read_params['message_type'],
@@ -123,17 +123,17 @@ class RPCIO(RPCBase):
             )
         else:
             self.sys_log("Found key in LRU cache.")
-        self._logger.write_log('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
+        self._logger.info('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
         read_params.pop('proto_module', None)
         return storage.read(params=read_params)
 
     def _partitioner_storage_impl(self, request):
-        self._logger.write_log("Getting request of partitioner storage read.")
+        self._logger.info("Getting request of partitioner storage read.")
         read_params = dict(request.params)
         read_params['num_line'] = -1
 
         lru_key = (read_params['PartitionerStorageType'], request.dir_name)
-        self._logger.write_log("Partitioner type is " + read_params['PartitionerStorageType'])
+        self._logger.info("Partitioner type is " + read_params['PartitionerStorageType'])
         storage = self._lru_cache_tool.get(key=lru_key)
         if not storage:
             self.sys_log("Did not find the storage in cache. Making a new one...")
@@ -150,7 +150,7 @@ class RPCIO(RPCBase):
         else:
             self.sys_log("Found key in LRU cache.")
 
-        self._logger.write_log('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
+        self._logger.info('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
         read_params.pop('PartitionerStorageType', None)
 
         response = RPCIOResponse()

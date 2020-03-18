@@ -47,7 +47,7 @@ class InstantMessagingRPC(RPCBase):
                     headers=header
                 )
             except Exception as err:
-                self._logger.write_log("Slack failed to send message with err " + str(err))
+                self._logger.error("Slack failed to send message with err " + str(err))
                 status = Status.FAILED
                 error_payload = "payload={'text':'" + "Error: " + str(err) + "\nCurrent time is "\
                                 + str(TimezoneUtil.cur_time_in_pst()) + "'}"
@@ -68,7 +68,7 @@ class InstantMessagingRPC(RPCBase):
             try:
                 requests.post(webhook_url, json.dumps(data))
             except Exception as err:
-                self._logger.write_log("Rocketchat failed to send message with err " + str(err))
+                self._logger.error("Rocketchat failed to send message with err " + str(err))
                 status = Status.FAILED
                 error_data = {
                     "text": "Error: " + str(err) + "\nCurrent time is " + str(TimezoneUtil.cur_time_in_pst()) +
@@ -95,7 +95,7 @@ class InstantMessagingRPC(RPCBase):
                     headers=headers
                 )
             except Exception as err:
-                self._logger.write_log("Teams failed to send message with err " + str(err))
+                self._logger.error("Teams failed to send message with err " + str(err))
                 status = Status.FAILED
                 error_json_data = {
                     "text": "Error: " + str(err) + ". Current time is " + str(TimezoneUtil.cur_time_in_pst()),

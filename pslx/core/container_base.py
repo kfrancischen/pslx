@@ -45,8 +45,8 @@ class ContainerBase(GraphBase):
             server_url=server_url,
             root_certificate=root_certificate
         )
-        self._logger.write_log("Bind to backend with name " + self._backend.get_client_name() + " at server url " +
-                               server_url + '.')
+        self._logger.info("Bind to backend with name " + self._backend.get_client_name() + " at server url " +
+                          server_url + '.')
 
     def initialize(self, force=False):
         for operator in self._node_name_to_node_dict.values():
@@ -113,7 +113,7 @@ class ContainerBase(GraphBase):
             snapshot.operator_snapshot_map[op_name].CopyFrom(op.get_operator_snapshot(output_file=op_output_file))
 
         self.sys_log("Saved to folder " + self._snapshot_file_folder + '.')
-        self._logger.write_log("Saved to folder " + self._snapshot_file_folder + '.')
+        self._logger.info("Saved to folder " + self._snapshot_file_folder + '.')
         output_file_name = FileUtil.join_paths_to_file(
             root_dir=FileUtil.dir_name(self._snapshot_file_folder),
             base_name='SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' + self._container_name + '.pb'
@@ -130,25 +130,25 @@ class ContainerBase(GraphBase):
     def _execute(self, task_queue, finished_queue):
         for operator_name in iter(task_queue.get, Signal.STOP):
             self.sys_log("Starting task: " + operator_name)
-            self._logger.write_log("Starting task: " + operator_name)
+            self._logger.info("Starting task: " + operator_name)
             op = self._node_name_to_node_dict[operator_name]
             op.execute()
             self.sys_log("Taking snapshot after executing " + operator_name)
             self.get_container_snapshot()
             finished_queue.put(operator_name)
             self.sys_log("Finished task: " + operator_name)
-            self._logger.write_log("Finished task: " + operator_name)
+            self._logger.info("Finished task: " + operator_name)
             task_queue.task_done()
         task_queue.task_done()
 
     def execute(self, is_backfill=False, num_threads=1):
         if is_backfill:
             self.sys_log("Running in backfill mode.")
-            self._logger.write_log("Running in backfill mode.")
+            self._logger.debug("Running in backfill mode.")
 
         if not self._is_initialized:
             self.sys_log("Cannot execute if the container is not initialized.")
-            self._logger.write_log("Cannot execute if the container is not initialized.")
+            self._logger.error("Cannot execute if the container is not initialized.")
             raise exception.ContainerUninitializedException
 
         self.sys_log('Upstream operators are: ' + ', '.join(self._upstream_ops))
@@ -189,7 +189,7 @@ class ContainerBase(GraphBase):
                     self._node_name_to_node_dict[operator_name].set_status(status=Status.SUCCEEDED)
                     continue
                 self.sys_log("Adding " + operator_name + " to task queue.")
-                self._logger.write_log("Adding " + operator_name + " to task queue.")
+                self._logger.info("Adding " + operator_name + " to task queue.")
                 task_queue.put(operator_name)
                 num_tasks += 1
         for _ in range(num_threads):
@@ -215,7 +215,7 @@ class ContainerBase(GraphBase):
 
         log_str += ', '.join(tasks_list)
             
-        self._logger.write_log(log_str + '.')
+        self._logger.info(log_str + '.')
         self.sys_log(log_str + '.')
 
         self.get_container_snapshot()

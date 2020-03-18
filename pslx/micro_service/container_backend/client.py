@@ -18,4 +18,4 @@ class ContainerBackendClient(ClientBase):
         try:
             self.send_request(request=snapshot, root_certificate=self._root_certificate)
         except Exception as err:
-            self._logger.write_log("Send to backend failed with error: " + str(err))
+            self._logger.error("Send to backend failed with error: " + str(err))

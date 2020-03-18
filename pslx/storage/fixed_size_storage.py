@@ -40,8 +40,8 @@ class FixedSizeStorage(DefaultStorage):
 
         for param in params:
             if param not in ['num_line', 'force_load']:
-                self._logger.write_log(param +
-                                       " will be omitted since it is not useful as an input argument in this function.")
+                self._logger.warning(param +
+                                     " will be omitted since it is not useful as an input argument in this function.")
                 self.sys_log(param + " will be omitted since it is not useful as an input argument in this function.")
 
         while self._writer_status != Status.IDLE:
@@ -66,8 +66,8 @@ class FixedSizeStorage(DefaultStorage):
                 self._reader_status = Status.IDLE
                 return self._stored_data
             else:
-                self._logger.write_log("Failed to read size of " + str(params['num_line']) + ' . Exceeds ' +
-                                       str(self._fixed_size) + '!')
+                self._logger.error("Failed to read size of " + str(params['num_line']) + ' . Exceeds ' +
+                                   str(self._fixed_size) + '!')
                 self.sys_log("Failed to read size of " + str(params['num_line']) + ' . Exceeds ' +
                              str(self._fixed_size) + '!')
                 raise StorageExceedsFixedSizeException
@@ -85,8 +85,8 @@ class FixedSizeStorage(DefaultStorage):
             for param in params:
                 if not isinstance(data, str) and param == 'delimiter':
                     continue
-                self._logger.write_log(param +
-                                       " will be omitted since it is not useful as an input argument in this function.")
+                self._logger.warning(param +
+                                     " will be omitted since it is not useful as an input argument in this function.")
                 self.sys_log(param + " will be omitted since it is not useful as an input argument in this function.")
 
         while self._reader_status != Status.IDLE:
@@ -120,5 +120,5 @@ class FixedSizeStorage(DefaultStorage):
 
         except Exception as err:
             self.sys_log("Write got exception " + str(err) + '.')
-            self._logger.write_log("Write got exception " + str(err) + '.')
+            self._logger.error("Write got exception " + str(err) + '.')
             raise StorageWriteException

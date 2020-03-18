@@ -16,6 +16,8 @@ class LinkedListBase(Base):
         return self._tail
 
     def add_to_head(self, node):
+        if node.get_node_name() == 'LINKED_LIST_BASE_DUMMY_NODE':
+            self.sys_log('LINKED_LIST_BASE_DUMMY_NODE is a reserved name. Please consider changing name.')
         self.sys_log("Adding " + node.get_node_name() + " to head.")
         if node.get_node_name() in self._node_dict:
             self.delete_by_node(node=node)

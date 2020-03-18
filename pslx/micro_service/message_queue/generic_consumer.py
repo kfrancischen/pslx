@@ -4,7 +4,7 @@ import threading
 import time
 from pslx.core.base import Base
 from pslx.core.exception import QueueAlreadyExistException, QueueConsumerNotInitializedException
-from pslx.schema.rpc_pb2 import GenericRPCResponse, GenericRPCRequest
+from pslx.schema.rpc_pb2 import GenericRPCRequest
 from pslx.tool.logging_tool import LoggingTool
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimeSleepObj
@@ -41,8 +41,8 @@ class GenericQueueConsumer(Base):
 
     def create_consumer(self, exchange, connection_str):
         self.sys_log("Create consumer connection_str = " + connection_str + ' and exchange = ' + exchange + '.')
-        self._logger.write_log("Create consumer connection_str = " + connection_str + ' and exchange = ' +
-                               exchange + '.')
+        self._logger.info("Create consumer connection_str = " + connection_str + ' and exchange = ' +
+                          exchange + '.')
         self._connection_str = connection_str
         self._exchange = exchange
         self._connection = pika.SelectConnection(
@@ -53,7 +53,7 @@ class GenericQueueConsumer(Base):
     def bind_queue(self, queue):
         if self._has_added_queue:
             self.sys_log("queue already exist, cannot bind any more.")
-            self._logger.write_log("queue already exist, cannot bind any more.")
+            self._logger.error("queue already exist, cannot bind any more.")
             raise QueueAlreadyExistException
         self.sys_log("Binding to queue with name " + queue.get_queue_name() + '.')
         self._has_added_queue = True
@@ -65,7 +65,7 @@ class GenericQueueConsumer(Base):
                 message_type=GenericRPCRequest,
                 json_str=body
             )
-            self._logger.write_log("Getting request with uuid " + generic_request.uuid)
+            self._logger.info("Getting request with uuid " + generic_request.uuid)
             response = self._queue.send_request(request=generic_request)
             response_str = ProtoUtil.message_to_json(proto_message=response)
             ch.basic_publish(exchange=self._exchange,
@@ -73,7 +73,7 @@ class GenericQueueConsumer(Base):
                              properties=pika.BasicProperties(correlation_id=props.correlation_id),
                              body=response_str)
         except Exception as err:
-            self._logger.write_log("Error: " + str(err))
+            self._logger.error("Error: " + str(err))
 
     def on_open(self, connection):
         connection.channel(on_open_callback=self._on_channel_open)
@@ -126,8 +126,8 @@ class GenericConsumer(Base):
 
     def bind_queue(self, exchange, queue):
         queue_consumer = GenericQueueConsumer(consumer_name=queue.get_queue_name() + '_consumer')
-        self._logger.write_log("Adding queue of " + queue.get_queue_name() + " to consumer " +
-                               queue_consumer.get_consumer_name() + '.')
+        self._logger.info("Adding queue of " + queue.get_queue_name() + " to consumer " +
+                          queue_consumer.get_consumer_name() + '.')
         queue_consumer.create_consumer(exchange=exchange, connection_str=self._connection_str)
         queue_consumer.bind_queue(queue=queue)
         self._queue_consumers.append(queue_consumer)
@@ -135,7 +135,7 @@ class GenericConsumer(Base):
     def start_consumer(self):
         try:
             for consumer in self._queue_consumers:
-                self._logger.write_log("Starting consumer " + consumer.get_consumer_name() + '.')
+                self._logger.info("Starting consumer " + consumer.get_consumer_name() + '.')
                 consumer.start_consumer()
             while True:
                 time.sleep(TimeSleepObj.ONE_SECOND)

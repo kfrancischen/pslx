@@ -43,8 +43,12 @@ class Base(object):
     @classmethod
     def sys_log(cls, string):
         if EnvUtil.get_pslx_env_variable(var='PSLX_LOG'):
-            caller = getframeinfo(stack()[1][0])
-            print('[SYS-LOG] ' + ColorsUtil.Foreground.GREEN + '[file: %s]' % FileUtil.base_name(caller.filename) +
-                  ColorsUtil.RESET + ' ' + ColorsUtil.Foreground.YELLOW + '[line: %d]' % caller.lineno +
-                  ColorsUtil.RESET + ' ' + ColorsUtil.Foreground.RED + '[%s]' % str(TimezoneUtil.cur_time_in_pst()) +
-                  ColorsUtil.RESET + ': ' + string)
+            try:
+                caller = getframeinfo(stack()[1][0])
+                print('[SYS-LOG] ' + ColorsUtil.Foreground.GREEN + '[file: %s]' % FileUtil.base_name(caller.filename) +
+                      ColorsUtil.RESET + ' ' + ColorsUtil.Foreground.YELLOW + '[line: %d]' % caller.lineno +
+                      ColorsUtil.RESET + ' ' + ColorsUtil.Foreground.RED + '[%s]' % str(TimezoneUtil.cur_time_in_pst())
+                      + ColorsUtil.RESET + ': ' + string)
+            except Exception as _:
+                print('[SYS-LOG] ' + ColorsUtil.Foreground.GREEN + ColorsUtil.RESET + ' ' + ColorsUtil.Foreground.RED +
+                      '[%s]' % str(TimezoneUtil.cur_time_in_pst()) + ColorsUtil.RESET + ': ' + string)
