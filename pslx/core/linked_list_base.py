@@ -32,9 +32,9 @@ class LinkedListBase(Base):
         self.check_valid()
 
     def delete_by_node(self, node):
-        self.sys_log("Deleting " + node.get_node_name() + ".")
         if not node or node.get_num_parents() == 0:
             return
+        self.sys_log("Deleting " + node.get_node_name() + ".")
 
         node_parent = node.get_parents_nodes()[0]
         node_parent.delete_child(child_node=node)

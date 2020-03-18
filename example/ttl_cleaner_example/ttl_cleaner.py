@@ -8,4 +8,3 @@ if __name__ == "__main__":
     )
     ttl_cleaner.set_max_instances(max_instances=5)
     ttl_cleaner.execute()
-

@@ -42,7 +42,7 @@ class TestOperatorBase(unittest.TestCase):
         test_operator_2 = DummyUtil.dummy_operator(operator_name='test_operator_2')
         test_operator_1.add_child(child_node=test_operator_2)
         test_operator_1.set_status(status=Status.SUCCEEDED)
-        self.assertTrue(test_operator_2.wait_for_upstream_status())
+        self.assertListEqual(test_operator_2.wait_for_upstream_status(), [])
 
     def test_is_data_model_consistent_1(self):
         test_operator_1 = DummyUtil.dummy_operator(operator_name='test_operator_1')
