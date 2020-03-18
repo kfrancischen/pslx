@@ -68,4 +68,4 @@ class LoggingTool(Base):
             self._new_logger()
         caller = getframeinfo(stack()[1][0])
         self._logger.info(' [' + FileUtil.base_name(caller.filename) + ': ' + str(caller.lineno) + ', ' +
-                          str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + ']: ' + string)
+                          str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + ' PST]: ' + string)

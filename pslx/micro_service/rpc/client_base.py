@@ -43,18 +43,17 @@ class ClientBase(Base):
             if not root_certificate:
                 self._logger.write_log("Start with insecure channel.")
                 with grpc.insecure_channel(self._server_url, options=options) as channel:
-                    self._logger.write_log("Channel created with url " + self._server_url)
                     stub = GenericRPCServiceStub(channel=channel)
                     response = stub.SendRequest(request=generic_request)
             else:
                 self._logger.write_log("Start with secure channel.")
                 channel_credential = grpc.ssl_channel_credentials(root_certificate)
                 with grpc.secure_channel(self._server_url, channel_credential, options=options) as channel:
-                    self._logger.write_log("Channel created with url " + self._server_url)
                     stub = GenericRPCServiceStub(channel=channel)
                     response = stub.SendRequest(request=generic_request)
 
             if not self.RESPONSE_MESSAGE_TYPE:
+                self.sys_log("Response message type unset, return None instead.")
                 return None
             else:
                 return ProtoUtil.any_to_message(

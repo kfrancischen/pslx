@@ -41,6 +41,7 @@ class GenericServer(Base):
             self._logger.write_log("RPC already exist, cannot bind any more.")
             raise RPCAlreadyExistException
         self.sys_log("Server " + self._url + " binding to rpc with name " + rpc.get_rpc_service_name() + '.')
+        self._logger.write_log("Server " + self._url + " binding to rpc with name " + rpc.get_rpc_service_name() + '.')
         add_GenericRPCServiceServicer_to_server(rpc, self._rpc_server)
         self._has_added_rpc = True
 
