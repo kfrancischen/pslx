@@ -14,7 +14,7 @@ class EmailRPC(RPCBase):
         super().__init__(service_name=self.get_class_name(), rpc_storage=rpc_storage)
 
         self._logger = LoggingTool(
-            name=self.get_rpc_service_name(),
+            name="PSLX_EMAIL_RPC",
             ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
         )
         self._credentials = {}

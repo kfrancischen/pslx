@@ -1,5 +1,7 @@
 from pslx.micro_service.rpc.client_base import ClientBase
 from pslx.schema.rpc_pb2 import FileViewerRPCResponse, FileViewerRPCRequest
+from pslx.tool.logging_tool import LoggingTool
+from pslx.util.env_util import EnvUtil
 
 
 class FileViewerRPCClient(ClientBase):
@@ -7,6 +9,10 @@ class FileViewerRPCClient(ClientBase):
 
     def __init__(self, server_url):
         super().__init__(client_name=self.get_class_name(), server_url=server_url)
+        self._logger = LoggingTool(
+            name='PSLX_FILE_VIEWER_RPC_CLIENT',
+            ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
+        )
 
     def view_file(self, file_path, root_certificate=None):
         request = FileViewerRPCRequest()

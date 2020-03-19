@@ -13,7 +13,7 @@ class TTLCleanerOp(BatchOperator):
     def __init__(self):
         super().__init__(operator_name='ttl_cleaner_op')
         self._logger = LoggingTool(
-            name=self.get_class_name(),
+            name='PSLX_TTL_CLEANER_OP',
             ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
         )
 
@@ -76,7 +76,7 @@ class TTLCleaner(Base):
     def __init__(self):
         super().__init__()
         self._container = CronBatchContainer(
-            container_name='ttl_cleaner_container',
+            container_name='PSLX_TTL_CLEANER_OPERATOR',
             ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
         )
 

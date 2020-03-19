@@ -4,7 +4,7 @@ import threading
 from pslx.core.graph_base import GraphBase
 import pslx.core.exception as exception
 from pslx.core.operator_base import OperatorBase
-from pslx.micro_service.container_backend.client import ContainerBackendClient
+from pslx.micro_service.container_backend.client import ContainerBackendRPCClient
 from pslx.schema.enums_pb2 import DataModelType
 from pslx.schema.enums_pb2 import Signal
 from pslx.schema.enums_pb2 import Status
@@ -40,8 +40,8 @@ class ContainerBase(GraphBase):
         self._status = Status.IDLE
 
     def bind_backend(self, server_url, root_certificate=None):
-        self._backend = ContainerBackendClient(
-            client_name=self._container_name + '_BACKEND',
+        self._backend = ContainerBackendRPCClient(
+            client_name=self._container_name + '_backend',
             server_url=server_url,
             root_certificate=root_certificate
         )

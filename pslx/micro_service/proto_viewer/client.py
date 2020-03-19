@@ -1,5 +1,7 @@
 from pslx.micro_service.rpc.client_base import ClientBase
 from pslx.schema.rpc_pb2 import ProtoViewerRPCResponse, ProtoViewerRPCRequest
+from pslx.tool.logging_tool import LoggingTool
+from pslx.util.env_util import EnvUtil
 
 
 class ProtoViewerRPCClient(ClientBase):
@@ -7,6 +9,10 @@ class ProtoViewerRPCClient(ClientBase):
 
     def __init__(self, server_url):
         super().__init__(client_name=self.get_class_name(), server_url=server_url)
+        self._logger = LoggingTool(
+            name='PSLX_PROTO_VIEWER_RPC_CLIENT',
+            ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
+        )
 
     def view_proto(self, proto_file_path, message_type, module, root_certificate=None):
         request = ProtoViewerRPCRequest()

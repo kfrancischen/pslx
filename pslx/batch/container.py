@@ -14,8 +14,8 @@ class DefaultBatchContainer(ContainerBase):
     def __init__(self, container_name, ttl=-1):
         super().__init__(container_name, ttl=ttl)
         self._logger = LoggingTool(
-            name=(self.get_class_name() + '__' +
-                  ProtoUtil.get_name_by_value(enum_type=DataModelType, value=self.DATA_MODEL) + '__' + container_name),
+            name=(ProtoUtil.get_name_by_value(enum_type=DataModelType, value=self.DATA_MODEL) + '__' +
+                  self.get_class_name() + '__' + container_name),
             ttl=ttl
         )
         self._config = {

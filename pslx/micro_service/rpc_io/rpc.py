@@ -35,7 +35,7 @@ class RPCIO(RPCBase):
             StorageType.PARTITIONER_STORAGE: self._partitioner_storage_impl,
         }
         self._logger = LoggingTool(
-            name=self.get_rpc_service_name(),
+            name='PSLX_RPC_IO_RPC',
             ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
         )
 

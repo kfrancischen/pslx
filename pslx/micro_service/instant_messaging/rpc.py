@@ -20,7 +20,7 @@ class InstantMessagingRPC(RPCBase):
             InstantMessagingType.TEAMS: self._send_by_teams,
         }
         self._logger = LoggingTool(
-            name=self.get_rpc_service_name(),
+            name='PSLX_INSTANT_MESSAGING_RPC',
             ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
         )
 

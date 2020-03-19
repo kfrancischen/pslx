@@ -1,7 +1,9 @@
 from pslx.micro_service.rpc.client_base import ClientBase
 from pslx.schema.rpc_pb2 import RPCIOResponse, RPCIORequest
 from pslx.schema.enums_pb2 import StorageType, PartitionerStorageType
+from pslx.tool.logging_tool import LoggingTool
 from pslx.util.proto_util import ProtoUtil
+from pslx.util.env_util import EnvUtil
 
 
 class RPCIOClient(ClientBase):
@@ -16,8 +18,12 @@ class RPCIOClient(ClientBase):
         'end_time'
     ]
 
-    def __init__(self, server_url):
-        super().__init__(client_name=self.get_class_name(), server_url=server_url)
+    def __init__(self, client_name, server_url):
+        super().__init__(client_name=client_name, server_url=server_url)
+        self._logger = LoggingTool(
+            name=client_name,
+            ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
+        )
 
     def get_storage_type(self):
         return self.STORAGE_TYPE

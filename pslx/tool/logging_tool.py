@@ -2,16 +2,14 @@ import logging
 import datetime
 from inspect import getframeinfo, stack
 import os
-from pslx.core.base import Base
 from pslx.schema.enums_pb2 import DiskLoggerLevel
 from pslx.util.env_util import EnvUtil
 from pslx.util.timezone_util import TimezoneUtil
 from pslx.util.file_util import FileUtil
 
 
-class LoggingTool(Base):
+class LoggingTool(object):
     def __init__(self, name, date=datetime.datetime.utcnow(), ttl=-1):
-        super().__init__()
         if name:
             self._start_date = date
             assert '-' not in name

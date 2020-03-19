@@ -14,7 +14,7 @@ class ProtoViewerRPC(RPCBase):
     def __init__(self, rpc_storage):
         super().__init__(service_name=self.get_class_name(), rpc_storage=rpc_storage)
         self._logger = LoggingTool(
-            name=self.get_rpc_service_name(),
+            name='PSLX_PROTO_VIEWER_RPC',
             ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
         )
 
