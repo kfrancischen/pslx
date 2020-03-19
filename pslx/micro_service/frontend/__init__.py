@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import os
 from pslx.schema.common_pb2 import FrontendConfig
 from pslx.tool.logging_tool import LoggingTool
 from pslx.util.env_util import EnvUtil
@@ -25,15 +24,9 @@ pslx_frontend_ui_app.config['frontend_config'] = FileUtil.read_proto_from_file(
     file_name=frontend_config_file
 )
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-
 pslx_frontend_ui_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 pslx_frontend_ui_app.config['SQLALCHEMY_DATABASE_URI'] =\
-    pslx_frontend_ui_app.config['frontend_config'].sqlalchemy_database_uri
-pslx_frontend_ui_app.config['SQLALCHEMY_MIGRATE_REPO'] = FileUtil.join_paths_to_dir(
-    root_dir=FileUtil.dir_name(file_name=pslx_frontend_ui_app.config['SQLALCHEMY_DATABASE_URI']),
-    base_name='db_repository'
-)
+    'sqlite:///' + pslx_frontend_ui_app.config['frontend_config'].sqlalchemy_database_path
 
 pslx_frontend_db = SQLAlchemy(pslx_frontend_ui_app)
 

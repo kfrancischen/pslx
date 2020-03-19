@@ -29,7 +29,7 @@ class CommonUtil(object):
         else:
             dict_config = YamlUtil.yaml_to_dict(file_name=yaml_path)
             config = FrontendConfig()
-            config.sqlalchemy_database_uri = dict_config['sqlalchemy_database_uri']
+            config.sqlalchemy_database_path = dict_config['sqlalchemy_database_path']
 
             container_backend_config = FrontendConfig.ContainerBackendConfig()
             container_backend_config.server_url = dict_config['container_backend_config']['server_url']

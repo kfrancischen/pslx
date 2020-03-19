@@ -28,7 +28,7 @@ message FrontendConfig {
     message ViewerConfig {
         map<string, string> server_url_to_root_certificate_map = 3;
     }
-    string sqlalchemy_database_uri = 4;
+    string sqlalchemy_database_path = 4;
     ContainerBackendConfig container_backend_config = 5;
     ViewerConfig proto_viewer_config = 6;
     ViewerConfig file_viewer_config = 7;

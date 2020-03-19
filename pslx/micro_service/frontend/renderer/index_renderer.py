@@ -4,13 +4,13 @@ from flask_login import login_user, logout_user
 from flask_login import LoginManager, login_required
 
 from pslx.micro_service.frontend import pslx_frontend_ui_app
-from pslx.micro_service.frontend.db.model import User
+from pslx.micro_service.frontend.model.model import User
 
 
 @pslx_frontend_ui_app.before_request
 def make_session_permanent():
     session.permanent = True
-    pslx_frontend_ui_app.permanent_session_lifetime = datetime.timedelta(minutes=20)
+    pslx_frontend_ui_app.permanent_session_lifetime = datetime.timedelta(minutes=10)
     session.modified = True
 
 
@@ -34,7 +34,7 @@ def login():
     if request.method == 'POST':
         if request.form['username'] == login_credential.user_name and \
                 request.form['password'] == login_credential.password:
-            user = User.query.filter_by(email=request.form['username']).first()
+            user = User.query.filter_by(username=request.form['username']).first()
             if user:
                 assert user.password == request.form['password']
                 login_user(user)

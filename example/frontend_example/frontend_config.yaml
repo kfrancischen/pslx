@@ -1,4 +1,4 @@
-sqlalchemy_database_uri: "example/frontend_example/frontend_example.db"
+sqlalchemy_database_path: "/mnt/c/Users/francischen/Development/pslx/example/frontend_example/frontend_example.db"
 container_backend_config:
   server_url: "localhost:11443"
   root_certificate_path: ""

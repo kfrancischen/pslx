@@ -1,4 +1,5 @@
 from flask import render_template, request
+from flask_login import login_required
 from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logger
 from pslx.micro_service.proto_viewer.client import ProtoViewerRPCClient
 from pslx.util.file_util import FileUtil
@@ -26,6 +27,7 @@ for url, certificate_path in dict(proto_viewer_config).items():
 
 @pslx_frontend_ui_app.route('/proto_viewer.html', methods=['GET', 'POST'])
 @pslx_frontend_ui_app.route('/view_proto', methods=['GET', 'POST'])
+@login_required
 def view_proto():
     if request.method == 'POST':
         try:

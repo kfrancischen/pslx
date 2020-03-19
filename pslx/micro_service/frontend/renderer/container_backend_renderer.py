@@ -1,6 +1,7 @@
 import datetime
 
 from flask import render_template, request
+from flask_login import login_required
 from pslx.micro_service.container_backend.client import ContainerBackendRPCClient
 from pslx.micro_service.container_backend.rpc import ContainerBackendRPC
 from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logger
@@ -165,6 +166,7 @@ def get_operators_info(container_name, mode, data_model):
 
 
 @pslx_frontend_ui_app.route("/container_backend.html", methods=['GET', 'POST'])
+@login_required
 def container_backend():
     containers_info = get_containers_info()
     try:
@@ -181,6 +183,7 @@ def container_backend():
 
 
 @pslx_frontend_ui_app.route('/view_container', methods=['GET', 'POST'])
+@login_required
 def view_container():
     container_name = request.args.get('container_name')
     mode = request.args.get('mode')
