@@ -1,5 +1,3 @@
 include README.md
-include pslx/micro_service/container_backend/templates/*.html
-include pslx/micro_service/file_viewer/templates/*.html
-include pslx/micro_service/proto_viewer/templates/*.html
-recursive-include pslx/ui/ *
+recursive-include pslx/frontend/static/ *
+recursive-include pslx/frontend/templates/ *

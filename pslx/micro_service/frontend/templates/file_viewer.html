@@ -2,14 +2,14 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>File Viewer | PSLX</title>
+    <title>PSLX Backend</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}"/>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="static/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/font-awesome/css/font-awesome.min.css"/>
 
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.10.2.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="static/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
 </head>
 <body>
 
@@ -17,9 +17,27 @@
 
 <div class="page-header">
     <a class="nav-link" href="index.html">
-        <h1>PSLX File Viewer</h1>
-    </a><h1><small>View file system from browser</small></h1>
+        <h1>PSLX Backend</h1>
+    </a><h1><small>Proto Viewer, File Viewer and Containers.</small></h1>
 </div>
+
+<ul class="nav justify-content-center nav-pills navbar-right">
+    <li class="nav-item">
+      <a class="nav-link active" href="proto_viewer.html">
+        <i class="fa fa-file"></i>
+        <span>Proto Viewer</span></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="file_viewer.html">
+        <i class="fa fa-archive"></i>
+        <span>File Viewer</span></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" href="container_backend.html">
+        <i class="fa fa-table"></i>
+        <span>Container Backend</span></a>
+    </li>
+</ul>
 
 <!-- Contact Form - START -->
 <div class="container">

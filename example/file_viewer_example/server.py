@@ -4,7 +4,7 @@ from pslx.storage.partitioner_storage import MinutelyPartitionerStorage
 from pslx.util.file_util import FileUtil
 
 if __name__ == "__main__":
-    server_url = "localhost:11443"
+    server_url = "localhost:11445"
     partitioner_dir = FileUtil.join_paths_to_dir_with_mode(
         root_dir='database/file_viewer/',
         base_name='file_viewer_example',

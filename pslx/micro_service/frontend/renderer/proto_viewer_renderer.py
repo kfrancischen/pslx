@@ -1,34 +1,15 @@
-import argparse
-import json
-from flask import Flask, render_template, request
+from flask import render_template, request
+from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logger
 from pslx.micro_service.proto_viewer.client import ProtoViewerRPCClient
-from pslx.tool.logging_tool import LoggingTool
-from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
 
-CLIENT_NAME = "PSLX_PROTO_VIEWER_UI"
-proto_viewer_rpc_client_ui = Flask(
-    __name__,
-    template_folder='templates',
-    static_folder='../../ui'
-)
-proto_viewer_rpc_client_ui.config.update(
-    SECRET_KEY=CLIENT_NAME
-)
-parser = argparse.ArgumentParser()
-parser.add_argument('--server_url_and_root_certificate_dict', dest='server_url_and_root_certificate_dict',
-                    default="{}", type=json.loads,
-                    help='json string containing url to root certificate dictionary.')
-args = parser.parse_args()
-url_and_certificate_dict = args.server_url_and_root_certificate_dict
-client_map = {}
-logger = LoggingTool(
-    name=CLIENT_NAME,
-    ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
-)
 
-for url, certificate_path in url_and_certificate_dict.items():
-    logger.info("Getting url of " + url + " and certificate path " + certificate_path + '.')
+client_map = {}
+
+proto_viewer_config = \
+    pslx_frontend_ui_app.config['frontend_config'].proto_viewer_config.server_url_to_root_certificate_map
+for url, certificate_path in dict(proto_viewer_config).items():
+    pslx_frontend_logger.info("Getting url of " + url + " and certificate path " + certificate_path + '.')
     root_certificate = None
     if certificate_path:
         with open(FileUtil.die_if_file_not_exist(file_name=certificate_path), 'r') as infile:
@@ -43,16 +24,8 @@ for url, certificate_path in url_and_certificate_dict.items():
     }
 
 
-@proto_viewer_rpc_client_ui.route("/", methods=['GET', 'POST'])
-@proto_viewer_rpc_client_ui.route("/index.html", methods=['GET', 'POST'])
-def index():
-    return render_template(
-        'index.html',
-        proto_content=''
-    )
-
-
-@proto_viewer_rpc_client_ui.route('/view_proto', methods=['GET', 'POST'])
+@pslx_frontend_ui_app.route('/proto_viewer.html', methods=['GET', 'POST'])
+@pslx_frontend_ui_app.route('/view_proto', methods=['GET', 'POST'])
 def view_proto():
     if request.method == 'POST':
         try:
@@ -73,12 +46,17 @@ def view_proto():
                 else:
                     result_ui += key + ': ' + val + '\n\n'
             return render_template(
-                'index.html',
+                'proto_viewer.html',
                 proto_content=result_ui
             )
         except Exception as err:
-            logger.error("Got error: " + str(err))
+            pslx_frontend_logger.error("Got error: " + str(err))
             return render_template(
-                'index.html',
+                'proto_viewer.html',
                 proto_content="Got error: " + str(err)
             )
+    else:
+        return render_template(
+            'proto_viewer.html',
+            proto_content=""
+        )

@@ -1,0 +1,14 @@
+sqlalchemy_database_uri: "example/frontend_example/frontend_example.db"
+container_backend_config:
+  server_url: "localhost:11443"
+  root_certificate_path: ""
+proto_viewer_config:
+  server_1:
+    server_url: "localhost:11444"
+    root_certificate_path: ""
+file_viewer_config:
+  server_1:
+    server_url: "localhost:11445"
+    root_certificate_path: ""
+user_name: "guest"
+password: "guest"
