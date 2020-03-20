@@ -9,6 +9,7 @@ client_map = {}
 
 proto_viewer_config = \
     pslx_frontend_ui_app.config['frontend_config'].proto_viewer_config.server_url_to_root_certificate_map
+server_urls = []
 for url, certificate_path in dict(proto_viewer_config).items():
     pslx_frontend_logger.info("Getting url of " + url + " and certificate path " + certificate_path + '.')
     root_certificate = None
@@ -23,18 +24,22 @@ for url, certificate_path in dict(proto_viewer_config).items():
         'client': proto_viewer_client,
         'root_certificate': root_certificate,
     }
+    server_urls.append(url)
 
 
 @pslx_frontend_ui_app.route('/proto_viewer.html', methods=['GET', 'POST'])
 @pslx_frontend_ui_app.route('/view_proto', methods=['GET', 'POST'])
 @login_required
 def view_proto():
+    all_urls = sorted(server_urls)
     if request.method == 'POST':
         try:
-            server_url = request.form['server_url']
-            proto_file_path = request.form['proto_file_path']
-            message_type = request.form['message_type']
-            module = request.form['module']
+            server_url = request.form['server_url'].strip()
+            proto_file_path = request.form['proto_file_path'].strip()
+            message_type = request.form['message_type'].strip()
+            module = request.form['module'].strip()
+            pslx_frontend_logger.info("Select url " + server_url + ' and input path ' + proto_file_path + '.' +
+                                      " with message type " + message_type + ' in module name ' + module + '.')
             result = client_map[server_url]['client'].view_proto(
                 proto_file_path=proto_file_path,
                 message_type=message_type,
@@ -47,18 +52,24 @@ def view_proto():
                     result_ui += key + ':\n\n' + val + '\n\n'
                 else:
                     result_ui += key + ': ' + val + '\n\n'
+            all_urls.remove(server_url)
+            all_urls = [server_url] + all_urls
             return render_template(
                 'proto_viewer.html',
-                proto_content=result_ui
+                proto_content=result_ui,
+                server_urls=all_urls
             )
         except Exception as err:
             pslx_frontend_logger.error("Got error: " + str(err))
             return render_template(
                 'proto_viewer.html',
-                proto_content="Got error: " + str(err)
+                proto_content="Got error: " + str(err),
+                server_urls=all_urls
             )
     else:
         return render_template(
             'proto_viewer.html',
-            proto_content=""
+            proto_content="",
+            selected_server_url='',
+            server_urls=server_urls
         )
