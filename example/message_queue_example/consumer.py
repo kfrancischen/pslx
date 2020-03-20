@@ -28,7 +28,7 @@ class SlackQueue(QueueBase):
                 headers=header
             )
         except Exception as err:
-            self._logger.write_log("Slack failed to send message with err " + str(err))
+            self._logger.error("Slack failed to send message with err " + str(err))
             status = Status.FAILED
         return None, status
 

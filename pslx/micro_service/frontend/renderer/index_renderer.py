@@ -23,7 +23,8 @@ login_manager.login_view = "login"
 def load_user(user_id):
     try:
         return User.query.get(int(user_id))
-    except Exception as _:
+    except Exception as err:
+        pslx_frontend_logger.error("Load user with error message: " + str(err) + '.')
         return None
 
 
