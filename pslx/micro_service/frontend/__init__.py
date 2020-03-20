@@ -27,6 +27,8 @@ pslx_frontend_ui_app.config['frontend_config'] = FileUtil.read_proto_from_file(
 pslx_frontend_ui_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 pslx_frontend_ui_app.config['SQLALCHEMY_DATABASE_URI'] =\
     'sqlite:///' + pslx_frontend_ui_app.config['frontend_config'].sqlalchemy_database_path
+pslx_frontend_logger.info("sqlalchemy database uri " +
+                          str(pslx_frontend_ui_app.config['SQLALCHEMY_DATABASE_URI']) + '.')
 
 pslx_frontend_db = SQLAlchemy(pslx_frontend_ui_app)
 

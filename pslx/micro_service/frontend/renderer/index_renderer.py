@@ -3,7 +3,7 @@ from flask import render_template, request, abort, redirect, url_for, session
 from flask_login import login_user, logout_user
 from flask_login import LoginManager, login_required
 
-from pslx.micro_service.frontend import pslx_frontend_ui_app
+from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logger
 from pslx.micro_service.frontend.model.model import User
 
 
@@ -32,6 +32,7 @@ def login():
     login_credential = pslx_frontend_ui_app.config['frontend_config'].credential
 
     if request.method == 'POST':
+        pslx_frontend_logger.info('Logging in with ' + str(dict(request.form)) + " from ip " + request.remote_addr + '.')
         if request.form['username'] == login_credential.user_name and \
                 request.form['password'] == login_credential.password:
             user = User.query.filter_by(username=request.form['username']).first()
@@ -60,5 +61,29 @@ def logout():
 @pslx_frontend_ui_app.route("/index.html", methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template("index.html")
+    config = pslx_frontend_ui_app.config['frontend_config']
+    server, port = config.container_backend_config.server_url.split(':')
+    service_info = [{
+        'name': 'container_backend',
+        'server': server,
+        'port': port,
+    }]
+    for key in dict(config.proto_viewer_config.server_url_to_root_certificate_map).keys():
+        server, port = key.split(':')
+        service_info.append({
+            'name': 'proto_viewer',
+            'server': server,
+            'port': port,
+        })
+
+    for key in dict(config.file_viewer_config.server_url_to_root_certificate_map).keys():
+        server, port = key.split(':')
+        service_info.append({
+            'name': 'file_viewer',
+            'server': server,
+            'port': port,
+        })
+
+    return render_template("index.html",
+                           service_info=sorted(service_info, key=lambda x: x['name']))
 

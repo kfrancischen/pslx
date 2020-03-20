@@ -38,6 +38,48 @@
     </li>
 </ul>
 
+<!-- Contact Form - START -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well well-sm">
+                <form class="form-horizontal" method="POST" action="view_file">
+                    <fieldset>
+                      <div class="card mb-3">
+                        <div class="card-header">
+                          <i class="fa fa-table bigicon"></i>
+                        </div>
+                        <div class="card-body">
+                          <div class="table-responsive">
+                            <table class="table table-bordered" id="file_tree_table" width="100%" cellspacing="0">
+                              <thead>
+                                <tr>
+                                  <th>Service Name</th>
+                                  <th>Binded RPC Server IP</th>
+                                  <th>Binded RPC Server Port</th>
+                                </tr>
+                              </thead>
+                              {% for service in service_info %}
+                                <tbody>
+                                  <tr>
+                                    <td>{{ service['name'] }}</td>
+                                    <td>{{ service['server'] }}</td>
+                                    <td>{{ service['port'] }}</td>
+                                  </tr>
+                                </tbody>
+                              {% endfor %}
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
     .header {
         color: #36A0FF;
