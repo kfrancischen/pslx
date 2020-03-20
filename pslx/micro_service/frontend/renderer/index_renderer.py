@@ -3,8 +3,11 @@ from flask import render_template, request, abort, redirect, url_for, session
 from flask_login import login_user, logout_user
 from flask_login import LoginManager, login_required
 
+from pslx.schema.enums_pb2 import Status
 from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logger
 from pslx.micro_service.frontend.model.model import User
+from pslx.util.proto_util import ProtoUtil
+from pslx.util.rpc_util import RPCUtil
 
 
 @pslx_frontend_ui_app.before_request
@@ -64,25 +67,43 @@ def logout():
 def index():
     config = pslx_frontend_ui_app.config['frontend_config']
     server, port = config.container_backend_config.server_url.split(':')
+    pslx_frontend_logger.info("Checking health for url " + config.container_backend_config.server_url + '.')
+    status = RPCUtil.check_health(
+        server_url=config.container_backend_config.server_url,
+        root_certificate_path=config.container_backend_config.root_certificate_path
+    )
     service_info = [{
         'name': 'container_backend',
         'server': server,
         'port': port,
+        'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
     }]
     for key in dict(config.proto_viewer_config.server_url_to_root_certificate_map).keys():
         server, port = key.split(':')
+        status = RPCUtil.check_health(
+            server_url=key,
+            root_certificate_path=config.proto_viewer_config.server_url_to_root_certificate_map[key]
+        )
+        pslx_frontend_logger.info("Checking health for url " + key + '.')
         service_info.append({
             'name': 'proto_viewer',
             'server': server,
             'port': port,
+            'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
         })
 
     for key in dict(config.file_viewer_config.server_url_to_root_certificate_map).keys():
         server, port = key.split(':')
+        status = RPCUtil.check_health(
+            server_url=key,
+            root_certificate_path=config.file_viewer_config.server_url_to_root_certificate_map[key]
+        )
+        pslx_frontend_logger.info("Checking health for url " + key + '.')
         service_info.append({
             'name': 'file_viewer',
             'server': server,
             'port': port,
+            'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
         })
 
     return render_template("index.html",

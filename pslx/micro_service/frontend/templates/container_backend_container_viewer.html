@@ -71,7 +71,17 @@
                                     <td>{{ operator_info['operator_name'] }}</td>
                                     <td>{{ operator_info['num_of_dependencies'] }}</td>
                                     <td>{{ operator_info['dependencies'] }}</td>
-                                    <td>{{ operator_info['status'] }}</td>
+                                    {% if operator_info['status'] == "FAILED" %}
+                                        <td><font color="red">{{ operator_info['status'] }}</font></td>
+                                    {% elif operator_info['status'] == "SUCCEEDED" %}
+                                        <td><font color="green">{{ operator_info['status'] }}</font></td>
+                                    {% elif operator_info['status'] == "RUNNING" %}
+                                        <td><font color="blue">{{ operator_info['status'] }}</font></td>
+                                    {% elif operator_info['status'] == "WAITING" %}
+                                        <td><font color="yellow">{{ operator_info['status'] }}</font></td>
+                                    {% else %}
+                                        <td><font color="purple">{{ operator_info['status'] }}</font></td>
+                                    {% endif %}
                                     <td>{{ operator_info['start_time'] }}</td>
                                     <td>{{ operator_info['end_time'] }}</td>
                                   </tr>

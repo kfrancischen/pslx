@@ -1,6 +1,6 @@
 from pslx.core.base import Base
-from pslx.schema.enums_pb2 import StorageType
-from pslx.schema.rpc_pb2 import GenericRPCRequestResponsePair
+from pslx.schema.enums_pb2 import StorageType, Status
+from pslx.schema.rpc_pb2 import GenericRPCRequestResponsePair, HealthCheckerResponse
 from pslx.schema.rpc_pb2_grpc import GenericRPCServiceServicer
 from pslx.storage.proto_table_storage import ProtoTableStorage
 from pslx.util.env_util import EnvUtil
@@ -60,6 +60,14 @@ class RPCBase(GenericRPCServiceServicer, Base):
             self.sys_log("Request response pair saved to " + self._rpc_storage.get_latest_dir() + '.')
 
         return generic_response
+
+    def CheckHealth(self, request, context):
+        self.sys_log("Checking health for url " + request.server_url + '.')
+        self._logger.info("Checking health for url " + request.server_url + '.')
+        response = HealthCheckerResponse()
+        response.server_url = request.server_url
+        response.server_status = Status.RUNNING
+        return response
 
     @classmethod
     def get_request_message_type(cls):

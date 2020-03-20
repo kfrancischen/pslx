@@ -9,6 +9,7 @@ package pslx;
 
 service GenericRPCService {
     rpc SendRequest (GenericRPCRequest)  returns (GenericRPCResponse) {}
+    rpc CheckHealth (HealthCheckerRequest) returns (HealthCheckerResponse) {}
 }
 
 // the next will be 6
@@ -18,6 +19,18 @@ message GenericRPCRequest {
     google.protobuf.Any request_data = 3;
     string message_type = 4;
     Status status = 5;
+}
+
+// the next will be 3
+message HealthCheckerRequest {
+    string server_url = 1;
+    bool secure = 2;
+}
+
+// the next will be 3
+message HealthCheckerResponse {
+    string server_url = 1;
+    Status server_status = 2;
 }
 
 // the next will be 6

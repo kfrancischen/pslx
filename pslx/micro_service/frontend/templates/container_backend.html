@@ -68,7 +68,17 @@
                                     <td>{{ container_info['mode'] }}</td>
                                     <td>{{ container_info['data_model'] }}</td>
                                     <td><a href="{{ url_for('view_container', container_name=container_info['container_name'], mode=container_info['mode'], data_model=container_info['data_model']) }}">{{ container_info['container_name'] }}</a></td>
-                                    <td>{{ container_info['status'] }}</td>
+                                    {% if container_info['status'] == "FAILED" %}
+                                        <td><font color="red">{{ container_info['status'] }}</font></td>
+                                    {% elif container_info['status'] == "SUCCEEDED" %}
+                                        <td><font color="green">{{ container_info['status'] }}</font></td>
+                                    {% elif container_info['status'] == "RUNNING" %}
+                                        <td><font color="blue">{{ container_info['status'] }}</font></td>
+                                    {% elif container_info['status'] == "WAITING" %}
+                                        <td><font color="yellow">{{ container_info['status'] }}</font></td>
+                                    {% else %}
+                                        <td><font color="purple">{{ container_info['status'] }}</font></td>
+                                    {% endif %}
                                     <td>{{ container_info['updated_time'] }}</td>
                                   </tr>
                                 </tbody>
