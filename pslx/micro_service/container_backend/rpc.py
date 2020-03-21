@@ -26,7 +26,7 @@ class ContainerBackendRPC(RPCBase):
         )
         self._backend_folder = FileUtil.join_paths_to_dir(
             root_dir=EnvUtil.get_pslx_env_variable('PSLX_DATABASE'),
-            base_name=self.get_class_name()
+            base_name='PSLX_CONTAINER_BACKEND_TABLE'
         )
 
     def get_response_and_status_impl(self, request):

@@ -2,8 +2,6 @@ import datetime
 
 from flask import render_template, request
 from flask_login import login_required
-from pslx.micro_service.container_backend.client import ContainerBackendRPCClient
-from pslx.micro_service.container_backend.rpc import ContainerBackendRPC
 from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logger, pslx_partitioner_lru_cache, \
     pslx_proto_table_lru_cache
 from pslx.schema.enums_pb2 import Status, ModeType, DataModelType
@@ -21,17 +19,11 @@ if container_backend_config.root_certificate_path:
     with open(FileUtil.die_if_file_not_exist(file_name=container_backend_config.root_certificate_path), 'r') as infile:
         root_certificate = infile.read()
 
-container_backend_client = ContainerBackendRPCClient(
-    client_name=ContainerBackendRPCClient.get_class_name() + '_FLASK_BACKEND',
-    server_url=container_backend_config.server_url,
-    root_certificate=root_certificate
-)
-
 
 def get_containers_info():
     backend_folder = FileUtil.join_paths_to_dir(
         root_dir=EnvUtil.get_pslx_env_variable('PSLX_DATABASE'),
-        base_name=ContainerBackendRPC.get_class_name()
+        base_name='PSLX_CONTAINER_BACKEND_TABLE'
     )
     backend_folder = FileUtil.create_dir_if_not_exist(dir_name=backend_folder)
     containers_info = []
@@ -52,9 +44,9 @@ def get_containers_info():
                     partitioner_storage = pslx_partitioner_lru_cache.get(key=dir_name)
                     if not partitioner_storage:
                         partitioner_storage = MinutelyPartitionerStorage()
+                        pslx_partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
 
                     partitioner_storage.initialize_from_dir(dir_name=dir_name)
-                    pslx_partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
                     latest_dir = partitioner_storage.get_latest_dir()
                     files = FileUtil.list_files_in_dir(dir_name=latest_dir)
                     if not files:
@@ -62,9 +54,9 @@ def get_containers_info():
                     proto_table_storage = pslx_proto_table_lru_cache.get(key=files[0])
                     if not proto_table_storage:
                         proto_table_storage = ProtoTableStorage()
+                        pslx_proto_table_lru_cache.set(key=files[0], value=proto_table_storage)
 
                     proto_table_storage.initialize_from_file(file_name=files[0])
-                    pslx_proto_table_lru_cache.set(key=files[0], value=proto_table_storage)
                     result_proto = proto_table_storage.read(
                         params={
                             'key': container_name,
@@ -93,7 +85,7 @@ def get_operators_info(container_name, mode, data_model):
     operators_info = []
     backend_folder = FileUtil.join_paths_to_dir(
         root_dir=EnvUtil.get_pslx_env_variable('PSLX_DATABASE'),
-        base_name=ContainerBackendRPC.get_class_name()
+        base_name='PSLX_CONTAINER_BACKEND_TABLE'
     )
     backend_folder = FileUtil.create_dir_if_not_exist(dir_name=backend_folder)
     container_folder = FileUtil.join_paths_to_dir(
