@@ -21,17 +21,15 @@ message FileInfo {
 
 // the next will be 9
 message FrontendConfig {
-    message ContainerBackendConfig {
+    message ServerConfig {
         string server_url = 1;
         string root_certificate_path = 2;
     }
-    message ViewerConfig {
-        map<string, string> server_url_to_root_certificate_map = 3;
-    }
+
     string sqlalchemy_database_path = 4;
-    ContainerBackendConfig container_backend_config = 5;
-    ViewerConfig proto_viewer_config = 6;
-    ViewerConfig file_viewer_config = 7;
+    ServerConfig container_backend_config = 5;
+    repeated ServerConfig proto_viewer_config = 6;
+    repeated ServerConfig file_viewer_config = 7;
 
     Credentials credential = 8;
 }

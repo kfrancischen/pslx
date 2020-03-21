@@ -31,25 +31,21 @@ class CommonUtil(object):
             config = FrontendConfig()
             config.sqlalchemy_database_path = dict_config['sqlalchemy_database_path']
 
-            container_backend_config = FrontendConfig.ContainerBackendConfig()
+            container_backend_config = FrontendConfig.ServerConfig()
             container_backend_config.server_url = dict_config['container_backend_config']['server_url']
             container_backend_config.root_certificate_path = \
                 dict_config['container_backend_config']['root_certificate_path']
             config.container_backend_config.CopyFrom(container_backend_config)
 
-            proto_viewer_config = FrontendConfig.ViewerConfig()
             for val in dict_config['proto_viewer_config'].values():
-                proto_viewer_config.server_url_to_root_certificate_map[val['server_url']] = \
-                    val['root_certificate_path']
+                server_config = config.proto_viewer_config.add()
+                server_config.server_url = val['server_url']
+                server_config.root_certificate_path = val['root_certificate_path']
 
-            config.proto_viewer_config.CopyFrom(proto_viewer_config)
-
-            file_viewer_config = FrontendConfig.ViewerConfig()
             for val in dict_config['file_viewer_config'].values():
-                file_viewer_config.server_url_to_root_certificate_map[val['server_url']] = \
-                    val['root_certificate_path']
-
-            config.file_viewer_config.CopyFrom(file_viewer_config)
+                server_config = config.file_viewer_config.add()
+                server_config.server_url = val['server_url']
+                server_config.root_certificate_path = val['root_certificate_path']
 
             credential = Credentials()
             credential.user_name = dict_config['user_name']

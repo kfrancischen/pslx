@@ -78,13 +78,13 @@ def index():
         'port': port,
         'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
     }]
-    for key in dict(config.proto_viewer_config.server_url_to_root_certificate_map).keys():
-        server, port = key.split(':')
+    for server_config in pslx_frontend_ui_app.config['frontend_config'].proto_viewer_config:
+        server, port = server_config.server_url.split(':')
         status = RPCUtil.check_health(
-            server_url=key,
-            root_certificate_path=config.proto_viewer_config.server_url_to_root_certificate_map[key]
+            server_url=server_config.server_url,
+            root_certificate_path=server_config.root_certificate_path
         )
-        pslx_frontend_logger.info("Checking health for url " + key + '.')
+        pslx_frontend_logger.info("Checking health for url " + server_config.server_url + '.')
         service_info.append({
             'name': 'proto_viewer',
             'server': server,
@@ -92,13 +92,13 @@ def index():
             'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
         })
 
-    for key in dict(config.file_viewer_config.server_url_to_root_certificate_map).keys():
-        server, port = key.split(':')
+    for server_config in pslx_frontend_ui_app.config['frontend_config'].file_viewer_config:
+        server, port = server_config.server_url.split(':')
         status = RPCUtil.check_health(
-            server_url=key,
-            root_certificate_path=config.file_viewer_config.server_url_to_root_certificate_map[key]
+            server_url=server_config.server_url,
+            root_certificate_path=server_config.root_certificate_path
         )
-        pslx_frontend_logger.info("Checking health for url " + key + '.')
+        pslx_frontend_logger.info("Checking health for url " + server_config.server_url + '.')
         service_info.append({
             'name': 'file_viewer',
             'server': server,
