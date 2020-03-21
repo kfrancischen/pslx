@@ -4,12 +4,12 @@ from flask import render_template, request
 from flask_login import login_required
 from pslx.micro_service.container_backend.client import ContainerBackendRPCClient
 from pslx.micro_service.container_backend.rpc import ContainerBackendRPC
-from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logger
+from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logger, pslx_partitioner_lru_cache, \
+    pslx_proto_table_lru_cache
 from pslx.schema.enums_pb2 import Status, ModeType, DataModelType
 from pslx.schema.storage_pb2 import ContainerBackendValue
 from pslx.storage.partitioner_storage import MinutelyPartitionerStorage
 from pslx.storage.proto_table_storage import ProtoTableStorage
-from pslx.tool.lru_cache_tool import LRUCacheTool
 from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
@@ -25,13 +25,6 @@ container_backend_client = ContainerBackendRPCClient(
     client_name=ContainerBackendRPCClient.get_class_name() + '_FLASK_BACKEND',
     server_url=container_backend_config.server_url,
     root_certificate=root_certificate
-)
-
-partitioner_lru_cache = LRUCacheTool(
-    max_capacity=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE')
-)
-proto_table_lru_cache = LRUCacheTool(
-    max_capacity=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE')
 )
 
 
@@ -56,21 +49,22 @@ def get_containers_info():
                 for dir_name in FileUtil.list_dirs_in_dir(dir_name=dir_to_containers):
                     pslx_frontend_logger.info("Checking folder " + dir_name + '.')
                     container_name = dir_name.strip('/').split('/')[-1]
-                    partitioner_storage = partitioner_lru_cache.get(key=dir_name)
+                    partitioner_storage = pslx_partitioner_lru_cache.get(key=dir_name)
                     if not partitioner_storage:
                         partitioner_storage = MinutelyPartitionerStorage()
-                        partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
 
                     partitioner_storage.initialize_from_dir(dir_name=dir_name)
+                    pslx_partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
                     latest_dir = partitioner_storage.get_latest_dir()
                     files = FileUtil.list_files_in_dir(dir_name=latest_dir)
                     if not files:
                         continue
-                    proto_table_storage = proto_table_lru_cache.get(key=files[0])
+                    proto_table_storage = pslx_proto_table_lru_cache.get(key=files[0])
                     if not proto_table_storage:
                         proto_table_storage = ProtoTableStorage()
-                        proto_table_lru_cache.set(key=files[0], value=proto_table_storage)
+
                     proto_table_storage.initialize_from_file(file_name=files[0])
+                    pslx_proto_table_lru_cache.set(key=files[0], value=proto_table_storage)
                     result_proto = proto_table_storage.read(
                         params={
                             'key': container_name,
