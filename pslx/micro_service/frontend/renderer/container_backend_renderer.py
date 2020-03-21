@@ -119,13 +119,13 @@ def get_operators_info(container_name, mode, data_model):
     if not FileUtil.does_dir_exist(dir_name=dir_name):
         return operators_info
 
-    partitioner_storage = partitioner_lru_cache.get(key=dir_name)
+    partitioner_storage = pslx_partitioner_lru_cache.get(key=dir_name)
     if not partitioner_storage:
         partitioner_storage = MinutelyPartitionerStorage()
-        partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
 
     pslx_frontend_logger.info("Checking folder " + dir_name + '.')
     partitioner_storage.initialize_from_dir(dir_name=dir_name)
+    pslx_partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
     latest_dir = partitioner_storage.get_latest_dir()
     files = FileUtil.list_files_in_dir(dir_name=latest_dir)
 
@@ -133,12 +133,12 @@ def get_operators_info(container_name, mode, data_model):
     if not files:
         return operators_info
 
-    proto_table_storage = proto_table_lru_cache.get(key=files[0])
+    proto_table_storage = pslx_proto_table_lru_cache.get(key=files[0])
     if not proto_table_storage:
         proto_table_storage = ProtoTableStorage()
-        proto_table_lru_cache.set(key=files[0], value=proto_table_storage)
 
     proto_table_storage.initialize_from_file(file_name=files[0])
+    pslx_proto_table_lru_cache.set(key=files[0], value=proto_table_storage)
     result_proto = proto_table_storage.read(
         params={
             'key': container_name,
