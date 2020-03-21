@@ -33,10 +33,10 @@ if __name__ == "__main__":
     container1.initialize()
     container1.execute()
 
-    op1.unset_status()
-    op2.unset_status()
-    op3.unset_status()
-    op4.unset_status()
+    op1 = HelloWorldOp(operator_name='hello_world_op1')
+    op2 = HelloWorldOp(operator_name='hello_world_op2')
+    op3 = HelloWorldOp(operator_name='hello_world_op3')
+    op4 = HelloWorldOp(operator_name='hello_world_op4')
     container2 = HelloWorldContainer(container_name='hello_world_container_2', ttl=1)
     container2.bind_backend(
         server_url="localhost:11443"
