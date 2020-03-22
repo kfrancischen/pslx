@@ -47,10 +47,14 @@ if __name__ == "__main__":
         }
     )
 
-    op1 = HelloWorldOp(operator_name='hello_world_op1')
-    op2 = HelloWorldOp(operator_name='hello_world_op2')
-    op3 = HelloWorldOp(operator_name='hello_world_op3')
-    op4 = HelloWorldOp(operator_name='hello_world_op4')
+    op1.unset_dependency()
+    op1.unset_status()
+    op2.unset_dependency()
+    op2.unset_status()
+    op3.unset_dependency()
+    op3.unset_status()
+    op4.unset_dependency()
+    op4.unset_status()
 
     container2.add_operator_edge(from_operator=op1,
                                  to_operator=dummy_op)

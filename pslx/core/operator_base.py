@@ -46,6 +46,13 @@ class OperatorBase(OrderedNodeBase):
         self.sys_log("Unset status.")
         self.set_status(status=Status.IDLE)
 
+    def unset_dependency(self):
+        self.sys_log("Unset dependencies")
+        for child_node in self.get_children_nodes():
+            self.delete_child(child_node=child_node)
+        for parent_node in self.get_parents_nodes():
+            self.delete_parent(parent_node=parent_node)
+
     def get_status(self):
         return self._status
 
