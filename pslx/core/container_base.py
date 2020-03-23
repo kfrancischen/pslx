@@ -61,7 +61,7 @@ class ContainerBase(GraphBase):
                 if not force:
                     raise exception.OperatorDataModelInconsistentException
                 else:
-                    operator.get_data_model(self.DATA_MODEL)
+                    operator.set_data_model(self.DATA_MODEL)
 
         self._is_initialized = True
 
