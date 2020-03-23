@@ -84,6 +84,18 @@ class OperatorBase(OrderedNodeBase):
         except FileNotExistException as _:
             return Status.IDLE
 
+    @classmethod
+    def get_content_from_snapshot(cls, snapshot_file, message_type):
+        try:
+            with FileLockTool(snapshot_file, read_mode=True):
+                snapshot = FileUtil.read_proto_from_file(
+                    proto_type=OperatorSnapshot,
+                    file_name=FileUtil.die_if_file_not_exist(file_name=snapshot_file)
+                )
+            return ProtoUtil.any_to_message(message_type=message_type, any_message=snapshot.content)
+        except FileNotExistException as _:
+            return message_type()
+
     def wait_for_upstream_status(self):
         unfinished_op = []
         if self.DATA_MODEL != DataModelType.DEFAULT:
