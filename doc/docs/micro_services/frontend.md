@@ -112,6 +112,18 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+Then, to enable login, please use the following snippet to create the table
+```python
+from pslx.micro_service.frontend import pslx_frontend_db
+
+if __name__ == '__main__':
+    pslx_frontend_db.create_all()
+```
+, and the related command is
+```bash
+ PSLX_FRONTEND_CONFIG_PROTO_PATH=example/frontend_example/frontend_config.pb \
+ PYTHONPATH=. python example/frontend_example/create_frontend_table.py
+```
 
 Finally, one can launch the backend by pointing `PSLX_FRONTEND_CONFIG_PROTO_PATH` to the proto with
 ```python
