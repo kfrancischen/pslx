@@ -150,11 +150,11 @@ delete(key)
     it uses an underlying tree structure defined in [tree_base.py](https://github.com/kfrancischen/pslx/blob/master/pslx/core/tree_base.py).
     
 In PSLX, five types of partitioners are supported:     
-1. `PartitionerStorageType.MINUTELY`: the underlying directory will be format of `2020/03/01/00/59/`. 
+1. `PartitionerStorageType.MINUTELY`: the underlying directory will be format of `2020/03/01/00/59/`.       
 2. `PartitionerStorageType.HOURLY`:  the underlying directory will be format of `2020/03/01/00/`.
-3. `PartitionerStorageType.DAILY`:  the underlying directory will be format of `2020/03/01/`.
-4. `PartitionerStorageType.MONTHLY`: the underlying directory will be format of `2020/03/`.
-5. `PartitionerStorageType.YEARLY` the underlying directory will be format of `2020/`.
+3. `PartitionerStorageType.DAILY`:  the underlying directory will be format of `2020/03/01/`.                   
+4. `PartitionerStorageType.MONTHLY`: the underlying directory will be format of `2020/03/`.           
+5. `PartitionerStorageType.YEARLY` the underlying directory will be format of `2020/`.         
 
 All the partitioners share with the following functions. The choice of partition type would depend on the data size. It is recommended
 that if the data size is huge, a more fine grained storage (`PartitionerStorageType.MINUTELY`) is used, and vice versa.
