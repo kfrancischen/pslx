@@ -1,4 +1,5 @@
 PSLX stores the temporary data including:
+
 1. Snapshots of operators and containers.
 2. Log files.
 3. RPC requests and responses.
