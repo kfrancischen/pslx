@@ -1,0 +1,1398 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+        <meta name="author" content="Kaifeng Chen">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+    
+    
+      
+        <title>Utilities - PSLX documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
+      
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#documentation-of-file-utilities" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href=".." title="PSLX documentation" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              PSLX documentation
+            </span>
+            <span class="md-header-nav__topic">
+              
+                Utilities
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/kfrancischen/pslx/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    kfrancischen/pslx
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href=".." title="PSLX documentation" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    PSLX documentation
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/kfrancischen/pslx/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    kfrancischen/pslx
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../container/" title="Job Scheduling" class="md-nav__link">
+      Job Scheduling
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../storage/" title="Data Storage" class="md-nav__link">
+      Data Storage
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../rpc/" title="RPC" class="md-nav__link">
+      RPC
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      Micro Services
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        Micro Services
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../micro_services/instant_messaging/" title="Instant Messaging" class="md-nav__link">
+      Instant Messaging
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../micro_services/email/" title="Email" class="md-nav__link">
+      Email
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../micro_services/rpc_storage_io/" title="RPC Storage IO" class="md-nav__link">
+      RPC Storage IO
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../micro_services/message_queue/" title="Message Queue" class="md-nav__link">
+      Message Queue
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../micro_services/frontend/" title="PSLX frontend" class="md-nav__link">
+      PSLX frontend
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../tool/" title="Tools" class="md-nav__link">
+      Tools
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Utilities
+      </label>
+    
+    <a href="./" title="Utilities" class="md-nav__link md-nav__link--active">
+      Utilities
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-file-utilities" class="md-nav__link">
+    Documentation of File Utilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-protobuf-utilities" class="md-nav__link">
+    Documentation of Protobuf Utilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-timezone-utilities" class="md-nav__link">
+    Documentation of Timezone Utilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-dummy-utilities" class="md-nav__link">
+    Documentation of Dummy Utilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-yaml-utilities" class="md-nav__link">
+    Documentation of Yaml Utilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-common-utilities" class="md-nav__link">
+    Documentation of Common Utilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-environment-utilities" class="md-nav__link">
+    Documentation of Environment Utilities
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../ttl_cleaner/" title="TTL Cleaner" class="md-nav__link">
+      TTL Cleaner
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../schema/" title="Proto Schema" class="md-nav__link">
+      Proto Schema
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-file-utilities" class="md-nav__link">
+    Documentation of File Utilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-protobuf-utilities" class="md-nav__link">
+    Documentation of Protobuf Utilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-timezone-utilities" class="md-nav__link">
+    Documentation of Timezone Utilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-dummy-utilities" class="md-nav__link">
+    Documentation of Dummy Utilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-yaml-utilities" class="md-nav__link">
+    Documentation of Yaml Utilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-common-utilities" class="md-nav__link">
+    Documentation of Common Utilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-of-environment-utilities" class="md-nav__link">
+    Documentation of Environment Utilities
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/kfrancischen/pslx/edit/master/docs/util.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                  <h1>Utilities</h1>
+                
+                <p>PSLX provides a comprehensive set of utility functions including</p>
+<ol>
+<li><a href="https://github.com/kfrancischen/pslx/blob/master/pslx/util/file_util.py">file_util.py</a>: utilities related to files and directories.</li>
+<li><a href="https://github.com/kfrancischen/pslx/blob/master/pslx/util/proto_util.py">proto_util.py</a>: utilities for protobuf.</li>
+<li><a href="https://github.com/kfrancischen/pslx/blob/master/pslx/util/timezone_util.py">timezone_util.py</a>: utilities for timestamp related.</li>
+<li><a href="https://github.com/kfrancischen/pslx/blob/master/pslx/util/dummy_util.py">dummy_util.py</a>: a wrapper of dummy tools.</li>
+<li><a href="https://github.com/kfrancischen/pslx/blob/master/pslx/util/yaml_util.py">yaml.util.py</a>: utility for yaml files.</li>
+<li><a href="https://github.com/kfrancischen/pslx/blob/master/pslx/util/common_util.py">common_util.py</a>: utility for creating credentials.</li>
+<li><a href="https://github.com/kfrancischen/pslx/blob/master/pslx/util/env_util.py">env_util.py</a>: utility for PSLX built-in environment variables.</li>
+</ol>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>All the below functions are labeled as <code>classmethods</code>, and can be called without initiating any instance of the class.</p>
+</div>
+<h3 id="documentation-of-file-utilities">Documentation of File Utilities<a class="headerlink" href="#documentation-of-file-utilities" title="Permanent link">&para;</a></h3>
+<p>The following are functions related to files and directories.</p>
+<div class="codehilite"><pre><span></span><span class="n">base_name</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get the base name of a file.</li>
+<li>Arguments:<ol>
+<li>file_name: the name of the file.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">dir_name</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get the directory of a file.</li>
+<li>Arguments:<ol>
+<li>file_name: the name of the file.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">does_file_exist</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: check whether a file exist or not.</li>
+<li>Arguments:<ol>
+<li>file_name: the name of the file.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">does_dir_exist</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: check whether a directory exist or not.</li>
+<li>Arguments:<ol>
+<li>dir_name: the name of the directory.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">is_file_empty</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: check whether a file is empty.</li>
+<li>Arguments:<ol>
+<li>file_name: the name of the file.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">is_dir_empty</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: check whether a file is empty.</li>
+<li>Arguments:<ol>
+<li>dir_name: the name of the directory.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">create_file_if_not_exist</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: create a file if the file does not exist</li>
+<li>Arguments:<ol>
+<li>file_name: the name of the file.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">create_dir_if_not_exist</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: create a directory if the file does not exist</li>
+<li>Arguments:<ol>
+<li>dir_name: the name of the directory.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">die_if_file_not_exist</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: raise error if a file does not exist.</li>
+<li>Arguments:<ol>
+<li>file_name: the name of the file.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">die_if_dir_not_exist</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: raise error if a directory does not exist.</li>
+<li>Arguments:<ol>
+<li>dir_name: the name of the directory.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">is_file</span><span class="p">(</span><span class="n">path_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: check whether the given path is a file.</li>
+<li>Arguments:<ol>
+<li>path_name: the name of the path.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">is_dir</span><span class="p">(</span><span class="n">path_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: check whether the given path is a directory.</li>
+<li>Arguments:<ol>
+<li>path_name: the name of the path.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">normalize_file_name</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: normalize a file name.</li>
+<li>Arguments:<ol>
+<li>file_name: the name of the file.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">normalize_dir_name</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: normalize a directory name.</li>
+<li>Arguments:<ol>
+<li>dir_name: the name of the directory.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">list_files_in_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: list all files in a directory.</li>
+<li>Arguments:<ol>
+<li>dir_name: the name of the directory.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">list_dirs_in_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: list all sub directories in a directory.</li>
+<li>Arguments:<ol>
+<li>dir_name: the name of the directory.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">list_files_in_dir_recursively</span><span class="p">(</span><span class="n">proto_message</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: list all files in a directory recursively.</li>
+<li>Arguments:<ol>
+<li>dir_name: the name of the directory.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">list_dirs_in_dir_recursively</span><span class="p">(</span><span class="n">proto_message</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: list all sub directories in a directory recursively.</li>
+<li>Arguments:<ol>
+<li>dir_name: the name of the directory.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">remove_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: remove a file.</li>
+<li>Arguments:<ol>
+<li>file_name: the name of the file to be removed.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">remove_dir_recursively</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: remove sub directories recursively from a directory.</li>
+<li>Arguments:<ol>
+<li>dir_name: the name of the directory.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">get_file_modified_time</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get the last modified time of a file.</li>
+<li>Arguments:<ol>
+<li>file_name: the name of the file.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">get_ttl_from_path</span><span class="p">(</span><span class="n">path_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get the ttl from a path.</li>
+<li>Arguments:<ol>
+<li>path_name: the path, a file or directory.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">join_paths_to_file_with_mode</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">base_name</span><span class="p">,</span> <span class="n">ttl</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: join root directory, base name, ttl, and the mode, to a file name.</li>
+<li>Arguments:<ol>
+<li>root_dir: the root directory of the file.</li>
+<li>base_name: the base name of the file.</li>
+<li>ttl: the ttl of the file.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">join_paths_to_dir_with_mode</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">base_name</span><span class="p">,</span> <span class="n">ttl</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: join root directory, base name, ttl, and the mode, to a directory name.</li>
+<li>Arguments:<ol>
+<li>root_dir: the root directory of the directory.</li>
+<li>base_name: the base name of the directory.</li>
+<li>ttl: the ttl of the file.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">join_paths_to_file</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">base_name</span><span class="p">,</span> <span class="n">ttl</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: join root directory, base name, and ttl, to a file name.</li>
+<li>Arguments:<ol>
+<li>root_dir: the root directory of the file.</li>
+<li>base_name: the base name of the file.</li>
+<li>ttl: the ttl of the file.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">join_paths_to_dir</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">base_name</span><span class="p">,</span> <span class="n">ttl</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: join root directory, base name, and ttl, to a directory name.</li>
+<li>Arguments:<ol>
+<li>root_dir: the root directory of the directory.</li>
+<li>base_name: the base name of the directory.</li>
+<li>ttl: the ttl of the file.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">get_file_names_from_pattern</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get all the files with the pattern.</li>
+<li>Arguments:<ol>
+<li>pattern: the pattern of the files.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">get_mode</span><span class="p">(</span><span class="n">path_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get the mode from a path.</li>
+<li>Arguments:<ol>
+<li>path_name: the path to a file or directory.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">write_proto_to_file</span><span class="p">(</span><span class="n">proto</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: write a proto message to a file.</li>
+<li>Arguments:<ol>
+<li>proto: the proto message to be written.</li>
+<li>file_name: the output file name.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">read_proto_from_file</span><span class="p">(</span><span class="n">proto_type</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: read a proto message with given type from a file.</li>
+<li>Arguments:<ol>
+<li>proto_type: the type of the proto message.</li>
+<li>file_name: the name of the file containing the message.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">create_container_snapshot_pattern</span><span class="p">(</span><span class="n">container_name</span><span class="p">,</span> <span class="n">container_class</span><span class="p">,</span> <span class="n">container_ttl</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get the container snapshot pattern.</li>
+<li>Arguments:<ol>
+<li>container_name: the name of the container.</li>
+<li>container_class: the class of the container.</li>
+<li>container_ttl: the ttl of the container.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">create_operator_snapshot_pattern</span><span class="p">(</span><span class="n">container_name</span><span class="p">,</span> <span class="n">operator_name</span><span class="p">,</span> <span class="n">container_class</span><span class="p">,</span> <span class="n">container_ttl</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get the operator snapshot pattern.</li>
+<li>Arguments:<ol>
+<li>container_name: the name of the container.</li>
+<li>operator_name: the name of the operator.</li>
+<li>container_class: the class of the container.</li>
+<li>container_ttl: the ttl of the container.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">get_file_size</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get a string representation of the size of the file.</li>
+<li>Arguments:<ol>
+<li>file_name: the name of the file.</li>
+</ol>
+</li>
+</ul>
+<h3 id="documentation-of-protobuf-utilities">Documentation of Protobuf Utilities<a class="headerlink" href="#documentation-of-protobuf-utilities" title="Permanent link">&para;</a></h3>
+<p>THe following functions are related to protobuf.</p>
+<div class="codehilite"><pre><span></span><span class="n">check_valid_enum</span><span class="p">(</span><span class="n">enum_type</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: check whether a enum type value is valid.</li>
+<li>Arguments:<ol>
+<li>enum_type: the enum type of the value.</li>
+<li>value: the value to be checked.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">get_name_by_value</span><span class="p">(</span><span class="n">enum_type</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get the name of the enum type value.</li>
+<li>Arguments:<ol>
+<li>enum_type: the enum type of the value.</li>
+<li>value: the value to be examined.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">get_value_by_name</span><span class="p">(</span><span class="n">enum_type</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get the value of the enum type name.</li>
+<li>Arguments:<ol>
+<li>enum_type: the enum type of the name.</li>
+<li>name: the name to be examined.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">get_name_by_value_and_enum_name</span><span class="p">(</span><span class="n">enum_type_str</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get the name of the enum type value when the enum type is represented by a string.</li>
+<li>Arguments:<ol>
+<li>enum_type_str: the string representation of the enum type.</li>
+<li>value: the value to be examined.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">get_value_by_name_and_enum_name</span><span class="p">(</span><span class="n">enum_type_str</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: get the value of the enum type value when the enum type is represented by a string.</li>
+<li>Arguments:<ol>
+<li>enum_type_str: the string representation of the enum type.</li>
+<li>name: the name to be examined.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">message_to_json</span><span class="p">(</span><span class="n">proto_message</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: convert a proto message to json.</li>
+<li>Arguments:<ol>
+<li>proto_message: the proto message to be converted.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">message_to_text</span><span class="p">(</span><span class="n">proto_message</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: convert a proto message to text.</li>
+<li>Arguments:<ol>
+<li>proto_message: the proto message to be converted.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">json_to_message</span><span class="p">(</span><span class="n">message_type</span><span class="p">,</span> <span class="n">json_str</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: convert a json to a proto message in a given type.</li>
+<li>Arguments:<ol>
+<li>message_type: the type of the output proto message.</li>
+<li>json_str: the json to be converted.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">text_to_message</span><span class="p">(</span><span class="n">message_type</span><span class="p">,</span> <span class="n">text_str</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: convert a text to a proto message in a given type.</li>
+<li>Arguments:<ol>
+<li>message_type: the type of the output proto message.</li>
+<li>text_str: the text to be converted.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">message_to_any</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: convert a proto message to <code>Any</code> type.</li>
+<li>Arguments:<ol>
+<li>message: the message to be converted.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">any_to_message</span><span class="p">(</span><span class="n">message_type</span><span class="p">,</span> <span class="n">any_message</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: convert an <code>Any</code> type message to a given type message.</li>
+<li>Arguments:<ol>
+<li>message_type: the type of the output proto message.</li>
+<li>any_message: the <code>Any</code> message to be converted.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">infer_message_type_from_str</span><span class="p">(</span><span class="n">message_type_str</span><span class="p">,</span> <span class="n">modules</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: infer the message type represented by a string.</li>
+<li>Arguments:<ol>
+<li>message_type_str: the string representation of the message type.</li>
+<li>modules: the possible proto modules to search.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">infer_str_from_message_type</span><span class="p">(</span><span class="n">message_type</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: infer the string representation of a given message type.</li>
+<li>Arguments:<ol>
+<li>message_type: the proto message type.</li>
+</ol>
+</li>
+</ul>
+<h3 id="documentation-of-timezone-utilities">Documentation of Timezone Utilities<a class="headerlink" href="#documentation-of-timezone-utilities" title="Permanent link">&para;</a></h3>
+<p>The timestamp related utility class includes the following methods:</p>
+<div class="codehilite"><pre><span></span><span class="n">utc_to_pst</span><span class="p">(</span><span class="n">utc_time</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: convert a utc datetime object to a pst datetime object.</li>
+<li>Arguments:<ol>
+<li>utc_time: the utc datetime object.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">utc_to_est</span><span class="p">(</span><span class="n">utc_time</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: convert a utc datetime object to an est datetime object.</li>
+<li>Arguments:<ol>
+<li>utc_time: the utc datetime object.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">pst_to_est</span><span class="p">(</span><span class="n">western_time</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: convert a pst datetime object to an est datetime object.</li>
+<li>Arguments:<ol>
+<li>western_time: the pst datetime object.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">est_to_pst</span><span class="p">(</span><span class="n">eastern_time</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: convert an est datetime object to a pst datetime object.</li>
+<li>Arguments:<ol>
+<li>eastern_time: the est datetime object.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">cur_time_in_local</span><span class="p">()</span>
+</pre></div>
+
+
+<ul>
+<li>Description: the current time in local timezone.</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">cur_time_in_utc</span><span class="p">()</span>
+</pre></div>
+
+
+<ul>
+<li>Description: the current time in utc timezone.</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">cur_time_in_pst</span><span class="p">()</span>
+</pre></div>
+
+
+<ul>
+<li>Description: the current time in pst timezone.</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">cur_time_in_est</span><span class="p">()</span>
+</pre></div>
+
+
+<ul>
+<li>Description: the current time in est timezone.</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">cur_time_in_est</span><span class="p">(</span><span class="n">time_str</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: convert a string representation of datetime object to datetime object.</li>
+<li>Arguments:<ol>
+<li>time_str: the string representation of datetime object.</li>
+</ol>
+</li>
+</ul>
+<h3 id="documentation-of-dummy-utilities">Documentation of Dummy Utilities<a class="headerlink" href="#documentation-of-dummy-utilities" title="Permanent link">&para;</a></h3>
+<p>The <code>DummyUtil</code> class is a wrapper of a few dummy entities that can be used. Here dummy means that any method inside them
+are dummy function calls.</p>
+<div class="codehilite"><pre><span></span><span class="n">dummy_logging</span><span class="p">()</span>
+</pre></div>
+
+
+<ul>
+<li>Description: return a dummy logger that acts as a placeholder but does not log.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The above operators are very helpful for containers that have only one meaningful operator. Please check 
+<a href="https://github.com/kfrancischen/pslx/tree/master/example/batch_example">batch_container_example</a> and 
+<a href="https://github.com/kfrancischen/pslx/tree/master/example/streaming_example">streaming_container_example</a>.</p>
+</div>
+<div class="codehilite"><pre><span></span><span class="n">dummy_streaming_operator</span><span class="p">(</span><span class="n">operator_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: return a dummy streaming operator tha does not execute anything.</li>
+<li>Arguments:<ol>
+<li>operator_name: the name of the operator.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">dummy_batch_operator</span><span class="p">(</span><span class="n">operator_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: return a dummy batch operator tha does not execute anything.</li>
+<li>Arguments:<ol>
+<li>operator_name: the name of the operator.</li>
+</ol>
+</li>
+</ul>
+<h3 id="documentation-of-yaml-utilities">Documentation of Yaml Utilities<a class="headerlink" href="#documentation-of-yaml-utilities" title="Permanent link">&para;</a></h3>
+<p>The following method is provided</p>
+<div class="codehilite"><pre><span></span><span class="n">yaml_to_dict</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: read a yaml file to dictionary.</li>
+<li>Arguments:<ol>
+<li>file_name: the yaml file name.</li>
+</ol>
+</li>
+<li>Return: the dictionary representation of the content in the yaml file.</li>
+</ul>
+<h3 id="documentation-of-common-utilities">Documentation of Common Utilities<a class="headerlink" href="#documentation-of-common-utilities" title="Permanent link">&para;</a></h3>
+<p>The following methods are provided</p>
+<div class="codehilite"><pre><span></span><span class="n">make_email_credentials</span><span class="p">(</span><span class="n">email_addr</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">email_server</span><span class="p">,</span> <span class="n">email_server_port</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: make a credential for email RPC server.</li>
+<li>Arguments:<ol>
+<li>email_addr: the email address.</li>
+<li>password: the password to the email.</li>
+<li>email_server: the smtp server of the email, default to be "smtp.gmail.com".</li>
+<li>email_server_port: the port for the email server, default to be 25.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">make_sql_server_credentials</span><span class="p">(</span><span class="n">sql_host_ip</span><span class="p">,</span> <span class="n">sql_port</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: make a credential for SQL server.</li>
+<li>Arguments:<ol>
+<li>sql_host_ip: the host server ip for the SQL database.</li>
+<li>sql_port: the port on the server ip for the SQL database.</li>
+<li>user_name: the user name to login the SQL database.</li>
+<li>password: the password to login the SQL database.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><span class="n">make_frontend_config</span><span class="p">(</span><span class="n">yaml_path</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Description: make a credential for PSLX frontend.</li>
+<li>Arguments:<ol>
+<li>yaml_path: the path to the config yaml file. Please check section <a href="../micro_services/frontend/">frontend</a>.</li>
+</ol>
+</li>
+</ul>
+<h3 id="documentation-of-environment-utilities">Documentation of Environment Utilities<a class="headerlink" href="#documentation-of-environment-utilities" title="Permanent link">&para;</a></h3>
+<p>The environment variables inside PSLX are defined in a dictionary:</p>
+<div class="codehilite"><pre><span></span><span class="n">PSLX_ENV_TO_DEFAULT_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;PSLX_INTERNAL_TTL&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_INTERNAL_CACHE&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_TEST&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_LOG&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_DATABASE&#39;</span><span class="p">:</span> <span class="s1">&#39;database/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_GRPC_MAX_MESSAGE_LENGTH&#39;</span><span class="p">:</span> <span class="mi">512</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>  <span class="c1"># 512MB,</span>
+    <span class="s1">&#39;PSLX_BACKEND_STORAGE&#39;</span><span class="p">:</span> <span class="s1">&#39;backend/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_FRONTEND_CONFIG_PROTO_PATH&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>, and this utility allows user to access the above variables by</p>
+<div class="codehilite"><pre><span></span><span class="n">get_pslx_env_variable</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">fallback_value</span><span class="p">)</span>
+</pre></div>
+
+
+<ul>
+<li>Arguments:<ol>
+<li>var: the environment variable name.</li>
+<li>fallback_value: the fallback value if the var does not have a default value defined by PSLX.</li>
+</ol>
+</li>
+</ul>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../tool/" title="Tools" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Tools
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../ttl_cleaner/" title="TTL Cleaner" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                TTL Cleaner
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2020 Kaifeng Chen
+          </div>
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../assets/fonts/font-awesome.css">
+    
+      <a href="https://github.com/kfrancischen" class="md-footer-social__link fa fa-github"></a>
+    
+      <a href="https://www.linkedin.com/in/kaifeng-chen-b37a2b69/" class="md-footer-social__link fa fa-linkedin"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+    
+  </body>
+</html>

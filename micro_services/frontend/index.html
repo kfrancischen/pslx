@@ -1,0 +1,643 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+        <meta name="author" content="Kaifeng Chen">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+    
+    
+      
+        <title>PSLX frontend - PSLX documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="PSLX documentation" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              PSLX documentation
+            </span>
+            <span class="md-header-nav__topic">
+              
+                PSLX frontend
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/kfrancischen/pslx/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    kfrancischen/pslx
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="PSLX documentation" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    PSLX documentation
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/kfrancischen/pslx/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    kfrancischen/pslx
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../container/" title="Job Scheduling" class="md-nav__link">
+      Job Scheduling
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../storage/" title="Data Storage" class="md-nav__link">
+      Data Storage
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../rpc/" title="RPC" class="md-nav__link">
+      RPC
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5" checked>
+    
+    <label class="md-nav__link" for="nav-5">
+      Micro Services
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        Micro Services
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../instant_messaging/" title="Instant Messaging" class="md-nav__link">
+      Instant Messaging
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../email/" title="Email" class="md-nav__link">
+      Email
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../rpc_storage_io/" title="RPC Storage IO" class="md-nav__link">
+      RPC Storage IO
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../message_queue/" title="Message Queue" class="md-nav__link">
+      Message Queue
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+    <a href="./" title="PSLX frontend" class="md-nav__link md-nav__link--active">
+      PSLX frontend
+    </a>
+    
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../tool/" title="Tools" class="md-nav__link">
+      Tools
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../util/" title="Utilities" class="md-nav__link">
+      Utilities
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../ttl_cleaner/" title="TTL Cleaner" class="md-nav__link">
+      TTL Cleaner
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../schema/" title="Proto Schema" class="md-nav__link">
+      Proto Schema
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/kfrancischen/pslx/edit/master/docs/micro_services/frontend.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                  <h1>PSLX frontend</h1>
+                
+                <p>PSLX supports a frontend UI for viewing proto and browsing files. The implementation is based on Flask, and is in the 
+<a href="https://github.com/kfrancischen/pslx/tree/master/pslx/micro_service/frontend">folder</a>. The frontend UI is made of four parts:    <br />
+1. RPC health checker: The index page will show the connection to the RPC servers, including the proto viewer RPC server, file viewer
+and container backend RPC server.     <br />
+2. Proto Viewer: view the content in the proto.   <br />
+3. File Viewer: browse files in the server.    <br />
+4. Container Backend: the status of the containers and operators.</p>
+<p>On example way of starting proto viewer server is at <a href="https://github.com/kfrancischen/pslx/blob/master/example/proto_viewer_example/server.py">proto_viewer_example/server.py</a>:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.proto_viewer.rpc</span> <span class="kn">import</span> <span class="n">ProtoViewerRPC</span>
+<span class="kn">from</span> <span class="nn">pslx.micro_service.rpc.generic_server</span> <span class="kn">import</span> <span class="n">GenericServer</span>
+<span class="kn">from</span> <span class="nn">pslx.storage.partitioner_storage</span> <span class="kn">import</span> <span class="n">MinutelyPartitionerStorage</span>
+<span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">server_url</span> <span class="o">=</span> <span class="s2">&quot;localhost:11444&quot;</span>
+    <span class="n">partitioner_dir</span> <span class="o">=</span> <span class="n">FileUtil</span><span class="o">.</span><span class="n">join_paths_to_dir_with_mode</span><span class="p">(</span>
+        <span class="n">root_dir</span><span class="o">=</span><span class="s1">&#39;database/proto_viewer/&#39;</span><span class="p">,</span>
+        <span class="n">base_name</span><span class="o">=</span><span class="s1">&#39;proto_viewer_example&#39;</span><span class="p">,</span>
+        <span class="n">ttl</span><span class="o">=</span><span class="s1">&#39;1h&#39;</span>
+    <span class="p">)</span>
+    <span class="n">storage</span> <span class="o">=</span> <span class="n">MinutelyPartitionerStorage</span><span class="p">()</span>
+    <span class="n">storage</span><span class="o">.</span><span class="n">initialize_from_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="o">=</span><span class="n">partitioner_dir</span><span class="p">)</span>
+    <span class="n">example_rpc</span> <span class="o">=</span> <span class="n">ProtoViewerRPC</span><span class="p">(</span><span class="n">rpc_storage</span><span class="o">=</span><span class="n">storage</span><span class="p">)</span>
+    <span class="n">example_server</span> <span class="o">=</span> <span class="n">GenericServer</span><span class="p">(</span><span class="n">server_name</span><span class="o">=</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
+    <span class="n">example_server</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
+    <span class="n">example_server</span><span class="o">.</span><span class="n">bind_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="o">=</span><span class="n">example_rpc</span><span class="p">)</span>
+    <span class="n">example_server</span><span class="o">.</span><span class="n">start_server</span><span class="p">()</span>
+</pre></div>
+
+
+<p>On example way of starting file viewer server is at <a href="https://github.com/kfrancischen/pslx/blob/master/example/file_viewer_example/server.py">file_viewer_example/server.py</a>:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.file_viewer.rpc</span> <span class="kn">import</span> <span class="n">FileViewerRPC</span>
+<span class="kn">from</span> <span class="nn">pslx.micro_service.rpc.generic_server</span> <span class="kn">import</span> <span class="n">GenericServer</span>
+<span class="kn">from</span> <span class="nn">pslx.storage.partitioner_storage</span> <span class="kn">import</span> <span class="n">MinutelyPartitionerStorage</span>
+<span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">server_url</span> <span class="o">=</span> <span class="s2">&quot;localhost:11445&quot;</span>
+    <span class="n">partitioner_dir</span> <span class="o">=</span> <span class="n">FileUtil</span><span class="o">.</span><span class="n">join_paths_to_dir_with_mode</span><span class="p">(</span>
+        <span class="n">root_dir</span><span class="o">=</span><span class="s1">&#39;database/file_viewer/&#39;</span><span class="p">,</span>
+        <span class="n">base_name</span><span class="o">=</span><span class="s1">&#39;file_viewer_example&#39;</span><span class="p">,</span>
+        <span class="n">ttl</span><span class="o">=</span><span class="s1">&#39;1h&#39;</span>
+    <span class="p">)</span>
+    <span class="n">storage</span> <span class="o">=</span> <span class="n">MinutelyPartitionerStorage</span><span class="p">()</span>
+    <span class="n">storage</span><span class="o">.</span><span class="n">initialize_from_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="o">=</span><span class="n">partitioner_dir</span><span class="p">)</span>
+    <span class="n">example_rpc</span> <span class="o">=</span> <span class="n">FileViewerRPC</span><span class="p">(</span><span class="n">rpc_storage</span><span class="o">=</span><span class="n">storage</span><span class="p">)</span>
+    <span class="n">example_server</span> <span class="o">=</span> <span class="n">GenericServer</span><span class="p">(</span><span class="n">server_name</span><span class="o">=</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
+    <span class="n">example_server</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
+    <span class="n">example_server</span><span class="o">.</span><span class="n">bind_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="o">=</span><span class="n">example_rpc</span><span class="p">)</span>
+    <span class="n">example_server</span><span class="o">.</span><span class="n">start_server</span><span class="p">()</span>
+</pre></div>
+
+
+<p>On example way of starting a container backend is at <a href="https://github.com/kfrancischen/pslx/blob/master/example/container_backend_example/server.py">container_backend_example/server.py</a>:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.container_backend.rpc</span> <span class="kn">import</span> <span class="n">ContainerBackendRPC</span>
+<span class="kn">from</span> <span class="nn">pslx.micro_service.rpc.generic_server</span> <span class="kn">import</span> <span class="n">GenericServer</span>
+<span class="kn">from</span> <span class="nn">pslx.storage.partitioner_storage</span> <span class="kn">import</span> <span class="n">MinutelyPartitionerStorage</span>
+<span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">server_url</span> <span class="o">=</span> <span class="s2">&quot;localhost:11443&quot;</span>
+    <span class="n">partitioner_dir</span> <span class="o">=</span> <span class="n">FileUtil</span><span class="o">.</span><span class="n">join_paths_to_dir_with_mode</span><span class="p">(</span>
+        <span class="n">root_dir</span><span class="o">=</span><span class="s1">&#39;database/container_backend/&#39;</span><span class="p">,</span>
+        <span class="n">base_name</span><span class="o">=</span><span class="s1">&#39;container_backend_example&#39;</span><span class="p">,</span>
+        <span class="n">ttl</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+    <span class="n">storage</span> <span class="o">=</span> <span class="n">MinutelyPartitionerStorage</span><span class="p">()</span>
+    <span class="n">storage</span><span class="o">.</span><span class="n">initialize_from_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="o">=</span><span class="n">partitioner_dir</span><span class="p">)</span>
+    <span class="n">example_rpc</span> <span class="o">=</span> <span class="n">ContainerBackendRPC</span><span class="p">(</span><span class="n">rpc_storage</span><span class="o">=</span><span class="n">storage</span><span class="p">)</span>
+    <span class="n">example_server</span> <span class="o">=</span> <span class="n">GenericServer</span><span class="p">(</span><span class="n">server_name</span><span class="o">=</span><span class="s1">&#39;example_backend&#39;</span><span class="p">)</span>
+    <span class="n">example_server</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
+    <span class="n">example_server</span><span class="o">.</span><span class="n">bind_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="o">=</span><span class="n">example_rpc</span><span class="p">)</span>
+    <span class="n">example_server</span><span class="o">.</span><span class="n">start_server</span><span class="p">()</span>
+</pre></div>
+
+
+<p>To start the frontend, one needs to create a YAML file containing the settings. An example of it can be found at 
+<a href="https://github.com/kfrancischen/pslx/blob/master/example/frontend_example/frontend_config.yaml">frontend_example/frontend_config.yaml</a>:</p>
+<div class="codehilite"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">sqlalchemy_database_path</span><span class="p p-Indicator">:</span> <span class="s">&quot;/mnt/c/Users/francischen/Development/pslx/example/frontend_example/frontend_example.db&quot;</span>
+<span class="l l-Scalar l-Scalar-Plain">container_backend_config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">server_url</span><span class="p p-Indicator">:</span> <span class="s">&quot;localhost:11443&quot;</span>
+  <span class="l l-Scalar l-Scalar-Plain">root_certificate_path</span><span class="p p-Indicator">:</span> <span class="s">&quot;&quot;</span>
+<span class="l l-Scalar l-Scalar-Plain">proto_viewer_config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">server_1</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">server_url</span><span class="p p-Indicator">:</span> <span class="s">&quot;localhost:11444&quot;</span>
+    <span class="l l-Scalar l-Scalar-Plain">root_certificate_path</span><span class="p p-Indicator">:</span> <span class="s">&quot;&quot;</span>
+<span class="l l-Scalar l-Scalar-Plain">file_viewer_config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">server_1</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">server_url</span><span class="p p-Indicator">:</span> <span class="s">&quot;localhost:11445&quot;</span>
+    <span class="l l-Scalar l-Scalar-Plain">root_certificate_path</span><span class="p p-Indicator">:</span> <span class="s">&quot;&quot;</span>
+<span class="l l-Scalar l-Scalar-Plain">user_name</span><span class="p p-Indicator">:</span> <span class="s">&quot;guest&quot;</span>
+<span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="s">&quot;guest&quot;</span>
+</pre></div>
+
+
+<p>The above <code>user_name</code> and <code>password</code> are the credentials used to login the frontend. In the second step, one needs to parse
+the yaml file into a <code>FrontendConfig</code> proto. One can follow this script defined in <a href="https://github.com/kfrancischen/pslx/blob/master/example/frontend_example/create_config.py">frontend_example/create_config.py</a>:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.util.common_util</span> <span class="kn">import</span> <span class="n">CommonUtil</span>
+<span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">yaml_path</span> <span class="o">=</span> <span class="s2">&quot;example/frontend_example/frontend_config.yaml&quot;</span>
+    <span class="n">proto_path</span> <span class="o">=</span> <span class="s2">&quot;example/frontend_example/frontend_config.pb&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">CommonUtil</span><span class="o">.</span><span class="n">make_frontend_config</span><span class="p">(</span><span class="n">yaml_path</span><span class="o">=</span><span class="n">yaml_path</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">FileUtil</span><span class="o">.</span><span class="n">write_proto_to_file</span><span class="p">(</span><span class="n">proto</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">proto_path</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+
+<p>Then, to enable login, please use the following snippet to create the table</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.frontend</span> <span class="kn">import</span> <span class="n">pslx_frontend_db</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">pslx_frontend_db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+</pre></div>
+
+
+<p>, and the related command is</p>
+<div class="codehilite"><pre><span></span> <span class="nv">PSLX_FRONTEND_CONFIG_PROTO_PATH</span><span class="o">=</span>example/frontend_example/frontend_config.pb <span class="se">\</span>
+ <span class="nv">PYTHONPATH</span><span class="o">=</span>. python example/frontend_example/create_frontend_table.py
+</pre></div>
+
+
+<p>Finally, one can launch the backend by pointing <code>PSLX_FRONTEND_CONFIG_PROTO_PATH</code> to the proto with</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.frontend</span> <span class="kn">import</span> <span class="n">pslx_frontend_ui_app</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">pslx_frontend_ui_app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">5001</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+
+<p>The command is</p>
+<div class="codehilite"><pre><span></span><span class="nv">PSLX_FRONTEND_CONFIG_PROTO_PATH</span><span class="o">=</span>example/frontend_example/frontend_config.pb <span class="se">\</span>
+<span class="nv">PYTHONPATH</span><span class="o">=</span>. python example/frontend_example/run_frontend.py
+</pre></div>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../message_queue/" title="Message Queue" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Message Queue
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../../tool/" title="Tools" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Tools
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2020 Kaifeng Chen
+          </div>
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
+    
+      <a href="https://github.com/kfrancischen" class="md-footer-social__link fa fa-github"></a>
+    
+      <a href="https://www.linkedin.com/in/kaifeng-chen-b37a2b69/" class="md-footer-social__link fa fa-linkedin"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      
+    
+  </body>
+</html>
