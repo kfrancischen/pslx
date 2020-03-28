@@ -1,6 +1,8 @@
 ### Package PSLX
 **P**ython **S**tandard **L**ibrary e**X**tension.
 
+The site for detailed documentation: https://kfrancischen.github.io/pslx/.
+
 A standard library for job scheduling, micro services including message queue, RPC, instant messaging and monitoring, tooling 
 such as logging, file storage and caching, developed by [Kaifeng Chen](<kfrancischen@gmail.com>). The library is written 
 compatible to Python 3.7+. To use the program, please install the latest [protobuf compiler](https://github.com/protocolbuffers/protobuf)
@@ -36,3 +38,5 @@ yaml file io, text coloring, and credential composing and environment variables 
 * Internal [protobuf schemas](doc/docs/schema.md).
 
 Please also take a look at the [example](https://github.com/kfrancischen/pslx/tree/master/example) folder for different example implementations.
+
+I do accept BTC/ETH donation. My BTC address is 3LH5VQ51fToFTpb46N4hYn225e6iMDPU7f, and ETH address is 0xd16B5edEc78F9C798d3aD4D94b008ED091722bEC.

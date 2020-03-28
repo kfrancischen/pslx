@@ -2,7 +2,7 @@
 **P**ython **S**tandard **L**ibrary e**X**tension.
 
 A standard library for job scheduling, micro services including message queue, RPC, instant messaging and monitoring, tooling 
-such as logging, file storage and caching, developed by [Kaifeng Chen](<kfrancischen@gmail.com>). The library is written 
+such as logging, file storage and caching. The library is written 
 compatible to Python 3.7+. To use the program, please install the latest [protobuf compiler](https://github.com/protocolbuffers/protobuf)
 and [gRPC](https://grpc.io/) tools. This document covers the APIs of PSLX provided, and is organized as follows:
 
