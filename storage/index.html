@@ -686,6 +686,14 @@ so that the reader could correctly deserialize to the desired protobuf.</li>
 </ol>
 </li>
 </ul>
+<div class="codehilite"><pre><span></span><span class="n">read_all</span><span class="p">()</span>
+</pre></div>
+
+
+<ul>
+<li>Description: Read all the data.</li>
+<li>Return: the key, value pairs of the table, with value being the <code>Any</code> proto format.</li>
+</ul>
 <div class="codehilite"><pre><span></span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
 </pre></div>
 
@@ -835,8 +843,10 @@ params. The default <code>base_name</code> is <code>data</code> for <code>Storag
 <li>Explanation:<ol>
 <li>The params must contain <code>start_time</code> and <code>end_time</code> in order for the partitioner to retrieve files
 with partition within the given time range. The interval is a close interval.</li>
-<li>The return from this function will be a dictionary with file name as the key and file content (from top to bottom)
+<li>The return from this function will be a dictionary with file name as the key and file content
 as the value.</li>
+<li>If the underlying storage is a proto table, the value in the output dict will be in the format of 
+<code>[key_1, val_1, ... ..., key_n, val_n]</code>.</li>
 </ol>
 </li>
 </ul>

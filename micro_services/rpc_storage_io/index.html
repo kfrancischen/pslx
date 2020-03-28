@@ -501,6 +501,18 @@ server can be launched with following code:</p>
             <span class="s1">&#39;end_time&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
         <span class="p">}</span>
     <span class="p">))</span>
+
+    <span class="n">dir_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/yearly_partitioner_4/&quot;</span>
+    <span class="n">example_client</span> <span class="o">=</span> <span class="n">PartitionerStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read_range</span><span class="p">(</span>
+        <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">dir_name</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;PartitionerStorageType&#39;</span><span class="p">:</span> <span class="n">PartitionerStorageType</span><span class="o">.</span><span class="n">YEARLY</span><span class="p">,</span>
+            <span class="s1">&#39;start_time&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+            <span class="s1">&#39;end_time&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+            <span class="s1">&#39;is_proto_table&#39;</span><span class="p">:</span> <span class="bp">True</span>
+        <span class="p">}</span>
+    <span class="p">))</span>
 </pre></div>
 
 
