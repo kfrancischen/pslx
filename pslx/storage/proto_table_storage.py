@@ -77,6 +77,25 @@ class ProtoTableStorage(StorageBase):
         else:
             return None
 
+    def read_all(self):
+
+        while self._writer_status != Status.IDLE:
+            self.sys_log("Waiting for writer to finish.")
+            time.sleep(TimeSleepObj.ONE_SECOND)
+
+        while self._deleter_status != Status.IDLE:
+            self.sys_log("Waiting for deleter to finish.")
+            time.sleep(TimeSleepObj.ONE_SECOND)
+
+        self._reader_status = Status.RUNNING
+        try:
+            self._reader_status = Status.IDLE
+            return dict(self._table_message.data)
+        except Exception as err:
+            self.sys_log("Got exception: " + str(err))
+            self._logger.error("Got exception: " + str(err))
+            raise StorageReadException
+
     def delete(self, key):
         while self._reader_status != Status.IDLE:
             self.sys_log("Waiting for reader to finish.")

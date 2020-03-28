@@ -124,6 +124,12 @@ read(params)
     so that the reader could correctly deserialize to the desired protobuf.
     3. Under PSLX convention, the underlying file name needs to end with `.pb`.
 
+```python
+read_all()
+```
+* Description: Read all the data.
+* Return: the key, value pairs of the table, with value being the `Any` proto format.
+
 ```python       
 write(data, params)
 ```
@@ -237,8 +243,10 @@ read_range(data, params)
 * Explanation:
     1. The params must contain `start_time` and `end_time` in order for the partitioner to retrieve files
     with partition within the given time range. The interval is a close interval.
-    2. The return from this function will be a dictionary with file name as the key and file content (from top to bottom)
+    2. The return from this function will be a dictionary with file name as the key and file content
     as the value.
+    3. If the underlying storage is a proto table, the value in the output dict will be in the format of 
+    `[key_1, val_1, ... ..., key_n, val_n]`.
     
 ```python       
 write(data, params)

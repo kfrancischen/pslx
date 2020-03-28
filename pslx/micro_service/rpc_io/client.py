@@ -120,6 +120,10 @@ class PartitionerStorageRPC(RPCIOClient):
 
     def read_range(self, file_or_dir_path, params=None, is_test=False, root_certificate=None):
         assert 'PartitionerStorageType' in params and 'start_time' in params and 'end_time' in params
+        if 'is_proto_table' in params and params['is_proto_table']:
+            params['is_proto_table'] = '1'
+        else:
+            params['is_proto_table'] = '0'
 
         request = RPCIORequest()
         request.is_test = is_test
@@ -134,6 +138,7 @@ class PartitionerStorageRPC(RPCIOClient):
             enum_type=PartitionerStorageType,
             value=params['PartitionerStorageType']
         )
+        request.params['is_proto_table'] = params['is_proto_table']
 
         response = self.send_request(request=request, root_certificate=root_certificate)
         result = {}

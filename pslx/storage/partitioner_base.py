@@ -6,6 +6,7 @@ from pslx.core.node_base import OrderedNodeBase
 from pslx.core.tree_base import TreeBase
 from pslx.schema.enums_pb2 import StorageType, PartitionerStorageType, SortOrder, Status
 from pslx.storage.default_storage import DefaultStorage
+from pslx.storage.proto_table_storage import ProtoTableStorage
 from pslx.storage.storage_base import StorageBase
 from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
@@ -212,7 +213,6 @@ class PartitionerBase(StorageBase):
             return timestamp
 
         assert 'start_time' in params and 'end_time' in params and params['start_time'] <= params['end_time']
-        assert self._underlying_storage.get_storage_type() == StorageType.DEFAULT_STORAGE
         while self._writer_status != Status.IDLE:
             self.sys_log("Waiting for writer to finish.")
             time.sleep(TimeSleepObj.ONE_SECOND)
@@ -241,13 +241,23 @@ class PartitionerBase(StorageBase):
                     base_name=dir_name
                 )
                 if FileUtil.does_dir_exist(dir_name=dir_name):
-                    storage = DefaultStorage()
+                    if self._underlying_storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE:
+                        storage = ProtoTableStorage()
+                    else:
+                        storage = DefaultStorage()
                     file_names = FileUtil.list_files_in_dir(dir_name=dir_name)
                     for file_name in file_names:
                         storage.initialize_from_file(file_name=file_name)
-                        result[file_name] = storage.read(params={
-                            'num_line': -1
-                        })
+                        if storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE:
+                            result[file_name] = []
+                            result_from_file = storage.read_all()
+                            for key, val in result_from_file.items():
+                                result[file_name].append(key)
+                                result[file_name].append(ProtoUtil.message_to_json(val))
+                        else:
+                            result[file_name] = storage.read(params={
+                                'num_line': -1
+                            })
 
                 if self.PARTITIONER_TYPE == PartitionerStorageType.YEARLY:
                     start_time = start_time.replace(year=start_time.year + 1, month=1, day=1)

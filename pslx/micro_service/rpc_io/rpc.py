@@ -169,6 +169,10 @@ class RPCIO(RPCBase):
                 read_params['end_time'] = TimezoneUtil.cur_time_from_str(
                     time_str=read_params['end_time']
                 )
+            if read_params['is_proto_table'] == '1':
+                proto_table_storage = ProtoTableStorage()
+                storage.set_underlying_storage(storage=proto_table_storage)
+
             data = storage.read_range(params=read_params)
             for key, vals in data.items():
                 rpc_list_data = RPCIOResponse.RPCListData()

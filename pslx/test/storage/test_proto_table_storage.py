@@ -92,6 +92,13 @@ class ProtoTableStorageTest(unittest.TestCase):
             }
         )
         self.assertEqual(result_proto, self.EXAMPLE_PROTO_3)
+
+        result = proto_table_storage.read_all()
+        self.assertDictEqual(result, {
+            'test': ProtoUtil.message_to_any(self.EXAMPLE_PROTO_1),
+            'test_1': ProtoUtil.message_to_any(self.EXAMPLE_PROTO_3),
+        })
+
         self.assertEqual(proto_table_storage.get_num_entries(), 2)
         copyfile(self.TEST_DATA_2, self.TEST_DATA_4)
 

@@ -54,3 +54,15 @@ if __name__ == "__main__":
             'end_time': datetime.datetime(2020, 1, 5),
         }
     ))
+
+    dir_name = "pslx/test/storage/test_data/yearly_partitioner_4/"
+    example_client = PartitionerStorageRPC(client_name='example_rpc_io', server_url=server_url)
+    print(example_client.read_range(
+        file_or_dir_path=dir_name,
+        params={
+            'PartitionerStorageType': PartitionerStorageType.YEARLY,
+            'start_time': datetime.datetime(2019, 1, 5),
+            'end_time': datetime.datetime(2020, 1, 5),
+            'is_proto_table': True
+        }
+    ))
