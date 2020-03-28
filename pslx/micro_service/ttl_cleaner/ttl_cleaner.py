@@ -42,7 +42,7 @@ class TTLCleanerOp(BatchOperator):
                 dir_name=ttl_dir_name
             )
             for file_name in all_files_under_dir:
-                ttl = FileUtil.get_ttl_from_path(path=file_name)
+                ttl = FileUtil.get_ttl_from_path(path_name=file_name)
                 if ttl and start_time - FileUtil.get_file_modified_time(file_name=file_name) > ttl:
                     self._logger.info("Removing file " + file_name + '...')
                     try:

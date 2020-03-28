@@ -143,8 +143,8 @@ class FileUtil(object):
         return datetime.datetime.fromtimestamp(mod_time)
 
     @classmethod
-    def get_ttl_from_path(cls, path):
-        for item in path.split('/'):
+    def get_ttl_from_path(cls, path_name):
+        for item in path_name.split('/'):
             if 'ttl=' in item:
                 item = item.replace('ttl=', '').lower()
                 if 'd' == item[-1]:
@@ -197,8 +197,8 @@ class FileUtil(object):
         return sorted(glob.glob(pattern))
 
     @classmethod
-    def get_mode(cls, file_path):
-        if 'TEST' in file_path:
+    def get_mode(cls, path_name):
+        if 'TEST' in path_name:
             return ModeType.TEST
         else:
             return ModeType.PROD
@@ -237,10 +237,10 @@ class FileUtil(object):
                                  dir_name_list[4])
 
     @classmethod
-    def create_container_snapshot_pattern(cls, container_name, contain_class, container_ttl=-1):
+    def create_container_snapshot_pattern(cls, container_name, container_class, container_ttl=-1):
         contain_snapshot_dir = cls.join_paths_to_dir_with_mode(
             root_dir=os.getenv('DATABASE', 'database/'),
-            base_name=contain_class.get_class_name() + '__' + container_name,
+            base_name=container_class.get_class_name() + '__' + container_name,
             ttl=container_ttl
         )
         return FileUtil.join_paths_to_file(
@@ -249,10 +249,10 @@ class FileUtil(object):
         )
 
     @classmethod
-    def create_operator_snapshot_pattern(cls, container_name, operator_name, contain_class, container_ttl=-1):
+    def create_operator_snapshot_pattern(cls, container_name, operator_name, container_class, container_ttl=-1):
         contain_snapshot_dir = cls.join_paths_to_dir_with_mode(
             root_dir=os.getenv('DATABASE', 'database/'),
-            base_name=contain_class.get_class_name() + '__' + container_name,
+            base_name=container_class.get_class_name() + '__' + container_name,
             ttl=container_ttl
         )
         return FileUtil.join_paths_to_file(

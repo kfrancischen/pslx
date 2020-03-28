@@ -89,12 +89,12 @@ class FileUtilTest(unittest.TestCase):
         database = os.getenv('DATABASE', 'database/')
         self.assertTrue(FileUtil.create_container_snapshot_pattern(
             container_name=container_name,
-            contain_class=container_class
+            container_class=container_class
         ).replace(database, '') in ["PROD/DefaultBatchContainer__container_foo/SNAPSHOT_*_container_foo.pb",
                                     "TEST/DefaultBatchContainer__container_foo/SNAPSHOT_*_container_foo.pb"])
         self.assertTrue(FileUtil.create_container_snapshot_pattern(
             container_name=container_name,
-            contain_class=container_class,
+            container_class=container_class,
             container_ttl=1
         ).replace(database, '') in [
             "PROD/ttl=1/DefaultBatchContainer__container_foo/SNAPSHOT_*_container_foo.pb",
@@ -108,14 +108,14 @@ class FileUtilTest(unittest.TestCase):
         self.assertTrue(FileUtil.create_operator_snapshot_pattern(
             container_name=container_name,
             operator_name=operator_name,
-            contain_class=container_class
+            container_class=container_class
         ).replace(database, '') in [
             "PROD/DefaultBatchContainer__container_foo/operators/SNAPSHOT_*_operator_bar.pb",
             "TEST/DefaultBatchContainer__container_foo/operators/SNAPSHOT_*_operator_bar.pb"])
         self.assertTrue(FileUtil.create_operator_snapshot_pattern(
             container_name=container_name,
             operator_name=operator_name,
-            contain_class=container_class,
+            container_class=container_class,
             container_ttl=1
         ).replace(database, '') in [
             "PROD/ttl=1/DefaultBatchContainer__container_foo/operators/SNAPSHOT_*_operator_bar.pb",
@@ -140,12 +140,12 @@ class FileUtilTest(unittest.TestCase):
 
     def test_get_ttl_from_path(self):
         path = "pslx/test/util/"
-        self.assertTrue(FileUtil.get_ttl_from_path(path=path) is None)
+        self.assertTrue(FileUtil.get_ttl_from_path(path_name=path) is None)
         path = "pslx/ttl=-1/test/util/"
-        self.assertTrue(FileUtil.get_ttl_from_path(path=path) is None)
+        self.assertTrue(FileUtil.get_ttl_from_path(path_name=path) is None)
         path = "pslx/ttl=1/test/util/"
-        self.assertEqual(FileUtil.get_ttl_from_path(path=path), datetime.timedelta(days=1))
+        self.assertEqual(FileUtil.get_ttl_from_path(path_name=path), datetime.timedelta(days=1))
         path = "pslx/ttl=1d/test/util/"
-        self.assertEqual(FileUtil.get_ttl_from_path(path=path), datetime.timedelta(days=1))
+        self.assertEqual(FileUtil.get_ttl_from_path(path_name=path), datetime.timedelta(days=1))
         path = "pslx/ttl=1h/test/util/"
-        self.assertEqual(FileUtil.get_ttl_from_path(path=path), datetime.timedelta(hours=1))
+        self.assertEqual(FileUtil.get_ttl_from_path(path_name=path), datetime.timedelta(hours=1))
