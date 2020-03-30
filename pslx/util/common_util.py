@@ -29,26 +29,26 @@ class CommonUtil(object):
         else:
             dict_config = YamlUtil.yaml_to_dict(file_name=yaml_path)
             config = FrontendConfig()
-            config.sqlalchemy_database_path = dict_config['sqlalchemy_database_path']
+            config.sqlalchemy_database_path = dict_config['SQLALCHEMY_DATABASE_PATH']
 
             container_backend_config = FrontendConfig.ServerConfig()
-            container_backend_config.server_url = dict_config['container_backend_config']['server_url']
+            container_backend_config.server_url = dict_config['CONTAINER_BACKEND_CONFIG']['SERVER_URL']
             container_backend_config.root_certificate_path = \
-                dict_config['container_backend_config']['root_certificate_path']
+                dict_config['CONTAINER_BACKEND_CONFIG']['ROOT_CERTIFICATE_PATH']
             config.container_backend_config.CopyFrom(container_backend_config)
 
-            for val in dict_config['proto_viewer_config'].values():
+            for val in dict_config['PROTO_VIEWER_CONFIG'].values():
                 server_config = config.proto_viewer_config.add()
-                server_config.server_url = val['server_url']
-                server_config.root_certificate_path = val['root_certificate_path']
+                server_config.server_url = val['SERVER_URL']
+                server_config.root_certificate_path = val['ROOT_CERTIFICATE_PATH']
 
-            for val in dict_config['file_viewer_config'].values():
+            for val in dict_config['FILE_VIEWER_CONFIG'].values():
                 server_config = config.file_viewer_config.add()
-                server_config.server_url = val['server_url']
-                server_config.root_certificate_path = val['root_certificate_path']
+                server_config.server_url = val['SERVER_URL']
+                server_config.root_certificate_path = val['ROOT_CERTIFICATE_PATH']
 
             credential = Credentials()
-            credential.user_name = dict_config['user_name']
-            credential.password = dict_config['password']
+            credential.user_name = dict_config['USER_NAME']
+            credential.password = dict_config['PASSWORD']
             config.credential.CopyFrom(credential)
             return config
