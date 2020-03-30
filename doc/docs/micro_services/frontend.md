@@ -78,20 +78,20 @@ if __name__ == "__main__":
 To start the frontend, one needs to create a YAML file containing the settings. An example of it can be found at 
 [frontend_example/frontend_config.yaml](https://github.com/kfrancischen/pslx/blob/master/example/frontend_example/frontend_config.yaml):
 ```yaml
-sqlalchemy_database_path: "/mnt/c/Users/francischen/Development/pslx/example/frontend_example/frontend_example.db"
-container_backend_config:
-  server_url: "localhost:11443"
-  root_certificate_path: ""
-proto_viewer_config:
-  server_1:
-    server_url: "localhost:11444"
-    root_certificate_path: ""
-file_viewer_config:
-  server_1:
-    server_url: "localhost:11445"
-    root_certificate_path: ""
-user_name: "guest"
-password: "guest"
+SQLALCHEMY_DATABASE_PATH: "/mnt/c/Users/francischen/Development/pslx/example/frontend_example/frontend_example.db"
+CONTAINER_BACKEND_CONFIG:
+  SERVER_URL: "localhost:11443"
+  ROOT_CERTIFICATE_PATH: ""
+PROTO_VIEWER_CONFIG:
+  SERVER_1:
+    SERVER_URL: "localhost:11444"
+    ROOT_CERTIFICATE_PATH: ""
+FILE_VIEWER_CONFIG:
+  SERVER_1:
+    SERVER_URL: "localhost:11445"
+    ROOT_CERTIFICATE_PATH: ""
+USER_NAME: "guest"
+PASSWORD: "guest"
 ```
 
 The above `user_name` and `password` are the credentials used to login the frontend. In the second step, one needs to parse
