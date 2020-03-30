@@ -78,7 +78,7 @@ if __name__ == "__main__":
 To start the frontend, one needs to create a YAML file containing the settings. An example of it can be found at 
 [frontend_example/frontend_config.yaml](https://github.com/kfrancischen/pslx/blob/master/example/frontend_example/frontend_config.yaml):
 ```yaml
-SQLALCHEMY_DATABASE_PATH: "/mnt/c/Users/francischen/Development/pslx/example/frontend_example/frontend_example.db"
+SQLALCHEMY_DATABASE_PATH: "/home/francischen/Development/pslx/example/frontend_example/frontend_example.db"
 CONTAINER_BACKEND_CONFIG:
   SERVER_URL: "localhost:11443"
   ROOT_CERTIFICATE_PATH: ""

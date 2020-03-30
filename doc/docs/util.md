@@ -497,7 +497,6 @@ PSLX_ENV_TO_DEFAULT_MAP = {
     'PSLX_LOG': False,
     'PSLX_DATABASE': 'database/',
     'PSLX_GRPC_MAX_MESSAGE_LENGTH': 512 * 1024 * 1024,  # 512MB,
-    'PSLX_BACKEND_STORAGE': 'backend/',
     'PSLX_FRONTEND_CONFIG_PROTO_PATH': '',
 }
 ```

@@ -1,4 +1,4 @@
-SQLALCHEMY_DATABASE_PATH: "/mnt/c/Users/francischen/Development/pslx/example/frontend_example/frontend_example.db"
+SQLALCHEMY_DATABASE_PATH: "/home/francischen/Development/pslx/example/frontend_example/frontend_example.db"
 CONTAINER_BACKEND_CONFIG:
   SERVER_URL: "localhost:11443"
   ROOT_CERTIFICATE_PATH: ""
