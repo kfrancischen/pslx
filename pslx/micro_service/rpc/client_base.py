@@ -37,8 +37,10 @@ class ClientBase(Base):
         self.sys_log("Client getting request of uuid " + generic_request.uuid + '.')
         try:
             options = [
-                ('grpc.max_receive_message_length', EnvUtil.get_pslx_env_variable(var='PSLX_GRPC_MAX_MESSAGE_LENGTH')),
-                ('grpc.max_send_message_length', EnvUtil.get_pslx_env_variable(var='PSLX_GRPC_MAX_MESSAGE_LENGTH')),
+                ('grpc.max_receive_message_length',
+                 int(EnvUtil.get_pslx_env_variable(var='PSLX_GRPC_MAX_MESSAGE_LENGTH'))),
+                ('grpc.max_send_message_length',
+                 int(EnvUtil.get_pslx_env_variable(var='PSLX_GRPC_MAX_MESSAGE_LENGTH'))),
             ]
             if not root_certificate:
                 self._logger.info("Start with insecure channel.")

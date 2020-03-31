@@ -106,6 +106,34 @@ def index():
             'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
         })
 
+    for server_config in pslx_frontend_ui_app.config['frontend_config'].instant_messaging_config:
+        server, port = server_config.server_url.split(':')
+        status = RPCUtil.check_health(
+            server_url=server_config.server_url,
+            root_certificate_path=server_config.root_certificate_path
+        )
+        pslx_frontend_logger.info("Checking health for url " + server_config.server_url + '.')
+        service_info.append({
+            'name': 'instant_messaging',
+            'server': server,
+            'port': port,
+            'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
+        })
+
+    for server_config in pslx_frontend_ui_app.config['frontend_config'].rpc_io_config:
+        server, port = server_config.server_url.split(':')
+        status = RPCUtil.check_health(
+            server_url=server_config.server_url,
+            root_certificate_path=server_config.root_certificate_path
+        )
+        pslx_frontend_logger.info("Checking health for url " + server_config.server_url + '.')
+        service_info.append({
+            'name': 'rpc_io',
+            'server': server,
+            'port': port,
+            'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
+        })
+
     return render_template("index.html",
                            service_info=sorted(service_info, key=lambda x: x['name']))
 

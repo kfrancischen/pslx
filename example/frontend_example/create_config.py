@@ -1,5 +1,5 @@
 """
- PYTHONPATH=. python example/frontend_example/create_config.py
+PYTHONPATH=. python example/frontend_example/create_config.py
 """
 from pslx.util.common_util import CommonUtil
 from pslx.util.file_util import FileUtil

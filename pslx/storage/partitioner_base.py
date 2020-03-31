@@ -28,7 +28,7 @@ class PartitionerBase(StorageBase):
     def __init__(self, logger=None, max_capacity=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE')):
         super().__init__(logger=logger)
         self._file_tree = None
-        self._max_capacity = max_capacity
+        self._max_capacity = int(max_capacity)
         self._underlying_storage = DefaultStorage(logger=logger)
 
     def get_partitioner_type(self):
@@ -39,7 +39,7 @@ class PartitionerBase(StorageBase):
         self._underlying_storage = storage
 
     def set_max_capacity(self, max_capacity):
-        self._max_capacity = max_capacity
+        self._max_capacity = int(max_capacity)
 
     def initialize_from_file(self, file_name):
         self.sys_log("Initialize_from_file function is not implemented for storage type "

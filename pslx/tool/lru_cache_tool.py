@@ -6,7 +6,7 @@ from pslx.core.node_base import OrderedNodeBase
 class LRUCacheTool(Base):
     def __init__(self, max_capacity):
         super().__init__()
-        self._max_capacity = max_capacity
+        self._max_capacity = int(max_capacity)
         self._key_value_store = {}
         self._linked_list = LinkedListBase()
 
