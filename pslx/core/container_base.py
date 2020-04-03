@@ -39,6 +39,9 @@ class ContainerBase(GraphBase):
         self._backend = None
         self._status = Status.IDLE
 
+    def get_container_name(self):
+        return self._container_name
+
     def bind_backend(self, server_url, root_certificate=None):
         self._backend = ContainerBackendRPCClient(
             client_name=self._container_name + '_backend',
