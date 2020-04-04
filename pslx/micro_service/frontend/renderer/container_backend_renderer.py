@@ -48,6 +48,7 @@ def get_containers_info():
 
                     partitioner_storage.initialize_from_dir(dir_name=dir_name)
                     latest_dir = partitioner_storage.get_latest_dir()
+                    pslx_frontend_logger.info("Checking latest dir " + latest_dir + '.')
                     files = FileUtil.list_files_in_dir(dir_name=latest_dir)
                     if not files:
                         continue
@@ -65,7 +66,7 @@ def get_containers_info():
                     )
                     if TimezoneUtil.cur_time_in_pst() - TimezoneUtil.cur_time_from_str(
                             time_str=result_proto.updated_time) > \
-                            datetime.timedelta(days=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')):
+                            datetime.timedelta(days=int(EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL'))):
                         continue
                     container_info = {
                         'container_name': result_proto.container_name,
