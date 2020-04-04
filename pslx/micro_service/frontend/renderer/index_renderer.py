@@ -68,7 +68,7 @@ def index():
     config = pslx_frontend_ui_app.config['frontend_config']
     server, port = config.container_backend_config.server_url.split(':')
     pslx_frontend_logger.info("Checking health for url " + config.container_backend_config.server_url + '.')
-    status = RPCUtil.check_health(
+    status, qps = RPCUtil.check_health_and_qps(
         server_url=config.container_backend_config.server_url,
         root_certificate_path=config.container_backend_config.root_certificate_path
     )
@@ -77,10 +77,11 @@ def index():
         'server': server,
         'port': port,
         'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
+        'qps': round(qps, 3),
     }]
     for server_config in pslx_frontend_ui_app.config['frontend_config'].proto_viewer_config:
         server, port = server_config.server_url.split(':')
-        status = RPCUtil.check_health(
+        status, qps = RPCUtil.check_health_and_qps(
             server_url=server_config.server_url,
             root_certificate_path=server_config.root_certificate_path
         )
@@ -90,11 +91,12 @@ def index():
             'server': server,
             'port': port,
             'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
+            'qps': round(qps, 3),
         })
 
     for server_config in pslx_frontend_ui_app.config['frontend_config'].file_viewer_config:
         server, port = server_config.server_url.split(':')
-        status = RPCUtil.check_health(
+        status, qps = RPCUtil.check_health_and_qps(
             server_url=server_config.server_url,
             root_certificate_path=server_config.root_certificate_path
         )
@@ -104,11 +106,12 @@ def index():
             'server': server,
             'port': port,
             'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
+            'qps': round(qps, 3),
         })
 
     for server_config in pslx_frontend_ui_app.config['frontend_config'].instant_messaging_config:
         server, port = server_config.server_url.split(':')
-        status = RPCUtil.check_health(
+        status, qps = RPCUtil.check_health_and_qps(
             server_url=server_config.server_url,
             root_certificate_path=server_config.root_certificate_path
         )
@@ -118,11 +121,12 @@ def index():
             'server': server,
             'port': port,
             'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
+            'qps': round(qps, 3),
         })
 
     for server_config in pslx_frontend_ui_app.config['frontend_config'].rpc_io_config:
         server, port = server_config.server_url.split(':')
-        status = RPCUtil.check_health(
+        status, qps = RPCUtil.check_health_and_qps(
             server_url=server_config.server_url,
             root_certificate_path=server_config.root_certificate_path
         )
@@ -132,6 +136,7 @@ def index():
             'server': server,
             'port': port,
             'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
+            'qps': round(qps, 3),
         })
 
     return render_template("index.html",

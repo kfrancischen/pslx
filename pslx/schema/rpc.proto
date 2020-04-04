@@ -27,10 +27,11 @@ message HealthCheckerRequest {
     bool secure = 2;
 }
 
-// the next will be 3
+// the next will be 4
 message HealthCheckerResponse {
     string server_url = 1;
     Status server_status = 2;
+    float server_qps = 3;
 }
 
 // the next will be 6

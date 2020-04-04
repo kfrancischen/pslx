@@ -59,6 +59,7 @@
                                   <th>Binded RPC Server IP</th>
                                   <th>Binded RPC Server Port</th>
                                   <th>Server Status</th>
+                                  <th>Server QPS</th>
                                 </tr>
                               </thead>
                               {% for service in service_info %}
@@ -72,6 +73,7 @@
                                     {% else %}
                                         <td><font color="blue">{{ service['status'] }}</font></td>
                                     {% endif %}
+                                    <td>{{ service['qps'] }}</td>
                                   </tr>
                                 </tbody>
                               {% endfor %}

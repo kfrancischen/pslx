@@ -1,3 +1,6 @@
+import collections
+import datetime
+
 from pslx.core.base import Base
 from pslx.schema.enums_pb2 import StorageType, Status
 from pslx.schema.rpc_pb2 import GenericRPCRequestResponsePair, HealthCheckerResponse
@@ -6,6 +9,7 @@ from pslx.storage.proto_table_storage import ProtoTableStorage
 from pslx.util.env_util import EnvUtil
 from pslx.util.dummy_util import DummyUtil
 from pslx.util.proto_util import ProtoUtil
+from pslx.util.timezone_util import TimezoneUtil
 
 
 class RPCBase(GenericRPCServiceServicer, Base):
@@ -23,6 +27,7 @@ class RPCBase(GenericRPCServiceServicer, Base):
             rpc_storage.set_underlying_storage(storage=underlying_storage)
             rpc_storage.set_max_capacity(max_capacity=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE'))
         self._rpc_storage = rpc_storage
+        self._request_timestamp = collections.deque()
 
     def get_rpc_service_name(self):
         return self._service_name
@@ -58,6 +63,7 @@ class RPCBase(GenericRPCServiceServicer, Base):
                 }
             )
             self.sys_log("Request response pair saved to " + self._rpc_storage.get_latest_dir() + '.')
+            self._add_request_timestamp()
 
         return generic_response
 
@@ -67,6 +73,12 @@ class RPCBase(GenericRPCServiceServicer, Base):
         response = HealthCheckerResponse()
         response.server_url = request.server_url
         response.server_status = Status.RUNNING
+        self._add_request_timestamp()
+        if len(self._request_timestamp) < 1:
+            response.server_qps = 0
+        else:
+            duration = (TimezoneUtil.cur_time_in_pst() - self._request_timestamp[0]) / datetime.timedelta(seconds=1)
+            response.server_qps = len(self._request_timestamp) / max(duration, 1)
         return response
 
     @classmethod
@@ -80,6 +92,13 @@ class RPCBase(GenericRPCServiceServicer, Base):
             message_type=cls.REQUEST_MESSAGE_TYPE,
             any_message=request.request_data
         )
+
+    def _add_request_timestamp(self):
+        cur_time = TimezoneUtil.cur_time_in_pst()
+
+        while self._request_timestamp and cur_time - self._request_timestamp[0] >= datetime.timedelta(minutes=30):
+            self._request_timestamp.popleft()
+        self._request_timestamp.append(cur_time)
 
     def get_response_and_status_impl(self, request):
         raise NotImplementedError

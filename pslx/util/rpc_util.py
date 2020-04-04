@@ -8,7 +8,7 @@ from pslx.util.file_util import FileUtil
 class RPCUtil(object):
 
     @classmethod
-    def check_health(cls, server_url, root_certificate_path=None):
+    def check_health_and_qps(cls, server_url, root_certificate_path=None):
         request = HealthCheckerRequest()
         request.server_url = server_url
         if not root_certificate_path:
@@ -17,9 +17,9 @@ class RPCUtil(object):
                 stub = GenericRPCServiceStub(channel=channel)
                 try:
                     response = stub.CheckHealth(request=request)
-                    return response.server_status
+                    return response.server_status, response.server_qps
                 except Exception as _:
-                    return Status.FAILED
+                    return Status.FAILED, 0
         else:
             with open(FileUtil.die_if_file_not_exist(file_name=root_certificate_path), 'r') as infile:
                 root_certificate = infile.read()
@@ -29,6 +29,6 @@ class RPCUtil(object):
                 stub = GenericRPCServiceStub(channel=channel)
                 try:
                     response = stub.CheckHealth(request=request)
-                    return response.server_status
+                    return response.server_status, response.server_qps
                 except Exception as _:
-                    return Status.FAILED
+                    return Status.FAILED, 0
