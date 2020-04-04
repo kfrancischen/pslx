@@ -494,7 +494,8 @@ of being executed now. Then it will turn to the status of <code>Status.RUNNING</
 status could be one of <code>Status.SUCCEEDED</code> and <code>Status.FAILED</code> depending on the execution. One failure in the container graph will result in
 failure in all the subsequent operators.</p>
 <p>PSLX has two kinds of data models: <code>DataModelType.BATCH</code> and <code>DataModelType.STREAMING</code>, and the enums are defined as protobuf enums (Please check
-the section of <a href="../schema/">schema</a>). <code>DataModelType.BATCH</code> mode supports running operators in multi-thread fashion. The two types of 
+the section of <a href="../schema/">schema</a>). <code>DataModelType.BATCH</code> mode supports running operators in multi-thread fashion, and allows each operator to send
+its status to the backend, while <code>DataModelType.STREAMING</code> only supports sending status to the backend when the container starts and ends. The two types of 
 operations all have the following functions:</p>
 <h3 id="operator-documentation">Operator Documentation<a class="headerlink" href="#operator-documentation" title="Permanent link">&para;</a></h3>
 <div class="admonition note">
