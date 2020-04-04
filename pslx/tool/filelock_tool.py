@@ -28,12 +28,13 @@ class FileLockTool(Base):
             self._lock_file_contents = "Owning process args:\n"
             for arg in sys.argv:
                 self._lock_file_contents += arg + "\n"
+        self.sys_log("Lock file contents: " + self._lock_file_contents)
 
     def is_locked(self):
         return self._is_locked
 
     def is_available(self):
-        return not os.path.exists(self._lockfile)
+        return not FileUtil.does_file_exist(file_name=self._lockfile)
 
     def _acquire(self, blocking=True):
         start_time = time.time()
@@ -55,8 +56,9 @@ class FileLockTool(Base):
         return True
 
     def _release(self):
+        self.sys_log("File released by removing " + self._lockfile + '.')
         self._is_locked = False
-        os.unlink(self._lockfile)
+        FileUtil.remove_file(self._lockfile)
 
     def __enter__(self):
         self._acquire()
