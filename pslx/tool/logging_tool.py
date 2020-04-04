@@ -9,7 +9,8 @@ from pslx.util.file_util import FileUtil
 
 
 class LoggingTool(object):
-    def __init__(self, name, date=datetime.datetime.utcnow(), ttl=-1):
+    def __init__(self, name, date=datetime.datetime.utcnow(),
+                 ttl=EnvUtil.get_pslx_env_variable(var="PSLX_INTERNAL_TTL")):
         if name:
             self._start_date = date
             assert '-' not in name
