@@ -19,12 +19,16 @@ class OperatorBase(OrderedNodeBase):
         super().__init__(node_name=operator_name, order=order)
         self._config = {
             'save_snapshot': False,
+            'allow_container_snapshot': False if self.DATA_MODEL != DataModelType.BATCH else True,
             'slo': -1,
         }
         self._start_time = None
         self._end_time = None
         self._persistent = False
         self._status = Status.IDLE
+
+    def allow_container_snapshot(self):
+        return self._config['allow_container_snapshot']
 
     def set_data_model(self, model):
         self.sys_log("Switching to " + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=model) +

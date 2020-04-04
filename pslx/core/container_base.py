@@ -90,7 +90,7 @@ class ContainerBase(GraphBase):
     def add_upstream_op(self, op_snapshot_file_pattern):
         self._upstream_ops.append(op_snapshot_file_pattern)
 
-    def get_container_snapshot(self):
+    def get_container_snapshot(self, send_backend=True):
         if not self._is_initialized:
             self.sys_log("Warning: taking snapshot when the container is not initialized.")
 
@@ -126,7 +126,7 @@ class ContainerBase(GraphBase):
                 proto=snapshot,
                 file_name=output_file_name
             )
-        if self._backend:
+        if self._backend and send_backend:
             self._backend.send_to_backend(snapshot=snapshot)
         return snapshot
 
@@ -137,7 +137,7 @@ class ContainerBase(GraphBase):
             op = self._node_name_to_node_dict[operator_name]
             op.execute()
             self.sys_log("Taking snapshot after executing " + operator_name)
-            self.get_container_snapshot()
+            self.get_container_snapshot(send_backend=op.allow_container_snapshot())
             finished_queue.put(operator_name)
             self.sys_log("Finished task: " + operator_name)
             self._logger.info("Finished task: " + operator_name)
