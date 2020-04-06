@@ -127,7 +127,11 @@ class ContainerBase(GraphBase):
                 file_name=output_file_name
             )
         if self._backend and send_backend:
-            self._backend.send_to_backend(snapshot=snapshot)
+            try:
+                self._backend.send_to_backend(snapshot=snapshot)
+            except Exception as err:
+                self._logger.error("Sending backend failed with error " + str(err) + '.')
+
         return snapshot
 
     def _execute(self, task_queue, finished_queue):

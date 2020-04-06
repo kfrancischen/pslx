@@ -98,7 +98,7 @@ class UnorderedNodeBase(NodeBase):
     def __init__(self, node_name):
         super().__init__(node_name=node_name)
 
-    def add_child(self, child_node):
+    def add_child(self, child_node, order=None):
         assert child_node != self
         if self.has_child(child_name=child_node.get_node_name()):
             self.sys_log("Child node name of " + child_node.get_node_name() +
@@ -107,7 +107,7 @@ class UnorderedNodeBase(NodeBase):
         if not child_node.has_parent(parent_name=self._node_name):
             child_node.add_parent(parent_node=self)
 
-    def add_parent(self, parent_node):
+    def add_parent(self, parent_node, order=None):
         assert parent_node != self
         if self.has_parent(parent_name=parent_node.get_node_name()):
             self.sys_log("Parent node name of " + parent_node.get_node_name() +
@@ -122,30 +122,29 @@ class OrderedNodeBase(NodeBase):
     PARENTS_DATA_STRUCT = OrderedDict
     IS_ORDERED = True
 
-    def __init__(self, node_name, order=SortOrder.ORDER):
+    def __init__(self, node_name):
         super().__init__(node_name=node_name)
-        self._order = order
 
-    def add_child(self, child_node):
+    def add_child(self, child_node, order=SortOrder.ORDER):
         self.sys_log("Adding child node " + child_node.get_node_name() + '.')
         assert child_node != self
         if self.has_child(child_name=child_node.get_node_name()):
             self.sys_log("Child node name of " + child_node.get_node_name() +
                          " duplicated. Will overwrite the previous node.")
         self._children[child_node.get_node_name()] = child_node
-        if self._order == SortOrder.REVERSE:
+        if order == SortOrder.REVERSE:
             self._children.move_to_end(key=child_node.get_node_name(), last=False)
         if not child_node.has_parent(parent_name=self._node_name):
-            child_node.add_parent(parent_node=self)
+            child_node.add_parent(parent_node=self, order=order)
 
-    def add_parent(self, parent_node):
+    def add_parent(self, parent_node, order=SortOrder.ORDER):
         self.sys_log("Adding parent node " + parent_node.get_node_name() + '.')
         assert parent_node != self
         if self.has_parent(parent_name=parent_node.get_node_name()):
             self.sys_log("Parent node name of " + parent_node.get_node_name() +
                          " duplicated. Will overwrite the previous node.")
         self._parents[parent_node.get_node_name()] = parent_node
-        if self._order == SortOrder.REVERSE:
+        if order == SortOrder.REVERSE:
             self._parents.move_to_end(key=parent_node.get_node_name(), last=False)
         if not parent_node.has_child(child_name=self._node_name):
-            parent_node.add_child(child_node=self)
+            parent_node.add_child(child_node=self, order=order)

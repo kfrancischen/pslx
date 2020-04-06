@@ -15,8 +15,8 @@ class OperatorBase(OrderedNodeBase):
     DATA_MODEL = DataModelType.DEFAULT
     CONTENT_MESSAGE_TYPE = None
 
-    def __init__(self, operator_name, order=SortOrder.ORDER):
-        super().__init__(node_name=operator_name, order=order)
+    def __init__(self, operator_name):
+        super().__init__(node_name=operator_name)
         self._config = {
             'save_snapshot': False,
             'allow_container_snapshot': False if self.DATA_MODEL != DataModelType.BATCH else True,
@@ -109,9 +109,11 @@ class OperatorBase(OrderedNodeBase):
                                  ProtoUtil.get_name_by_value(enum_type=Status, value=parent.get_status()) + '.')
                     unfinished_op.append(parent.get_node_name())
                 elif parent.get_status() == Status.FAILED:
-                    self.set_status(status=Status.FAILED)
                     self.sys_log("Upstream operator " + parent.get_node_name() + " failed.")
-                    unfinished_op = []
+                    # streaming mode allows failure from its dependencies.
+                    if self.DATA_MODEL != DataModelType.STREAMING:
+                        self.set_status(status=Status.FAILED)
+                        unfinished_op = []
                     break
 
         return unfinished_op
@@ -127,7 +129,7 @@ class OperatorBase(OrderedNodeBase):
             if (parent_node.get_status() in [Status.IDLE, Status.WAITING, Status.RUNNING] and
                     self._status in [Status.RUNNING, Status.SUCCEEDED, Status.FAILED]):
                 return False
-            if (parent_node.get_status() == Status.FAILED and
+            if (self.DATA_MODEL != DataModelType.STREAMING and parent_node.get_status() == Status.FAILED and
                     self._status in [Status.RUNNING, Status.SUCCEEDED]):
                 return False
 
@@ -164,10 +166,13 @@ class OperatorBase(OrderedNodeBase):
             return
         for parent_node in self.get_parents_nodes():
             if parent_node.get_status() == Status.FAILED:
-                self.sys_log("Operator " + parent_node.get_node_name() +
-                             " failed. This results in failure of all the following descendant operators.")
-                self.set_status(status=Status.FAILED)
-                return
+                self.sys_log("Operator " + parent_node.get_node_name() + " failed.")
+                if self.DATA_MODEL != DataModelType.STREAMING:
+                    self.set_status(status=Status.FAILED)
+                    self.sys_log('This results in failure of all the following descendant operators.')
+                    return
+                else:
+                    self.sys_log("Failure is allowed in Streaming mode. The rest of operators will continue.")
 
         unfinished_parent_ops = self.wait_for_upstream_status()
         while unfinished_parent_ops:

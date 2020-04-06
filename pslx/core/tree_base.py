@@ -1,6 +1,7 @@
 from collections import deque
 from collections import OrderedDict
 from pslx.core.base import Base
+from pslx.schema.enums_pb2 import SortOrder
 
 
 class TreeBase(Base):
@@ -26,21 +27,23 @@ class TreeBase(Base):
         self._root = root
         return
 
-    def add_node(self, parent_node, child_node):
+    def add_node(self, parent_node, child_node, order=SortOrder.ORDER):
         self.sys_log("Adding parent node " + parent_node.get_node_name() + " to " + child_node.get_node_name() + '.')
         assert child_node.get_num_parents() == 0 and parent_node != child_node
         if parent_node != self._root:
             assert parent_node.get_num_parents() != 0
 
-        parent_node.add_child(child_node)
+        parent_node.add_child(child_node, order=order)
         if parent_node.get_node_name() in self._node_name_to_node_dict:
             self.sys_log(string=parent_node.get_node_name() + " already exists.")
         else:
+            self.sys_log("Adding new parent node to tree " + parent_node.get_node_name() + '.')
             self._node_name_to_node_dict[parent_node.get_node_name()] = parent_node
 
         if child_node.get_node_name() in self._node_name_to_node_dict:
             self.sys_log(string=child_node.get_node_name() + " already exists.")
         else:
+            self.sys_log("Adding new child node to tree " + child_node.get_node_name() + '.')
             self._node_name_to_node_dict[child_node.get_node_name()] = child_node
 
         self._clean_dict()
@@ -51,6 +54,7 @@ class TreeBase(Base):
 
     def find_node(self, node_name):
         if node_name in self._node_name_to_node_dict:
+            self.sys_log("Successfully found the node with name " + node_name + '.')
             return self._node_name_to_node_dict[node_name]
         search_queue = deque()
         search_queue.append(self._root)
@@ -116,18 +120,18 @@ class TreeBase(Base):
             return
         if max_capacity < 1 + node.get_num_children():
             num_children_to_trim = 1 + node.get_num_children() - max_capacity
-            for child_node in node.get_children_nodes()[:num_children_to_trim]:
+            for child_node in node.get_children_nodes()[::-1][:num_children_to_trim]:
                 child_node.delete_parent(parent_node=node)
             return
         else:
             children_nodes = node.get_children_nodes()
-            pivot_index = 0
-            while pivot_index < len(children_nodes):
+            pivot_index = len(children_nodes) - 1
+            while pivot_index > 0:
                 child_node = children_nodes[pivot_index]
 
                 cumulative_size -= self.get_num_nodes_subtree(node=child_node)
                 if cumulative_size >= max_capacity:
-                    pivot_index += 1
+                    pivot_index -= 1
                 else:
                     self._trim_tree(
                         node=child_node,
@@ -135,7 +139,7 @@ class TreeBase(Base):
                     )
                     break
 
-            for index in range(pivot_index):
+            for index in range(len(children_nodes) - 1 - pivot_index):
                 child_node = children_nodes[index]
                 child_node.delete_parent(parent_node=node)
                 self._node_name_to_node_dict.pop(child_node.get_node_name(), None)
@@ -184,20 +188,22 @@ class TreeBase(Base):
         return height
 
     def print_self(self):
-        result_node_names = []
         search_queue = deque()
         search_queue.append(self._root)
+        search_queue_count = 1
         print_str, level = '', 0
         while search_queue:
             search_node = search_queue.popleft()
+            search_queue_count -= 1
             print_str += search_node.get_node_name()
-            result_node_names.append(search_node.get_node_name())
-            child_nodes = search_node.get_children_nodes()
-            if len(search_queue) > 0:
+            for child_node in search_node.get_children_nodes():
+                search_queue.append(child_node)
+
+            if search_queue_count > 0:
                 print_str += '->'
             else:
                 print('Level ' + str(level) + ': ' + print_str)
                 print_str = ''
                 level += 1
-            for child_node in child_nodes:
-                search_queue.append(child_node)
+                search_queue_count = len(search_queue)
+
