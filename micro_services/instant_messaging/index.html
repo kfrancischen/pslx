@@ -34,7 +34,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
     
     
       
@@ -42,17 +42,17 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
       
       
     
     
-      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -84,7 +84,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="../.." title="PSLX documentation" class="md-header-nav__button md-logo">
+        <a href="../.." title="PSLX documentation" aria-label="PSLX documentation" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -115,7 +115,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
       <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
         &#xE5CD;
@@ -416,23 +416,23 @@
 implementation of the RPC can be found at <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/instant_messaging/rpc.py">instant_messaging/rpc.py</a>. </p>
 <p>To start a RPC server, one can take a look at the <a href="https://github.com/kfrancischen/pslx/blob/master/example/instant_messaging_example/server.py">example</a>. The server's
 implementation is easy:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.instant_messaging.rpc</span> <span class="kn">import</span> <span class="n">InstantMessagingRPC</span>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.instant_messaging.rpc</span> <span class="kn">import</span> <span class="n">InstantMessagingRPC</span>
 <span class="kn">from</span> <span class="nn">pslx.micro_service.rpc.generic_server</span> <span class="kn">import</span> <span class="n">GenericServer</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">server_url</span> <span class="o">=</span> <span class="s2">&quot;localhost:11443&quot;</span>
 
-    <span class="n">example_rpc</span> <span class="o">=</span> <span class="n">InstantMessagingRPC</span><span class="p">(</span><span class="n">rpc_storage</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+    <span class="n">example_rpc</span> <span class="o">=</span> <span class="n">InstantMessagingRPC</span><span class="p">(</span><span class="n">rpc_storage</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">example_server</span> <span class="o">=</span> <span class="n">GenericServer</span><span class="p">(</span><span class="n">server_name</span><span class="o">=</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
     <span class="n">example_server</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
     <span class="n">example_server</span><span class="o">.</span><span class="n">bind_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="o">=</span><span class="n">example_rpc</span><span class="p">)</span>
     <span class="n">example_server</span><span class="o">.</span><span class="n">start_server</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>, and the client examples are:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.instant_messaging.client</span> <span class="kn">import</span> <span class="n">SlackClient</span><span class="p">,</span> <span class="n">RocketchatClient</span><span class="p">,</span> <span class="n">TeamsClient</span>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.instant_messaging.client</span> <span class="kn">import</span> <span class="n">SlackClient</span><span class="p">,</span> <span class="n">RocketchatClient</span><span class="p">,</span> <span class="n">TeamsClient</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">server_url</span> <span class="o">=</span> <span class="s2">&quot;localhost:11443&quot;</span>
@@ -442,7 +442,7 @@ implementation is easy:</p>
         <span class="n">webhook_url</span><span class="o">=</span><span class="s1">&#39;https://hooks.slack.com/services/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&#39;</span><span class="p">,</span>
         <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span>
     <span class="p">)</span>
-    <span class="n">slack_client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">is_test</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">slack_client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">is_test</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="n">rocketchat_client</span> <span class="o">=</span> <span class="n">RocketchatClient</span><span class="p">(</span>
         <span class="n">channel_name</span><span class="o">=</span><span class="s1">&#39;internal_msg_queue&#39;</span><span class="p">,</span>
@@ -450,7 +450,7 @@ implementation is easy:</p>
                      <span class="s1">&#39;7YDoDrqcsyHHqRtHd/6YnK7GbDgzit38DwhH2TppRG6turXNdJ24JsbPyJhy28E6JG&#39;</span><span class="p">,</span>
         <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span>
     <span class="p">)</span>
-    <span class="n">rocketchat_client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">is_test</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">rocketchat_client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">is_test</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="n">teams_client</span> <span class="o">=</span> <span class="n">TeamsClient</span><span class="p">(</span>
         <span class="n">channel_name</span><span class="o">=</span><span class="s1">&#39;internal_msg_queue&#39;</span><span class="p">,</span>
@@ -459,13 +459,14 @@ implementation is easy:</p>
                     <span class="s2">&quot;IncomingWebhook/4880528f42434ef7827809b2c403c7f6/623b9f83-e4f8-4ae2-946a-710a6d4e085e&quot;</span><span class="p">,</span>
         <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span>
     <span class="p">)</span>
-    <span class="n">teams_client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">is_test</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-</pre></div>
+    <span class="n">teams_client</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">is_test</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
 
 
 <p>If <code>is_test</code> is set True, no actual message will be sent over RPC.</p>
                 
                   
+                
                 
               
               
@@ -525,18 +526,18 @@ implementation is easy:</p>
           </div>
         
         powered by
-        <a href="https://www.mkdocs.org">MkDocs</a>
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs</a>
       </div>
       
   <div class="md-footer-social">
     <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
     
-      <a href="https://github.com/kfrancischen" class="md-footer-social__link fa fa-github"></a>
+      <a href="https://github.com/kfrancischen" target="_blank" rel="noopener" title="github" class="md-footer-social__link fa fa-github"></a>
     
-      <a href="https://www.linkedin.com/in/kaifeng-chen-b37a2b69/" class="md-footer-social__link fa fa-linkedin"></a>
+      <a href="https://www.linkedin.com/in/kaifeng-chen-b37a2b69/" target="_blank" rel="noopener" title="linkedin" class="md-footer-social__link fa fa-linkedin"></a>
     
   </div>
 
@@ -546,9 +547,9 @@ implementation is easy:</p>
       
     </div>
     
-      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      <script>app.initialize({version:"1.1",url:{base:"../.."}})</script>
       
     
   </body>

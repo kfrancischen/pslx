@@ -34,7 +34,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
     
     
       
@@ -42,17 +42,17 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.adb8469c.css">
       
       
     
     
-      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
+      <script src="../assets/javascripts/modernizr.86422ebf.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -84,7 +84,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href=".." title="PSLX documentation" class="md-header-nav__button md-logo">
+        <a href=".." title="PSLX documentation" aria-label="PSLX documentation" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -115,7 +115,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
       <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
         &#xE5CD;
@@ -414,8 +414,8 @@
 <a href="../micro_services/email/">email</a>, <a href="../micro_services/rpc_storage_io/">rpc storage io</a>) are concrete implementations of RPC. To build
 an RPC service using PSLX, one first needs to take a look at the abstract class implementation defined in <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/rpc/rpc_base.py">rpc_base</a>.
 The following functions are provided</p>
-<div class="codehilite"><pre><span></span><span class="fm">__init__</span><span class="p">(</span><span class="n">service_name</span><span class="p">,</span> <span class="n">rpc_storage</span><span class="p">)</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">service_name</span><span class="p">,</span> <span class="n">rpc_storage</span><span class="p">)</span>
+</code></pre></div>
 
 
 <ul>
@@ -431,8 +431,8 @@ won't be stored.</li>
 <p class="admonition-title">Info</p>
 <p>Function needs to be implemented by specific application.        </p>
 </div>
-<div class="codehilite"><pre><span></span><span class="n">get_response_and_status_impl</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code><span class="n">get_response_and_status_impl</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</code></pre></div>
 
 
 <ul>
@@ -450,8 +450,8 @@ level variable.</li>
 </ul>
 <p>In addition to inheriting and implementing a RPC class, one also needs to create a client class inheriting <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/rpc/client_base.py">client_base</a>.
 The <code>client_base.py</code> provides the following functions</p>
-<div class="codehilite"><pre><span></span><span class="fm">__init__</span><span class="p">(</span><span class="n">client_name</span><span class="p">,</span> <span class="n">server_url</span><span class="p">)</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">client_name</span><span class="p">,</span> <span class="n">server_url</span><span class="p">)</span>
+</code></pre></div>
 
 
 <ul>
@@ -462,8 +462,8 @@ The <code>client_base.py</code> provides the following functions</p>
 </ol>
 </li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="n">send_request</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">root_certificate</span><span class="p">)</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code><span class="n">send_request</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">root_certificate</span><span class="p">)</span>
+</code></pre></div>
 
 
 <ul>
@@ -480,8 +480,8 @@ In this example, a customized function <code>send_message</code> wraps the <code
 interact with rpc server.</p>
 <p>Inside PSLX, RPC requests and responses will finally be parsed as <code>Any</code> proto message and hence the interface is universal. To create a
 PSLX server, the user of PSLX needs to bind an RPC to a server using the methods provided by <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/rpc/generic_server.py">generic_server</a>.</p>
-<div class="codehilite"><pre><span></span><span class="n">_init__</span><span class="p">(</span><span class="n">server_name</span><span class="p">)</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code><span class="n">_init__</span><span class="p">(</span><span class="n">server_name</span><span class="p">)</span>
+</code></pre></div>
 
 
 <ul>
@@ -491,8 +491,8 @@ PSLX server, the user of PSLX needs to bind an RPC to a server using the methods
 </ol>
 </li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="p">,</span> <span class="n">server_url</span><span class="p">)</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="p">,</span> <span class="n">server_url</span><span class="p">)</span>
+</code></pre></div>
 
 
 <ul>
@@ -507,8 +507,8 @@ PSLX server, the user of PSLX needs to bind an RPC to a server using the methods
 <p class="admonition-title">Note</p>
 <p>Each generic server is only allowed to bind to one rpc instance.</p>
 </div>
-<div class="codehilite"><pre><span></span><span class="n">bind_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="p">)</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code><span class="n">bind_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="p">)</span>
+</code></pre></div>
 
 
 <ul>
@@ -518,8 +518,8 @@ PSLX server, the user of PSLX needs to bind an RPC to a server using the methods
 </ol>
 </li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="n">start_server</span><span class="p">(</span><span class="n">private_key</span><span class="p">,</span> <span class="n">certificate_chain</span><span class="p">)</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code><span class="n">start_server</span><span class="p">(</span><span class="n">private_key</span><span class="p">,</span> <span class="n">certificate_chain</span><span class="p">)</span>
+</code></pre></div>
 
 
 <ul>
@@ -532,6 +532,7 @@ PSLX server, the user of PSLX needs to bind an RPC to a server using the methods
 </ul>
                 
                   
+                
                 
               
               
@@ -591,18 +592,18 @@ PSLX server, the user of PSLX needs to bind an RPC to a server using the methods
           </div>
         
         powered by
-        <a href="https://www.mkdocs.org">MkDocs</a>
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs</a>
       </div>
       
   <div class="md-footer-social">
     <link rel="stylesheet" href="../assets/fonts/font-awesome.css">
     
-      <a href="https://github.com/kfrancischen" class="md-footer-social__link fa fa-github"></a>
+      <a href="https://github.com/kfrancischen" target="_blank" rel="noopener" title="github" class="md-footer-social__link fa fa-github"></a>
     
-      <a href="https://www.linkedin.com/in/kaifeng-chen-b37a2b69/" class="md-footer-social__link fa fa-linkedin"></a>
+      <a href="https://www.linkedin.com/in/kaifeng-chen-b37a2b69/" target="_blank" rel="noopener" title="linkedin" class="md-footer-social__link fa fa-linkedin"></a>
     
   </div>
 
@@ -612,9 +613,9 @@ PSLX server, the user of PSLX needs to bind an RPC to a server using the methods
       
     </div>
     
-      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      <script>app.initialize({version:"1.1",url:{base:".."}})</script>
       
     
   </body>

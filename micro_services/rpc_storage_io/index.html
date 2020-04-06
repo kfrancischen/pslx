@@ -34,7 +34,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
     
     
       
@@ -42,17 +42,17 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
       
       
     
     
-      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -84,7 +84,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="../.." title="PSLX documentation" class="md-header-nav__button md-logo">
+        <a href="../.." title="PSLX documentation" aria-label="PSLX documentation" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -115,7 +115,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
       <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
         &#xE5CD;
@@ -416,7 +416,7 @@
 and all the storage types defined in <a href="../../storage/">storage</a> are supported. One can also take a look at the example in 
 <a href="https://github.com/kfrancischen/pslx/tree/master/example/rpc_io_example">example/rpc_io_example</a>. Like other services, the 
 server can be launched with following code:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.rpc_io.rpc</span> <span class="kn">import</span> <span class="n">RPCIO</span>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.rpc_io.rpc</span> <span class="kn">import</span> <span class="n">RPCIO</span>
 <span class="kn">from</span> <span class="nn">pslx.micro_service.rpc.generic_server</span> <span class="kn">import</span> <span class="n">GenericServer</span>
 <span class="kn">from</span> <span class="nn">pslx.storage.partitioner_storage</span> <span class="kn">import</span> <span class="n">MinutelyPartitionerStorage</span>
 <span class="kn">from</span> <span class="nn">pslx.util.env_util</span> <span class="kn">import</span> <span class="n">EnvUtil</span>
@@ -440,12 +440,12 @@ server can be launched with following code:</p>
     <span class="n">example_server</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
     <span class="n">example_server</span><span class="o">.</span><span class="n">bind_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="o">=</span><span class="n">example_rpc</span><span class="p">)</span>
     <span class="n">example_server</span><span class="o">.</span><span class="n">start_server</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>Note here, we also use a RPC storage (Proto Table) for <code>GenericRPCRequestResponsePair</code> storage.</p>
 <p>The example clients are defined in <a href="https://github.com/kfrancischen/pslx/blob/master/example/rpc_io_example/client.py">rpc_io_example/client.py</a></p>
-<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">from</span> <span class="nn">pslx.micro_service.rpc_io.client</span> <span class="kn">import</span> <span class="n">DefaultStorageRPC</span><span class="p">,</span> <span class="n">FixedSizeStorageRPC</span><span class="p">,</span> <span class="n">ProtoTableStorageRPC</span><span class="p">,</span>\
     <span class="n">PartitionerStorageRPC</span>
 <span class="kn">from</span> <span class="nn">pslx.schema.enums_pb2</span> <span class="kn">import</span> <span class="n">PartitionerStorageType</span>
@@ -457,23 +457,23 @@ server can be launched with following code:</p>
 
     <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/test_default_storage_data.txt&quot;</span>
     <span class="n">example_client</span> <span class="o">=</span> <span class="n">DefaultStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
         <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">file_name</span>
     <span class="p">))</span>
 
     <span class="n">example_client</span> <span class="o">=</span> <span class="n">FixedSizeStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
         <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
         <span class="n">params</span><span class="o">=</span><span class="p">{</span>
             <span class="s1">&#39;fixed_size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s1">&#39;num_line&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="s1">&#39;force_load&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+            <span class="s1">&#39;force_load&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
 
         <span class="p">}</span>
     <span class="p">))</span>
     <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/test_proto_table_data.pb&quot;</span>
     <span class="n">example_client</span> <span class="o">=</span> <span class="n">ProtoTableStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
         <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
         <span class="n">params</span><span class="o">=</span><span class="p">{</span>
             <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span>
@@ -484,7 +484,7 @@ server can be launched with following code:</p>
 
     <span class="n">dir_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/yearly_partitioner_1/&quot;</span>
     <span class="n">example_client</span> <span class="o">=</span> <span class="n">PartitionerStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
         <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">dir_name</span><span class="p">,</span>
         <span class="n">params</span><span class="o">=</span><span class="p">{</span>
             <span class="s1">&#39;PartitionerStorageType&#39;</span><span class="p">:</span> <span class="n">PartitionerStorageType</span><span class="o">.</span><span class="n">YEARLY</span><span class="p">,</span>
@@ -493,7 +493,7 @@ server can be launched with following code:</p>
 
     <span class="n">dir_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/yearly_partitioner_3/&quot;</span>
     <span class="n">example_client</span> <span class="o">=</span> <span class="n">PartitionerStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read_range</span><span class="p">(</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read_range</span><span class="p">(</span>
         <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">dir_name</span><span class="p">,</span>
         <span class="n">params</span><span class="o">=</span><span class="p">{</span>
             <span class="s1">&#39;PartitionerStorageType&#39;</span><span class="p">:</span> <span class="n">PartitionerStorageType</span><span class="o">.</span><span class="n">YEARLY</span><span class="p">,</span>
@@ -504,16 +504,16 @@ server can be launched with following code:</p>
 
     <span class="n">dir_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/yearly_partitioner_4/&quot;</span>
     <span class="n">example_client</span> <span class="o">=</span> <span class="n">PartitionerStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read_range</span><span class="p">(</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read_range</span><span class="p">(</span>
         <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">dir_name</span><span class="p">,</span>
         <span class="n">params</span><span class="o">=</span><span class="p">{</span>
             <span class="s1">&#39;PartitionerStorageType&#39;</span><span class="p">:</span> <span class="n">PartitionerStorageType</span><span class="o">.</span><span class="n">YEARLY</span><span class="p">,</span>
             <span class="s1">&#39;start_time&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
             <span class="s1">&#39;end_time&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
-            <span class="s1">&#39;is_proto_table&#39;</span><span class="p">:</span> <span class="bp">True</span>
+            <span class="s1">&#39;is_proto_table&#39;</span><span class="p">:</span> <span class="kc">True</span>
         <span class="p">}</span>
     <span class="p">))</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>We can see that in addition to the required parameter for the storage, we also need to pass the following parameters:  <br />
@@ -523,6 +523,7 @@ server can be launched with following code:</p>
 always return the content of the whole underlying file.</p>
                 
                   
+                
                 
               
               
@@ -582,18 +583,18 @@ always return the content of the whole underlying file.</p>
           </div>
         
         powered by
-        <a href="https://www.mkdocs.org">MkDocs</a>
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs</a>
       </div>
       
   <div class="md-footer-social">
     <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
     
-      <a href="https://github.com/kfrancischen" class="md-footer-social__link fa fa-github"></a>
+      <a href="https://github.com/kfrancischen" target="_blank" rel="noopener" title="github" class="md-footer-social__link fa fa-github"></a>
     
-      <a href="https://www.linkedin.com/in/kaifeng-chen-b37a2b69/" class="md-footer-social__link fa fa-linkedin"></a>
+      <a href="https://www.linkedin.com/in/kaifeng-chen-b37a2b69/" target="_blank" rel="noopener" title="linkedin" class="md-footer-social__link fa fa-linkedin"></a>
     
   </div>
 
@@ -603,9 +604,9 @@ always return the content of the whole underlying file.</p>
       
     </div>
     
-      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      <script>app.initialize({version:"1.1",url:{base:"../.."}})</script>
       
     
   </body>

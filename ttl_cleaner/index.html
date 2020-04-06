@@ -34,7 +34,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
     
     
       
@@ -42,17 +42,17 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.adb8469c.css">
       
       
     
     
-      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
+      <script src="../assets/javascripts/modernizr.86422ebf.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -84,7 +84,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href=".." title="PSLX documentation" class="md-header-nav__button md-logo">
+        <a href=".." title="PSLX documentation" aria-label="PSLX documentation" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -115,7 +115,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
       <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
         &#xE5CD;
@@ -426,7 +426,7 @@ day. For string value time, one can specify the unit of <code>m</code> as minute
 will guarantee that all the files in the folder that are not updated within the past 1 minute will be deleted if the ttl cleaner sees it.</p>
 <p>The current ttl cleaner implementation exists in <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/ttl_cleaner/ttl_cleaner.py">ttl_cleaner</a>,
 there is also an example about how to run the ttl cleaner in the <a href="https://github.com/kfrancischen/pslx/blob/master/example/ttl_cleaner_example/ttl_cleaner.py">example</a> folder.</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.ttl_cleaner.ttl_cleaner</span> <span class="kn">import</span> <span class="n">TTLCleaner</span>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.ttl_cleaner.ttl_cleaner</span> <span class="kn">import</span> <span class="n">TTLCleaner</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">ttl_cleaner</span> <span class="o">=</span> <span class="n">TTLCleaner</span><span class="p">()</span>
@@ -436,7 +436,7 @@ there is also an example about how to run the ttl cleaner in the <a href="https:
     <span class="p">)</span>
     <span class="n">ttl_cleaner</span><span class="o">.</span><span class="n">set_max_instances</span><span class="p">(</span><span class="n">max_instances</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
     <span class="n">ttl_cleaner</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>Fundamentally, ttl cleaner is designed as an <code>CronBatchContainer</code> with container name <code>PSLX_TTL_CLEANER_OPERATOR</code>, and like regular
@@ -445,8 +445,8 @@ at every 10 min. </p>
 <p>Also please make sure your <code>PSLX_DATABASE</code> is consistent across your application, because ttl cleaner looks at files
 under this folder by default.</p>
 <p>ttl cleaner also allows user to specify other folders in addition to <code>PSLX_DATABASE</code>. The way to do that is through the following function:</p>
-<div class="codehilite"><pre><span></span><span class="n">watch_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code><span class="n">watch_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+</code></pre></div>
 
 
 <ul>
@@ -458,6 +458,7 @@ under this folder by default.</p>
 </ul>
                 
                   
+                
                 
               
               
@@ -517,18 +518,18 @@ under this folder by default.</p>
           </div>
         
         powered by
-        <a href="https://www.mkdocs.org">MkDocs</a>
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs</a>
       </div>
       
   <div class="md-footer-social">
     <link rel="stylesheet" href="../assets/fonts/font-awesome.css">
     
-      <a href="https://github.com/kfrancischen" class="md-footer-social__link fa fa-github"></a>
+      <a href="https://github.com/kfrancischen" target="_blank" rel="noopener" title="github" class="md-footer-social__link fa fa-github"></a>
     
-      <a href="https://www.linkedin.com/in/kaifeng-chen-b37a2b69/" class="md-footer-social__link fa fa-linkedin"></a>
+      <a href="https://www.linkedin.com/in/kaifeng-chen-b37a2b69/" target="_blank" rel="noopener" title="linkedin" class="md-footer-social__link fa fa-linkedin"></a>
     
   </div>
 
@@ -538,9 +539,9 @@ under this folder by default.</p>
       
     </div>
     
-      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      <script>app.initialize({version:"1.1",url:{base:".."}})</script>
       
     
   </body>

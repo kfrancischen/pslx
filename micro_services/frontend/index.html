@@ -34,7 +34,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
     
     
       
@@ -42,17 +42,17 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
       
       
     
     
-      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
     
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -84,7 +84,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="../.." title="PSLX documentation" class="md-header-nav__button md-logo">
+        <a href="../.." title="PSLX documentation" aria-label="PSLX documentation" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -115,7 +115,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
       <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
         &#xE5CD;
@@ -420,7 +420,7 @@ and container backend RPC server.     <br />
 3. File Viewer: browse files in the server.    <br />
 4. Container Backend: the status of the containers and operators.</p>
 <p>On example way of starting proto viewer server is at <a href="https://github.com/kfrancischen/pslx/blob/master/example/proto_viewer_example/server.py">proto_viewer_example/server.py</a>:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.proto_viewer.rpc</span> <span class="kn">import</span> <span class="n">ProtoViewerRPC</span>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.proto_viewer.rpc</span> <span class="kn">import</span> <span class="n">ProtoViewerRPC</span>
 <span class="kn">from</span> <span class="nn">pslx.micro_service.rpc.generic_server</span> <span class="kn">import</span> <span class="n">GenericServer</span>
 <span class="kn">from</span> <span class="nn">pslx.storage.partitioner_storage</span> <span class="kn">import</span> <span class="n">MinutelyPartitionerStorage</span>
 <span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
@@ -439,11 +439,11 @@ and container backend RPC server.     <br />
     <span class="n">example_server</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
     <span class="n">example_server</span><span class="o">.</span><span class="n">bind_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="o">=</span><span class="n">example_rpc</span><span class="p">)</span>
     <span class="n">example_server</span><span class="o">.</span><span class="n">start_server</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>On example way of starting file viewer server is at <a href="https://github.com/kfrancischen/pslx/blob/master/example/file_viewer_example/server.py">file_viewer_example/server.py</a>:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.file_viewer.rpc</span> <span class="kn">import</span> <span class="n">FileViewerRPC</span>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.file_viewer.rpc</span> <span class="kn">import</span> <span class="n">FileViewerRPC</span>
 <span class="kn">from</span> <span class="nn">pslx.micro_service.rpc.generic_server</span> <span class="kn">import</span> <span class="n">GenericServer</span>
 <span class="kn">from</span> <span class="nn">pslx.storage.partitioner_storage</span> <span class="kn">import</span> <span class="n">MinutelyPartitionerStorage</span>
 <span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
@@ -462,11 +462,11 @@ and container backend RPC server.     <br />
     <span class="n">example_server</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
     <span class="n">example_server</span><span class="o">.</span><span class="n">bind_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="o">=</span><span class="n">example_rpc</span><span class="p">)</span>
     <span class="n">example_server</span><span class="o">.</span><span class="n">start_server</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>On example way of starting a container backend is at <a href="https://github.com/kfrancischen/pslx/blob/master/example/container_backend_example/server.py">container_backend_example/server.py</a>:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.container_backend.rpc</span> <span class="kn">import</span> <span class="n">ContainerBackendRPC</span>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.container_backend.rpc</span> <span class="kn">import</span> <span class="n">ContainerBackendRPC</span>
 <span class="kn">from</span> <span class="nn">pslx.micro_service.rpc.generic_server</span> <span class="kn">import</span> <span class="n">GenericServer</span>
 <span class="kn">from</span> <span class="nn">pslx.storage.partitioner_storage</span> <span class="kn">import</span> <span class="n">MinutelyPartitionerStorage</span>
 <span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
@@ -485,31 +485,31 @@ and container backend RPC server.     <br />
     <span class="n">example_server</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
     <span class="n">example_server</span><span class="o">.</span><span class="n">bind_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="o">=</span><span class="n">example_rpc</span><span class="p">)</span>
     <span class="n">example_server</span><span class="o">.</span><span class="n">start_server</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>To start the frontend, one needs to create a YAML file containing the settings. An example of it can be found at 
 <a href="https://github.com/kfrancischen/pslx/blob/master/example/frontend_example/frontend_config.yaml">frontend_example/frontend_config.yaml</a>:</p>
-<div class="codehilite"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">SQLALCHEMY_DATABASE_PATH</span><span class="p p-Indicator">:</span> <span class="s">&quot;/home/francischen/Development/pslx/example/frontend_example/frontend_example.db&quot;</span>
-<span class="l l-Scalar l-Scalar-Plain">CONTAINER_BACKEND_CONFIG</span><span class="p p-Indicator">:</span>
-  <span class="l l-Scalar l-Scalar-Plain">SERVER_URL</span><span class="p p-Indicator">:</span> <span class="s">&quot;localhost:11443&quot;</span>
-  <span class="l l-Scalar l-Scalar-Plain">ROOT_CERTIFICATE_PATH</span><span class="p p-Indicator">:</span> <span class="s">&quot;&quot;</span>
-<span class="l l-Scalar l-Scalar-Plain">PROTO_VIEWER_CONFIG</span><span class="p p-Indicator">:</span>
-  <span class="l l-Scalar l-Scalar-Plain">SERVER_1</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">SERVER_URL</span><span class="p p-Indicator">:</span> <span class="s">&quot;localhost:11444&quot;</span>
-    <span class="l l-Scalar l-Scalar-Plain">ROOT_CERTIFICATE_PATH</span><span class="p p-Indicator">:</span> <span class="s">&quot;&quot;</span>
-<span class="l l-Scalar l-Scalar-Plain">FILE_VIEWER_CONFIG</span><span class="p p-Indicator">:</span>
-  <span class="l l-Scalar l-Scalar-Plain">SERVER_1</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">SERVER_URL</span><span class="p p-Indicator">:</span> <span class="s">&quot;localhost:11445&quot;</span>
-    <span class="l l-Scalar l-Scalar-Plain">ROOT_CERTIFICATE_PATH</span><span class="p p-Indicator">:</span> <span class="s">&quot;&quot;</span>
-<span class="l l-Scalar l-Scalar-Plain">USER_NAME</span><span class="p p-Indicator">:</span> <span class="s">&quot;guest&quot;</span>
-<span class="l l-Scalar l-Scalar-Plain">PASSWORD</span><span class="p p-Indicator">:</span> <span class="s">&quot;guest&quot;</span>
-</pre></div>
+<div class="codehilite"><pre><span></span><code><span class="nt">SQLALCHEMY_DATABASE_PATH</span><span class="p">:</span> <span class="s">&quot;/home/francischen/Development/pslx/example/frontend_example/frontend_example.db&quot;</span>
+<span class="nt">CONTAINER_BACKEND_CONFIG</span><span class="p">:</span>
+  <span class="nt">SERVER_URL</span><span class="p">:</span> <span class="s">&quot;localhost:11443&quot;</span>
+  <span class="nt">ROOT_CERTIFICATE_PATH</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
+<span class="nt">PROTO_VIEWER_CONFIG</span><span class="p">:</span>
+  <span class="nt">SERVER_1</span><span class="p">:</span>
+    <span class="nt">SERVER_URL</span><span class="p">:</span> <span class="s">&quot;localhost:11444&quot;</span>
+    <span class="nt">ROOT_CERTIFICATE_PATH</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
+<span class="nt">FILE_VIEWER_CONFIG</span><span class="p">:</span>
+  <span class="nt">SERVER_1</span><span class="p">:</span>
+    <span class="nt">SERVER_URL</span><span class="p">:</span> <span class="s">&quot;localhost:11445&quot;</span>
+    <span class="nt">ROOT_CERTIFICATE_PATH</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
+<span class="nt">USER_NAME</span><span class="p">:</span> <span class="s">&quot;guest&quot;</span>
+<span class="nt">PASSWORD</span><span class="p">:</span> <span class="s">&quot;guest&quot;</span>
+</code></pre></div>
 
 
 <p>The above <code>user_name</code> and <code>password</code> are the credentials used to login the frontend. In the second step, one needs to parse
 the yaml file into a <code>FrontendConfig</code> proto. One can follow this script defined in <a href="https://github.com/kfrancischen/pslx/blob/master/example/frontend_example/create_config.py">frontend_example/create_config.py</a>:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.util.common_util</span> <span class="kn">import</span> <span class="n">CommonUtil</span>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.util.common_util</span> <span class="kn">import</span> <span class="n">CommonUtil</span>
 <span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
 
 
@@ -517,43 +517,44 @@ the yaml file into a <code>FrontendConfig</code> proto. One can follow this scri
     <span class="n">yaml_path</span> <span class="o">=</span> <span class="s2">&quot;example/frontend_example/frontend_config.yaml&quot;</span>
     <span class="n">proto_path</span> <span class="o">=</span> <span class="s2">&quot;example/frontend_example/frontend_config.pb&quot;</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">CommonUtil</span><span class="o">.</span><span class="n">make_frontend_config</span><span class="p">(</span><span class="n">yaml_path</span><span class="o">=</span><span class="n">yaml_path</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
     <span class="n">FileUtil</span><span class="o">.</span><span class="n">write_proto_to_file</span><span class="p">(</span><span class="n">proto</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">proto_path</span><span class="p">)</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>Then, to enable login, please use the following snippet to create the table</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.frontend</span> <span class="kn">import</span> <span class="n">pslx_frontend_db</span>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.frontend</span> <span class="kn">import</span> <span class="n">pslx_frontend_db</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">pslx_frontend_db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>, and the related command is</p>
-<div class="codehilite"><pre><span></span> <span class="nv">PSLX_FRONTEND_CONFIG_PROTO_PATH</span><span class="o">=</span>example/frontend_example/frontend_config.pb <span class="se">\</span>
+<div class="codehilite"><pre><span></span><code> <span class="nv">PSLX_FRONTEND_CONFIG_PROTO_PATH</span><span class="o">=</span>example/frontend_example/frontend_config.pb <span class="se">\</span>
  <span class="nv">PYTHONPATH</span><span class="o">=</span>. python example/frontend_example/create_frontend_table.py
-</pre></div>
+</code></pre></div>
 
 
 <p>Finally, one can launch the backend by pointing <code>PSLX_FRONTEND_CONFIG_PROTO_PATH</code> to the proto with</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">pslx.micro_service.frontend</span> <span class="kn">import</span> <span class="n">pslx_frontend_ui_app</span>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.frontend</span> <span class="kn">import</span> <span class="n">pslx_frontend_ui_app</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">pslx_frontend_ui_app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">5001</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-</pre></div>
+    <span class="n">pslx_frontend_ui_app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">5001</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
 
 
 <p>The command is</p>
-<div class="codehilite"><pre><span></span><span class="nv">PSLX_FRONTEND_CONFIG_PROTO_PATH</span><span class="o">=</span>example/frontend_example/frontend_config.pb <span class="se">\</span>
+<div class="codehilite"><pre><span></span><code><span class="nv">PSLX_FRONTEND_CONFIG_PROTO_PATH</span><span class="o">=</span>example/frontend_example/frontend_config.pb <span class="se">\</span>
 <span class="nv">PYTHONPATH</span><span class="o">=</span>. python example/frontend_example/run_frontend.py
-</pre></div>
+</code></pre></div>
                 
                   
+                
                 
               
               
@@ -613,18 +614,18 @@ the yaml file into a <code>FrontendConfig</code> proto. One can follow this scri
           </div>
         
         powered by
-        <a href="https://www.mkdocs.org">MkDocs</a>
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs</a>
       </div>
       
   <div class="md-footer-social">
     <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
     
-      <a href="https://github.com/kfrancischen" class="md-footer-social__link fa fa-github"></a>
+      <a href="https://github.com/kfrancischen" target="_blank" rel="noopener" title="github" class="md-footer-social__link fa fa-github"></a>
     
-      <a href="https://www.linkedin.com/in/kaifeng-chen-b37a2b69/" class="md-footer-social__link fa fa-linkedin"></a>
+      <a href="https://www.linkedin.com/in/kaifeng-chen-b37a2b69/" target="_blank" rel="noopener" title="linkedin" class="md-footer-social__link fa fa-linkedin"></a>
     
   </div>
 
@@ -634,9 +635,9 @@ the yaml file into a <code>FrontendConfig</code> proto. One can follow this scri
       
     </div>
     
-      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      <script>app.initialize({version:"1.1",url:{base:"../.."}})</script>
       
     
   </body>
