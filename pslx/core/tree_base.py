@@ -110,7 +110,7 @@ class TreeBase(Base):
                 search_stack.append((child_node, dist_to_root + 1))
         return result
 
-    def _trim_tree(self, node, max_capacity=-1):
+    def _trim_tree_from_right(self, node, max_capacity=-1):
         self.sys_log("Trimming with capacity " + str(max_capacity) + " from node " + node.get_node_name() + '.')
         if not node.is_children_ordered():
             self.sys_log(string=node.get_node_name() + ' is not ordered. Be careful when you trim the tree.')
@@ -126,30 +126,71 @@ class TreeBase(Base):
         else:
             children_nodes = node.get_children_nodes()
             pivot_index = len(children_nodes) - 1
-            while pivot_index > 0:
+            while pivot_index >= 0:
                 child_node = children_nodes[pivot_index]
 
                 cumulative_size -= self.get_num_nodes_subtree(node=child_node)
                 if cumulative_size >= max_capacity:
                     pivot_index -= 1
                 else:
-                    self._trim_tree(
+                    self._trim_tree_from_right(
                         node=child_node,
                         max_capacity=max_capacity - cumulative_size
                     )
                     break
 
-            for index in range(len(children_nodes) - 1 - pivot_index):
+            for index in range(len(children_nodes) - 1, pivot_index, -1):
                 child_node = children_nodes[index]
                 child_node.delete_parent(parent_node=node)
                 self._node_name_to_node_dict.pop(child_node.get_node_name(), None)
             return
 
-    def trim_tree(self, max_capacity=-1):
-        self._trim_tree(
-            node=self._root,
-            max_capacity=max_capacity
-        )
+    def _trim_tree_from_left(self, node, max_capacity=-1):
+        self.sys_log("Trimming with capacity " + str(max_capacity) + " from node " + node.get_node_name() + '.')
+        if not node.is_children_ordered():
+            self.sys_log(string=node.get_node_name() + ' is not ordered. Be careful when you trim the tree.')
+
+        cumulative_size = self.get_num_nodes_subtree(node=node)
+        if max_capacity <= 0 or cumulative_size <= max_capacity:
+            return
+        if max_capacity < 1 + node.get_num_children():
+            num_children_to_trim = 1 + node.get_num_children() - max_capacity
+            for child_node in node.get_children_nodes()[:num_children_to_trim]:
+                child_node.delete_parent(parent_node=node)
+            return
+        else:
+            children_nodes = node.get_children_nodes()
+            pivot_index = 0
+            while pivot_index < len(children_nodes):
+                child_node = children_nodes[pivot_index]
+
+                cumulative_size -= self.get_num_nodes_subtree(node=child_node)
+                if cumulative_size >= max_capacity:
+                    pivot_index += 1
+                else:
+                    self._trim_tree_from_left(
+                        node=child_node,
+                        max_capacity=max_capacity - cumulative_size
+                    )
+                    break
+
+            for index in range(pivot_index):
+                child_node = children_nodes[index]
+                child_node.delete_parent(parent_node=node)
+                self._node_name_to_node_dict.pop(child_node.get_node_name(), None)
+            return
+
+    def trim_tree(self, max_capacity=-1, from_right=True):
+        if from_right:
+            self._trim_tree_from_right(
+                node=self._root,
+                max_capacity=max_capacity
+            )
+        else:
+            self._trim_tree_from_left(
+                node=self._root,
+                max_capacity=max_capacity
+            )
         return
 
     def get_leaves(self):

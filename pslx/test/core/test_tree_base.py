@@ -158,7 +158,7 @@ class TreeBaseTest(unittest.TestCase):
             child_node=test_child_node_2
         )
         test_tree.trim_tree(max_capacity=2)
-        self.assertListEqual(test_tree.bfs_search(), [('test_parent_node', 0), ('test_child_node_2', 1)])
+        self.assertListEqual(test_tree.bfs_search(), [('test_parent_node', 0), ('test_child_node_1', 1)])
         self.assertEqual(test_tree.get_num_nodes(), 2)
 
     def test_trim_tree_2(self):
@@ -199,7 +199,7 @@ class TreeBaseTest(unittest.TestCase):
         test_tree.trim_tree(max_capacity=3)
         self.assertListEqual(
             test_tree.bfs_search(),
-            [('test_parent_node', 0), ('test_child_node_1', 1), ('test_child_node_2', 2)]
+            [('test_parent_node', 0), ('test_child_node_3', 1), ('test_child_node_1', 1)]
         )
         self.assertEqual(test_tree.get_num_nodes(), 3)
 
@@ -239,7 +239,7 @@ class TreeBaseTest(unittest.TestCase):
         test_tree.trim_tree(max_capacity=3)
         self.assertListEqual(
             test_tree.bfs_search(),
-            [('test_parent_node', 0), ('test_child_node_2', 1), ('test_child_node_6', 2)]
+            [('test_parent_node', 0), ('test_child_node_1', 1), ('test_child_node_3', 2)]
         )
 
     def test_trim_tree_5(self):
@@ -278,7 +278,7 @@ class TreeBaseTest(unittest.TestCase):
         test_tree.trim_tree(max_capacity=4)
         self.assertListEqual(
             test_tree.bfs_search(),
-            [('test_parent_node', 0), ('test_child_node_2', 1), ('test_child_node_5', 2), ('test_child_node_6', 2)]
+            [('test_parent_node', 0), ('test_child_node_1', 1), ('test_child_node_3', 2), ('test_child_node_4', 2)]
         )
         self.assertEqual(test_tree.get_num_nodes(), 4)
 
@@ -316,6 +316,47 @@ class TreeBaseTest(unittest.TestCase):
             child_node=test_child_node_6
         )
         test_tree.trim_tree(max_capacity=5)
+        self.assertListEqual(
+            test_tree.bfs_search(),
+            [('test_parent_node', 0), ('test_child_node_1', 1), ('test_child_node_2', 1), ('test_child_node_3', 2),
+             ('test_child_node_4', 2)]
+        )
+        self.assertEqual(test_tree.get_num_nodes(), 5)
+
+    def test_trim_tree_7(self):
+        test_parent_node = OrderedNodeBase(node_name='test_parent_node')
+        test_child_node_1 = OrderedNodeBase(node_name='test_child_node_1')
+        test_child_node_2 = OrderedNodeBase(node_name='test_child_node_2')
+        test_child_node_3 = OrderedNodeBase(node_name='test_child_node_3')
+        test_child_node_4 = OrderedNodeBase(node_name='test_child_node_4')
+        test_child_node_5 = OrderedNodeBase(node_name='test_child_node_5')
+        test_child_node_6 = OrderedNodeBase(node_name='test_child_node_6')
+        test_tree = TreeBase(root=test_parent_node)
+        test_tree.add_node(
+            parent_node=test_parent_node,
+            child_node=test_child_node_1
+        )
+        test_tree.add_node(
+            parent_node=test_parent_node,
+            child_node=test_child_node_2
+        )
+        test_tree.add_node(
+            parent_node=test_child_node_1,
+            child_node=test_child_node_3
+        )
+        test_tree.add_node(
+            parent_node=test_child_node_1,
+            child_node=test_child_node_4
+        )
+        test_tree.add_node(
+            parent_node=test_child_node_2,
+            child_node=test_child_node_5
+        )
+        test_tree.add_node(
+            parent_node=test_child_node_2,
+            child_node=test_child_node_6
+        )
+        test_tree.trim_tree(max_capacity=5, from_right=False)
         self.assertListEqual(
             test_tree.bfs_search(),
             [('test_parent_node', 0), ('test_child_node_1', 1), ('test_child_node_2', 1), ('test_child_node_5', 2),
