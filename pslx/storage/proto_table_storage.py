@@ -136,23 +136,22 @@ class ProtoTableStorage(StorageBase):
             time.sleep(TimeSleepObj.ONE_SECOND)
 
         self._writer_status = Status.RUNNING
-        assert isinstance(data, list) and len(data) == 2 and isinstance(data[0], str)
-        if data[0] in self._table_message.data and not params['overwrite']:
-            self.sys_log(data[0] + " already exist and will not be overwritten.")
-            self._logger.info(data[0] + " already exist and will not be overwritten.")
-            self._writer_status = Status.IDLE
-        else:
-            try:
-                any_message = ProtoUtil.message_to_any(message=data[1])
-                self._table_message.data[data[0]].CopyFrom(any_message)
-                self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
-                with FileLockTool(self._file_name, read_mode=False):
-                    FileUtil.write_proto_to_file(
-                        proto=self._table_message,
-                        file_name=self._file_name
-                    )
-                    self._writer_status = Status.IDLE
-            except Exception as err:
-                self.sys_log("Write got exception: " + str(err) + '.')
-                self._logger.error("Write got exception: " + str(err) + '.')
-                raise StorageWriteException
+        assert isinstance(data, dict)
+        try:
+            for key, val in data.items():
+                if not params['overwrite'] and key in self._table_message.data:
+                    continue
+                any_message = ProtoUtil.message_to_any(message=val)
+                self._table_message.data[key].CopyFrom(any_message)
+
+            self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
+            with FileLockTool(self._file_name, read_mode=False):
+                FileUtil.write_proto_to_file(
+                    proto=self._table_message,
+                    file_name=self._file_name
+                )
+                self._writer_status = Status.IDLE
+        except Exception as err:
+            self.sys_log("Write got exception: " + str(err) + '.')
+            self._logger.error("Write got exception: " + str(err) + '.')
+            raise StorageWriteException

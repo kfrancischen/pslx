@@ -115,8 +115,8 @@ class ContainerBase(GraphBase):
             )
             snapshot.operator_snapshot_map[op_name].CopyFrom(op.get_operator_snapshot(output_file=op_output_file))
 
-        self.sys_log("Saved to folder " + self._snapshot_file_folder + '.')
-        self._logger.info("Saved to folder " + self._snapshot_file_folder + '.')
+        self.sys_log("Snapshot saved to folder " + self._snapshot_file_folder + '.')
+        self._logger.info("Snapshot saved to folder " + self._snapshot_file_folder + '.')
         output_file_name = FileUtil.join_paths_to_file(
             root_dir=FileUtil.dir_name(self._snapshot_file_folder),
             base_name='SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' + self._container_name + '.pb'
@@ -150,6 +150,9 @@ class ContainerBase(GraphBase):
 
     def execute(self, is_backfill=False, num_threads=1):
         if is_backfill:
+            if self.DATA_MODEL == DataModelType.STREAMING:
+                self._logger.warning('STREAMING container does not support backfill mode.')
+                return
             self.sys_log("Running in backfill mode.")
             self._logger.debug("Running in backfill mode.")
 
@@ -181,12 +184,6 @@ class ContainerBase(GraphBase):
 
         self._start_time = TimezoneUtil.cur_time_in_pst()
         task_queue, finished_queue, num_tasks = Queue(), Queue(), 0
-        thread_list = []
-        for _ in range(num_threads):
-            thread = threading.Thread(target=self._execute, args=(task_queue, finished_queue))
-            thread.daemon = True
-            thread.start()
-            thread_list.append(thread)
 
         node_levels = self.get_node_levels()
         max_level = max(node_levels.keys())
@@ -199,13 +196,27 @@ class ContainerBase(GraphBase):
                 self._logger.info("Adding " + operator_name + " to task queue.")
                 task_queue.put(operator_name)
                 num_tasks += 1
+
         for _ in range(num_threads):
             task_queue.put(Signal.STOP)
 
-        self.sys_log("Joining all threads.")
-        for thread in thread_list:
-            thread.join()
-        self.sys_log("Done Joining all threads.")
+        if num_threads > 1:
+            thread_list = []
+            self._logger.info("Using " + str(num_threads) + " threads. Enter multi-threading mode.")
+            for _ in range(num_threads):
+                thread = threading.Thread(target=self._execute, args=(task_queue, finished_queue))
+                thread.daemon = True
+                thread.start()
+                thread_list.append(thread)
+
+            self.sys_log("Joining all threads.")
+            for thread in thread_list:
+                thread.join()
+            self.sys_log("Done Joining all threads.")
+        else:
+            # this is mainly for streaming case.
+            self._logger.info("Using only 1 thread. Execute the container directly.")
+            self._execute(task_queue=task_queue, finished_queue=finished_queue)
 
         self._end_time = TimezoneUtil.cur_time_in_pst()
 

@@ -72,7 +72,7 @@ class ContainerBackendRPC(RPCBase):
         storage.initialize_from_dir(dir_name=partitioner_dir)
 
         storage.write(
-            data=[storage_value.container_name, storage_value],
+            data={storage_value.container_name: storage_value},
             params={
                 'overwrite': True,
                 'make_partition': True,

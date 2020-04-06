@@ -137,7 +137,7 @@ write(data, params)
 * Arguments:
     1. data: the write parameters.
 * Explanation:
-    1. The data needs to be a list of `[key, value]` with key being a string and value being a protobuf message of any user defined
+    1. The data needs to be a dictionary of `key, value` with key being a string and value being a protobuf message of any user defined
     types.
     2. The params can contain `overwrite` with its value a boolean indicating whether to overwrite the value if the key already 
     exists in the proto table.

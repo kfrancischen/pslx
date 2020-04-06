@@ -152,9 +152,9 @@ class TestOperatorBase(unittest.TestCase):
         self.assertEqual(test_operator_3.get_operator_snapshot().status, Status.SUCCEEDED)
 
     def test_execution_3(self):
-        test_operator_1 = DummyUtil.dummy_operator(operator_name='test_operator_1')
-        test_operator_2 = DummyUtil.dummy_operator(operator_name='test_operator_2')
-        test_operator_3 = DummyUtil.dummy_operator(operator_name='test_operator_3')
+        test_operator_1 = DummyUtil.dummy_batch_operator(operator_name='test_operator_1')
+        test_operator_2 = DummyUtil.dummy_batch_operator(operator_name='test_operator_2')
+        test_operator_3 = DummyUtil.dummy_batch_operator(operator_name='test_operator_3')
         test_operator_1.add_child(child_node=test_operator_2)
         test_operator_2.add_child(child_node=test_operator_3)
         test_operator_1.set_status(status=Status.FAILED)

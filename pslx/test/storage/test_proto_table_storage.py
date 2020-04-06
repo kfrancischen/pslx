@@ -52,7 +52,7 @@ class ProtoTableStorageTest(unittest.TestCase):
             file_name=self.TEST_DATA_3
         )
         proto_table_storage.write(
-            data=['test', self.EXAMPLE_PROTO_1],
+            data={'test': self.EXAMPLE_PROTO_1},
         )
         result_proto = proto_table_storage.read(
             params={
@@ -69,10 +69,10 @@ class ProtoTableStorageTest(unittest.TestCase):
             file_name=self.TEST_DATA_4
         )
         proto_table_storage.write(
-            data=['test', self.EXAMPLE_PROTO_1],
+            data={'test': self.EXAMPLE_PROTO_1}
         )
         proto_table_storage.write(
-            data=['test_1', self.EXAMPLE_PROTO_2]
+            data={'test_1': self.EXAMPLE_PROTO_2}
         )
         result_proto = proto_table_storage.read(
             params={
@@ -83,7 +83,7 @@ class ProtoTableStorageTest(unittest.TestCase):
         self.assertEqual(result_proto, self.EXAMPLE_PROTO_2)
 
         proto_table_storage.write(
-            data=['test_1', self.EXAMPLE_PROTO_3]
+            data={'test_1': self.EXAMPLE_PROTO_3}
         )
         result_proto = proto_table_storage.read(
             params={
@@ -108,10 +108,10 @@ class ProtoTableStorageTest(unittest.TestCase):
             file_name=self.TEST_DATA_4
         )
         proto_table_storage.write(
-            data=['test', self.EXAMPLE_PROTO_1],
+            data={'test': self.EXAMPLE_PROTO_1}
         )
         proto_table_storage.write(
-            data=['test_1', self.EXAMPLE_PROTO_2]
+            data={'test_1': self.EXAMPLE_PROTO_2}
         )
         result_proto = proto_table_storage.read(
             params={
@@ -122,7 +122,7 @@ class ProtoTableStorageTest(unittest.TestCase):
         self.assertEqual(result_proto, self.EXAMPLE_PROTO_2)
 
         proto_table_storage.write(
-            data=['test_1', self.EXAMPLE_PROTO_3],
+            data={'test_1': self.EXAMPLE_PROTO_3},
             params={
                 'overwrite': False,
             }

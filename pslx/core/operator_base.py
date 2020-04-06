@@ -112,9 +112,12 @@ class OperatorBase(OrderedNodeBase):
                     self.sys_log("Upstream operator " + parent.get_node_name() + " failed.")
                     # streaming mode allows failure from its dependencies.
                     if self.DATA_MODEL != DataModelType.STREAMING:
+                        self.sys_log('This results in failure of all the following descendant operators.')
                         self.set_status(status=Status.FAILED)
                         unfinished_op = []
-                    break
+                        break
+                    else:
+                        self.sys_log("Failure is allowed in Streaming mode. The rest of operators will continue.")
 
         return unfinished_op
 
@@ -164,21 +167,16 @@ class OperatorBase(OrderedNodeBase):
         if self.get_status() == Status.SUCCEEDED:
             self.sys_log("Process already succeeded. It might have been finished by another process.")
             return
-        for parent_node in self.get_parents_nodes():
-            if parent_node.get_status() == Status.FAILED:
-                self.sys_log("Operator " + parent_node.get_node_name() + " failed.")
-                if self.DATA_MODEL != DataModelType.STREAMING:
-                    self.set_status(status=Status.FAILED)
-                    self.sys_log('This results in failure of all the following descendant operators.')
-                    return
-                else:
-                    self.sys_log("Failure is allowed in Streaming mode. The rest of operators will continue.")
 
         unfinished_parent_ops = self.wait_for_upstream_status()
         while unfinished_parent_ops:
-            self.sys_log("Waiting for parent process to finish: " + ','.join(unfinished_parent_ops) + '.')
             time.sleep(TimeSleepObj.ONE_SECOND)
             unfinished_parent_ops = self.wait_for_upstream_status()
+
+        if self.get_status() == Status.FAILED:
+            self.sys_log("Operator already failed because of upstream jobs. Existing...")
+            return
+        self.sys_log("Waiting for parent process to finish: " + ','.join(unfinished_parent_ops) + '.')
 
         self.set_status(status=Status.RUNNING)
         self._start_time = TimezoneUtil.cur_time_in_pst()
@@ -198,12 +196,17 @@ class OperatorBase(OrderedNodeBase):
                     return
             except OperatorFailureException as err:
                 self.sys_log("Execute with err: " + str(err) + '.')
+                break
 
         self.set_status(status=Status.FAILED)
 
     def _execute_impl(self):
-        self.execute_impl()
-        return Signal.STOP
+        try:
+            self.execute_impl()
+            return Signal.STOP
+        except Exception as err:
+            self.sys_log("operator failed with error " + str(err) + '.')
+            raise OperatorFailureException
 
     def execute_impl(self):
         raise NotImplementedError

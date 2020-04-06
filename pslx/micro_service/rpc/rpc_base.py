@@ -28,6 +28,7 @@ class RPCBase(GenericRPCServiceServicer, Base):
             rpc_storage.set_max_capacity(max_capacity=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE'))
         self._rpc_storage = rpc_storage
         self._request_timestamp = collections.deque()
+        self._request_response_pair = {}
 
     def get_rpc_service_name(self):
         return self._service_name
@@ -54,15 +55,18 @@ class RPCBase(GenericRPCServiceServicer, Base):
             request_response_pair.uuid = request.uuid
             request_response_pair.generic_rpc_request.CopyFrom(request)
             request_response_pair.generic_rpc_response.CopyFrom(generic_response)
+            self._request_response_pair[request.uuid] = request_response_pair
+            if len(self._request_response_pair) >= int(EnvUtil.get_pslx_env_variable('PSLX_RPC_FLUSH_RATE')):
+                self._rpc_storage.write(
+                    data=self._request_response_pair,
+                    params={
+                        'overwrite': True,
+                        'make_partition': True,
+                    }
+                )
+                self.sys_log("Request response pairs flushed to " + self._rpc_storage.get_latest_dir() + '.')
+                self._request_response_pair.clear()
 
-            self._rpc_storage.write(
-                data=[request.uuid, request_response_pair],
-                params={
-                    'overwrite': True,
-                    'make_partition': True,
-                }
-            )
-            self.sys_log("Request response pair saved to " + self._rpc_storage.get_latest_dir() + '.')
             self._add_request_timestamp()
 
         return generic_response
