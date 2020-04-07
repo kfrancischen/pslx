@@ -680,8 +680,8 @@ size, error will be raised. If <code>force_load</code> is true, the storage will
 </li>
 <li>Explanation:<ol>
 <li>proto table is a key-value storage, and therefore the params need to contain field of <code>key</code>. </li>
-<li>The value of the proto table is a proto message, and therefore the params need to contain the field of <code>message_type</code>
-so that the reader could correctly deserialize to the desired protobuf.</li>
+<li>The value of the proto table is a proto message, and if the field of <code>message_type</code> is provided,
+ the reader will correctly deserialize to the desired protobuf. Otherwise it will only an <code>Any</code> type message.</li>
 <li>Under PSLX convention, the underlying file name needs to end with <code>.pb</code>.</li>
 </ol>
 </li>
@@ -692,7 +692,7 @@ so that the reader could correctly deserialize to the desired protobuf.</li>
 
 <ul>
 <li>Description: Read all the data.</li>
-<li>Return: the key, value pairs of the table, with value being the <code>Any</code> proto format.</li>
+<li>Return: the key, value dictionary of the table, with value being the <code>Any</code> proto format.</li>
 </ul>
 <div class="codehilite"><pre><span></span><code><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
 </code></pre></div>
@@ -825,7 +825,8 @@ will store all the file nodes.</li>
 <li>Explanation:<ol>
 <li>The underlying storage might prefer a different file name stored in each partition, hence <code>base_name</code> is an arg in
 params. The default <code>base_name</code> is <code>data</code> for <code>StorageType.DEFAULT_STORAGE</code> and <code>StorageType.FIXED_SIZE_STORAGE</code>, and <code>data.pb</code> for
-<code>StorageType.PROTO_TABLE_STORAGE</code>.</li>
+<code>StorageType.PROTO_TABLE_STORAGE</code>. One can also set <code>reinitialize_underlying_storage</code> if one wants the storage
+to be reinitialized.</li>
 <li>The read only load data from the latest directory.</li>
 </ol>
 </li>
@@ -846,7 +847,7 @@ with partition within the given time range. The interval is a close interval.</l
 <li>The return from this function will be a dictionary with file name as the key and file content
 as the value.</li>
 <li>If the underlying storage is a proto table, the value in the output dict will be in the format of 
-<code>[key_1, val_1, ... ..., key_n, val_n]</code>.</li>
+<code>{key_1: val_1, ... ..., key_n: val_n}</code> with all the <code>val_i</code> being an <code>Any</code> type message.</li>
 </ol>
 </li>
 </ul>
