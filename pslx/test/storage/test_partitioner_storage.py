@@ -36,6 +36,35 @@ class PartitionerStorageTest(unittest.TestCase):
         )
         self.assertListEqual(data, ['1,2,3', '2,3,4'])
 
+    def test_read_2(self):
+        partitioner = YearlyPartitionerStorage()
+        partitioner.initialize_from_dir(dir_name=self.YEARLY_PATITIONER_TEST_DATA_4)
+        proto_table_storage = ProtoTableStorage()
+        partitioner.set_underlying_storage(storage=proto_table_storage)
+        data = partitioner.read(
+            params={
+                'key': 'test',
+            }
+        )
+        proto_text_str = """
+        node_name: "test"
+        children_names: ["child_1", "child_2"]
+        parents_names: ["parent_1", "parent_2"]
+        """
+        val = ProtoUtil.message_to_any(
+                message=ProtoUtil.text_to_message(
+                    message_type=NodeSnapshot,
+                    text_str=proto_text_str
+                )
+            )
+        self.assertEqual(data, val)
+        data = partitioner.read(
+            params={
+                'key': 'test1',
+            }
+        )
+        self.assertIsNone(data)
+
     def test_read_range_1(self):
         partitioner = YearlyPartitionerStorage()
         partitioner.initialize_from_dir(dir_name=self.YEARLY_PATITIONER_TEST_DATA_3)
@@ -65,17 +94,16 @@ class PartitionerStorageTest(unittest.TestCase):
         children_names: ["child_1", "child_2"]
         parents_names: ["parent_1", "parent_2"]
         """
-        val = ProtoUtil.message_to_json(
-            proto_message=ProtoUtil.message_to_any(
+        val = ProtoUtil.message_to_any(
                 message=ProtoUtil.text_to_message(
                     message_type=NodeSnapshot,
                     text_str=proto_text_str
                 )
             )
-        )
+
         self.assertDictEqual(data, {
-            self.YEARLY_PATITIONER_TEST_DATA_4 + '2019/data.pb': ['test', val],
-            self.YEARLY_PATITIONER_TEST_DATA_4 + '2020/data.pb': ['test', val],
+            self.YEARLY_PATITIONER_TEST_DATA_4 + '2019/data.pb': {'test': val},
+            self.YEARLY_PATITIONER_TEST_DATA_4 + '2020/data.pb': {'test': val},
         })
 
     def test_write_1(self):
@@ -133,3 +161,15 @@ class PartitionerStorageTest(unittest.TestCase):
         self.assertEqual(partitioner.get_size(), 4)
         rmtree(self.MONTHLY_PATITIONER_TEST_DATA)
         copytree(self.MONTHLY_PATITIONER_TEST_DATA_2, self.MONTHLY_PATITIONER_TEST_DATA)
+
+    def test_get_previous_dir(self):
+        partitioner = MonthlyPartitionerStorage()
+        partitioner.initialize_from_dir(dir_name=self.MONTHLY_PATITIONER_TEST_DATA)
+        self.assertEqual(partitioner.get_previous_dir(cur_dir=partitioner.get_latest_dir()),
+                         self.MONTHLY_PATITIONER_TEST_DATA + '2020/01/')
+
+    def test_get_next_dir(self):
+        partitioner = MonthlyPartitionerStorage()
+        partitioner.initialize_from_dir(dir_name=self.MONTHLY_PATITIONER_TEST_DATA)
+        self.assertEqual(partitioner.get_next_dir(cur_dir=self.MONTHLY_PATITIONER_TEST_DATA + '2020/01/'),
+                         self.MONTHLY_PATITIONER_TEST_DATA + '2020/02/')

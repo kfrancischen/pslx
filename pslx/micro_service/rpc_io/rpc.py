@@ -106,10 +106,15 @@ class RPCIO(RPCBase):
     def _proto_table_storage_impl(self, request):
         self._logger.info("Getting request of proto table storage read.")
         read_params = dict(request.params)
-        read_params['message_type'] = ProtoUtil.infer_message_type_from_str(
-            message_type_str=read_params['message_type'],
-            modules=read_params['proto_module']
-        )
+        if 'proto_module' in read_params:
+            read_params['message_type'] = ProtoUtil.infer_message_type_from_str(
+                message_type_str=read_params['message_type'],
+                modules=read_params['proto_module']
+            )
+        else:
+            read_params['message_type'] = ProtoUtil.infer_message_type_from_str(
+                message_type_str=read_params['message_type']
+            )
 
         lru_key = (request.type, request.file_name)
         storage = self._lru_cache_tool.get(key=lru_key)
@@ -130,7 +135,7 @@ class RPCIO(RPCBase):
     def _partitioner_storage_impl(self, request):
         self._logger.info("Getting request of partitioner storage read.")
         read_params = dict(request.params)
-        read_params['num_line'] = -1
+        is_proto_table = True if read_params['is_proto_table'] == '1' else False
 
         lru_key = (read_params['PartitionerStorageType'], request.dir_name)
         self._logger.info("Partitioner type is " + read_params['PartitionerStorageType'])
@@ -152,15 +157,39 @@ class RPCIO(RPCBase):
 
         self._logger.info('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
         read_params.pop('PartitionerStorageType', None)
+        read_params.pop('is_proto_table', None)
+
+        if is_proto_table:
+            proto_table_storage = ProtoTableStorage()
+            storage.set_underlying_storage(storage=proto_table_storage)
+        else:
+            read_params['num_line'] = -1
 
         response = RPCIOResponse()
         if 'start_time' not in read_params:
+            # calling read function
+            if is_proto_table:
+                if 'message_type' in read_params:
+                    assert 'proto_module' in read_params
+                    read_params['message_type'] = ProtoUtil.infer_message_type_from_str(
+                        message_type_str=read_params['message_type'],
+                        modules=read_params['proto_module']
+                    )
+
             data = storage.read(params=read_params)
-            rpc_list_data = RPCIOResponse.RPCListData()
-            for item in data:
-                rpc_list_data.data.append(item)
-            response.list_data.CopyFrom(rpc_list_data)
+            if data:
+                rpc_list_data = RPCIOResponse.RPCListData()
+                if is_proto_table:
+                    # if underlying storage is proto table.
+                    rpc_list_data.data.append(ProtoUtil.message_to_json(proto_message=data))
+                else:
+                    # if underlying storage is not proto table.
+                    for item in data:
+                        rpc_list_data.data.append(item)
+
+                response.list_data.CopyFrom(rpc_list_data)
         else:
+            # calling read_range function
             if 'start_time' in read_params:
                 read_params['start_time'] = TimezoneUtil.cur_time_from_str(
                     time_str=read_params['start_time']
@@ -169,16 +198,19 @@ class RPCIO(RPCBase):
                 read_params['end_time'] = TimezoneUtil.cur_time_from_str(
                     time_str=read_params['end_time']
                 )
-            if read_params['is_proto_table'] == '1':
-                proto_table_storage = ProtoTableStorage()
-                storage.set_underlying_storage(storage=proto_table_storage)
 
             data = storage.read_range(params=read_params)
-            for key, vals in data.items():
-                rpc_list_data = RPCIOResponse.RPCListData()
-                for val in vals:
-                    rpc_list_data.data.append(val)
-                response.dict_data[key].CopyFrom(rpc_list_data)
+            if data:
+                for key, val in data.items():
+                    rpc_list_data = RPCIOResponse.RPCListData()
+                    if is_proto_table:
+                        for proto_key, any_message in val.items():
+                            rpc_list_data.data.append(proto_key)
+                            rpc_list_data.data.append(ProtoUtil.message_to_json(proto_message=any_message))
+                    else:
+                        for entry in val:
+                            rpc_list_data.data.append(entry)
+                    response.dict_data[key].CopyFrom(rpc_list_data)
 
         return response
 

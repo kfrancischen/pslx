@@ -66,4 +66,4 @@ class ClientBase(Base):
         except Exception as err:
             self._logger.error(self.get_client_name() + " send request with error " + str(err) + '.')
             self.sys_log(self.get_client_name() + " send request with error " + str(err) + '.')
-            pass
+            return None

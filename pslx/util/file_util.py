@@ -80,7 +80,7 @@ class FileUtil(object):
         cls.normalize_dir_name(dir_name=dir_name)
         cls.die_if_dir_not_exist(dir_name=dir_name)
         items = os.listdir(dir_name)
-        return [cls.join_paths_to_file(dir_name, item) for item in items]
+        return [cls.join_paths_to_file(dir_name, item) for item in items if not item.startswith('.')]
 
     @classmethod
     def normalize_file_name(cls, file_name):

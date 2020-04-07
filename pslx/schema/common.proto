@@ -2,9 +2,6 @@ syntax = "proto3";
 
 package pslx;
 
-message EmptyMessage {
-}
-
 // the next will be 4
 message Credentials {
     string user_name = 1;

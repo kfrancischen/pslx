@@ -51,7 +51,7 @@ class ProtoTableStorage(StorageBase):
         return len(self._table_message.data)
 
     def read(self, params=None):
-        assert 'message_type' in params and 'key' in params
+        assert 'key' in params
 
         while self._writer_status != Status.IDLE:
             self.sys_log("Waiting for writer to finish.")
@@ -64,10 +64,13 @@ class ProtoTableStorage(StorageBase):
         self._reader_status = Status.RUNNING
         if params['key'] in self._table_message.data:
             try:
-                result = ProtoUtil.any_to_message(
-                    message_type=params['message_type'],
-                    any_message=self._table_message.data[params['key']]
-                )
+                if 'message_type' in params:
+                    result = ProtoUtil.any_to_message(
+                        message_type=params['message_type'],
+                        any_message=self._table_message.data[params['key']]
+                    )
+                else:
+                    result = self._table_message.data[params['key']]
                 self._reader_status = Status.IDLE
                 return result
             except Exception as err:
@@ -143,7 +146,9 @@ class ProtoTableStorage(StorageBase):
                     continue
                 any_message = ProtoUtil.message_to_any(message=val)
                 self._table_message.data[key].CopyFrom(any_message)
-
+            if len(self._table_message.data) > 1000:
+                self.sys_log("Warning: the table content is too large, considering using Partitioner "
+                             "combined with proto table.")
             self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
             with FileLockTool(self._file_name, read_mode=False):
                 FileUtil.write_proto_to_file(

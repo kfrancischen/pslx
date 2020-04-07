@@ -7,7 +7,6 @@ import uuid
 from pslx.core.exception import ProtobufNameNotExistException, ProtobufValueNotExistException,\
     ProtobufEnumTypeNotExistException, ProtobufMessageTypeNotExistException
 from pslx.schema.rpc_pb2 import GenericRPCRequest, GenericRPCResponse
-from pslx.schema.common_pb2 import EmptyMessage
 from pslx.util.timezone_util import TimezoneUtil
 
 
@@ -90,6 +89,24 @@ class ProtoUtil(object):
         )
 
     @classmethod
+    def json_to_any(cls, json_str):
+        proto_message = Any()
+        return json_format.Parse(
+            text=json_str,
+            message=proto_message,
+            ignore_unknown_fields=True
+        )
+
+    @classmethod
+    def text_to_any(cls, text_str):
+        proto_message = Any()
+        return text_format.Parse(
+            text=text_str,
+            message=proto_message,
+            allow_unknown_field=True
+        )
+
+    @classmethod
     def message_to_any(cls, message):
         any_message = Any()
         any_message.Pack(message)
@@ -97,9 +114,12 @@ class ProtoUtil(object):
 
     @classmethod
     def any_to_message(cls, message_type, any_message):
-        proto_message = message_type()
-        any_message.Unpack(proto_message)
-        return proto_message
+        if any_message.Is(message_type.DESCRIPTOR):
+            proto_message = message_type()
+            any_message.Unpack(proto_message)
+            return proto_message
+        else:
+            return None
 
     @classmethod
     def infer_message_type_from_str(cls, message_type_str, modules=None):
@@ -123,10 +143,7 @@ class ProtoUtil(object):
     @classmethod
     def compose_generic_response(cls, response):
         generic_response = GenericRPCResponse()
-        if not response:
-            empty_message = EmptyMessage()
-            generic_response.response_data.CopyFrom(cls.message_to_any(empty_message))
-        else:
+        if response:
             generic_response.response_data.CopyFrom(cls.message_to_any(response))
         generic_response.timestamp = str(TimezoneUtil.cur_time_in_pst())
 

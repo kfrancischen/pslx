@@ -67,7 +67,7 @@ class RPCBase(GenericRPCServiceServicer, Base):
                 self.sys_log("Request response pairs flushed to " + self._rpc_storage.get_latest_dir() + '.')
                 self._request_response_pair.clear()
 
-            self._add_request_timestamp()
+        self._add_request_timestamp()
 
         return generic_response
 

@@ -120,15 +120,15 @@ read(params)
     1. params: the read parameters.
 * Explanation:
     1. proto table is a key-value storage, and therefore the params need to contain field of `key`. 
-    2. The value of the proto table is a proto message, and therefore the params need to contain the field of `message_type`
-    so that the reader could correctly deserialize to the desired protobuf.
+    2. The value of the proto table is a proto message, and if the field of `message_type` is provided,
+     the reader will correctly deserialize to the desired protobuf. Otherwise it will only an `Any` type message.
     3. Under PSLX convention, the underlying file name needs to end with `.pb`.
 
 ```python
 read_all()
 ```
 * Description: Read all the data.
-* Return: the key, value pairs of the table, with value being the `Any` proto format.
+* Return: the key, value dictionary of the table, with value being the `Any` proto format.
 
 ```python       
 write(data, params)
@@ -231,7 +231,8 @@ read(params)
 * Explanation:
     1. The underlying storage might prefer a different file name stored in each partition, hence `base_name` is an arg in
     params. The default `base_name` is `data` for `StorageType.DEFAULT_STORAGE` and `StorageType.FIXED_SIZE_STORAGE`, and `data.pb` for
-    `StorageType.PROTO_TABLE_STORAGE`.
+    `StorageType.PROTO_TABLE_STORAGE`. One can also set `reinitialize_underlying_storage` if one wants the storage
+    to be reinitialized.
     2. The read only load data from the latest directory.
     
 ```python       
@@ -246,7 +247,7 @@ read_range(data, params)
     2. The return from this function will be a dictionary with file name as the key and file content
     as the value.
     3. If the underlying storage is a proto table, the value in the output dict will be in the format of 
-    `[key_1, val_1, ... ..., key_n, val_n]`.
+    `{key_1: val_1, ... ..., key_n: val_n}` with all the `val_i` being an `Any` type message.
     
 ```python       
 write(data, params)

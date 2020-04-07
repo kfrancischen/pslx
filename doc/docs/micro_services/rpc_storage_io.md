@@ -94,6 +94,43 @@ if __name__ == "__main__":
 
     dir_name = "pslx/test/storage/test_data/yearly_partitioner_4/"
     example_client = PartitionerStorageRPC(client_name='example_rpc_io', server_url=server_url)
+    print(example_client.read(
+        file_or_dir_path=dir_name,
+        params={
+            'PartitionerStorageType': PartitionerStorageType.YEARLY,
+            'is_proto_table': True,
+            'key': 'test',
+        }
+    ))
+
+    dir_name = "pslx/test/storage/test_data/yearly_partitioner_4/"
+    example_client = PartitionerStorageRPC(client_name='example_rpc_io', server_url=server_url)
+    print(example_client.read(
+        file_or_dir_path=dir_name,
+        params={
+            'PartitionerStorageType': PartitionerStorageType.YEARLY,
+            'is_proto_table': True,
+            'message_type': NodeSnapshot,
+            'proto_module': 'pslx.schema.snapshots_pb2',
+            'key': 'test',
+        }
+    ))
+
+    dir_name = "pslx/test/storage/test_data/yearly_partitioner_4/"
+    example_client = PartitionerStorageRPC(client_name='example_rpc_io', server_url=server_url)
+    print(example_client.read(
+        file_or_dir_path=dir_name,
+        params={
+            'PartitionerStorageType': PartitionerStorageType.YEARLY,
+            'is_proto_table': True,
+            'message_type': NodeSnapshot,
+            'proto_module': 'pslx.schema.snapshots_pb2',
+            'key': 'test1',
+        }
+    ))
+
+    dir_name = "pslx/test/storage/test_data/yearly_partitioner_4/"
+    example_client = PartitionerStorageRPC(client_name='example_rpc_io', server_url=server_url)
     print(example_client.read_range(
         file_or_dir_path=dir_name,
         params={
@@ -107,7 +144,7 @@ if __name__ == "__main__":
 
 We can see that in addition to the required parameter for the storage, we also need to pass the following parameters:    
 1. `PartitionerStorageType` for `PartitionerStorageRPC`.    
-2. `proto_module` for `FixedSizeStorageRPC`.
+2. `proto_module` for `ProtoTableStorageRPC` if one wants the message to be deserialized to the desired format.
 
 As a side note, the `DefaultStorageRPC` will now ignore the parameter of `num_line` as in the RPC case, the function call will
 always return the content of the whole underlying file.

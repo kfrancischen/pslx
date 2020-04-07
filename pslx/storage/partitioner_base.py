@@ -168,6 +168,69 @@ class PartitionerBase(StorageBase):
         else:
             return self._file_tree.get_rightmost_leaf()
 
+    def get_previous_dir(self, cur_dir):
+        cur_dir = cur_dir.replace(self._file_tree.get_root_name(), '')
+        cur_time = FileUtil.parse_dir_to_timestamp(dir_name=cur_dir)
+        if self.PARTITIONER_TYPE == PartitionerStorageType.YEARLY:
+            pre_time = datetime.datetime(cur_time.year - 1, 1, 1)
+        elif self.PARTITIONER_TYPE == PartitionerStorageType.MONTHLY:
+            if cur_time.month == 1:
+                pre_time = datetime.datetime(cur_time.year - 1, 12, 1)
+            else:
+                pre_time = datetime.datetime(cur_time.year, cur_time.month - 1, 1)
+        elif self.PARTITIONER_TYPE == PartitionerStorageType.DAILY:
+            pre_time = cur_time - datetime.timedelta(days=1)
+        elif self.PARTITIONER_TYPE == PartitionerStorageType.HOURLY:
+            pre_time = cur_time - datetime.timedelta(hours=1)
+        else:
+            pre_time = cur_time - datetime.timedelta(minutes=1)
+        last_dir_name = FileUtil.parse_timestamp_to_dir(timestamp=pre_time).split('/')
+        last_dir_name = '/'.join(last_dir_name[:self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]])
+        last_dir_name = FileUtil.join_paths_to_dir(
+            root_dir=self._file_tree.get_root_name(),
+            base_name=last_dir_name
+        )
+        if FileUtil.does_dir_exist(dir_name=last_dir_name):
+            return last_dir_name
+        else:
+            return None
+
+    def get_next_dir(self, cur_dir):
+        cur_dir = cur_dir.replace(self._file_tree.get_root_name(), '')
+        cur_time = FileUtil.parse_dir_to_timestamp(dir_name=cur_dir)
+        if self.PARTITIONER_TYPE == PartitionerStorageType.YEARLY:
+            next_time = datetime.datetime(cur_time.year + 1, 1, 1)
+        elif self.PARTITIONER_TYPE == PartitionerStorageType.MONTHLY:
+            if cur_time.month == 12:
+                next_time = datetime.datetime(cur_time.year + 1, 1, 1)
+            else:
+                next_time = datetime.datetime(cur_time.year, cur_time.month + 1, 1)
+        elif self.PARTITIONER_TYPE == PartitionerStorageType.DAILY:
+            next_time = cur_time + datetime.timedelta(days=1)
+        elif self.PARTITIONER_TYPE == PartitionerStorageType.HOURLY:
+            next_time = cur_time + datetime.timedelta(hours=1)
+        else:
+            next_time = cur_time + datetime.timedelta(minutes=1)
+
+        next_dir_name = FileUtil.parse_timestamp_to_dir(timestamp=next_time).split('/')
+        next_dir_name = '/'.join(next_dir_name[:self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]])
+
+        next_dir_name = FileUtil.join_paths_to_dir(
+            root_dir=self._file_tree.get_root_name(),
+            base_name=next_dir_name
+        )
+        if FileUtil.does_dir_exist(dir_name=next_dir_name):
+            return next_dir_name
+        else:
+            return None
+
+    def _reinitialize_underlying_storage(self, file_base_name):
+        file_name = FileUtil.join_paths_to_file(root_dir=self.get_latest_dir(), base_name=file_base_name)
+        if not FileUtil.does_file_exist(file_name):
+            self.sys_log("The file to read does not exist.")
+            return
+        self._underlying_storage.initialize_from_file(file_name=file_name)
+
     def read(self, params=None):
         if self._underlying_storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE:
             file_base_name = 'data.pb'
@@ -176,6 +239,8 @@ class PartitionerBase(StorageBase):
         if params and 'base_name' in params:
             file_base_name = params['base_name']
             params.pop('base_name', None)
+        if params and 'reinitialize_underlying_storage' in params:
+            self._reinitialize_underlying_storage(file_base_name=file_base_name)
 
         while self._writer_status != Status.IDLE:
             self.sys_log("Waiting for writer to finish.")
@@ -259,11 +324,7 @@ class PartitionerBase(StorageBase):
                     for file_name in file_names:
                         storage.initialize_from_file(file_name=file_name)
                         if storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE:
-                            result[file_name] = []
-                            result_from_file = storage.read_all()
-                            for key, val in result_from_file.items():
-                                result[file_name].append(key)
-                                result[file_name].append(ProtoUtil.message_to_json(val))
+                            result[file_name] = storage.read_all()
                         else:
                             result[file_name] = storage.read(params={
                                 'num_line': -1

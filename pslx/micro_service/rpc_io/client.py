@@ -1,3 +1,4 @@
+from google.protobuf.any_pb2 import Any
 from pslx.micro_service.rpc.client_base import ClientBase
 from pslx.schema.rpc_pb2 import RPCIOResponse, RPCIORequest
 from pslx.schema.enums_pb2 import StorageType, PartitionerStorageType
@@ -10,13 +11,14 @@ class RPCIOClient(ClientBase):
     RESPONSE_MESSAGE_TYPE = RPCIOResponse
     STORAGE_TYPE = None
 
-    WHITELISTED_KEY = [
+    WHITELISTED_KEY = {
         'fixed_size',
         'force_load',
         'num_line',
         'start_time',
-        'end_time'
-    ]
+        'end_time',
+        'is_proto_table',
+    }
 
     def __init__(self, client_name, server_url):
         super().__init__(client_name=client_name, server_url=server_url)
@@ -73,20 +75,23 @@ class ProtoTableStorageRPC(RPCIOClient):
     STORAGE_TYPE = StorageType.PROTO_TABLE_STORAGE
 
     def read(self, file_or_dir_path, params=None, is_test=False, root_certificate=None):
-        assert 'message_type' in params and 'proto_module' in params
+        if 'message_type' in params:
+            assert 'proto_module' in params
         request = RPCIORequest()
         request.is_test = is_test
         request.type = self.STORAGE_TYPE
         request.file_name = file_or_dir_path
-        self.RESPONSE_MESSAGE_TYPE = params['message_type']
+        if 'message_type' in params:
+            self.RESPONSE_MESSAGE_TYPE = params['message_type']
+            request.params['message_type'] = ProtoUtil.infer_str_from_message_type(
+                message_type=params['message_type']
+            )
+        else:
+            self.RESPONSE_MESSAGE_TYPE = Any
 
         for key, val in params.items():
             if isinstance(val, str) or key in self.WHITELISTED_KEY:
                 request.params[key] = str(val)
-
-        request.params['message_type'] = ProtoUtil.infer_str_from_message_type(
-            message_type=params['message_type']
-        )
 
         response = self.send_request(request=request, root_certificate=root_certificate)
         return response
@@ -103,6 +108,16 @@ class PartitionerStorageRPC(RPCIOClient):
         request.type = self.STORAGE_TYPE
         request.dir_name = file_or_dir_path
 
+        if 'is_proto_table' in params and params['is_proto_table']:
+            params['is_proto_table'] = '1'
+        else:
+            params['is_proto_table'] = '0'
+
+        if 'message_type' in params:
+            request.params['message_type'] = ProtoUtil.infer_str_from_message_type(
+                message_type=params['message_type']
+            )
+
         for key, val in params.items():
             if isinstance(val, str) or key in self.WHITELISTED_KEY:
                 request.params[key] = str(val)
@@ -113,10 +128,15 @@ class PartitionerStorageRPC(RPCIOClient):
         )
 
         response = self.send_request(request=request, root_certificate=root_certificate)
+
         if response:
-            return list(response.list_data.data)
+            result = list(response.list_data.data)
+            if params['is_proto_table'] == '1':
+                return None if not result else result[0]
+            else:
+                return result
         else:
-            return []
+            return None if params['is_proto_table'] == '1' else []
 
     def read_range(self, file_or_dir_path, params=None, is_test=False, root_certificate=None):
         assert 'PartitionerStorageType' in params and 'start_time' in params and 'end_time' in params
@@ -144,6 +164,11 @@ class PartitionerStorageRPC(RPCIOClient):
         result = {}
         if response:
             for key, val in response.dict_data.items():
-                result[key] = list(val.data)
+                if params['is_proto_table'] == '1':
+                    result[key] = {}
+                    for index in range(0, len(val.data) - 1, 2):
+                        result[key][val.data[index]] = val.data[index + 1]
+                else:
+                    result[key] = list(val.data)
 
         return result

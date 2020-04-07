@@ -46,6 +46,43 @@ class ProtoTableStorageTest(unittest.TestCase):
     TEST_DATA_3 = "pslx/test/storage/test_data/test_proto_table_data_3.pb"
     TEST_DATA_4 = "pslx/test/storage/test_data/test_proto_table_data_4.pb"
 
+    def test_read_1(self):
+        proto_table_storage = ProtoTableStorage()
+        proto_table_storage.initialize_from_file(
+            file_name=self.TEST_DATA_3
+        )
+        result_proto = proto_table_storage.read(
+            params={
+                'key': 'test',
+                'message_type': NodeSnapshot
+            }
+        )
+        self.assertEqual(result_proto, self.EXAMPLE_PROTO_1)
+
+    def test_read_2(self):
+        proto_table_storage = ProtoTableStorage()
+        proto_table_storage.initialize_from_file(
+            file_name=self.TEST_DATA_3
+        )
+        result_proto = proto_table_storage.read(
+            params={
+                'key': 'test'
+            }
+        )
+        self.assertEqual(result_proto, ProtoUtil.message_to_any(self.EXAMPLE_PROTO_1))
+
+    def test_read_3(self):
+        proto_table_storage = ProtoTableStorage()
+        proto_table_storage.initialize_from_file(
+            file_name=self.TEST_DATA_3
+        )
+        result_proto = proto_table_storage.read(
+            params={
+                'key': 'test1'
+            }
+        )
+        self.assertIsNone(result_proto)
+
     def test_write_1(self):
         proto_table_storage = ProtoTableStorage()
         proto_table_storage.initialize_from_file(
