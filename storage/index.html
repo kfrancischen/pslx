@@ -732,7 +732,7 @@ it uses an underlying tree structure defined in <a href="https://github.com/kfra
 <p>In PSLX, five types of partitioners are supported:   <br />
 1. <code>PartitionerStorageType.MINUTELY</code>: the underlying directory will be format of <code>2020/03/01/00/59/</code>.     <br />
 2. <code>PartitionerStorageType.HOURLY</code>:  the underlying directory will be format of <code>2020/03/01/00/</code>.
-3. <code>PartitionerStorageType.DAILY</code>:  the underlying directory will be format of <code>2020/03/01/</code>.                 <br />
+3. <code>PartitionerStorageType.DAILY</code>:  the underlying directory will be format of <code>2020/03/01/</code>.                           <br />
 4. <code>PartitionerStorageType.MONTHLY</code>: the underlying directory will be format of <code>2020/03/</code>.         <br />
 5. <code>PartitionerStorageType.YEARLY</code> the underlying directory will be format of <code>2020/</code>.         </p>
 <p>All the partitioners share with the following functions. The choice of partition type would depend on the data size. It is recommended
@@ -812,6 +812,30 @@ will store all the file nodes.</li>
 <li>Description: Get oldest directory in timestamp contained in the partitioner.</li>
 <li>Return: The oldest directory.</li>
 </ul>
+<div class="codehilite"><pre><span></span><code><span class="n">get_previous_dir</span><span class="p">(</span><span class="n">cur_dir</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: Get the previous directory with respect to the current directory.</li>
+<li>Arguments:<ol>
+<li>cur_dir: the current directory</li>
+</ol>
+</li>
+<li>Return: The previous directory if exists, otherwise None.</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">get_next_dir</span><span class="p">(</span><span class="n">cur_dir</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: Get the next directory with respect to the current directory.</li>
+<li>Arguments:<ol>
+<li>cur_dir: the current directory</li>
+</ol>
+</li>
+<li>Return: The next directory if exists, otherwise None.</li>
+</ul>
 <div class="codehilite"><pre><span></span><code><span class="n">read</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 </code></pre></div>
 
@@ -865,8 +889,8 @@ as the value.</li>
 <li>The underlying storage might prefer a different file name stored in each partition, hence <code>base_name</code> is an arg in
 params. The default <code>base_name</code> is <code>data</code> for <code>StorageType.DEFAULT_STORAGE</code> and <code>StorageType.FIXED_SIZE_STORAGE</code>, and <code>data.pb</code> for
 <code>StorageType.PROTO_TABLE_STORAGE</code>.</li>
-<li>If <code>make_partition</code> is in the params and it is set False, the partition will not make new parittion for the new incoming data,
-otherwise (<code>make_partition</code>unset or set True), it will make partition based on the current PST timestamp.</li>
+<li>If <code>make_partition</code> is in the params and it is set False, the partition will not make new partition for the new incoming data,
+otherwise (<code>make_partition</code> unset or set True), it will make partition based on the current PST timestamp.</li>
 </ol>
 </li>
 </ul>

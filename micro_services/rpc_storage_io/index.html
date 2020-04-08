@@ -468,15 +468,26 @@ server can be launched with following code:</p>
             <span class="s1">&#39;fixed_size&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s1">&#39;num_line&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
             <span class="s1">&#39;force_load&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-
         <span class="p">}</span>
     <span class="p">))</span>
+
     <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/test_proto_table_data.pb&quot;</span>
     <span class="n">example_client</span> <span class="o">=</span> <span class="n">ProtoTableStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
         <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
         <span class="n">params</span><span class="o">=</span><span class="p">{</span>
             <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;message_type&#39;</span><span class="p">:</span> <span class="n">NodeSnapshot</span><span class="p">,</span>
+            <span class="s1">&#39;proto_module&#39;</span><span class="p">:</span> <span class="s1">&#39;pslx.schema.snapshots_pb2&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">))</span>
+
+    <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/test_proto_table_data.pb&quot;</span>
+    <span class="n">example_client</span> <span class="o">=</span> <span class="n">ProtoTableStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+        <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;test1&#39;</span><span class="p">,</span>
             <span class="s1">&#39;message_type&#39;</span><span class="p">:</span> <span class="n">NodeSnapshot</span><span class="p">,</span>
             <span class="s1">&#39;proto_module&#39;</span><span class="p">:</span> <span class="s1">&#39;pslx.schema.snapshots_pb2&#39;</span><span class="p">,</span>
         <span class="p">}</span>
@@ -509,33 +520,6 @@ server can be launched with following code:</p>
         <span class="n">params</span><span class="o">=</span><span class="p">{</span>
             <span class="s1">&#39;PartitionerStorageType&#39;</span><span class="p">:</span> <span class="n">PartitionerStorageType</span><span class="o">.</span><span class="n">YEARLY</span><span class="p">,</span>
             <span class="s1">&#39;is_proto_table&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">))</span>
-
-    <span class="n">dir_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/yearly_partitioner_4/&quot;</span>
-    <span class="n">example_client</span> <span class="o">=</span> <span class="n">PartitionerStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
-        <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">dir_name</span><span class="p">,</span>
-        <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-            <span class="s1">&#39;PartitionerStorageType&#39;</span><span class="p">:</span> <span class="n">PartitionerStorageType</span><span class="o">.</span><span class="n">YEARLY</span><span class="p">,</span>
-            <span class="s1">&#39;is_proto_table&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;message_type&#39;</span><span class="p">:</span> <span class="n">NodeSnapshot</span><span class="p">,</span>
-            <span class="s1">&#39;proto_module&#39;</span><span class="p">:</span> <span class="s1">&#39;pslx.schema.snapshots_pb2&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">))</span>
-
-    <span class="n">dir_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/yearly_partitioner_4/&quot;</span>
-    <span class="n">example_client</span> <span class="o">=</span> <span class="n">PartitionerStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
-        <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">dir_name</span><span class="p">,</span>
-        <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-            <span class="s1">&#39;PartitionerStorageType&#39;</span><span class="p">:</span> <span class="n">PartitionerStorageType</span><span class="o">.</span><span class="n">YEARLY</span><span class="p">,</span>
-            <span class="s1">&#39;is_proto_table&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;message_type&#39;</span><span class="p">:</span> <span class="n">NodeSnapshot</span><span class="p">,</span>
-            <span class="s1">&#39;proto_module&#39;</span><span class="p">:</span> <span class="s1">&#39;pslx.schema.snapshots_pb2&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;test1&#39;</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">))</span>
 
