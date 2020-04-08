@@ -16,7 +16,7 @@ message FileInfo {
     string modified_time = 3;
 }
 
-// the next will be 11
+// the next will be 12
 message FrontendConfig {
     message ServerConfig {
         string server_url = 1;
@@ -29,6 +29,7 @@ message FrontendConfig {
     repeated ServerConfig file_viewer_config = 7;
     repeated ServerConfig instant_messaging_config = 8;
     repeated ServerConfig rpc_io_config = 9;
+    repeated ServerConfig email_config = 10;
 
-    Credentials credential = 10;
+    Credentials credential = 11;
 }

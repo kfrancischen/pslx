@@ -158,7 +158,7 @@ delete(key)
 In PSLX, five types of partitioners are supported:     
 1. `PartitionerStorageType.MINUTELY`: the underlying directory will be format of `2020/03/01/00/59/`.       
 2. `PartitionerStorageType.HOURLY`:  the underlying directory will be format of `2020/03/01/00/`.
-3. `PartitionerStorageType.DAILY`:  the underlying directory will be format of `2020/03/01/`.                   
+3. `PartitionerStorageType.DAILY`:  the underlying directory will be format of `2020/03/01/`.                             
 4. `PartitionerStorageType.MONTHLY`: the underlying directory will be format of `2020/03/`.           
 5. `PartitionerStorageType.YEARLY` the underlying directory will be format of `2020/`.         
 
@@ -223,6 +223,22 @@ get_oldest_dir()
 * Return: The oldest directory.
 
 ```python       
+get_previous_dir(cur_dir)
+```
+* Description: Get the previous directory with respect to the current directory.
+* Arguments:
+    1. cur_dir: the current directory
+* Return: The previous directory if exists, otherwise None.
+
+```python       
+get_next_dir(cur_dir)
+```
+* Description: Get the next directory with respect to the current directory.
+* Arguments:
+    1. cur_dir: the current directory
+* Return: The next directory if exists, otherwise None.
+
+```python       
 read(params)
 ```
 * Description: Read from the latest file in the storage.
@@ -259,8 +275,8 @@ write(data, params)
     1. The underlying storage might prefer a different file name stored in each partition, hence `base_name` is an arg in
     params. The default `base_name` is `data` for `StorageType.DEFAULT_STORAGE` and `StorageType.FIXED_SIZE_STORAGE`, and `data.pb` for
     `StorageType.PROTO_TABLE_STORAGE`.
-    2. If `make_partition` is in the params and it is set False, the partition will not make new parittion for the new incoming data,
-    otherwise (`make_partition`unset or set True), it will make partition based on the current PST timestamp.
+    2. If `make_partition` is in the params and it is set False, the partition will not make new partition for the new incoming data,
+    otherwise (`make_partition` unset or set True), it will make partition based on the current PST timestamp.
     
 !!! info
     Debug only.

@@ -296,7 +296,7 @@ class PartitionerBase(StorageBase):
         self.initialize_from_dir(dir_name=self._file_tree.get_root_name())
         if self.is_empty():
             self.sys_log("Current partitioner is empty, cannot read anything.")
-            return []
+            return {}
 
         oldest_dir, latest_dir = self.get_oldest_dir(), self.get_latest_dir()
         oldest_dir = oldest_dir.replace(self._file_tree.get_root_name(), '')

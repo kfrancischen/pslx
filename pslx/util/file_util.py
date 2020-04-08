@@ -181,7 +181,10 @@ class FileUtil(object):
 
     @classmethod
     def join_paths_to_dir(cls, root_dir, base_name, ttl=-1):
-        return cls.join_paths_to_file(root_dir=root_dir, base_name=base_name, ttl=ttl) + '/'
+        path = cls.join_paths_to_file(root_dir=root_dir, base_name=base_name, ttl=ttl)
+        if path[-1] != '/':
+            path += '/'
+        return path
 
     @classmethod
     def get_file_names_in_dir(cls, dir_name):

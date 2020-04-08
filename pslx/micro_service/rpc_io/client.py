@@ -130,11 +130,13 @@ class PartitionerStorageRPC(RPCIOClient):
         response = self.send_request(request=request, root_certificate=root_certificate)
 
         if response:
-            result = list(response.list_data.data)
             if params['is_proto_table'] == '1':
-                return None if not result else result[0]
-            else:
+                result = {}
+                for key, val in dict(response.dict_data).items():
+                    result[key] = val.data[0]
                 return result
+            else:
+                return list(response.list_data.data)
         else:
             return None if params['is_proto_table'] == '1' else []
 

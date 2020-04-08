@@ -9,6 +9,7 @@ import pslx.storage.partitioner_storage as partitioner
 from pslx.tool.logging_tool import LoggingTool
 from pslx.tool.lru_cache_tool import LRUCacheTool
 from pslx.util.env_util import EnvUtil
+from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil
 
@@ -169,24 +170,31 @@ class RPCIO(RPCBase):
         if 'start_time' not in read_params:
             # calling read function
             if is_proto_table:
+                # if underlying storage is proto table.
                 if 'message_type' in read_params:
                     assert 'proto_module' in read_params
                     read_params['message_type'] = ProtoUtil.infer_message_type_from_str(
                         message_type_str=read_params['message_type'],
                         modules=read_params['proto_module']
                     )
-
-            data = storage.read(params=read_params)
-            if data:
+                latest_proto_storage = ProtoTableStorage()
+                latest_proto_storage.initialize_from_file(
+                    file_name=FileUtil.join_paths_to_file(
+                        root_dir=storage.get_latest_dir(),
+                        base_name='data.pb'
+                    )
+                )
+                data = latest_proto_storage.read_all()
+                for key, val in data.items():
+                    rpc_list_data = RPCIOResponse.RPCListData()
+                    rpc_list_data.data.append(ProtoUtil.message_to_json(proto_message=val))
+                    response.dict_data[key].CopyFrom(rpc_list_data)
+            else:
+                # if underlying storage is not proto table.
+                data = storage.read(params=read_params)
                 rpc_list_data = RPCIOResponse.RPCListData()
-                if is_proto_table:
-                    # if underlying storage is proto table.
-                    rpc_list_data.data.append(ProtoUtil.message_to_json(proto_message=data))
-                else:
-                    # if underlying storage is not proto table.
-                    for item in data:
-                        rpc_list_data.data.append(item)
-
+                for item in data:
+                    rpc_list_data.data.append(item)
                 response.list_data.CopyFrom(rpc_list_data)
         else:
             # calling read_range function

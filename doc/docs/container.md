@@ -11,8 +11,9 @@ failure in all the subsequent operators.
 
 PSLX has two kinds of data models: `DataModelType.BATCH` and `DataModelType.STREAMING`, and the enums are defined as protobuf enums (Please check
 the section of [schema](schema.md)). `DataModelType.BATCH` mode supports running operators in multi-thread fashion, and allows each operator to send
-its status to the backend, while `DataModelType.STREAMING` only supports sending status to the backend when the container starts and ends. The two types of 
-operations all have the following functions:
+its status to the backend, while `DataModelType.STREAMING` only supports sending status to the backend when the container starts and ends. For the execution,
+`DataModelType.STREAMING` allows operators to fail in the middle, while for `DataModelType.BATCH`, one failure in an operator will result in the failure of
+ the overall container. The two types of operations all have the following functions:
 
 
 ### Operator Documentation   
