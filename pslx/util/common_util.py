@@ -61,6 +61,12 @@ class CommonUtil(object):
                     server_config.server_url = val['SERVER_URL']
                     server_config.root_certificate_path = val['ROOT_CERTIFICATE_PATH']
 
+            if 'EMAIL_CONFIG' in dict_config:
+                for val in dict_config['EMAIL_CONFIG'].values():
+                    server_config = config.email_config.add()
+                    server_config.server_url = val['SERVER_URL']
+                    server_config.root_certificate_path = val['ROOT_CERTIFICATE_PATH']
+
             credential = Credentials()
             credential.user_name = dict_config['USER_NAME']
             credential.password = dict_config['PASSWORD']
