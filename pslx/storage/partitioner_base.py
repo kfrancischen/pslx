@@ -168,6 +168,19 @@ class PartitionerBase(StorageBase):
         else:
             return self._file_tree.get_rightmost_leaf()
 
+    def get_oldest_dir_in_root_directory(self):
+        if self.is_empty():
+            self.sys_log("Current partitioner is empty.")
+            return ''
+        else:
+            oldest_directory = self._file_tree.get_root_name()
+            while True:
+                sub_dirs = FileUtil.list_dirs_in_dir(dir_name=oldest_directory)
+                if sub_dirs:
+                    oldest_directory = sorted(sub_dirs)[0]
+                else:
+                    return oldest_directory
+
     def get_previous_dir(self, cur_dir):
         cur_dir = cur_dir.replace(self._file_tree.get_root_name(), '')
         cur_time = FileUtil.parse_dir_to_timestamp(dir_name=cur_dir)

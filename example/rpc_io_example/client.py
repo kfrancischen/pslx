@@ -55,6 +55,16 @@ if __name__ == "__main__":
         }
     ))
 
+    dir_name = "pslx/test/storage/test_data/yearly_partitioner_1/"
+    example_client = PartitionerStorageRPC(client_name='example_rpc_io', server_url=server_url)
+    print(example_client.read(
+        file_or_dir_path=dir_name,
+        params={
+            'PartitionerStorageType': PartitionerStorageType.YEARLY,
+            'read_oldest': True,
+        }
+    ))
+
     dir_name = "pslx/test/storage/test_data/yearly_partitioner_3/"
     example_client = PartitionerStorageRPC(client_name='example_rpc_io', server_url=server_url)
     print(example_client.read_range(
@@ -73,6 +83,17 @@ if __name__ == "__main__":
         params={
             'PartitionerStorageType': PartitionerStorageType.YEARLY,
             'is_proto_table': True,
+        }
+    ))
+
+    dir_name = "pslx/test/storage/test_data/yearly_partitioner_4/"
+    example_client = PartitionerStorageRPC(client_name='example_rpc_io', server_url=server_url)
+    print(example_client.read(
+        file_or_dir_path=dir_name,
+        params={
+            'PartitionerStorageType': PartitionerStorageType.YEARLY,
+            'is_proto_table': True,
+            'read_oldest': True,
         }
     ))
 

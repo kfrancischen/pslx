@@ -177,21 +177,46 @@ class RPCIO(RPCBase):
                         message_type_str=read_params['message_type'],
                         modules=read_params['proto_module']
                     )
-                latest_proto_storage = ProtoTableStorage()
-                latest_proto_storage.initialize_from_file(
-                    file_name=FileUtil.join_paths_to_file(
-                        root_dir=storage.get_latest_dir(),
-                        base_name='data.pb'
+                proto_storage = ProtoTableStorage()
+                if 'read_oldest' in read_params:
+                    proto_storage.initialize_from_file(
+                        file_name=FileUtil.join_paths_to_file(
+                            root_dir=storage.get_oldest_dir_in_root_directory(),
+                            base_name='data.pb'
+                        )
                     )
-                )
-                data = latest_proto_storage.read_all()
+                else:
+                    proto_storage.initialize_from_file(
+                        file_name=FileUtil.join_paths_to_file(
+                            root_dir=storage.get_latest_dir(),
+                            base_name='data.pb'
+                        )
+                    )
+                data = proto_storage.read_all()
                 for key, val in data.items():
                     rpc_list_data = RPCIOResponse.RPCListData()
                     rpc_list_data.data.append(ProtoUtil.message_to_json(proto_message=val))
                     response.dict_data[key].CopyFrom(rpc_list_data)
             else:
                 # if underlying storage is not proto table.
-                data = storage.read(params=read_params)
+                default_storage = DefaultStorage()
+                if 'read_oldest' in read_params:
+                    default_storage.initialize_from_file(
+                        file_name=FileUtil.join_paths_to_file(
+                            root_dir=storage.get_oldest_dir_in_root_directory(),
+                            base_name='data'
+                        )
+                    )
+                else:
+                    default_storage.initialize_from_file(
+                        file_name=FileUtil.join_paths_to_file(
+                            root_dir=storage.get_latest_dir(),
+                            base_name='data'
+                        )
+                    )
+                data = default_storage.read(params={
+                    'num_line': -1,
+                })
                 rpc_list_data = RPCIOResponse.RPCListData()
                 for item in data:
                     rpc_list_data.data.append(item)

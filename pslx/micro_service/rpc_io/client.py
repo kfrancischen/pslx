@@ -118,6 +118,9 @@ class PartitionerStorageRPC(RPCIOClient):
                 message_type=params['message_type']
             )
 
+        if 'read_oldest' in params and params['read_oldest']:
+            request.params['read_oldest'] = '1'
+
         for key, val in params.items():
             if isinstance(val, str) or key in self.WHITELISTED_KEY:
                 request.params[key] = str(val)

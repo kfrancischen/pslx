@@ -65,6 +65,14 @@ class PartitionerStorageTest(unittest.TestCase):
         )
         self.assertIsNone(data)
 
+    def test_get_oldest_dir_in_root_directory(self):
+        partitioner = YearlyPartitionerStorage()
+        partitioner.initialize_from_dir(dir_name=self.YEARLY_PATITIONER_TEST_DATA_4)
+        proto_table_storage = ProtoTableStorage()
+        partitioner.set_underlying_storage(storage=proto_table_storage)
+        self.assertEqual(partitioner.get_oldest_dir_in_root_directory(),
+                         'pslx/test/storage/test_data/yearly_partitioner_4/2019/')
+
     def test_read_range_1(self):
         partitioner = YearlyPartitionerStorage()
         partitioner.initialize_from_dir(dir_name=self.YEARLY_PATITIONER_TEST_DATA_3)
