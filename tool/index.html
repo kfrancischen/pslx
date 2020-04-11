@@ -385,6 +385,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#documentation-for-timeout-tool" class="md-nav__link">
+    Documentation for Timeout Tool
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#documentation-for-lru-caching" class="md-nav__link">
     Documentation for LRU Caching
   </a>
@@ -478,6 +485,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#documentation-for-timeout-tool" class="md-nav__link">
+    Documentation for Timeout Tool
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#documentation-for-lru-caching" class="md-nav__link">
     Documentation for LRU Caching
   </a>
@@ -517,7 +531,8 @@
 <li>Logging tool for ttl-ed logging.</li>
 <li>File locker to ensure the atomic io of files.</li>
 <li>LRU cache for caching.</li>
-<li>SQL tool for connecting to SQL database and executing queries.</li>
+<li>SQL tool for connecting to SQL database and executing queries.          </li>
+<li>Timeout tool to timeout a function in the main thread.</li>
 </ol>
 <h3 id="documentation-for-logging-tool">Documentation for Logging Tool<a class="headerlink" href="#documentation-for-logging-tool" title="Permanent link">&para;</a></h3>
 <p>To create a logging tool instance, please use</p>
@@ -562,6 +577,14 @@
 
 
 <p>FileLocker will raise error if the <code>protected_file_path</code> does not exist if <code>read_mode</code> is True.</p>
+<h3 id="documentation-for-timeout-tool">Documentation for Timeout Tool<a class="headerlink" href="#documentation-for-timeout-tool" title="Permanent link">&para;</a></h3>
+<p>The TimeoutTool can only be used in the main thread in the following way:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">with</span> <span class="n">TimeoutTool</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="o">...</span> <span class="o">...</span>
+</code></pre></div>
+
+
+<p>then the enclosed program will time out after 10 seconds.</p>
 <h3 id="documentation-for-lru-caching">Documentation for LRU Caching<a class="headerlink" href="#documentation-for-lru-caching" title="Permanent link">&para;</a></h3>
 <p>LRU caching supports the following methods:</p>
 <div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">max_capacity</span><span class="p">)</span>
