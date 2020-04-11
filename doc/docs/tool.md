@@ -3,7 +3,8 @@ PSLX provides a set of tools to assist development, and they include
 1. Logging tool for ttl-ed logging.
 2. File locker to ensure the atomic io of files.
 3. LRU cache for caching.
-4. SQL tool for connecting to SQL database and executing queries.
+4. SQL tool for connecting to SQL database and executing queries.          
+5. Timeout tool to timeout a function in the main thread.
 
 ### Documentation for Logging Tool
 To create a logging tool instance, please use
@@ -41,6 +42,14 @@ with FileLocker(protected_file_path=file_name, read_mode=False):
         ... ...
 ```
 FileLocker will raise error if the `protected_file_path` does not exist if `read_mode` is True.
+
+### Documentation for Timeout Tool
+The TimeoutTool can only be used in the main thread in the following way:
+```python
+with TimeoutTool(timeout=10):
+    ... ...
+```
+then the enclosed program will time out after 10 seconds.
 
 ### Documentation for LRU Caching
 LRU caching supports the following methods:

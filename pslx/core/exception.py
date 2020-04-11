@@ -2,6 +2,10 @@ class ExceptionBase(Exception):
     pass
 
 
+class TimeoutException(Exception):
+    pass
+
+
 class ProtobufNameNotExistException(ExceptionBase):
     pass
 

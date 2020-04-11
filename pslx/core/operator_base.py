@@ -1,9 +1,8 @@
-import datetime
 import time
 
 from pslx.core.exception import OperatorFailureException, FileNotExistException
 from pslx.core.node_base import OrderedNodeBase
-from pslx.schema.enums_pb2 import DataModelType, SortOrder, Status, Signal
+from pslx.schema.enums_pb2 import DataModelType, Status, Signal
 from pslx.schema.snapshots_pb2 import OperatorSnapshot
 from pslx.tool.filelock_tool import FileLockTool
 from pslx.util.file_util import FileUtil
@@ -20,7 +19,7 @@ class OperatorBase(OrderedNodeBase):
         self._config = {
             'save_snapshot': False,
             'allow_container_snapshot': False if self.DATA_MODEL != DataModelType.BATCH else True,
-            'slo': -1,
+            'allow_failure': True if self.DATA_MODEL == DataModelType.STREAMING else False,
         }
         self._start_time = None
         self._end_time = None
@@ -111,7 +110,7 @@ class OperatorBase(OrderedNodeBase):
                 elif parent.get_status() == Status.FAILED:
                     self.sys_log("Upstream operator " + parent.get_node_name() + " failed.")
                     # streaming mode allows failure from its dependencies.
-                    if self.DATA_MODEL != DataModelType.STREAMING:
+                    if not self._config['allow_failure']:
                         self.sys_log('This results in failure of all the following descendant operators.')
                         self.set_status(status=Status.FAILED)
                         unfinished_op = []
@@ -132,7 +131,7 @@ class OperatorBase(OrderedNodeBase):
             if (parent_node.get_status() in [Status.IDLE, Status.WAITING, Status.RUNNING] and
                     self._status in [Status.RUNNING, Status.SUCCEEDED, Status.FAILED]):
                 return False
-            if (self.DATA_MODEL != DataModelType.STREAMING and parent_node.get_status() == Status.FAILED and
+            if (not self._config['allow_failure'] and parent_node.get_status() == Status.FAILED and
                     self._status in [Status.RUNNING, Status.SUCCEEDED]):
                 return False
 
@@ -144,11 +143,10 @@ class OperatorBase(OrderedNodeBase):
         snapshot.data_model = self.get_data_model()
         snapshot.status = self.get_status()
         snapshot.node_snapshot.CopyFrom(self.get_node_snapshot())
-        snapshot.slo = self._config['slo']
         snapshot.class_name = self.get_full_class_name()
         if self._start_time:
             snapshot.start_time = str(self._start_time)
-        if self._end_time:
+        if self.get_status() == Status.SUCCEEDED and self._end_time:
             snapshot.end_time = str(self._end_time)
         if self._persistent:
             assert self.CONTENT_MESSAGE_TYPE is not None
@@ -183,22 +181,14 @@ class OperatorBase(OrderedNodeBase):
         for child_node in self.get_children_nodes():
             if child_node.get_status() != Status.WAITING:
                 child_node.set_status(Status.WAITING)
-        if self._config['slo'] < 0:
-            self.sys_log("Operator has negative SLO = -1. This might result in indefinite run. "
-                         "Please check set_slo() function.")
 
-        while self._config['slo'] < 0 or (self._config['slo'] > 0 and TimezoneUtil.cur_time_in_pst() -
-                                          self._start_time > datetime.timedelta(self._config['slo'])):
-            try:
-                if self._execute_impl() == Signal.STOP:
-                    self._end_time = TimezoneUtil.cur_time_in_pst()
-                    self.set_status(status=Status.SUCCEEDED)
-                    return
-            except OperatorFailureException as err:
-                self.sys_log("Execute with err: " + str(err) + '.')
-                break
-
-        self.set_status(status=Status.FAILED)
+        try:
+            if self._execute_impl() == Signal.STOP:
+                self._end_time = TimezoneUtil.cur_time_in_pst()
+                self.set_status(status=Status.SUCCEEDED)
+        except OperatorFailureException as err:
+            self.sys_log("Execute with err: " + str(err) + '.')
+            self.set_status(status=Status.FAILED)
 
     def _execute_impl(self):
         try:
