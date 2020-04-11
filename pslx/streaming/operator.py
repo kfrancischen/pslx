@@ -16,6 +16,10 @@ class StreamingOperator(OperatorBase):
 
     def convert_to_batch_operator(self):
         self.DATA_MODEL = DataModelType.BATCH
+        self.set_config(config={
+            'allow_container_snapshot': True,
+            'allow_failure': False,
+        })
 
     def execute_impl(self):
         raise NotImplementedError

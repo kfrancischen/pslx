@@ -16,6 +16,10 @@ class BatchOperator(OperatorBase):
 
     def convert_to_streaming_operator(self):
         self.DATA_MODEL = DataModelType.STREAMING
+        self.set_config(config={
+            'allow_container_snapshot': False,
+            'allow_failure': True,
+        })
 
     def execute_impl(self):
         raise NotImplementedError
