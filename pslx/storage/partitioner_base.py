@@ -61,6 +61,10 @@ class PartitionerBase(StorageBase):
                     self.sys_log("Reach the max number of node: " + str(self._max_capacity))
                     return
 
+                newly_added_string = child_node_name.replace(node_name, '').replace('/', '')
+                if not newly_added_string.isdigit():
+                    continue
+
                 if not from_scratch and self._cmp_dir_by_timestamp(
                         dir_name_1=child_node_name, dir_name_2=self.get_latest_dir()):
                     continue
