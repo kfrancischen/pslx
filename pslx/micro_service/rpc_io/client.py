@@ -46,7 +46,7 @@ class DefaultStorageRPC(RPCIOClient):
         request.params['num_line'] = '-1'
         response = self.send_request(request=request, root_certificate=root_certificate)
         if response:
-            return list(response.list_data.data)
+            return [rpc_data.string_data for rpc_data in response.list_data.data]
         else:
             return []
 
@@ -66,7 +66,7 @@ class FixedSizeStorageRPC(RPCIOClient):
 
         response = self.send_request(request=request, root_certificate=root_certificate)
         if response:
-            return list(response.list_data.data)
+            return [rpc_data.string_data for rpc_data in response.list_data.data]
         else:
             return []
 
@@ -136,10 +136,10 @@ class PartitionerStorageRPC(RPCIOClient):
             if params['is_proto_table'] == '1':
                 result = {}
                 for key, val in dict(response.dict_data).items():
-                    result[key] = val.data[0]
+                    result[key] = val.data[0].proto_data
                 return result
             else:
-                return list(response.list_data.data)
+                return [rpc_data.string_data for rpc_data in response.list_data.data]
         else:
             return None if params['is_proto_table'] == '1' else []
 
@@ -172,8 +172,8 @@ class PartitionerStorageRPC(RPCIOClient):
                 if params['is_proto_table'] == '1':
                     result[key] = {}
                     for index in range(0, len(val.data) - 1, 2):
-                        result[key][val.data[index]] = val.data[index + 1]
+                        result[key][val.data[index].string_data] = val.data[index + 1].proto_data
                 else:
-                    result[key] = list(val.data)
+                    result[key] = [rpc_data.string_data for rpc_data in val.data]
 
         return result

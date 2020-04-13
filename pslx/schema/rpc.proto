@@ -80,11 +80,17 @@ message RPCIORequest {
 
 // the next will be 4
 message RPCIOResponse {
-    message RPCListData {
-        repeated string data = 1;
+    message RPCData {
+        oneof raw_data {
+            string string_data = 1;
+            google.protobuf.Any proto_data = 2;
+        }
     }
-    RPCListData list_data = 2;
-    map<string, RPCListData> dict_data = 3;
+    message RPCListData {
+        repeated RPCData data = 3;
+    }
+    RPCListData list_data = 4;
+    map<string, RPCListData> dict_data = 5;
 }
 
 // the next will be 4

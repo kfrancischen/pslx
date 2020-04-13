@@ -64,7 +64,8 @@ class RPCIO(RPCBase):
         data = storage.read(params=read_params)
         rpc_list_data = RPCIOResponse.RPCListData()
         for item in data:
-            rpc_list_data.data.append(item)
+            rpc_data = rpc_list_data.data.add()
+            rpc_data.string_data = item
         response.list_data.CopyFrom(rpc_list_data)
         return response
 
@@ -100,7 +101,8 @@ class RPCIO(RPCBase):
         data = storage.read(params=read_params)
         rpc_list_data = RPCIOResponse.RPCListData()
         for item in data:
-            rpc_list_data.data.append(item)
+            rpc_data = rpc_list_data.data.add()
+            rpc_data.string_data = item
         response.list_data.CopyFrom(rpc_list_data)
         return response
 
@@ -195,7 +197,8 @@ class RPCIO(RPCBase):
                 data = proto_storage.read_all()
                 for key, val in data.items():
                     rpc_list_data = RPCIOResponse.RPCListData()
-                    rpc_list_data.data.append(ProtoUtil.message_to_json(proto_message=val))
+                    rpc_data = rpc_list_data.data.add()
+                    rpc_data.proto_data.CopyFrom(val)
                     response.dict_data[key].CopyFrom(rpc_list_data)
             else:
                 # if underlying storage is not proto table.
@@ -219,7 +222,9 @@ class RPCIO(RPCBase):
                 })
                 rpc_list_data = RPCIOResponse.RPCListData()
                 for item in data:
-                    rpc_list_data.data.append(item)
+                    rpc_data = rpc_list_data.data.add()
+                    rpc_data.string_data = item
+
                 response.list_data.CopyFrom(rpc_list_data)
         else:
             # calling read_range function
@@ -238,11 +243,16 @@ class RPCIO(RPCBase):
                     rpc_list_data = RPCIOResponse.RPCListData()
                     if is_proto_table:
                         for proto_key, any_message in val.items():
-                            rpc_list_data.data.append(proto_key)
-                            rpc_list_data.data.append(ProtoUtil.message_to_json(proto_message=any_message))
+                            rpc_data = rpc_list_data.data.add()
+                            rpc_data.string_data = proto_key
+
+                            rpc_data = rpc_list_data.data.add()
+                            rpc_data.proto_data.CopyFrom(any_message)
                     else:
                         for entry in val:
-                            rpc_list_data.data.append(entry)
+                            rpc_data = rpc_list_data.data.add()
+                            rpc_data.string_data = entry
+
                     response.dict_data[key].CopyFrom(rpc_list_data)
 
         return response
