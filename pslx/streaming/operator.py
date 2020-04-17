@@ -7,6 +7,11 @@ class StreamingOperator(OperatorBase):
 
     def __init__(self, operator_name):
         super().__init__(operator_name=operator_name)
+        self._config = {
+            'save_snapshot': False,
+            'allow_container_snapshot': False,
+            'allow_failure': True,
+        }
 
     def set_data_model(self, model):
         pass

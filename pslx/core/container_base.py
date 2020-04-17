@@ -250,6 +250,8 @@ class ContainerBase(GraphBase):
                 operator_status[operator_name] = self._node_name_to_node_dict[operator_name].get_status_from_snapshot(
                     snapshot_file=snapshot_file
                 )
+                self.sys_log("Status for operator " + operator_name + ' is ' + ProtoUtil.get_name_by_value(
+                    enum_type=Status, value=operator_status[operator_name]) + '.')
             if len(operator_status) == len(self._node_name_to_node_dict):
                 break
         return operator_status

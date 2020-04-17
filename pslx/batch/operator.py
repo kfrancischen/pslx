@@ -7,6 +7,11 @@ class BatchOperator(OperatorBase):
 
     def __init__(self, operator_name):
         super().__init__(operator_name=operator_name)
+        self._config = {
+            'save_snapshot': True,
+            'allow_container_snapshot': True,
+            'allow_failure': False,
+        }
 
     def set_data_model(self, model):
         pass

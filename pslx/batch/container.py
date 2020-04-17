@@ -71,6 +71,10 @@ class CronBatchContainer(DefaultBatchContainer):
         except (KeyboardInterrupt, SystemExit):
             background_scheduler.shutdown()
 
+    def execute_now(self, is_backfill=False, num_threads=1):
+        self.sys_log("Entering execute now mode. Container will run now only once.")
+        self._execute_wrapper(is_backfill=is_backfill, num_threads=num_threads)
+
 
 class IntervalBatchContainer(DefaultBatchContainer):
     DATA_MODEL = DataModelType.BATCH
@@ -119,3 +123,7 @@ class IntervalBatchContainer(DefaultBatchContainer):
                 time.sleep(TimeSleepObj.ONE_SECOND)
         except (KeyboardInterrupt, SystemExit):
             background_scheduler.shutdown()
+
+    def execute_now(self, is_backfill=False, num_threads=1):
+        self.sys_log("Entering execute now mode. Container will run now only once.")
+        self._execute_wrapper(is_backfill=is_backfill, num_threads=num_threads)

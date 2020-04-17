@@ -18,8 +18,8 @@ class OperatorBase(OrderedNodeBase):
         super().__init__(node_name=operator_name)
         self._config = {
             'save_snapshot': False,
-            'allow_container_snapshot': False if self.DATA_MODEL != DataModelType.BATCH else True,
-            'allow_failure': True if self.DATA_MODEL == DataModelType.STREAMING else False,
+            'allow_container_snapshot': False,
+            'allow_failure': False,
         }
         self._start_time = None
         self._end_time = None
