@@ -244,4 +244,15 @@ execute(is_backfill, num_threads)
     1. is_backfill: whether the execution runs in backfill mode. If so, the successful operators will be executed again.
     2. num_threads: number of threads used for the execution. If the container is of type `DataModelType.STREAMING`, this 
     input will be ignored and only one thread is allowed.
-    
+
+!!! note
+    The following function is only for `CronBatchContainer` and `IntervalBatchContainer`.
+
+```python       
+execute_now(is_backfill, num_threads)
+```
+* Description: Execute the container graph now for once. Then there is not wait for the schedule.
+* Arguments:
+    1. is_backfill: whether the execution runs in backfill mode. If so, the successful operators will be executed again.
+    2. num_threads: number of threads used for the execution.
+ 
