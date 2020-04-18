@@ -817,6 +817,22 @@ input will be ignored and only one thread is allowed.</li>
 </ol>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The following function is only for <code>CronBatchContainer</code> and <code>IntervalBatchContainer</code>.</p>
+</div>
+<div class="codehilite"><pre><span></span><code><span class="n">execute_now</span><span class="p">(</span><span class="n">is_backfill</span><span class="p">,</span> <span class="n">num_threads</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: Execute the container graph now for once. Then there is not wait for the schedule.</li>
+<li>Arguments:<ol>
+<li>is_backfill: whether the execution runs in backfill mode. If so, the successful operators will be executed again.</li>
+<li>num_threads: number of threads used for the execution.</li>
+</ol>
+</li>
+</ul>
                 
                   
                 
