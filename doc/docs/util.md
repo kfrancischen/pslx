@@ -311,6 +311,13 @@ message_to_json(proto_message)
     1. proto_message: the proto message to be converted.
 
 ```python
+message_to_string(proto_message)
+```
+* Description: convert a proto message to plain string.
+* Arguments:
+    1. proto_message: the proto message to be converted.
+
+```python
 message_to_text(proto_message)
 ```
 * Description: convert a proto message to text.
@@ -324,6 +331,14 @@ json_to_message(message_type, json_str)
 * Arguments:
     1. message_type: the type of the output proto message.
     2. json_str: the json to be converted.
+    
+```python
+string_to_message(message_type, string)
+```
+* Description: convert a plain string to a proto message in a given type.
+* Arguments:
+    1. message_type: the type of the output proto message.
+    2. string: the plain string to be converted.
 
 ```python
 text_to_message(message_type, text_str)

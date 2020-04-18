@@ -65,6 +65,10 @@ class ProtoUtil(object):
         )
 
     @classmethod
+    def message_to_string(cls, proto_message):
+        return proto_message.SerializeToString()
+
+    @classmethod
     def message_to_text(cls, proto_message):
         return text_format.MessageToString(
             message=proto_message
@@ -87,6 +91,12 @@ class ProtoUtil(object):
             message=proto_message,
             allow_unknown_field=True
         )
+
+    @classmethod
+    def string_to_message(cls, message_type, string):
+        proto_message = message_type()
+        proto_message.ParseFromString(string)
+        return proto_message
 
     @classmethod
     def json_to_any(cls, json_str):

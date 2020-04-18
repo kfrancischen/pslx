@@ -1,3 +1,4 @@
+import base64
 import datetime
 import pika
 import uuid
@@ -31,9 +32,9 @@ class ProducerBase(Base):
 
     def on_response(self, ch, method, props, body):
         if self._corr_id == props.correlation_id:
-            self._response = ProtoUtil.json_to_message(
+            self._response = ProtoUtil.string_to_message(
                 message_type=GenericRPCResponse,
-                json_str=body
+                string=base64.b64decode(body)
             )
 
     def get_queue_name(self):
@@ -44,17 +45,18 @@ class ProducerBase(Base):
         return cls.RESPONSE_MESSAGE_TYPE
 
     def send_request(self, request):
+        self._response = None
         generic_request = GenericRPCRequest()
         generic_request.request_data.CopyFrom(ProtoUtil.message_to_any(message=request))
         generic_request.timestamp = str(TimezoneUtil.cur_time_in_pst())
-        generic_request.uuid = str(uuid.uuid4())
+        self._corr_id = generic_request.uuid = str(uuid.uuid4())
         if self.RESPONSE_MESSAGE_TYPE:
             generic_request.message_type = ProtoUtil.infer_str_from_message_type(
                     message_type=self.RESPONSE_MESSAGE_TYPE
                 )
         self.sys_log("Getting request of uuid " + generic_request.uuid + '.')
         try:
-            generic_request_str = ProtoUtil.message_to_json(
+            generic_request_str = ProtoUtil.message_to_string(
                 proto_message=generic_request
             )
             self._channel.basic_publish(
@@ -65,15 +67,15 @@ class ProducerBase(Base):
                     correlation_id=self._corr_id,
                     delivery_mode=2
                 ),
-                body=generic_request_str)
+                body=base64.b64encode(generic_request_str))
             wait_start_time = TimezoneUtil.cur_time_in_pst()
             while not self._response:
-                self._connection.process_data_events(time_limit=TimeSleepObj.ONE_MINUTE * 3)
+                self._connection.process_data_events(time_limit=TimeSleepObj.ONE_MINUTE)
                 if TimezoneUtil.cur_time_in_pst() - wait_start_time > \
-                        datetime.timedelta(seconds=TimeSleepObj.ONE_MINUTE * 3):
+                        datetime.timedelta(seconds=TimeSleepObj.ONE_MINUTE):
                     break
 
-            if not self.RESPONSE_MESSAGE_TYPE:
+            if not self.RESPONSE_MESSAGE_TYPE or self._response is None:
                 return None
             else:
                 return ProtoUtil.any_to_message(

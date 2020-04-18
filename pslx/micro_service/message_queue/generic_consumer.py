@@ -1,3 +1,4 @@
+import base64
 import os
 import pika
 import threading
@@ -61,17 +62,17 @@ class GenericQueueConsumer(Base):
 
     def _process_message(self, ch, method, props, body):
         try:
-            generic_request = ProtoUtil.json_to_message(
+            generic_request = ProtoUtil.string_to_message(
                 message_type=GenericRPCRequest,
-                json_str=body
+                string=base64.b64decode(body)
             )
             self._logger.info("Getting request with uuid " + generic_request.uuid)
             response = self._queue.send_request(request=generic_request)
-            response_str = ProtoUtil.message_to_json(proto_message=response)
+            response_str = ProtoUtil.message_to_string(proto_message=response)
             ch.basic_publish(exchange=self._exchange,
                              routing_key=props.reply_to,
                              properties=pika.BasicProperties(correlation_id=props.correlation_id),
-                             body=response_str)
+                             body=base64.b64encode(response_str))
         except Exception as err:
             self._logger.error("Error: " + str(err))
 
