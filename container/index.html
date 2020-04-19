@@ -505,7 +505,7 @@ its status to the backend, while <code>DataModelType.STREAMING</code> only suppo
 and the ones for the <code>DataModelType.BATCH</code> and <code>DataModelType.STREAMING</code> are in <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/batch/operator.py">batch/operator.py</a> and
 <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/streaming/operator.py">streaming/operator.py</a>, respectively.</p>
 </div>
-<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">operator_name</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">SortOrder</span><span class="o">.</span><span class="n">ORDER</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">operator_name</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -513,8 +513,6 @@ and the ones for the <code>DataModelType.BATCH</code> and <code>DataModelType.ST
 <li>Description: Construct an operator.</li>
 <li>Arguments:<ol>
 <li>operator_name: the name of the operator.</li>
-<li>order: the order of the dictionaries in operator node, default to be <code>SortOrder.ORDER</code>. This dictionaries 
-includes the one for the children and the one for the parents.</li>
 </ol>
 </li>
 </ul>
@@ -832,6 +830,24 @@ input will be ignored and only one thread is allowed.</li>
 <li>num_threads: number of threads used for the execution.</li>
 </ol>
 </li>
+</ul>
+<p>Also for <code>CronBatchContainer</code> and <code>CronStreamingContainer</code>, we do have</p>
+<div class="codehilite"><pre><span></span><code><span class="n">add_schedule</span><span class="p">(</span><span class="n">day_of_week</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: Add cron like schedule to the container. There could be multiple if schedules.</li>
+<li>Arguments: please check the related arguments in <a href="https://apscheduler.readthedocs.io/en/stable/modules/triggers/cron.html">apscheduler</a>.</li>
+</ul>
+<p>For <code>IntervalBatchContainer</code> and <code>IntervalStreamingContainer</code>, we do have</p>
+<div class="codehilite"><pre><span></span><code><span class="n">add_schedule</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minutes</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: Add interval schedule to the container. There could be multiple if schedules.</li>
+<li>Arguments: please check the related arguments in <a href="https://apscheduler.readthedocs.io/en/stable/modules/triggers/interval.html#module-apscheduler.triggers.interval">apscheduler</a>.</li>
 </ul>
                 
                   
