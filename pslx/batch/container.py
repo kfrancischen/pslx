@@ -28,22 +28,18 @@ class CronBatchContainer(DefaultBatchContainer):
 
     def __init__(self, container_name, ttl=-1):
         super().__init__(container_name, ttl=ttl)
-        self._scheduler_spec = {
-            'day_of_week': None,
-            'hour': None,
-            'minute': None,
-            'second': None,
-        }
+        self._scheduler_specs = []
 
-    def set_schedule(self, day_of_week, hour, minute=None, second=None):
-        self._scheduler_spec = {
+    def add_schedule(self, day_of_week, hour, minute=None, second=None):
+        scheduler_spec = {
             'day_of_week': day_of_week,
             'hour': hour,
             'minute': minute,
             'second': second,
         }
-        self._logger.info("Spec sets to " + str(self._scheduler_spec))
-        self.sys_log("Spec sets to " + str(self._scheduler_spec))
+        self._logger.info("Adding schedule spec: " + str(scheduler_spec))
+        self.sys_log("Adding schedule spec: " + str(scheduler_spec))
+        self._scheduler_specs.append(scheduler_spec)
 
     def _execute_wrapper(self, is_backfill, num_threads):
         self.unset_status()
@@ -53,17 +49,18 @@ class CronBatchContainer(DefaultBatchContainer):
 
     def execute(self, is_backfill=False, num_threads=1):
         background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
-        background_scheduler.add_job(
-            self._execute_wrapper,
-            'cron',
-            args=[is_backfill, num_threads],
-            day_of_week=self._scheduler_spec['day_of_week'],
-            hour=self._scheduler_spec['hour'],
-            minute=self._scheduler_spec['minute'],
-            second=self._scheduler_spec['second'],
-            max_instances=self._config['max_instances'],
-            misfire_grace_time=None
-        )
+        for scheduler_spec in self._scheduler_specs:
+            background_scheduler.add_job(
+                self._execute_wrapper,
+                'cron',
+                args=[is_backfill, num_threads],
+                day_of_week=scheduler_spec['day_of_week'],
+                hour=scheduler_spec['hour'],
+                minute=scheduler_spec['minute'],
+                second=scheduler_spec['second'],
+                max_instances=self._config['max_instances'],
+                misfire_grace_time=None
+            )
         background_scheduler.start()
         try:
             while True:
@@ -81,22 +78,18 @@ class IntervalBatchContainer(DefaultBatchContainer):
 
     def __init__(self, container_name, ttl=-1):
         super().__init__(container_name, ttl=ttl)
-        self._scheduler_spec = {
-            'days': 0,
-            'hours': 0,
-            'minutes': 0,
-            'seconds': 0,
-        }
+        self._scheduler_specs = []
 
-    def set_schedule(self, days, hours=0, minutes=0, seconds=0):
-        self._scheduler_spec = {
+    def add_schedule(self, days, hours=0, minutes=0, seconds=0):
+        scheduler_spec = {
             'days': days,
             'hours': hours,
             'minutes': minutes,
             'seconds': seconds,
         }
-        self._logger.info("Spec sets to " + str(self._scheduler_spec))
-        self.sys_log("Spec sets to " + str(self._scheduler_spec))
+        self._scheduler_specs.append(scheduler_spec)
+        self._logger.info("Spec sets to " + str(scheduler_spec))
+        self.sys_log("Spec sets to " + str(scheduler_spec))
 
     def _execute_wrapper(self, is_backfill, num_threads):
         self.unset_status()
@@ -106,17 +99,18 @@ class IntervalBatchContainer(DefaultBatchContainer):
 
     def execute(self, is_backfill=False, num_threads=1):
         background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
-        background_scheduler.add_job(
-            self._execute_wrapper,
-            'interval',
-            args=[is_backfill, num_threads],
-            days=self._scheduler_spec['days'],
-            hours=self._scheduler_spec['hours'],
-            minutes=self._scheduler_spec['minutes'],
-            seconds=self._scheduler_spec['seconds'],
-            max_instances=self._config['max_instances'],
-            misfire_grace_time=None
-        )
+        for scheduler_spec in self._scheduler_specs:
+            background_scheduler.add_job(
+                self._execute_wrapper,
+                'interval',
+                args=[is_backfill, num_threads],
+                days=scheduler_spec['days'],
+                hours=scheduler_spec['hours'],
+                minutes=scheduler_spec['minutes'],
+                seconds=scheduler_spec['seconds'],
+                max_instances=self._config['max_instances'],
+                misfire_grace_time=None
+            )
         background_scheduler.start()
         try:
             while True:

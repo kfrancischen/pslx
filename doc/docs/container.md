@@ -24,13 +24,11 @@ its status to the backend, while `DataModelType.STREAMING` only supports sending
     [streaming/operator.py](https://github.com/kfrancischen/pslx/blob/master/pslx/streaming/operator.py), respectively.
  
 ```python       
-__init__(operator_name, order=SortOrder.ORDER)
+__init__(operator_name)
 ```
 * Description: Construct an operator.
 * Arguments:
     1. operator_name: the name of the operator.
-    2. order: the order of the dictionaries in operator node, default to be `SortOrder.ORDER`. This dictionaries 
-    includes the one for the children and the one for the parents.
 
 ```python       
 set_data_model(model)
@@ -256,3 +254,20 @@ execute_now(is_backfill, num_threads)
     1. is_backfill: whether the execution runs in backfill mode. If so, the successful operators will be executed again.
     2. num_threads: number of threads used for the execution.
  
+ 
+ Also for `CronBatchContainer` and `CronStreamingContainer`, we do have
+ 
+```python
+add_schedule(day_of_week, hour, minute=None, second=None)
+```
+* Description: Add cron like schedule to the container. There could be multiple if schedules.
+* Arguments: please check the related arguments in [apscheduler](https://apscheduler.readthedocs.io/en/stable/modules/triggers/cron.html).
+
+For `IntervalBatchContainer` and `IntervalStreamingContainer`, we do have
+ 
+```python
+add_schedule(days, hours=0, minutes=0, seconds=0)
+```
+* Description: Add interval schedule to the container. There could be multiple if schedules.
+* Arguments: please check the related arguments in [apscheduler](https://apscheduler.readthedocs.io/en/stable/modules/triggers/interval.html#module-apscheduler.triggers.interval).
+
