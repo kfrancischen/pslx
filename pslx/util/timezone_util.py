@@ -45,10 +45,22 @@ class TimezoneUtil(object):
         return western_time.astimezone(TimezoneObj.EASTERN_TIMEZONE)
 
     @classmethod
+    def pst_to_utc(cls, western_time):
+        if western_time.tzinfo is None:
+            western_time = western_time.replace(tzinfo=TimezoneObj.WESTERN_TIMEZONE)
+        return western_time.astimezone(TimezoneObj.UTC_TIMEZONE)
+
+    @classmethod
     def est_to_pst(cls, eastern_time):
         if eastern_time.tzinfo is None:
             eastern_time = eastern_time.replace(tzinfo=TimezoneObj.EASTERN_TIMEZONE)
         return eastern_time.astimezone(TimezoneObj.WESTERN_TIMEZONE)
+
+    @classmethod
+    def est_to_utc(cls, eastern_time):
+        if eastern_time.tzinfo is None:
+            eastern_time = eastern_time.replace(tzinfo=TimezoneObj.EASTERN_TIMEZONE)
+        return eastern_time.astimezone(TimezoneObj.UTC_TIMEZONE)
 
     @classmethod
     def cur_time_in_local(cls):
