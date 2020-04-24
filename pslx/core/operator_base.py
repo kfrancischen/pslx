@@ -25,6 +25,7 @@ class OperatorBase(OrderedNodeBase):
         self._end_time = None
         self._persistent = False
         self._status = Status.IDLE
+        self._container = None
 
     def allow_container_snapshot(self):
         return self._config['allow_container_snapshot']
@@ -58,6 +59,15 @@ class OperatorBase(OrderedNodeBase):
 
     def get_status(self):
         return self._status
+
+    def bind_to_container(self, container):
+        self._container = container
+
+    def counter_increment(self, counter_name):
+        self.counter_increment_by_n(counter_name=counter_name, n=1)
+
+    def counter_increment_by_n(self, counter_name, n):
+        self._container.counter_increment(counter_name=self.get_node_name() + ':' + counter_name, n=n)
 
     def mark_as_done(self):
         self.sys_log("Mark status as done.")

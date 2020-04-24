@@ -11,6 +11,7 @@ class HelloWorldOp(BatchOperator):
 
     def execute_impl(self):
         # print(self.get_node_name())
+        self.counter_increment_by_n(counter_name='test_counter', n=1024)
         time.sleep(5)
         pass
 

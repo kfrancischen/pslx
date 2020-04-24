@@ -128,8 +128,9 @@ class PartitionerBase(StorageBase):
             self._logger.info("Tree updated, need force rebuilding the tree.")
             self.initialize_from_dir(dir_name=self.get_dir_name(), force=True)
 
-        rightmost_leaf_name = self._file_tree.get_rightmost_leaf()
-        if FileUtil.is_dir_empty(dir_name=rightmost_leaf_name):
+        leftmost_leaf_name, rightmost_leaf_name = (self._file_tree.get_leftmost_leaf(),
+                                                   self._file_tree.get_rightmost_leaf())
+        if FileUtil.is_dir_empty(dir_name=leftmost_leaf_name) and FileUtil.is_dir_empty(dir_name=rightmost_leaf_name):
             return True
         else:
             return False

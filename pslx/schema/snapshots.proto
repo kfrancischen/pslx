@@ -24,7 +24,7 @@ message OperatorSnapshot {
     string class_name = 8;
 }
 
-// the next will be 10
+// the next will be 12
 message ContainerSnapshot {
     string container_name = 1;
     map<string, OperatorSnapshot> operator_snapshot_map = 2;
@@ -35,6 +35,8 @@ message ContainerSnapshot {
     string class_name = 7;
     ModeType mode = 8;
     DataModelType data_model = 9;
+    string log_dir = 10;
+    map<string, int32> counters = 11;
 }
 
 // the next will be 5

@@ -1,3 +1,4 @@
+from collections import defaultdict
 from queue import Queue
 import threading
 
@@ -38,6 +39,7 @@ class ContainerBase(GraphBase):
         self._upstream_ops = []
         self._backend = None
         self._status = Status.IDLE
+        self._counter = defaultdict(int)
 
     def get_container_name(self):
         return self._container_name
@@ -86,6 +88,11 @@ class ContainerBase(GraphBase):
             self.sys_log("Cannot add more connections if the container is already initialized.")
             raise exception.ContainerAlreadyInitializedException
         self.add_direct_edge(from_node=from_operator, to_node=to_operator)
+        from_operator.bind_to_container(container=self)
+        to_operator.bind_to_container(container=self)
+
+    def counter_increment(self, counter_name, n):
+        self._counter[counter_name] = self._counter[counter_name] + n
 
     def add_upstream_op(self, op_snapshot_file_pattern):
         self._upstream_ops.append(op_snapshot_file_pattern)
@@ -101,6 +108,9 @@ class ContainerBase(GraphBase):
         snapshot.class_name = self.get_full_class_name()
         snapshot.mode = self._mode
         snapshot.data_model = self.DATA_MODEL
+        snapshot.log_dir = self._logger.get_log_dir()
+        for key, val in self._counter.items():
+            snapshot.counters[key] = val
         if self._start_time:
             snapshot.start_time = str(self._start_time)
         if self._end_time:

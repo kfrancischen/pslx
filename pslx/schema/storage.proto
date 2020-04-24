@@ -14,7 +14,7 @@ message ProtoTable {
     string updated_time = 5;
 }
 
-// the next will be 7
+// the next will be 11
 message ContainerBackendValue {
     string container_name = 1;
 
@@ -31,4 +31,8 @@ message ContainerBackendValue {
     ModeType mode = 4;
     DataModelType data_model = 5;
     string updated_time = 6;
+    string start_time = 7;
+    string end_time = 8;
+    string log_dir = 9;
+    map<string, int32> counters = 10;
 }

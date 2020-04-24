@@ -46,6 +46,11 @@ class ContainerBackendRPC(RPCBase):
         storage_value.mode = request.mode
         storage_value.data_model = request.data_model
         storage_value.updated_time = str(TimezoneUtil.cur_time_in_pst())
+        storage_value.start_time = request.start_time
+        storage_value.end_time = request.end_time
+        storage_value.log_dir = request.log_dir
+        for key in request.counters:
+            storage_value.counters[key] = request.counters[key]
         partitioner_dir = FileUtil.join_paths_to_dir_with_mode(
             root_dir=FileUtil.join_paths_to_dir(
                 root_dir=self._backend_folder,

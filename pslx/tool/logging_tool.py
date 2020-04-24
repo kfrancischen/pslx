@@ -11,6 +11,7 @@ from pslx.util.file_util import FileUtil
 class LoggingTool(object):
     def __init__(self, name, date=datetime.datetime.utcnow(),
                  ttl=EnvUtil.get_pslx_env_variable(var="PSLX_INTERNAL_TTL")):
+        self._log_file_dir = ''
         if name:
             self._start_date = date
             assert '-' not in name
@@ -32,6 +33,9 @@ class LoggingTool(object):
                 DiskLoggerLevel.DEBUG: self._logger.debug,
                 DiskLoggerLevel.ERROR: self._logger.error,
             }
+
+    def get_log_dir(self):
+        return self._log_file_dir
 
     def _new_logger(self):
         logging.basicConfig(level=logging.INFO)

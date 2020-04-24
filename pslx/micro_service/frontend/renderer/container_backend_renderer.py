@@ -82,7 +82,13 @@ def get_containers_info():
     return containers_info
 
 
-def get_operators_info(container_name, mode, data_model):
+def get_container_info(container_name, mode, data_model):
+    container_info = {
+        'log_dir': '',
+        'start_time': '',
+        'end_time': '',
+        'counter_info': [],
+    }
     operators_info = []
     backend_folder = FileUtil.join_paths_to_dir(
         root_dir=EnvUtil.get_pslx_env_variable('PSLX_DATABASE'),
@@ -95,7 +101,7 @@ def get_operators_info(container_name, mode, data_model):
     )
     pslx_frontend_logger.info("Checking folder " + container_folder + '.')
     if not FileUtil.does_dir_exist(dir_name=container_folder):
-        return operators_info
+        return container_info, operators_info
 
     sub_dirs = FileUtil.list_dirs_in_dir(dir_name=container_folder)
     if sub_dirs and 'ttl' in sub_dirs[0]:
@@ -110,7 +116,7 @@ def get_operators_info(container_name, mode, data_model):
         )
     pslx_frontend_logger.info("Checking folder " + container_folder + '.')
     if not FileUtil.does_dir_exist(dir_name=dir_name):
-        return operators_info
+        return container_info, operators_info
 
     partitioner_storage = pslx_partitioner_lru_cache.get(key=dir_name)
     if not partitioner_storage:
@@ -124,7 +130,7 @@ def get_operators_info(container_name, mode, data_model):
 
     pslx_frontend_logger.info("Checking folder " + latest_dir + '.')
     if not files:
-        return operators_info
+        return container_info, operators_info
 
     proto_table_storage = pslx_proto_table_lru_cache.get(key=files[0])
     if not proto_table_storage:
@@ -138,7 +144,16 @@ def get_operators_info(container_name, mode, data_model):
             'message_type': ContainerBackendValue,
         }
     )
-
+    container_info['log_dir'] = result_proto.log_dir
+    container_info['start_time'] = result_proto.start_time
+    container_info['end_time'] = result_proto.end_time
+    for key, val in dict(result_proto.counters).items():
+        container_info['counter_info'].append(
+            {
+                'name': key,
+                'count': val,
+            }
+        )
     for key, val in dict(result_proto.operator_info_map).items():
         operators_info.append({
             'operator_name': key,
@@ -149,7 +164,7 @@ def get_operators_info(container_name, mode, data_model):
             'num_of_dependencies': len(val.parents),
             'dependencies': ','.join(val.parents)
         })
-    return sorted(operators_info, key=lambda x: (x['num_of_dependencies'], x['operator_name']))
+    return container_info, sorted(operators_info, key=lambda x: (x['num_of_dependencies'], x['operator_name']))
 
 
 @pslx_frontend_ui_app.route("/container_backend.html", methods=['GET', 'POST'])
@@ -175,7 +190,7 @@ def view_container():
     container_name = request.args.get('container_name')
     mode = request.args.get('mode')
     data_model = request.args.get('data_model')
-    operators_info = get_operators_info(
+    container_info, operators_info = get_container_info(
         container_name=container_name,
         mode=mode,
         data_model=data_model
@@ -184,6 +199,7 @@ def view_container():
         return render_template(
             'container_backend_container_viewer.html',
             container_name=container_name,
+            container_info=container_info,
             operators_info=operators_info
         )
     except Exception as err:
@@ -191,5 +207,6 @@ def view_container():
         return render_template(
             'container_backend_container_viewer.html',
             container_name=str(err),
+            container_info=container_info,
             operators_info=[]
         )

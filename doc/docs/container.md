@@ -74,6 +74,21 @@ get_status()
 
 
 ```python       
+counter_increment(counter_name)
+```
+* Description: increment the counter name by 1.
+* Arguments:
+    1. counter_name: the name of the counter. The final counter name would be in the format of `operator_name:counter_name`.
+    
+```python       
+counter_increment_by_n(counter_name, n)
+```
+* Description: increment the counter name by n (n > 0).
+* Arguments:
+    1. counter_name: the name of the counter. The final counter name would be in the format of `operator_name:counter_name`.
+    2. n: the increment amount.
+    
+```python       
 mark_as_done()
 ```
 * Description: Mark the status of the operator as `Status.SUCCEEDED`.
