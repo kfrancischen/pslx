@@ -576,6 +576,29 @@ and children also will remove the operator.</li>
 <li>Description: Get the status of the operator.</li>
 <li>Return: the status of the operator, one of <code>Status.IDLE</code>, <code>Status.WAITING</code>, <code>Status.RUNNING</code>, <code>Status.SUCCEEDED</code> and <code>Status.FAILED</code>.</li>
 </ul>
+<div class="codehilite"><pre><span></span><code><span class="n">counter_increment</span><span class="p">(</span><span class="n">counter_name</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: increment the counter name by 1.</li>
+<li>Arguments:<ol>
+<li>counter_name: the name of the counter. The final counter name would be in the format of <code>operator_name:counter_name</code>.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">counter_increment_by_n</span><span class="p">(</span><span class="n">counter_name</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: increment the counter name by n (n &gt; 0).</li>
+<li>Arguments:<ol>
+<li>counter_name: the name of the counter. The final counter name would be in the format of <code>operator_name:counter_name</code>.</li>
+<li>n: the increment amount.</li>
+</ol>
+</li>
+</ul>
 <div class="codehilite"><pre><span></span><code><span class="n">mark_as_done</span><span class="p">()</span>
 </code></pre></div>
 
