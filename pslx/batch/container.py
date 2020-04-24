@@ -45,6 +45,7 @@ class CronBatchContainer(DefaultBatchContainer):
         self.unset_status()
         for node in self.get_nodes():
             node.unset_status()
+        self.unset_counters()
         super().execute(is_backfill=is_backfill, num_threads=num_threads)
 
     def execute(self, is_backfill=False, num_threads=1):
@@ -95,6 +96,7 @@ class IntervalBatchContainer(DefaultBatchContainer):
         self.unset_status()
         for node in self.get_nodes():
             node.unset_status()
+        self.unset_counters()
         super().execute(is_backfill=is_backfill, num_threads=num_threads)
 
     def execute(self, is_backfill=False, num_threads=1):

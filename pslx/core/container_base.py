@@ -94,6 +94,9 @@ class ContainerBase(GraphBase):
     def counter_increment(self, counter_name, n):
         self._counter[counter_name] = self._counter[counter_name] + n
 
+    def unset_counters(self):
+        self._counter.clear()
+
     def add_upstream_op(self, op_snapshot_file_pattern):
         self._upstream_ops.append(op_snapshot_file_pattern)
 

@@ -46,6 +46,7 @@ class CronStreamingContainer(DefaultStreamingContainer):
         self.unset_status()
         for node in self.get_nodes():
             node.unset_status()
+        self.unset_counters()
         super().execute(is_backfill=False, num_threads=1)
 
     def execute(self, is_backfill=False, num_threads=1):
@@ -89,6 +90,7 @@ class IntervalStreamingContainer(DefaultStreamingContainer):
         self.unset_status()
         for node in self.get_nodes():
             node.unset_status()
+        self.unset_counters()
         super().execute(is_backfill=False, num_threads=1)
 
     def execute(self, is_backfill=False, num_threads=1):
