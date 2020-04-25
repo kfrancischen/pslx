@@ -93,7 +93,8 @@ class FileUtil(object):
     @classmethod
     def list_files_in_dir(cls, dir_name):
         everything = cls._list_dir(dir_name=dir_name)
-        return [cls.normalize_file_name(item) for item in everything if cls.is_file(item)]
+        return [cls.normalize_file_name(item) for item in everything if cls.is_file(item) and '.lock' not in item and
+                '.DS_Store' not in item]
 
     @classmethod
     def list_dirs_in_dir(cls, dir_name):
