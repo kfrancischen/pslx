@@ -41,4 +41,4 @@ pslx_proto_table_lru_cache = LRUCacheTool(
 )
 
 from pslx.micro_service.frontend.renderer import index_renderer, file_viewer_renderer, proto_viewer_renderer, \
-    container_backend_renderer
+    container_backend_renderer, proto_table_viewer_renderer
