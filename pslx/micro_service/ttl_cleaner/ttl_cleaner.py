@@ -51,8 +51,10 @@ class TTLCleanerOp(BatchOperator):
                                 file_name=file_name
                             )
                         num_file_removed += 1
+                        self.counter_increment("num_file_removed")
                     except Exception as err:
                         num_file_failed += 1
+                        self.counter_increment("num_file_failed_to_be_removed")
                         self._logger.error("Removing file " + file_name + ' failed with err ' + str(err) + '.')
 
         self._logger.info("Total number of file removed in this round is " + str(num_file_removed) + '.')
@@ -71,9 +73,11 @@ class TTLCleanerOp(BatchOperator):
                     self._logger.info("Removing directory " + dir_name + '...')
                     try:
                         FileUtil.remove_dir_recursively(dir_name=dir_name)
+                        self.counter_increment("num_directory_removed")
                         num_dir_removed += 1
                     except Exception as err:
                         num_dir_failed += 1
+                        self.counter_increment("num_directory_failed_to_be_removed")
                         self._logger.error("Removing directory " + dir_name + ' failed with err ' + str(err) + '.')
 
         self._logger.info("Total number of directory removed in this round is " + str(num_dir_removed) + '.')
@@ -81,35 +85,31 @@ class TTLCleanerOp(BatchOperator):
                           str(num_dir_failed) + '.')
 
 
-class TTLCleaner(Base):
+class TTLCleaner(CronBatchContainer):
 
-    def __init__(self):
-        super().__init__()
-        self._container = CronBatchContainer(
-            container_name='PSLX_TTL_CLEANER_OPERATOR',
-            ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
-        )
+    def __init__(self, container_name='PSLX_TTL_CLEANER_CONTAINER'):
+        super().__init__(container_name=container_name, ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL'))
 
     def set_schedule(self, hour, minute):
-        self._container.add_schedule(
+        self.add_schedule(
             day_of_week='mon-sun',
             hour=hour,
             minute=minute
         )
 
     def set_max_instances(self, max_instances):
-        self._container.set_config(
+        self.set_config(
             config={
                 'max_instances': max_instances
             }
         )
 
-    def execute(self):
+    def start(self):
         ttl_cleaner_op = TTLCleanerOp()
         dummy_op = DummyUtil.dummy_batch_operator(operator_name=self.get_class_name() + '_dummy')
-        self._container.add_operator_edge(
+        self.add_operator_edge(
             from_operator=ttl_cleaner_op,
             to_operator=dummy_op
         )
-        self._container.initialize()
-        self._container.execute()
+        self.initialize()
+        self.execute()

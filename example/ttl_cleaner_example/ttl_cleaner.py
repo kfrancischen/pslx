@@ -7,4 +7,4 @@ if __name__ == "__main__":
         minute='*/10'
     )
     ttl_cleaner.set_max_instances(max_instances=5)
-    ttl_cleaner.execute()
+    ttl_cleaner.start()

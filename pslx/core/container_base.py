@@ -187,9 +187,9 @@ class ContainerBase(GraphBase):
                 else:
                     unblocked_blocker += 1
 
-        self.get_container_snapshot()
-        self.sys_log("Taking snapshot at start.")
         self.set_status(status=Status.RUNNING)
+        self.sys_log("Taking snapshot at start.")
+        self.get_container_snapshot()
         operator_status = {}
         if is_backfill:
             self.sys_log("Updating the status of operators from previous snapshots.")
