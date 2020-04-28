@@ -91,7 +91,7 @@ class TTLCleaner(Base):
         )
 
     def set_schedule(self, hour, minute):
-        self._container.set_schedule(
+        self._container.add_schedule(
             day_of_week='mon-sun',
             hour=hour,
             minute=minute
