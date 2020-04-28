@@ -179,12 +179,12 @@ class OperatorBase(OrderedNodeBase):
         unfinished_parent_ops = self.wait_for_upstream_status()
         while unfinished_parent_ops:
             time.sleep(TimeSleepObj.ONE_SECOND)
+            self.sys_log("Waiting for parent process to finish: " + ','.join(unfinished_parent_ops) + '.')
             unfinished_parent_ops = self.wait_for_upstream_status()
 
         if self.get_status() == Status.FAILED:
             self.sys_log("Operator already failed because of upstream jobs. Existing...")
             return
-        self.sys_log("Waiting for parent process to finish: " + ','.join(unfinished_parent_ops) + '.')
 
         self.set_status(status=Status.RUNNING)
         self._start_time = TimezoneUtil.cur_time_in_pst()

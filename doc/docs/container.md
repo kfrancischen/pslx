@@ -286,3 +286,5 @@ add_schedule(days, hours=0, minutes=0, seconds=0)
 * Description: Add interval schedule to the container. There could be multiple if schedules.
 * Arguments: please check the related arguments in [apscheduler](https://apscheduler.readthedocs.io/en/stable/modules/triggers/interval.html#module-apscheduler.triggers.interval).
 
+In addition, there exist two other containers `NonStoppingBatchContainer` and `NonStoppingStreamingContainer` that will continously
+execute again immediately after one successful execution.

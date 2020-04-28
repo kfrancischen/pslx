@@ -112,3 +112,23 @@ class IntervalStreamingContainer(DefaultStreamingContainer):
                 time.sleep(TimeSleepObj.ONE_SECOND)
         except (KeyboardInterrupt, SystemExit):
             background_scheduler.shutdown()
+
+
+class NonStoppingStreamingContainer(DefaultStreamingContainer):
+    DATA_MODEL = DataModelType.STREAMING
+
+    def __init__(self, container_name, ttl=-1):
+        super().__init__(container_name, ttl=ttl)
+
+    def _execute_wrapper(self):
+        self.unset_status()
+        for node in self.get_nodes():
+            node.unset_status()
+            node.unset_content()
+        self.unset_counters()
+        super().execute(is_backfill=False, num_threads=1)
+
+    def execute(self, is_backfill=False, num_threads=1):
+        while True:
+            self._logger.info("Entering executing loop. Starting one execution...")
+            self._execute_wrapper()

@@ -125,3 +125,23 @@ class IntervalBatchContainer(DefaultBatchContainer):
     def execute_now(self, is_backfill=False, num_threads=1):
         self.sys_log("Entering execute now mode. Container will run now only once.")
         self._execute_wrapper(is_backfill=is_backfill, num_threads=num_threads)
+
+
+class NonStoppingBatchContainer(DefaultBatchContainer):
+    DATA_MODEL = DataModelType.BATCH
+
+    def __init__(self, container_name, ttl=-1):
+        super().__init__(container_name, ttl=ttl)
+
+    def _execute_wrapper(self, num_threads):
+        self.unset_status()
+        for node in self.get_nodes():
+            node.unset_status()
+            node.unset_content()
+        self.unset_counters()
+        super().execute(is_backfill=False, num_threads=num_threads)
+
+    def execute(self, is_backfill=False, num_threads=1):
+        while True:
+            self._logger.info("Entering executing loop. Starting one execution...")
+            self._execute_wrapper(num_threads=num_threads)
