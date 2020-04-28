@@ -61,7 +61,8 @@ class ProtoUtil(object):
     def message_to_json(cls, proto_message):
         return json_format.MessageToJson(
             message=proto_message,
-            preserving_proto_field_name=True
+            preserving_proto_field_name=True,
+            including_default_value_fields=True
         )
 
     @classmethod

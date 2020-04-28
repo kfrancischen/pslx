@@ -101,7 +101,7 @@ message ProtoViewerRPCRequest {
 }
 
 
-// the next will be
+// the next will be 3
 message ProtoViewerRPCResponse {
     string proto_content = 1;
     FileInfo file_info = 2;
