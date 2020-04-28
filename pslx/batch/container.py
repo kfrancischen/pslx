@@ -45,6 +45,7 @@ class CronBatchContainer(DefaultBatchContainer):
         self.unset_status()
         for node in self.get_nodes():
             node.unset_status()
+            node.unset_content()
         self.unset_counters()
         super().execute(is_backfill=is_backfill, num_threads=num_threads)
 
@@ -96,6 +97,7 @@ class IntervalBatchContainer(DefaultBatchContainer):
         self.unset_status()
         for node in self.get_nodes():
             node.unset_status()
+            node.unset_content()
         self.unset_counters()
         super().execute(is_backfill=is_backfill, num_threads=num_threads)
 

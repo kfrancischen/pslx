@@ -90,6 +90,7 @@ class IntervalStreamingContainer(DefaultStreamingContainer):
         self.unset_status()
         for node in self.get_nodes():
             node.unset_status()
+            node.unset_content()
         self.unset_counters()
         super().execute(is_backfill=False, num_threads=1)
 

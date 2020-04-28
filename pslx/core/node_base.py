@@ -22,6 +22,9 @@ class NodeBase(Base):
     def get_content(self):
         return self._content
 
+    def unset_content(self):
+        self._content = None
+
     @classmethod
     def is_children_ordered(cls):
         return cls.IS_ORDERED
