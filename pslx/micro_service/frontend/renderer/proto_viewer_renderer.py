@@ -47,11 +47,11 @@ def view_proto():
                 root_certificate=client_map[server_url]['root_certificate']
             )
             result_ui = ''
-            for key, val in result.items():
+            for key in sorted(result.keys()):
                 if key == 'proto_content':
-                    result_ui += key + ':\n\n' + val + '\n\n'
+                    result_ui += key + ':\n\n' + result[key] + '\n\n'
                 else:
-                    result_ui += key + ': ' + val + '\n\n'
+                    result_ui += key + ': ' + result[key] + '\n\n'
             all_urls.remove(server_url)
             all_urls = [server_url] + all_urls
             return render_template(

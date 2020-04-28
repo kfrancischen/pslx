@@ -54,10 +54,11 @@ def view_proto_table():
             )
             result_content = ProtoUtil.text_to_message(message_type=ProtoTable, text_str=result['proto_content'])
             result_ui = ''
-            for key, val in dict(result_content.data).items():
+            result_content = dict(result_content.data)
+            for key in sorted(result_content.keys()):
                 proto_val = ProtoUtil.any_to_message(
                     message_type=value_type,
-                    any_message=val
+                    any_message=result_content[key]
                 )
                 result_ui += "ENTRY KEY:\n" + key + '\n\nENTRY VALUE:\n' + \
                              ProtoUtil.message_to_text(proto_message=proto_val) + '=' * 50 + '\n'
