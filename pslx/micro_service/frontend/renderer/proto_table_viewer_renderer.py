@@ -53,34 +53,38 @@ def view_proto_table():
                 modules=module
             )
             result_content = ProtoUtil.text_to_message(message_type=ProtoTable, text_str=result['proto_content'])
-            result_ui = ''
+            proto_contents = []
             result_content = dict(result_content.data)
             for key in sorted(result_content.keys()):
                 proto_val = ProtoUtil.any_to_message(
                     message_type=value_type,
                     any_message=result_content[key]
                 )
-                result_ui += "ENTRY KEY:\n" + key + '\n\nENTRY VALUE:\n' + \
-                             ProtoUtil.message_to_text(proto_message=proto_val) + '=' * 50 + '\n'
+                proto_contents.append(
+                    {
+                        'key': key,
+                        'val': ProtoUtil.message_to_text(proto_message=proto_val),
+                    }
+                )
 
             all_urls.remove(server_url)
             all_urls = [server_url] + all_urls
             return render_template(
                 'proto_table_viewer.html',
-                proto_content=result_ui,
+                proto_contents=proto_contents,
                 server_urls=all_urls
             )
         except Exception as err:
             pslx_frontend_logger.error("Got error: " + str(err))
             return render_template(
                 'proto_table_viewer.html',
-                proto_content="Got error: " + str(err),
+                proto_contents=[],
                 server_urls=all_urls
             )
     else:
         return render_template(
             'proto_table_viewer.html',
-            proto_content="",
+            proto_contents=[],
             selected_server_url='',
             server_urls=server_urls
         )

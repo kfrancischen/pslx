@@ -72,7 +72,8 @@ class ProtoUtil(object):
     @classmethod
     def message_to_text(cls, proto_message):
         return text_format.MessageToString(
-            message=proto_message
+            message=proto_message,
+            print_unknown_fields=True
         )
 
     @classmethod

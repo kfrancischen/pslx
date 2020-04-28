@@ -1,4 +1,3 @@
-from pslx.core.base import Base
 from pslx.batch.operator import BatchOperator
 from pslx.batch.container import CronBatchContainer
 from pslx.tool.filelock_tool import FileLockTool
