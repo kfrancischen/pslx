@@ -147,11 +147,11 @@ def get_container_info(container_name, mode, data_model):
     container_info['log_dir'] = result_proto.log_dir
     container_info['start_time'] = result_proto.start_time
     container_info['end_time'] = result_proto.end_time
-    for key, val in dict(result_proto.counters).items():
+    for key in sorted(dict(result_proto.counters).keys()):
         container_info['counter_info'].append(
             {
                 'name': key,
-                'count': val,
+                'count': result_proto.counters[key],
             }
         )
     for key, val in dict(result_proto.operator_info_map).items():
@@ -162,7 +162,7 @@ def get_container_info(container_name, mode, data_model):
             'start_time': val.start_time,
             'end_time': val.end_time,
             'num_of_dependencies': len(val.parents),
-            'dependencies': ','.join(val.parents)
+            'dependencies': ', '.join(val.parents)
         })
     return container_info, sorted(operators_info, key=lambda x: (x['num_of_dependencies'], x['operator_name']))
 

@@ -5,7 +5,7 @@ from pslx.tool.logging_tool import LoggingTool
 from pslx.util.dummy_util import DummyUtil
 from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
-from pslx.util.timezone_util import TimezoneUtil
+from pslx.util.timezone_util import TimezoneUtil, TimeSleepObj
 
 
 class TTLCleanerOp(BatchOperator):
@@ -45,7 +45,8 @@ class TTLCleanerOp(BatchOperator):
                 if ttl and start_time - FileUtil.get_file_modified_time(file_name=file_name) > ttl:
                     self._logger.info("Removing file " + file_name + '...')
                     try:
-                        with FileLockTool(protected_file_path=file_name, read_mode=True):
+                        with FileLockTool(protected_file_path=file_name, read_mode=True,
+                                          timeout=TimeSleepObj.ONE_TENTH_SECOND):
                             FileUtil.remove_file(
                                 file_name=file_name
                             )

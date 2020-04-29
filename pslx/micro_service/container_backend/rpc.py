@@ -1,5 +1,5 @@
 from pslx.micro_service.rpc.rpc_base import RPCBase
-from pslx.schema.enums_pb2 import DataModelType, Status
+from pslx.schema.enums_pb2 import DataModelType, Status, ModeType
 from pslx.schema.snapshots_pb2 import ContainerSnapshot
 from pslx.schema.storage_pb2 import ContainerBackendValue
 from pslx.storage.proto_table_storage import ProtoTableStorage
@@ -62,6 +62,8 @@ class ContainerBackendRPC(RPCBase):
             base_name=storage_value.container_name,
             ttl=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_TTL')
         )
+        if storage_value.mode == ModeType.TEST:
+            partitioner_dir = partitioner_dir.replace('PROD', 'TEST')
         storage = self._lru_cache_tool.get(key=partitioner_dir)
         if not storage:
             self.sys_log("Did not find the storage in cache. Making a new one...")

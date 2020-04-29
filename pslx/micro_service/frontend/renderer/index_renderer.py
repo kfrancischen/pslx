@@ -1,5 +1,4 @@
-import datetime
-from flask import render_template, request, abort, redirect, url_for, session
+from flask import render_template, request, abort, redirect, url_for
 from flask_login import login_user, logout_user
 from flask_login import LoginManager, login_required
 
@@ -8,13 +7,6 @@ from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logg
 from pslx.micro_service.frontend.model.model import User
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.rpc_util import RPCUtil
-
-
-@pslx_frontend_ui_app.before_request
-def make_session_permanent():
-    session.permanent = True
-    pslx_frontend_ui_app.permanent_session_lifetime = datetime.timedelta(minutes=10)
-    session.modified = True
 
 
 login_manager = LoginManager()

@@ -4,6 +4,7 @@ import os
 import shutil
 from pslx.core.exception import FileNotExistException, DirNotExistException
 from pslx.schema.enums_pb2 import ModeType
+from pslx.util.env_util import EnvUtil
 from pslx.util.proto_util import ProtoUtil
 
 
@@ -243,7 +244,7 @@ class FileUtil(object):
     @classmethod
     def create_container_snapshot_pattern(cls, container_name, container_class, container_ttl=-1):
         contain_snapshot_dir = cls.join_paths_to_dir_with_mode(
-            root_dir=os.getenv('DATABASE', 'database/'),
+            root_dir=EnvUtil.get_pslx_env_variable('PSLX_DATABASE'),
             base_name=container_class.get_class_name() + '__' + container_name,
             ttl=container_ttl
         )
@@ -255,7 +256,7 @@ class FileUtil(object):
     @classmethod
     def create_operator_snapshot_pattern(cls, container_name, operator_name, container_class, container_ttl=-1):
         contain_snapshot_dir = cls.join_paths_to_dir_with_mode(
-            root_dir=os.getenv('DATABASE', 'database/'),
+            root_dir=EnvUtil.get_pslx_env_variable('PSLX_DATABASE'),
             base_name=container_class.get_class_name() + '__' + container_name,
             ttl=container_ttl
         )
