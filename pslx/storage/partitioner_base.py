@@ -159,6 +159,13 @@ class PartitionerBase(StorageBase):
             dir_name_2_timestamp = FileUtil.parse_dir_to_timestamp(dir_name=dir_name_2)
             return dir_name_1_timestamp < dir_name_2_timestamp
 
+    def get_dir_in_timestamp(self, dir_name):
+        dir_name = dir_name.replace(self._file_tree.get_root_name(), '')
+        if dir_name:
+            return FileUtil.parse_dir_to_timestamp(dir_name=dir_name)
+        else:
+            return None
+
     def get_latest_dir(self):
         if self.is_empty():
             self.sys_log("Current partitioner is empty.")
@@ -409,7 +416,12 @@ class PartitionerBase(StorageBase):
         self._writer_status = Status.RUNNING
 
         if to_make_partition:
-            self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_pst())
+            if 'timezone' not in params or params['timezone'] == 'PST':
+                self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_pst())
+            elif params['timezone'] == 'UTC':
+                self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_utc())
+            elif params['timezone'] == 'EST':
+                self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_est())
 
         self.initialize_from_dir(dir_name=self._file_tree.get_root_name())
 

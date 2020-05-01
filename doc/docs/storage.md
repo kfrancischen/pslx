@@ -211,6 +211,14 @@ is_empty()
 
 
 ```python       
+get_dir_in_timestamp(dir_name)
+```
+* Description: Get the timestamp of the directory within the partitioner.
+* Arguments:
+    1. dir_name: the directory name.
+* Return: The formatted datetime object.
+
+```python       
 get_latest_dir()
 ```
 * Description: Get latest directory in timestamp contained in the partitioner.
@@ -276,7 +284,9 @@ write(data, params)
     params. The default `base_name` is `data` for `StorageType.DEFAULT_STORAGE` and `StorageType.FIXED_SIZE_STORAGE`, and `data.pb` for
     `StorageType.PROTO_TABLE_STORAGE`.
     2. If `make_partition` is in the params and it is set False, the partition will not make new partition for the new incoming data,
-    otherwise (`make_partition` unset or set True), it will make partition based on the current PST timestamp.
+    otherwise (`make_partition` unset or set True), it will make partition based on the current timestamp. If an extra `timezone` field is set,
+    the partitioner will make a new partition based on the timezone. Possible `timezone` could be `PST`, `EST` or `UTC`. If not set, the default
+    time zone is `PST`.
     
 !!! info
     Debug only.

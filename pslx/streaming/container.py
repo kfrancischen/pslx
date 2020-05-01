@@ -132,3 +132,4 @@ class NonStoppingStreamingContainer(DefaultStreamingContainer):
         while True:
             self._logger.info("Entering executing loop. Starting one execution...")
             self._execute_wrapper()
+            time.sleep(TimeSleepObj.HALF_SECOND)

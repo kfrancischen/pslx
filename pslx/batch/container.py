@@ -145,3 +145,4 @@ class NonStoppingBatchContainer(DefaultBatchContainer):
         while True:
             self._logger.info("Entering executing loop. Starting one execution...")
             self._execute_wrapper(num_threads=num_threads)
+            time.sleep(TimeSleepObj.HALF_SECOND)
