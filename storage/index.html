@@ -796,6 +796,18 @@ will store all the file nodes.</li>
 <li>Description: Check whether the partitioner is empty (no files).</li>
 <li>Return: True if empty and False otherwise.</li>
 </ul>
+<div class="codehilite"><pre><span></span><code><span class="n">get_dir_in_timestamp</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: Get the timestamp of the directory within the partitioner.</li>
+<li>Arguments:<ol>
+<li>dir_name: the directory name.</li>
+</ol>
+</li>
+<li>Return: The formatted datetime object.</li>
+</ul>
 <div class="codehilite"><pre><span></span><code><span class="n">get_latest_dir</span><span class="p">()</span>
 </code></pre></div>
 
@@ -890,7 +902,9 @@ as the value.</li>
 params. The default <code>base_name</code> is <code>data</code> for <code>StorageType.DEFAULT_STORAGE</code> and <code>StorageType.FIXED_SIZE_STORAGE</code>, and <code>data.pb</code> for
 <code>StorageType.PROTO_TABLE_STORAGE</code>.</li>
 <li>If <code>make_partition</code> is in the params and it is set False, the partition will not make new partition for the new incoming data,
-otherwise (<code>make_partition</code> unset or set True), it will make partition based on the current PST timestamp.</li>
+otherwise (<code>make_partition</code> unset or set True), it will make partition based on the current timestamp. If an extra <code>timezone</code> field is set,
+the partitioner will make a new partition based on the timezone. Possible <code>timezone</code> could be <code>PST</code>, <code>EST</code> or <code>UTC</code>. If not set, the default
+time zone is <code>PST</code>.</li>
 </ol>
 </li>
 </ul>
