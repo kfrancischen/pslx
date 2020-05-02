@@ -191,7 +191,9 @@ class OperatorBase(OrderedNodeBase):
         for child_node in self.get_children_nodes():
             if child_node.get_status() != Status.WAITING:
                 child_node.set_status(Status.WAITING)
-
+        if self._config['allow_container_snapshot']:
+            self.sys_log("Taking snapshot when status is updated.")
+            self._container.get_container_snapshot()
         try:
             if self._execute_impl() == Signal.STOP:
                 self._end_time = TimezoneUtil.cur_time_in_pst()

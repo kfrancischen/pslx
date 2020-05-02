@@ -416,7 +416,7 @@ class PartitionerBase(StorageBase):
         self._writer_status = Status.RUNNING
 
         if to_make_partition:
-            if 'timezone' not in params or params['timezone'] == 'PST':
+            if not params or 'timezone' not in params or params['timezone'] == 'PST':
                 self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_pst())
             elif params['timezone'] == 'UTC':
                 self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_utc())
