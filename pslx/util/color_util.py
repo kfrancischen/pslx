@@ -45,3 +45,7 @@ class ColorsUtil(object):
     @classmethod
     def make_foreground_red(cls, text):
         return ColorsUtil.Foreground.RED + text + ColorsUtil.RESET
+
+    @classmethod
+    def make_foreground_light_grey(cls, text):
+        return ColorsUtil.Foreground.LIGHT_GREY + text + ColorsUtil.RESET

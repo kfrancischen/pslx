@@ -46,7 +46,7 @@ class LoggingTool(object):
     def _new_logger(self):
         logging.basicConfig(
             level=logging.INFO,
-            format='[%(levelname).1s %(name)s]: %(message)s'
+            format='[%(levelname).1s %(name)s %(message)s'
         )
         self._logger = logging.getLogger(self._name)
         FileUtil.create_dir_if_not_exist(dir_name=self._log_file_dir)
@@ -66,20 +66,22 @@ class LoggingTool(object):
         if now.date() != self._start_date.date():
             self._start_date = now
             self._new_logger()
+
         try:
             caller = getframeinfo(stack()[2][0])
-            message = '[' + FileUtil.base_name(caller.filename) + ': ' + str(caller.lineno) + ' ' + \
-                      str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + 'PST] ' + string
+            message = ColorsUtil.make_foreground_light_grey(FileUtil.base_name(caller.filename) + ':' + str(
+                caller.lineno) + ' ' + str(TimezoneUtil.cur_time_in_pst())) + '] '
 
         except Exception as _:
-            message = '[' + str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + 'PST] ' + string
+            message = ColorsUtil.make_foreground_light_grey(str(TimezoneUtil.cur_time_in_pst())) + '] '
 
         if logger_level == DiskLoggerLevel.WARNING:
-            message = ColorsUtil.make_foreground_yellow(text=message)
+            message += ColorsUtil.make_foreground_yellow(text=string)
         elif logger_level == DiskLoggerLevel.ERROR:
-            message = ColorsUtil.make_foreground_red(text=message)
+            message += ColorsUtil.make_foreground_red(text=string)
         else:
-            message = ColorsUtil.make_foreground_green(text=message)
+            message += ColorsUtil.make_foreground_green(text=string)
+
         self._logger.setLevel(level=self._level_to_logger_level_map[logger_level])
         self._level_to_caller_map[logger_level](message)
 
