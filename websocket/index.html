@@ -38,7 +38,7 @@
     
     
       
-        <title>Tools - PSLX documentation</title>
+        <title>Websocket - PSLX documentation</title>
       
     
     
@@ -79,10 +79,6 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#documentation-for-logging-tool" tabindex="0" class="md-skip">
-        Skip to content
-      </a>
-    
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
@@ -105,7 +101,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Tools
+                Websocket
               
             </span>
           
@@ -226,11 +222,18 @@
       
       
 
+  
 
-  <li class="md-nav__item">
-    <a href="../websocket/" title="Websocket" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+    <a href="./" title="Websocket" class="md-nav__link md-nav__link--active">
       Websocket
     </a>
+    
   </li>
 
     
@@ -358,73 +361,11 @@
       
       
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        Tools
-      </label>
-    
-    <a href="./" title="Tools" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../tool/" title="Tools" class="md-nav__link">
       Tools
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary">
-  
-  
-  
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-for-logging-tool" class="md-nav__link">
-    Documentation for Logging Tool
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-for-file-locker" class="md-nav__link">
-    Documentation for File Locker
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-for-timeout-tool" class="md-nav__link">
-    Documentation for Timeout Tool
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-for-lru-caching" class="md-nav__link">
-    Documentation for LRU Caching
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-for-sql-tool" class="md-nav__link">
-    Documentation for SQL Tool
-  </a>
-  
-</li>
-      
-      
-      
-      
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
     
@@ -471,215 +412,50 @@
               </div>
             
             
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-<nav class="md-nav md-nav--secondary">
-  
-  
-  
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-for-logging-tool" class="md-nav__link">
-    Documentation for Logging Tool
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-for-file-locker" class="md-nav__link">
-    Documentation for File Locker
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-for-timeout-tool" class="md-nav__link">
-    Documentation for Timeout Tool
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-for-lru-caching" class="md-nav__link">
-    Documentation for LRU Caching
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-for-sql-tool" class="md-nav__link">
-    Documentation for SQL Tool
-  </a>
-  
-</li>
-      
-      
-      
-      
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/kfrancischen/pslx/edit/master/docs/tool.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/kfrancischen/pslx/edit/master/docs/websocket.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                  <h1>Tools</h1>
+                  <h1>Websocket</h1>
                 
-                <p>PSLX provides a set of tools to assist development, and they include</p>
-<ol>
-<li>Logging tool for ttl-ed logging.</li>
-<li>File locker to ensure the atomic io of files.</li>
-<li>LRU cache for caching.</li>
-<li>SQL tool for connecting to SQL database and executing queries.          </li>
-<li>Timeout tool to timeout a function in the main thread.</li>
-</ol>
-<h3 id="documentation-for-logging-tool">Documentation for Logging Tool<a class="headerlink" href="#documentation-for-logging-tool" title="Permanent link">&para;</a></h3>
-<p>To create a logging tool instance, please use</p>
-<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">ttl</span><span class="p">)</span>
+                <p>PSLX implements a basic Websocket client in <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/core/websocket_base.py">websocket_base.py</a>,
+where the following methods are supported:</p>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">ws_url</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
 </code></pre></div>
 
 
 <ul>
+<li>Description: Initialize a websocket client.</li>
 <li>Arguments:<ol>
-<li>name: the name of the logger instance.</li>
-<li>date: the date that this logger is created, default to the current time.</li>
-<li>ttl: the ttl policy, default to be -1.</li>
+<li>ws_url: the websocket URL.</li>
+<li>params: other parameters if necessary. It should be a dict.</li>
+<li>logger: the logger to record events.</li>
 </ol>
 </li>
 </ul>
-<p>The logger supports multiple level logging, and one can call these by using the following functions</p>
-<ol>
-<li>
-<p><code>info(string)</code>: for level = info.</p>
-</li>
-<li>
-<p><code>warning(string)</code>: for level = warning.</p>
-</li>
-<li><code>debug(string)</code>: for level = debug.</li>
-<li><code>error(string)</code>: for level = error.</li>
-</ol>
-<p>The logger output will be the format of </p>
-<p><strong>logger name</strong>_<strong>[file name: line number, timestamp]</strong>_<strong>the logged information</strong></p>
-<h3 id="documentation-for-file-locker">Documentation for File Locker<a class="headerlink" href="#documentation-for-file-locker" title="Permanent link">&para;</a></h3>
-<p>FileLocker tool is used in combination within a with sentence, for instance for reading a file:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">with</span> <span class="n">FileLocker</span><span class="p">(</span><span class="n">protected_file_path</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">read_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-        <span class="o">...</span> <span class="o">...</span>
-</code></pre></div>
-
-
-<p>and for writing data to a file:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">with</span> <span class="n">FileLocker</span><span class="p">(</span><span class="n">protected_file_path</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">read_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
-        <span class="o">...</span> <span class="o">...</span>
-</code></pre></div>
-
-
-<p>FileLocker will raise error if the <code>protected_file_path</code> does not exist if <code>read_mode</code> is True.</p>
-<h3 id="documentation-for-timeout-tool">Documentation for Timeout Tool<a class="headerlink" href="#documentation-for-timeout-tool" title="Permanent link">&para;</a></h3>
-<p>The TimeoutTool can only be used in the main thread in the following way:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">with</span> <span class="n">TimeoutTool</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-    <span class="o">...</span> <span class="o">...</span>
-</code></pre></div>
-
-
-<p>then the enclosed program will time out after 10 seconds.</p>
-<h3 id="documentation-for-lru-caching">Documentation for LRU Caching<a class="headerlink" href="#documentation-for-lru-caching" title="Permanent link">&para;</a></h3>
-<p>LRU caching supports the following methods:</p>
-<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">max_capacity</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="n">bind_to_op</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
 </code></pre></div>
 
 
 <ul>
-<li>Description: create a LRU cache with capacity equal max_capacity.</li>
+<li>Description: bind the websocket client to an operator.</li>
 <li>Arguments:<ol>
-<li>max_capacity: the maximum capacity of the LRU cache.</li>
+<li>op: the operator to be binded. In order to bind correctly, the operator needs to have a 
+   <code>msg_parser(message)</code> function defined as one of the methods.</li>
 </ol>
 </li>
 </ul>
-<div class="codehilite"><pre><span></span><code><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="n">start</span><span class="p">()</span>
 </code></pre></div>
 
 
 <ul>
-<li>Description: get the value stored in the key in the LRU cache.</li>
-<li>Arguments:<ol>
-<li>key: the key of the value. If key is not found, the function will return None.</li>
-</ol>
-</li>
-<li>Return: the value corresponding to the key.</li>
+<li>Description: start to consume the websocket.</li>
 </ul>
-<div class="codehilite"><pre><span></span><code><span class="nb">set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</code></pre></div>
-
-
-<ul>
-<li>Description: set the key value pair to the cache.</li>
-<li>Arguments:<ol>
-<li>key: the key of the pair to be inserted.</li>
-<li>value: the value of the pair to be inserted.</li>
-</ol>
-</li>
-</ul>
-<h3 id="documentation-for-sql-tool">Documentation for SQL Tool<a class="headerlink" href="#documentation-for-sql-tool" title="Permanent link">&para;</a></h3>
-<p>SQL tool supports the following methods:</p>
-<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">()</span>
-</code></pre></div>
-
-
-<ul>
-<li>Description: create an instance of the SQL tool.</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="n">connect_to_database</span><span class="p">(</span><span class="n">credential</span><span class="p">,</span> <span class="n">database</span><span class="p">)</span>
-</code></pre></div>
-
-
-<ul>
-<li>Description: connect to the database name with credential.</li>
-<li>Arguments:<ol>
-<li>credential: the credential used to connect to the database.</li>
-<li>database: the name of the database that is going to be connected to.</li>
-</ol>
-</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="n">execute_query_str</span><span class="p">(</span><span class="n">query_str</span><span class="p">,</span> <span class="n">modification</span><span class="p">)</span>
-</code></pre></div>
-
-
-<ul>
-<li>Description: execute the query string.</li>
-<li>Arguments:<ol>
-<li>query_str: the string of the query to be executed.</li>
-<li>modification: boolean indicating whether the query will modify the database.</li>
-</ol>
-</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="n">execute_query_file</span><span class="p">(</span><span class="n">query_file</span><span class="p">,</span> <span class="n">modification</span><span class="p">)</span>
-</code></pre></div>
-
-
-<ul>
-<li>Description: execute the query contained in a file.</li>
-<li>Arguments:<ol>
-<li>query_file: the file that contains the query.</li>
-<li>modification: boolean indicating whether the query will modify the database.</li>
-</ol>
-</li>
-</ul>
-<p>Note that before executing any queries, please connect to a database first.</p>
                 
                   
                 
@@ -701,7 +477,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../micro_services/frontend/" title="PSLX frontend" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href=".." title="Home" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -710,19 +486,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                PSLX frontend
+                Home
               </span>
             </div>
           </a>
         
         
-          <a href="../util/" title="Utilities" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../container/" title="Job Scheduling" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Utilities
+                Job Scheduling
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
