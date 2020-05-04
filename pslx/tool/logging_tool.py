@@ -69,10 +69,10 @@ class LoggingTool(object):
         try:
             caller = getframeinfo(stack()[2][0])
             message = '[' + FileUtil.base_name(caller.filename) + ': ' + str(caller.lineno) + ' ' + \
-                      str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + ' PST] ' + string
+                      str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + 'PST] ' + string
 
         except Exception as _:
-            message = '[' + str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + ' PST] ' + string
+            message = '[' + str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + 'PST] ' + string
 
         if logger_level == DiskLoggerLevel.WARNING:
             message = ColorsUtil.make_foreground_yellow(text=message)
