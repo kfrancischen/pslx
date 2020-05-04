@@ -1,8 +1,8 @@
 import logging
 import datetime
 from inspect import getframeinfo, stack
-import os
 from pslx.schema.enums_pb2 import DiskLoggerLevel
+from pslx.util.color_util import ColorsUtil
 from pslx.util.env_util import EnvUtil
 from pslx.util.timezone_util import TimezoneUtil
 from pslx.util.file_util import FileUtil
@@ -33,22 +33,32 @@ class LoggingTool(object):
                 DiskLoggerLevel.DEBUG: self._logger.debug,
                 DiskLoggerLevel.ERROR: self._logger.error,
             }
+            self._level_to_logger_level_map = {
+                DiskLoggerLevel.INFO: logging.INFO,
+                DiskLoggerLevel.WARNING: logging.WARNING,
+                DiskLoggerLevel.DEBUG: logging.DEBUG,
+                DiskLoggerLevel.ERROR: logging.ERROR,
+            }
 
     def get_log_dir(self):
         return self._log_file_dir
 
     def _new_logger(self):
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(
+            level=logging.INFO,
+            format='[%(levelname).1s %(name)s]: %(message)s'
+        )
         self._logger = logging.getLogger(self._name)
-        if not os.path.exists(self._log_file_dir):
-            os.makedirs(self._log_file_dir)
-        file_name = self._log_file_dir + '/' + self._name + '-' + str(self._start_date.year) + '-' + str(
-            self._start_date.month) + '-' + str(self._start_date.day)
+        FileUtil.create_dir_if_not_exist(dir_name=self._log_file_dir)
+        file_name = FileUtil.join_paths_to_file(
+            root_dir=self._log_file_dir,
+            base_name=self._name + '-' + str(self._start_date.year) + '-' + str(self._start_date.month) + '-' + str(
+                self._start_date.day) + '.log'
+        )
 
-        fh = logging.FileHandler(file_name + '.log')
-        fh.setLevel(logging.INFO)
-        formatter = logging.Formatter('%(levelname)s - %(message)s')
-        fh.setFormatter(formatter)
+        fh = logging.FileHandler(file_name)
+        for handler in self._logger.handlers:
+            self._logger.removeHandler(handler)
         self._logger.addHandler(fh)
 
     def _write_log(self, string, logger_level):
@@ -58,12 +68,20 @@ class LoggingTool(object):
             self._new_logger()
         try:
             caller = getframeinfo(stack()[2][0])
-            self._level_to_caller_map[logger_level](
-                ' [' + FileUtil.base_name(caller.filename) + ': ' + str(caller.lineno) + ', ' +
-                str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + ' PST]: ' + string)
+            message = '[' + FileUtil.base_name(caller.filename) + ': ' + str(caller.lineno) + ' ' + \
+                      str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + ' PST] ' + string
+
         except Exception as _:
-            self._level_to_caller_map[logger_level](' [' + str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) +
-                                                    ' PST]: ' + string)
+            message = '[' + str(TimezoneUtil.cur_time_in_pst().replace(tzinfo=None)) + ' PST] ' + string
+
+        if logger_level == DiskLoggerLevel.WARNING:
+            message = ColorsUtil.make_foreground_yellow(text=message)
+        elif logger_level == DiskLoggerLevel.ERROR:
+            message = ColorsUtil.make_foreground_red(text=message)
+        else:
+            message = ColorsUtil.make_foreground_green(text=message)
+        self._logger.setLevel(level=self._level_to_logger_level_map[logger_level])
+        self._level_to_caller_map[logger_level](message)
 
     def info(self, string):
         self._write_log(string=string, logger_level=DiskLoggerLevel.INFO)

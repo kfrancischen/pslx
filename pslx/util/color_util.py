@@ -18,7 +18,7 @@ class ColorsUtil(object):
         LIGHT_GREY = '\033[37m'
         DARK_GREY = '\033[90m'
         LIGHT_READ = '\033[91m'
-        LIGHT_GREEN='\033[92m'
+        LIGHT_GREEN = '\033[92m'
         YELLOW = '\033[93m'
         LIGHT_BLUE = '\033[94m'
         PINK = '\033[95m'
@@ -33,3 +33,15 @@ class ColorsUtil(object):
         PURPLE = '\033[45m'
         CYAN = '\033[46m'
         LIGHT_GREY = '\033[47m'
+
+    @classmethod
+    def make_foreground_green(cls, text):
+        return ColorsUtil.Foreground.GREEN + text + ColorsUtil.RESET
+
+    @classmethod
+    def make_foreground_yellow(cls, text):
+        return ColorsUtil.Foreground.YELLOW + text + ColorsUtil.RESET
+
+    @classmethod
+    def make_foreground_red(cls, text):
+        return ColorsUtil.Foreground.RED + text + ColorsUtil.RESET

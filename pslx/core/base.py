@@ -45,10 +45,13 @@ class Base(object):
         if EnvUtil.get_pslx_env_variable(var='PSLX_LOG'):
             try:
                 caller = getframeinfo(stack()[1][0])
-                print('[SYS-LOG] ' + ColorsUtil.Foreground.GREEN + '[file: %s]' % FileUtil.base_name(caller.filename) +
-                      ColorsUtil.RESET + ' ' + ColorsUtil.Foreground.YELLOW + '[line: %d]' % caller.lineno +
-                      ColorsUtil.RESET + ' ' + ColorsUtil.Foreground.RED + '[%s]' % str(TimezoneUtil.cur_time_in_pst())
-                      + ColorsUtil.RESET + ': ' + string)
+                print('[SYS-LOG] ' +
+                      ColorsUtil.make_foreground_green('[file: %s]' % FileUtil.base_name(caller.filename)) + ' ' +
+                      ColorsUtil.make_foreground_yellow('[line: %d]' % caller.lineno) + ' ' +
+                      ColorsUtil.make_foreground_red('[%s]' % str(TimezoneUtil.cur_time_in_pst())) + ': ' +
+                      string)
+
             except Exception as _:
-                print('[SYS-LOG] ' + ColorsUtil.Foreground.GREEN + ColorsUtil.RESET + ' ' + ColorsUtil.Foreground.RED +
-                      '[%s]' % str(TimezoneUtil.cur_time_in_pst()) + ColorsUtil.RESET + ': ' + string)
+                print('[SYS-LOG] ' +
+                      ColorsUtil.make_foreground_red('[%s]' % str(TimezoneUtil.cur_time_in_pst())) + ': ' +
+                      string)
