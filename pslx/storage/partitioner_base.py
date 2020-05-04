@@ -66,7 +66,7 @@ class PartitionerBase(StorageBase):
                     continue
 
                 if not from_scratch and self._cmp_dir_by_timestamp(
-                        dir_name_1=child_node_name, dir_name_2=self.get_latest_dir()):
+                        dir_name_1=child_node_name, dir_name_2=self._get_latest_dir_internal()):
                     continue
 
                 child_node = self._file_tree.find_node(node_name=child_node_name)
@@ -166,7 +166,14 @@ class PartitionerBase(StorageBase):
         else:
             return None
 
+    def _get_latest_dir_internal(self):
+        if not self._file_tree:
+            return ''
+        else:
+            return self._file_tree.get_leftmost_leaf()
+
     def get_latest_dir(self):
+        self.initialize_from_dir(dir_name=self.get_dir_name())
         if self.is_empty():
             self.sys_log("Current partitioner is empty.")
             return ''
@@ -174,6 +181,7 @@ class PartitionerBase(StorageBase):
             return self._file_tree.get_leftmost_leaf()
 
     def get_oldest_dir(self):
+        self.initialize_from_dir(dir_name=self.get_dir_name())
         if self.is_empty():
             self.sys_log("Current partitioner is empty.")
             return ''
@@ -272,13 +280,12 @@ class PartitionerBase(StorageBase):
             time.sleep(TimeSleepObj.ONE_SECOND)
 
         self._reader_status = Status.RUNNING
-        self.initialize_from_dir(dir_name=self._file_tree.get_root_name())
-        if self.is_empty():
+        self.sys_log("Read from the latest partition.")
+        latest_dir = self.get_latest_dir()
+        if not latest_dir:
             self.sys_log("Current partitioner is empty, cannot read anything.")
             return []
 
-        self.sys_log("Read from the latest partition.")
-        latest_dir = self.get_latest_dir()
         file_name = FileUtil.join_paths_to_file(root_dir=latest_dir, base_name=file_base_name)
         if not FileUtil.does_file_exist(file_name):
             self.sys_log("The file to read does not exist.")
@@ -318,12 +325,13 @@ class PartitionerBase(StorageBase):
             time.sleep(TimeSleepObj.ONE_SECOND)
 
         self._reader_status = Status.RUNNING
-        self.initialize_from_dir(dir_name=self._file_tree.get_root_name())
-        if self.is_empty():
-            self.sys_log("Current partitioner is empty, cannot read anything.")
-            return {}
 
         oldest_dir, latest_dir = self.get_oldest_dir(), self.get_latest_dir()
+        if not latest_dir or not oldest_dir:
+            if self.is_empty():
+                self.sys_log("Current partitioner is empty, cannot read anything.")
+                return {}
+
         oldest_dir = oldest_dir.replace(self._file_tree.get_root_name(), '')
         latest_dir = latest_dir.replace(self._file_tree.get_root_name(), '')
 

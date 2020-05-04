@@ -27,6 +27,7 @@ markdown_extensions:
 
 pages:
 - Home: 'index.md'
+- Websocket: 'websocket.md'
 - Job Scheduling: 'container.md'
 - Data Storage: 'storage.md'
 - RPC: 'rpc.md'

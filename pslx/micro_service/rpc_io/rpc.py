@@ -150,6 +150,7 @@ class RPCIO(RPCBase):
                 name=read_params['PartitionerStorageType']
             )
             storage = self.PARTITIONER_TYPE_TO_IMPL[partitioner_type]()
+            storage.initialize_from_dir(dir_name=request.dir_name)
             self._lru_cache_tool.set(
                 key=lru_key,
                 value=storage
@@ -166,7 +167,7 @@ class RPCIO(RPCBase):
             storage.set_underlying_storage(storage=proto_table_storage)
         else:
             read_params['num_line'] = -1
-        storage.initialize_from_dir(dir_name=request.dir_name)
+
         response = RPCIOResponse()
         if 'start_time' not in read_params:
             # calling read function

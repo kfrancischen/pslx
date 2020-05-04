@@ -70,13 +70,13 @@ class ContainerBackendRPC(RPCBase):
             storage = DailyPartitionerStorage()
             proto_table = ProtoTableStorage()
             storage.set_underlying_storage(storage=proto_table)
+            storage.initialize_from_dir(dir_name=partitioner_dir)
             self._lru_cache_tool.set(
                 key=partitioner_dir,
                 value=storage
             )
         else:
             self.sys_log("Found key in LRU cache.")
-        storage.initialize_from_dir(dir_name=partitioner_dir)
 
         storage.write(
             data={storage_value.container_name: storage_value},

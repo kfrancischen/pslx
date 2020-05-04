@@ -6,6 +6,9 @@ such as logging, file storage and caching. The library is written
 compatible to Python 3.7+. To use the program, please install the latest [protobuf compiler](https://github.com/protocolbuffers/protobuf)
 and [gRPC](https://grpc.io/) tools. This document covers the APIs of PSLX provided, and is organized as follows:
 
+#### Websocket
+* Base class for [Websocket](websocket.md), including abstract class for connection and interface for message parsing.
+
 #### Job Scheduling
 * Running ad-hoc and scheduled jobs with [operators and operator containers](container.md).
 

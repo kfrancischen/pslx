@@ -44,9 +44,9 @@ def get_containers_info():
                     partitioner_storage = pslx_partitioner_lru_cache.get(key=dir_name)
                     if not partitioner_storage:
                         partitioner_storage = MinutelyPartitionerStorage()
+                        partitioner_storage.initialize_from_dir(dir_name=dir_name)
                         pslx_partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
 
-                    partitioner_storage.initialize_from_dir(dir_name=dir_name)
                     latest_dir = partitioner_storage.get_latest_dir()
                     pslx_frontend_logger.info("Checking latest dir " + latest_dir + '.')
                     files = FileUtil.list_files_in_dir(dir_name=latest_dir)
@@ -121,10 +121,10 @@ def get_container_info(container_name, mode, data_model):
     partitioner_storage = pslx_partitioner_lru_cache.get(key=dir_name)
     if not partitioner_storage:
         partitioner_storage = MinutelyPartitionerStorage()
+        partitioner_storage.initialize_from_dir(dir_name=dir_name)
+        pslx_partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
 
     pslx_frontend_logger.info("Checking folder " + dir_name + '.')
-    partitioner_storage.initialize_from_dir(dir_name=dir_name)
-    pslx_partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
     latest_dir = partitioner_storage.get_latest_dir()
     files = FileUtil.list_files_in_dir(dir_name=latest_dir)
 
