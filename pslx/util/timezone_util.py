@@ -76,7 +76,7 @@ class TimezoneUtil(object):
 
     @classmethod
     def cur_time_in_est(cls):
-        return datetime.datetime.now(tz=TimezoneObj.WESTERN_TIMEZONE)
+        return datetime.datetime.now(tz=TimezoneObj.EASTERN_TIMEZONE)
 
     @classmethod
     def cur_time_from_str(cls, time_str):
