@@ -59,6 +59,9 @@ class LoggingTool(object):
         fh = logging.FileHandler(file_name)
         for handler in self._logger.handlers:
             self._logger.removeHandler(handler)
+
+        formatter = logging.Formatter('[%(levelname).1s %(name)s %(message)s')
+        fh.setFormatter(formatter)
         self._logger.addHandler(fh)
 
     def _write_log(self, string, logger_level):
