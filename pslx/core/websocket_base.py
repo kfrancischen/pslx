@@ -33,9 +33,21 @@ class WebsocketBase(Base):
     def bind_to_op(self, op):
         self._op = op
 
+    async def _check_connection(self):
+        if self._ws_connection.open:
+            self._logger.info('Connection established. Streaming will begin shortly.')
+            return True
+        elif self._ws_connection.close:
+            self._logger.warning('Connection was never opened and was closed.')
+            return False
+        else:
+            raise ConnectionError
+
     async def _connect(self):
         self._ws_connection = await websockets.client.connect(self._ws_url)
         self._logger.info("Connected to websocket..")
+        assert await self._check_connection()
+
         return self._ws_connection
 
     async def _close_stream(self):
@@ -55,11 +67,14 @@ class WebsocketBase(Base):
         else:
             self._op.msg_parser(message=message)
 
-    async def _receive_msg(self):
+    async def _receive_msg(self, return_message=False):
         while True:
             try:
                 message = await self._ws_connection.recv()
                 await self._parse_message(message=message)
-            except websockets.exceptions.ConnectionClosed:
-                self._logger.error("Websocket closed..")
+                if return_message:
+                    return message
+            except Exception as err:
+                self._logger.error("Receiving message with error: " + str(err) + '.')
                 await self._close_stream()
+                break
