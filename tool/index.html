@@ -417,6 +417,20 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#documentation-for-fetcher-tool" class="md-nav__link">
+    Documentation for Fetcher Tool
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-for-watcher-tool" class="md-nav__link">
+    Documentation for Watcher Tool
+  </a>
+  
+</li>
+      
       
       
       
@@ -517,6 +531,20 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#documentation-for-fetcher-tool" class="md-nav__link">
+    Documentation for Fetcher Tool
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-for-watcher-tool" class="md-nav__link">
+    Documentation for Watcher Tool
+  </a>
+  
+</li>
+      
       
       
       
@@ -544,7 +572,9 @@
 <li>File locker to ensure the atomic io of files.</li>
 <li>LRU cache for caching.</li>
 <li>SQL tool for connecting to SQL database and executing queries.          </li>
-<li>Timeout tool to timeout a function in the main thread.</li>
+<li>Timeout tool to timeout a function in the main thread.        </li>
+<li>Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).</li>
+<li>Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).</li>
 </ol>
 <h3 id="documentation-for-logging-tool">Documentation for Logging Tool<a class="headerlink" href="#documentation-for-logging-tool" title="Permanent link">&para;</a></h3>
 <p>To create a logging tool instance, please use</p>
@@ -572,7 +602,7 @@
 <li><code>error(string)</code>: for level = error.</li>
 </ol>
 <p>The logger output will be the format of </p>
-<p><strong>logger name</strong>_<strong>[file name: line number, timestamp]</strong>_<strong>the logged information</strong></p>
+<p><code>[initial_letter_of_logger_level logger_name file_name:line_number timestamp]: the logged information</code></p>
 <h3 id="documentation-for-file-locker">Documentation for File Locker<a class="headerlink" href="#documentation-for-file-locker" title="Permanent link">&para;</a></h3>
 <p>FileLocker tool is used in combination within a with sentence, for instance for reading a file:</p>
 <div class="codehilite"><pre><span></span><code><span class="k">with</span> <span class="n">FileLocker</span><span class="p">(</span><span class="n">protected_file_path</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">read_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -680,6 +710,102 @@
 </li>
 </ul>
 <p>Note that before executing any queries, please connect to a database first.</p>
+<h3 id="documentation-for-fetcher-tool">Documentation for Fetcher Tool<a class="headerlink" href="#documentation-for-fetcher-tool" title="Permanent link">&para;</a></h3>
+<p>Tool to fetch the latest, oldest data or data within a time range. This includes implementation of <code>LocalPartitionerFetcher</code>
+ where the partitioner data is local or a <code>RemotePartitionerFetcher</code> what fetches the data from a remote server through rpc.</p>
+<p>To initialize <code>LocalPartitionerFetcher</code></p>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">partitioner</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: initialize a <code>LocalPartitionerFetcher</code></li>
+<li>Arguments:<ol>
+<li>partitioner: the partitioner object to fetch. It needs to have underlying storage of a <code>ProtoTableStorage</code>.</li>
+</ol>
+</li>
+</ul>
+<p>To initialize <code>RemotePartitionerFetcher</code></p>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">partitioner</span><span class="p">,</span> <span class="n">server_url</span><span class="p">,</span> <span class="n">root_certificate</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: initialize a <code>RemotePartitionerFetcher</code></li>
+<li>Arguments:<ol>
+<li>partitioner_dir: the remote partitioner directory to fetch. It needs to have underlying storage of a <code>ProtoTableStorage</code>.</li>
+<li>server_url: the remote server url.</li>
+<li>root_certificate: the root_certificate for authentication.</li>
+</ol>
+</li>
+</ul>
+<p>Both <code>LocalPartitionerFetcher</code> and <code>RemotePartitionerFetcher</code> have the following implementations:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">fetch_latest</span><span class="p">()</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: fetch the latest data entry, sorted by the key.</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">fetch_oldest</span><span class="p">()</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: fetch the oldest data entry, sorted by the key.</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">fetch_range</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: fetch the data whose key is within the range.</li>
+</ul>
+<h3 id="documentation-for-watcher-tool">Documentation for Watcher Tool<a class="headerlink" href="#documentation-for-watcher-tool" title="Permanent link">&para;</a></h3>
+<p>Tool to monitor a specific latest key. This includes implementation of <code>LocalPartitionerWatcher</code>
+ where the partitioner data is local or a <code>RemotePartitionerWatcher</code> what watches the data from a remote server through rpc.</p>
+<p>To initialize <code>LocalPartitionerWatcher</code></p>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">partitioner</span><span class="p">,</span> <span class="n">delay</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: initialize a <code>LocalPartitionerWatcher</code></li>
+<li>Arguments:<ol>
+<li>partitioner: the partitioner object to watch. It needs to have underlying storage of a <code>ProtoTableStorage</code>.</li>
+<li>delay: the seconds between each trial.</li>
+<li>timeout: the seconds of watch timeout.</li>
+</ol>
+</li>
+</ul>
+<p>To initialize <code>RemotePartitionerWatcher</code></p>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">partitioner</span><span class="p">,</span> <span class="n">server_url</span><span class="p">,</span> <span class="n">root_certificate</span><span class="p">,</span> <span class="n">delay</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: initialize a <code>RemotePartitionerWatcher</code></li>
+<li>Arguments:<ol>
+<li>partitioner_dir: the remote partitioner directory to watch. It needs to have underlying storage of a <code>ProtoTableStorage</code>.</li>
+<li>server_url: the remote server url.</li>
+<li>root_certificate: the root_certificate for authentication.</li>
+<li>delay: the seconds between each trial.</li>
+<li>timeout: the seconds of watch timeout.</li>
+</ol>
+</li>
+</ul>
+<p>Both <code>LocalPartitionerWatcher</code> and <code>RemotePartitionerWatcher</code> have the following implementations:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">watch_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: watch for the appearance of the given key in the latest partition.</li>
+<li>Arguments:<ol>
+<li>key: the key to watch.</li>
+</ol>
+</li>
+</ul>
                 
                   
                 
