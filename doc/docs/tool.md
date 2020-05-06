@@ -4,7 +4,10 @@ PSLX provides a set of tools to assist development, and they include
 2. File locker to ensure the atomic io of files.
 3. LRU cache for caching.
 4. SQL tool for connecting to SQL database and executing queries.          
-5. Timeout tool to timeout a function in the main thread.
+5. Timeout tool to timeout a function in the main thread.        
+6. Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
+6. Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
+
 
 ### Documentation for Logging Tool
 To create a logging tool instance, please use
@@ -26,7 +29,7 @@ The logger supports multiple level logging, and one can call these by using the 
 
 The logger output will be the format of 
 
-**logger name**\_**\[file name: line number, timestamp\]**\_**the logged information**
+`[initial_letter_of_logger_level logger_name file_name:line_number timestamp]: the logged information`
 
 ### Documentation for File Locker
 FileLocker tool is used in combination within a with sentence, for instance for reading a file:
@@ -108,3 +111,80 @@ execute_query_file(query_file, modification)
     2. modification: boolean indicating whether the query will modify the database.
     
 Note that before executing any queries, please connect to a database first.
+
+### Documentation for Fetcher Tool
+Tool to fetch the latest, oldest data or data within a time range. This includes implementation of `LocalPartitionerFetcher`
+ where the partitioner data is local or a `RemotePartitionerFetcher` what fetches the data from a remote server through rpc.
+
+To initialize `LocalPartitionerFetcher`
+```python
+__init__(partitioner)
+```
+* Description: initialize a `LocalPartitionerFetcher`
+* Arguments:
+    1. partitioner: the partitioner object to fetch. It needs to have underlying storage of a `ProtoTableStorage`.
+
+
+To initialize `RemotePartitionerFetcher`
+```python
+__init__(partitioner, server_url, root_certificate)
+```
+* Description: initialize a `RemotePartitionerFetcher`
+* Arguments:
+    1. partitioner_dir: the remote partitioner directory to fetch. It needs to have underlying storage of a `ProtoTableStorage`.
+    2. server_url: the remote server url.
+    3. root_certificate: the root_certificate for authentication.
+    
+Both `LocalPartitionerFetcher` and `RemotePartitionerFetcher` have the following implementations:
+```python
+fetch_latest()
+```
+* Description: fetch the latest data entry, sorted by the key.
+
+```python
+fetch_oldest()
+```
+* Description: fetch the oldest data entry, sorted by the key.
+
+
+```python
+fetch_range(start_time, end_time)
+```
+* Description: fetch the data whose key is within the range.
+
+
+### Documentation for Watcher Tool
+Tool to monitor a specific latest key. This includes implementation of `LocalPartitionerWatcher`
+ where the partitioner data is local or a `RemotePartitionerWatcher` what watches the data from a remote server through rpc.
+
+To initialize `LocalPartitionerWatcher`
+```python
+__init__(partitioner, delay, timeout)
+```
+* Description: initialize a `LocalPartitionerWatcher`
+* Arguments:
+    1. partitioner: the partitioner object to watch. It needs to have underlying storage of a `ProtoTableStorage`.
+    2. delay: the seconds between each trial.
+    3. timeout: the seconds of watch timeout.
+
+
+To initialize `RemotePartitionerWatcher`
+```python
+__init__(partitioner, server_url, root_certificate, delay, timeout)
+```
+* Description: initialize a `RemotePartitionerWatcher`
+* Arguments:
+    1. partitioner_dir: the remote partitioner directory to watch. It needs to have underlying storage of a `ProtoTableStorage`.
+    2. server_url: the remote server url.
+    3. root_certificate: the root_certificate for authentication.
+    4. delay: the seconds between each trial.
+    5. timeout: the seconds of watch timeout.
+
+    
+Both `LocalPartitionerWatcher` and `RemotePartitionerWatcher` have the following implementations:
+```python
+watch_key(key)
+```
+* Description: watch for the appearance of the given key in the latest partition.
+* Arguments:
+    1. key: the key to watch.
