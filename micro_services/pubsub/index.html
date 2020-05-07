@@ -38,7 +38,7 @@
     
     
       
-        <title>Message Queue - PSLX documentation</title>
+        <title>Publisher/Subscriber - PSLX documentation</title>
       
     
     
@@ -101,7 +101,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Message Queue
+                Publisher/Subscriber
               
             </span>
           
@@ -327,6 +327,18 @@
           
           
 
+
+  <li class="md-nav__item">
+    <a href="../message_queue/" title="Message Queue" class="md-nav__link">
+      Message Queue
+    </a>
+  </li>
+
+        
+          
+          
+          
+
   
 
 
@@ -335,22 +347,10 @@
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
     
-    <a href="./" title="Message Queue" class="md-nav__link md-nav__link--active">
-      Message Queue
-    </a>
-    
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../pubsub/" title="Publisher/Subscriber" class="md-nav__link">
+    <a href="./" title="Publisher/Subscriber" class="md-nav__link md-nav__link--active">
       Publisher/Subscriber
     </a>
+    
   </li>
 
         
@@ -431,108 +431,111 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/kfrancischen/pslx/edit/master/docs/micro_services/message_queue.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/kfrancischen/pslx/edit/master/docs/micro_services/pubsub.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                  <h1>Message Queue</h1>
+                  <h1>Publisher/Subscriber</h1>
                 
-                <p>PSLX also implements a message queue API, the application needs to inherit <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/message_queue/queue_base.py">queue_base.py</a>,
-especially overriding the function of <code>get_response_and_status_impl</code> that takes a user defined request proto message to 
-a user defined response message. If the queue does not need response, please return None as the response.</p>
-<p>An <a href="https://github.com/kfrancischen/pslx/blob/master/example/message_queue_example/consumer.py">example</a> of this implementation of a queue for instant messaging including its consumer (like the RPC implementation) is </p>
-<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
-
-<span class="kn">from</span> <span class="nn">pslx.micro_service.message_queue.queue_base</span> <span class="kn">import</span> <span class="n">QueueBase</span>
-<span class="kn">from</span> <span class="nn">pslx.micro_service.message_queue.generic_consumer</span> <span class="kn">import</span> <span class="n">GenericConsumer</span>
-<span class="kn">from</span> <span class="nn">pslx.schema.enums_pb2</span> <span class="kn">import</span> <span class="n">Status</span>
-<span class="kn">from</span> <span class="nn">pslx.schema.rpc_pb2</span> <span class="kn">import</span> <span class="n">InstantMessagingRPCRequest</span>
-<span class="kn">from</span> <span class="nn">pslx.storage.partitioner_storage</span> <span class="kn">import</span> <span class="n">DailyPartitionerStorage</span>
-<span class="kn">from</span> <span class="nn">pslx.util.env_util</span> <span class="kn">import</span> <span class="n">EnvUtil</span>
-<span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
-<span class="kn">from</span> <span class="nn">pslx.util.timezone_util</span> <span class="kn">import</span> <span class="n">TimezoneUtil</span>
-
-
-<span class="k">class</span> <span class="nc">SlackQueue</span><span class="p">(</span><span class="n">QueueBase</span><span class="p">):</span>
-    <span class="n">REQUEST_MESSAGE_TYPE</span> <span class="o">=</span> <span class="n">InstantMessagingRPCRequest</span>
-
-    <span class="k">def</span> <span class="nf">get_response_and_status_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
-        <span class="n">header</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s2">&quot;application/x-www-form-urlencoded&quot;</span><span class="p">,</span>
-            <span class="s1">&#39;Cache-Control&#39;</span><span class="p">:</span> <span class="s2">&quot;no-cache&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
-        <span class="n">slack_payload</span> <span class="o">=</span> <span class="s2">&quot;payload={&#39;text&#39;:&#39;&quot;</span> <span class="o">+</span> <span class="n">request</span><span class="o">.</span><span class="n">message</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Current time is &quot;</span>\
-                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">TimezoneUtil</span><span class="o">.</span><span class="n">cur_time_in_pst</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;&#39;}&quot;</span>
-        <span class="n">status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">SUCCEEDED</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-                <span class="n">request</span><span class="o">.</span><span class="n">webhook_url</span><span class="p">,</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">slack_payload</span><span class="p">,</span>
-                <span class="n">headers</span><span class="o">=</span><span class="n">header</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Slack failed to send message with err &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
-            <span class="n">status</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAILED</span>
-        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">status</span>
-
+                <p>PSLX implements the basic Pubsub model through Rabbitmq. The publisher is directly usable as all the basic building blocks are already implemented.
+In addition, here the message that goes through the pubsub model needs to be a proto message. Here is an example of publisher:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">pslx.micro_service.pubsub.publisher</span> <span class="kn">import</span> <span class="n">Publisher</span>
+<span class="kn">from</span> <span class="nn">pslx.util.timezone_util</span> <span class="kn">import</span> <span class="n">TimeSleepObj</span>
+<span class="kn">from</span> <span class="nn">pslx.schema.rpc_pb2</span> <span class="kn">import</span> <span class="n">HealthCheckerRequest</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">consumer</span> <span class="o">=</span> <span class="n">GenericConsumer</span><span class="p">(</span>
+    <span class="n">publisher1</span> <span class="o">=</span> <span class="n">Publisher</span><span class="p">(</span>
+        <span class="n">exchange_name</span><span class="o">=</span><span class="s1">&#39;test_exchange_1&#39;</span><span class="p">,</span>
+        <span class="n">topic_name</span><span class="o">=</span><span class="s1">&#39;test1&#39;</span><span class="p">,</span>
         <span class="n">connection_str</span><span class="o">=</span><span class="s1">&#39;amqp://guest:guest@localhost:5672&#39;</span>
     <span class="p">)</span>
 
-    <span class="n">partitioner_dir</span> <span class="o">=</span> <span class="n">FileUtil</span><span class="o">.</span><span class="n">join_paths_to_dir_with_mode</span><span class="p">(</span>
-        <span class="n">root_dir</span><span class="o">=</span><span class="n">FileUtil</span><span class="o">.</span><span class="n">join_paths_to_dir</span><span class="p">(</span>
-                    <span class="n">root_dir</span><span class="o">=</span><span class="n">EnvUtil</span><span class="o">.</span><span class="n">get_pslx_env_variable</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="s1">&#39;PSLX_DATABASE&#39;</span><span class="p">),</span>
-                    <span class="n">base_name</span><span class="o">=</span><span class="s1">&#39;msg_queue&#39;</span>
-                <span class="p">),</span>
-        <span class="n">base_name</span><span class="o">=</span><span class="s1">&#39;msg_queue_example&#39;</span><span class="p">,</span>
-        <span class="n">ttl</span><span class="o">=</span><span class="s1">&#39;1h&#39;</span>
-    <span class="p">)</span>
-    <span class="n">storage</span> <span class="o">=</span> <span class="n">DailyPartitionerStorage</span><span class="p">()</span>
-    <span class="n">storage</span><span class="o">.</span><span class="n">initialize_from_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="o">=</span><span class="n">partitioner_dir</span><span class="p">)</span>
+    <span class="n">message1</span> <span class="o">=</span> <span class="n">HealthCheckerRequest</span><span class="p">()</span>
+    <span class="n">message1</span><span class="o">.</span><span class="n">server_url</span> <span class="o">=</span> <span class="s1">&#39;test1&#39;</span>
+    <span class="n">message1</span><span class="o">.</span><span class="n">secure</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="n">slack_queue</span> <span class="o">=</span> <span class="n">SlackQueue</span><span class="p">(</span>
-        <span class="n">queue_name</span><span class="o">=</span><span class="s1">&#39;slack_queue&#39;</span><span class="p">,</span>
-        <span class="n">queue_storage</span><span class="o">=</span><span class="n">storage</span>
+    <span class="n">publisher2</span> <span class="o">=</span> <span class="n">Publisher</span><span class="p">(</span>
+        <span class="n">exchange_name</span><span class="o">=</span><span class="s1">&#39;test_exchange_2&#39;</span><span class="p">,</span>
+        <span class="n">topic_name</span><span class="o">=</span><span class="s1">&#39;test2&#39;</span><span class="p">,</span>
+        <span class="n">connection_str</span><span class="o">=</span><span class="s1">&#39;amqp://guest:guest@localhost:5672&#39;</span>
     <span class="p">)</span>
-    <span class="n">consumer</span><span class="o">.</span><span class="n">bind_queue</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;slack_exchange&#39;</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="n">slack_queue</span><span class="p">)</span>
-    <span class="n">consumer</span><span class="o">.</span><span class="n">start_consumer</span><span class="p">()</span>
+
+    <span class="n">message2</span> <span class="o">=</span> <span class="n">HealthCheckerRequest</span><span class="p">()</span>
+    <span class="n">message2</span><span class="o">.</span><span class="n">server_url</span> <span class="o">=</span> <span class="s1">&#39;test2&#39;</span>
+    <span class="n">message2</span><span class="o">.</span><span class="n">secure</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Publish message...&quot;</span><span class="p">)</span>
+        <span class="n">publisher1</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">message1</span><span class="p">)</span>
+        <span class="n">publisher2</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">message2</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">TimeSleepObj</span><span class="o">.</span><span class="n">ONE_SECOND</span><span class="p">)</span>
 </code></pre></div>
 
 
-<p>To use the message queue, one can also follow the <a href="">example code</a> for an example of producer:</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.message_queue.producer_base</span> <span class="kn">import</span> <span class="n">ProducerBase</span>
-<span class="kn">from</span> <span class="nn">pslx.schema.enums_pb2</span> <span class="kn">import</span> <span class="n">InstantMessagingType</span>
-<span class="kn">from</span> <span class="nn">pslx.schema.rpc_pb2</span> <span class="kn">import</span> <span class="n">InstantMessagingRPCRequest</span>
+<p>For subscriber, the user needs to wrap it in an operator with the following function defined:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">pubsub_parse_message</span><span class="p">(</span><span class="n">exchange_name</span><span class="p">,</span> <span class="n">topic_name</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+</code></pre></div>
 
 
-<span class="k">class</span> <span class="nc">SlackProducer</span><span class="p">(</span><span class="n">ProducerBase</span><span class="p">):</span>
+<p>which takes in the exchange and topic (routing_key) of the message. The purpose of this function to allow user to have the access of handling the message. </p>
+<p>To bind the subscriber to the operator, one can use:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">bind_to_op</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+</code></pre></div>
 
-    <span class="k">def</span> <span class="nf">send_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel_name</span><span class="p">,</span> <span class="n">webhook_url</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-        <span class="n">request</span> <span class="o">=</span> <span class="n">InstantMessagingRPCRequest</span><span class="p">()</span>
-        <span class="n">request</span><span class="o">.</span><span class="n">is_test</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="n">request</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">InstantMessagingType</span><span class="o">.</span><span class="n">SLACK</span>
-        <span class="n">request</span><span class="o">.</span><span class="n">channel_name</span> <span class="o">=</span> <span class="n">channel_name</span>
-        <span class="n">request</span><span class="o">.</span><span class="n">webhook_url</span> <span class="o">=</span> <span class="n">webhook_url</span>
-        <span class="n">request</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send_request</span><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">)</span>
+
+<p>An example subscriber of the above publisher is</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.streaming.operator</span> <span class="kn">import</span> <span class="n">StreamingOperator</span>
+<span class="kn">from</span> <span class="nn">pslx.streaming.container</span> <span class="kn">import</span> <span class="n">DefaultStreamingContainer</span>
+<span class="kn">from</span> <span class="nn">pslx.micro_service.pubsub.subscriber_base</span> <span class="kn">import</span> <span class="n">Subscriber</span>
+<span class="kn">from</span> <span class="nn">pslx.schema.rpc_pb2</span> <span class="kn">import</span> <span class="n">HealthCheckerRequest</span>
+<span class="kn">from</span> <span class="nn">pslx.util.dummy_util</span> <span class="kn">import</span> <span class="n">DummyUtil</span>
+
+
+<span class="k">class</span> <span class="nc">SubscriberExampleOp</span><span class="p">(</span><span class="n">StreamingOperator</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">operator_name</span><span class="o">=</span><span class="s1">&#39;subscriber_example_op&#39;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">pubsub_msg_parser</span><span class="p">(</span><span class="n">exchange_name</span><span class="p">,</span> <span class="n">topic_name</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">exchange_name</span><span class="p">,</span> <span class="n">topic_name</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">execute_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">subscriber</span> <span class="o">=</span> <span class="n">Subscriber</span><span class="p">(</span>
+            <span class="n">connection_str</span><span class="o">=</span><span class="s1">&#39;amqp://guest:guest@localhost:5672&#39;</span>
+        <span class="p">)</span>
+        <span class="n">subscriber</span><span class="o">.</span><span class="n">bind_to_op</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">subscriber</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span>
+            <span class="n">exchange_name</span><span class="o">=</span><span class="s1">&#39;test_exchange_1&#39;</span><span class="p">,</span>
+            <span class="n">topic_name</span><span class="o">=</span><span class="s1">&#39;test1&#39;</span><span class="p">,</span>
+            <span class="n">message_type</span><span class="o">=</span><span class="n">HealthCheckerRequest</span>
+        <span class="p">)</span>
+        <span class="n">subscriber</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span>
+            <span class="n">exchange_name</span><span class="o">=</span><span class="s1">&#39;test_exchange_2&#39;</span><span class="p">,</span>
+            <span class="n">topic_name</span><span class="o">=</span><span class="s1">&#39;test2&#39;</span><span class="p">,</span>
+            <span class="n">message_type</span><span class="o">=</span><span class="n">HealthCheckerRequest</span>
+        <span class="p">)</span>
+        <span class="n">subscriber</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">SubscriberExampleContainer</span><span class="p">(</span><span class="n">DefaultStreamingContainer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">container_name</span><span class="o">=</span><span class="s1">&#39;subscriber_example_container&#39;</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">producer</span> <span class="o">=</span> <span class="n">SlackProducer</span><span class="p">(</span>
-        <span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;slack_exchange&#39;</span><span class="p">,</span>
-        <span class="n">queue_name</span><span class="o">=</span><span class="s1">&#39;slack_queue&#39;</span><span class="p">,</span>
-        <span class="n">connection_str</span><span class="o">=</span><span class="s1">&#39;amqp://guest:guest@localhost:5672&#39;</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">SubscriberExampleOp</span><span class="p">()</span>
+    <span class="n">container</span> <span class="o">=</span> <span class="n">SubscriberExampleContainer</span><span class="p">()</span>
+    <span class="n">container</span><span class="o">.</span><span class="n">add_operator_edge</span><span class="p">(</span><span class="n">from_operator</span><span class="o">=</span><span class="n">op</span><span class="p">,</span> <span class="n">to_operator</span><span class="o">=</span><span class="n">DummyUtil</span><span class="o">.</span><span class="n">dummy_streaming_operator</span><span class="p">())</span>
+    <span class="n">container</span><span class="o">.</span><span class="n">add_operator_edge</span><span class="p">(</span>
+        <span class="n">from_operator</span><span class="o">=</span><span class="n">op</span><span class="p">,</span>
+        <span class="n">to_operator</span><span class="o">=</span><span class="n">DummyUtil</span><span class="o">.</span><span class="n">dummy_streaming_operator</span><span class="p">(</span><span class="n">operator_name</span><span class="o">=</span><span class="s1">&#39;dummy_streaming_operator&#39;</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="n">producer</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span>
-        <span class="n">channel_name</span><span class="o">=</span><span class="s1">&#39;staging_test&#39;</span><span class="p">,</span>
-        <span class="n">webhook_url</span><span class="o">=</span><span class="s1">&#39;https://hooks.slack.com/services/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&#39;</span><span class="p">,</span>
-        <span class="n">message</span><span class="o">=</span><span class="s2">&quot;hello world&quot;</span>
-    <span class="p">)</span>
+
+    <span class="n">container</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+    <span class="n">container</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </code></pre></div>
-
-
-<p>One note is that in order to use the message queue, please install <a href="https://www.rabbitmq.com/">rabbitmq</a>.</p>
                 
                   
                 
@@ -554,7 +557,7 @@ a user defined response message. If the queue does not need response, please ret
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../rpc_storage_io/" title="RPC Storage IO" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../message_queue/" title="Message Queue" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -563,19 +566,19 @@ a user defined response message. If the queue does not need response, please ret
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                RPC Storage IO
+                Message Queue
               </span>
             </div>
           </a>
         
         
-          <a href="../pubsub/" title="Publisher/Subscriber" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../frontend/" title="PSLX frontend" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Publisher/Subscriber
+                PSLX frontend
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
