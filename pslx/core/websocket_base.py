@@ -65,7 +65,7 @@ class WebsocketBase(Base):
         if not self._op:
             self._logger.error("Please bind to operator to parse message.")
         else:
-            self._op.msg_parser(message=message)
+            self._op.ws_msg_parser(message=message)
 
     async def _receive_msg(self, return_message=False):
         while True:

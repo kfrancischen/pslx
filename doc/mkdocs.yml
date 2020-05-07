@@ -36,6 +36,7 @@ pages:
     - 'Email': 'micro_services/email.md'
     - 'RPC Storage IO': 'micro_services/rpc_storage_io.md'
     - 'Message Queue': 'micro_services/message_queue.md'
+    - 'Publisher/Subscriber': 'micro_services/pubsub.md'
     - 'PSLX frontend': 'micro_services/frontend.md'
 - Tools: 'tool.md'
 - Utilities: 'util.md'

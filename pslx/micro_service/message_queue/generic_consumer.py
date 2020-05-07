@@ -7,6 +7,7 @@ from pslx.core.base import Base
 from pslx.core.exception import QueueAlreadyExistException, QueueConsumerNotInitializedException
 from pslx.schema.rpc_pb2 import GenericRPCRequest
 from pslx.tool.logging_tool import LoggingTool
+from pslx.util.env_util import EnvUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimeSleepObj
 
@@ -18,7 +19,7 @@ class GenericQueueConsumer(Base):
         self._consumer_name = consumer_name
         self._logger = LoggingTool(
             name=consumer_name,
-            ttl=os.getenv('PSLX_INTERNAL_TTL', 7)
+            ttl=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_TTL')
         )
         self._connection_str = ''
         self._exchange = ''
@@ -120,7 +121,7 @@ class GenericConsumer(Base):
         super().__init__()
         self._logger = LoggingTool(
             name=self.get_class_name(),
-            ttl=os.getenv('PSLX_INTERNAL_TTL', 7)
+            ttl=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_TTL')
         )
         self._connection_str = connection_str
         self._queue_consumers = []

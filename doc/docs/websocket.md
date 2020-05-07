@@ -16,7 +16,7 @@ bind_to_op(op)
 * Description: bind the websocket client to an operator.
 * Arguments:
     1. op: the operator to be binded. In order to bind correctly, the operator needs to have a 
-       `msg_parser(message)` function defined as one of the methods.
+       `ws_msg_parser(message)` function defined as one of the methods.
 
 ```python
 start()

@@ -23,6 +23,7 @@ and [gRPC](https://grpc.io/) tools. This document covers the APIs of PSLX provid
 * [Email service](micro_services/email.md) for sending emails through code using the PSLX RPC framework.
 * [RPC storage io](micro_services/rpc_storage_io.md) for reading the data storage through remote RPC calls using the PSLX RPC framework.
 * [Message Queue](micro_services/message_queue.md) for building simple message queue using proto buffers. Part of the implementation also is shared with the PSLX rpc framework.
+* [Publisher/subscriber](micro_services/pubsub.md) for building simple applications with pubsub model.
 * [PSLX Frontend](micro_services/frontend.md) Flask frontend built to monitor the health of RPC servers, container status, and browser the content of protobufs and file system for local and remote servers.
 
 #### Tools
