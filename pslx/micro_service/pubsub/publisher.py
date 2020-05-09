@@ -11,7 +11,7 @@ class Publisher(Base):
     def __init__(self, exchange_name, topic_name, connection_str):
         super().__init__()
         self._logger = LoggingTool(
-            name=exchange_name + '_' + topic_name + 'publisher',
+            name=exchange_name + '_' + topic_name + '_publisher',
             ttl=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_TTL')
         )
         self._connection_str = connection_str
