@@ -5,7 +5,6 @@ from pslx.schema.rpc_pb2_grpc import GenericRPCServiceStub
 from pslx.util.env_util import EnvUtil
 from pslx.util.dummy_util import DummyUtil
 from pslx.util.proto_util import ProtoUtil
-from pslx.util.timezone_util import TimeSleepObj
 
 
 class ClientBase(Base):
@@ -43,17 +42,18 @@ class ClientBase(Base):
                 ('grpc.max_send_message_length',
                  int(EnvUtil.get_pslx_env_variable(var='PSLX_GRPC_MAX_MESSAGE_LENGTH'))),
             ]
+            timeout = int(EnvUtil.get_pslx_env_variable(var='PSLX_GRPC_TIMEOUT'))
             if not root_certificate:
                 self._logger.info("Start with insecure channel.")
                 with grpc.insecure_channel(self._server_url, options=options) as channel:
                     stub = GenericRPCServiceStub(channel=channel)
-                    response = stub.SendRequest(request=generic_request, timeout=TimeSleepObj.TEN_SECONDS)
+                    response = stub.SendRequest(request=generic_request, timeout=timeout)
             else:
                 self._logger.info("Start with secure channel.")
                 channel_credential = grpc.ssl_channel_credentials(root_certificate)
                 with grpc.secure_channel(self._server_url, channel_credential, options=options) as channel:
                     stub = GenericRPCServiceStub(channel=channel)
-                    response = stub.SendRequest(request=generic_request, timeout=TimeSleepObj.TEN_SECONDS)
+                    response = stub.SendRequest(request=generic_request, timeout=timeout)
 
             if not self.RESPONSE_MESSAGE_TYPE:
                 self.sys_log("Response message type unset, return None instead.")
