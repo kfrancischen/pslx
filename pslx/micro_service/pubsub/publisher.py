@@ -46,5 +46,7 @@ class Publisher(Base):
                 routing_key=self._topic_name,
                 body=base64.b64encode(message_str)
             )
+            self._logger.info("Succeeded in publishing the data to exchange " + self._exchange_name +
+                              " with topic name " + self._topic_name + '.')
         except Exception as err:
             self._logger.error("publish message failed with error " + str(err) + '.')
