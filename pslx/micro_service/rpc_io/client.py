@@ -18,6 +18,7 @@ class RPCIOClient(ClientBase):
         'start_time',
         'end_time',
         'is_proto_table',
+        'base_name',
     }
 
     def __init__(self, client_name, server_url):

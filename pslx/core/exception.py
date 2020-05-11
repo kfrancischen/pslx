@@ -104,3 +104,7 @@ class SQLExecutionException(ExceptionBase):
 
 class EnvNotExistException(ExceptionBase):
     pass
+
+
+class RegisteredItemAlreadyExistException(ExceptionBase):
+    pass

@@ -29,11 +29,12 @@ class Subscriber(Base):
                 queue=self._tmp_queue_name,
                 routing_key=topic_name
             )
-            self._logger.info("Succeeded in subscribing to topic " + topic_name + ' in exchange ' + exchange_name + '.')
+            self._logger.info("Succeeded in subscribing to topic [" + topic_name + '] in exchange [' +
+                              exchange_name + '].')
             self._topic_names_to_types[exchange_name + ':' + topic_name] = message_type
         except Exception as err:
-            self._logger.info("Failed to subscribe to topic " + topic_name + ' in exchange ' + exchange_name +
-                              ' with error ' + str(err) + '.')
+            self._logger.info("Failed to subscribe to topic [" + topic_name + '] in exchange [' + exchange_name +
+                              '] with error ' + str(err) + '.')
 
     def bind_to_op(self, op):
         self._op = op

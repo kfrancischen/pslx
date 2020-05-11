@@ -25,7 +25,8 @@ class Publisher(Base):
             exchange=self._exchange_name,
             exchange_type='direct'
         )
-        self._logger.info("Start publisher with topic name: " + self._topic_name + '.')
+        self._logger.info("Start publisher with topic name [" + self._topic_name + '] in exchange [' +
+                          self._exchange_name + '].')
 
     def get_topic_name(self):
         return self._topic_name
@@ -46,7 +47,7 @@ class Publisher(Base):
                 routing_key=self._topic_name,
                 body=base64.b64encode(message_str)
             )
-            self._logger.info("Succeeded in publishing the data to exchange " + self._exchange_name +
-                              " with topic name " + self._topic_name + '.')
+            self._logger.info("Succeeded in publishing the data to exchange [" + self._exchange_name +
+                              "] with topic name [" + self._topic_name + '].')
         except Exception as err:
             self._logger.error("publish message failed with error " + str(err) + '.')

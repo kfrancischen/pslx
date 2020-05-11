@@ -60,12 +60,21 @@ def view_proto_table():
                     message_type=value_type,
                     any_message=result_content[key]
                 )
-                proto_contents.append(
-                    {
-                        'key': key,
-                        'val': ProtoUtil.message_to_text(proto_message=proto_val),
-                    }
-                )
+                try:
+                    proto_contents.append(
+                        {
+                            'key': key,
+                            'val': ProtoUtil.message_to_text(proto_message=proto_val),
+                        }
+                    )
+                except Exception as err:
+                    pslx_frontend_logger.error("Parsing proto with error " + str(err) + '.')
+                    proto_contents.append(
+                        {
+                            'key': key,
+                            'val': str(proto_val),
+                        }
+                    )
 
             all_urls.remove(server_url)
             all_urls = [server_url] + all_urls

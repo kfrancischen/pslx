@@ -139,6 +139,10 @@ class RPCIO(RPCBase):
         self._logger.info("Getting request of partitioner storage read.")
         read_params = dict(request.params)
         is_proto_table = True if read_params['is_proto_table'] == '1' else False
+        if 'base_name' in read_params:
+            base_name = read_params['base_name']
+        else:
+            base_name = 'data.pb' if is_proto_table else 'data'
 
         lru_key = (read_params['PartitionerStorageType'], request.dir_name)
         self._logger.info("Partitioner type is " + read_params['PartitionerStorageType'])
@@ -184,14 +188,14 @@ class RPCIO(RPCBase):
                     proto_storage.initialize_from_file(
                         file_name=FileUtil.join_paths_to_file(
                             root_dir=storage.get_oldest_dir_in_root_directory(),
-                            base_name='data.pb'
+                            base_name=base_name
                         )
                     )
                 else:
                     proto_storage.initialize_from_file(
                         file_name=FileUtil.join_paths_to_file(
                             root_dir=storage.get_latest_dir(),
-                            base_name='data.pb'
+                            base_name=base_name
                         )
                     )
                 data = proto_storage.read_all()
@@ -207,14 +211,14 @@ class RPCIO(RPCBase):
                     default_storage.initialize_from_file(
                         file_name=FileUtil.join_paths_to_file(
                             root_dir=storage.get_oldest_dir_in_root_directory(),
-                            base_name='data'
+                            base_name=base_name
                         )
                     )
                 else:
                     default_storage.initialize_from_file(
                         file_name=FileUtil.join_paths_to_file(
                             root_dir=storage.get_latest_dir(),
-                            base_name='data'
+                            base_name=base_name
                         )
                     )
                 data = default_storage.read(params={

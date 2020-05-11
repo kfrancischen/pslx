@@ -108,3 +108,38 @@ if __name__ == "__main__":
             'is_proto_table': True
         }
     ))
+
+    dir_name = "pslx/test/storage/test_data/yearly_partitioner_5/"
+    example_client = PartitionerStorageRPC(client_name='example_rpc_io', server_url=server_url)
+    print(example_client.read(
+        file_or_dir_path=dir_name,
+        params={
+            'PartitionerStorageType': PartitionerStorageType.YEARLY,
+            'is_proto_table': True,
+            'base_name': 'some_data.pb',
+        }
+    ))
+
+    dir_name = "pslx/test/storage/test_data/yearly_partitioner_5/"
+    example_client = PartitionerStorageRPC(client_name='example_rpc_io', server_url=server_url)
+    print(example_client.read(
+        file_or_dir_path=dir_name,
+        params={
+            'PartitionerStorageType': PartitionerStorageType.YEARLY,
+            'is_proto_table': True,
+            'read_oldest': True,
+            'base_name': 'some_data.pb',
+        }
+    ))
+
+    dir_name = "pslx/test/storage/test_data/yearly_partitioner_5/"
+    example_client = PartitionerStorageRPC(client_name='example_rpc_io', server_url=server_url)
+    print(example_client.read_range(
+        file_or_dir_path=dir_name,
+        params={
+            'PartitionerStorageType': PartitionerStorageType.YEARLY,
+            'start_time': datetime.datetime(2019, 1, 5),
+            'end_time': datetime.datetime(2020, 1, 5),
+            'is_proto_table': True
+        }
+    ))

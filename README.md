@@ -26,7 +26,7 @@ and [gRPC](https://grpc.io/) tools. This document covers the APIs of PSLX provid
 * [PSLX Frontend](doc/docs/micro_services/frontend.md) Flask frontend built to monitor the health of RPC servers, container status, and browser the content of protobufs and file system for local and remote servers.
 
 #### Tools
-* [Tools](doc/docs/tool.md) provided by PSLX for thread-safe file io, LRC caching, ttl-ed logging, and SQL server read/write.
+* [Tools](doc/docs/tool.md) provided by PSLX for thread-safe file io, LRC caching, ttl-ed logging, SQL server read/write, timestamp key-ed partitioner local/remote fetcher and watcher, function registration.
 
 #### Utilities
 * [Utilities](doc/docs/util.md) provided by PSLX for file operation, protobuf related utilities, async unittesting, timezone related utilities, 

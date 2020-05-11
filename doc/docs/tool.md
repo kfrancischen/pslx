@@ -6,8 +6,8 @@ PSLX provides a set of tools to assist development, and they include
 4. SQL tool for connecting to SQL database and executing queries.          
 5. Timeout tool to timeout a function in the main thread.        
 6. Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
-6. Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
-
+7. Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
+8. Registry tool to be used as decorators to register functions.
 
 ### Documentation for Logging Tool
 To create a logging tool instance, please use
@@ -188,3 +188,15 @@ watch_key(key)
 * Description: watch for the appearance of the given key in the latest partition.
 * Arguments:
     1. key: the key to watch.
+
+### Documentation for Registry Tool
+The registry tool can be used as a function decorator to store functions in a dictionary. The following code shows the simple usage of this tool:
+
+```python
+from pslx.tool.registry_tool import RegistryTool
+
+registry = RegistryTool()
+@registry.register("example_func")
+def example_func(): 
+    ... ...
+```
