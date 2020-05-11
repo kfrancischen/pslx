@@ -443,6 +443,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#documentation-for-registry-tool" class="md-nav__link">
+    Documentation for Registry Tool
+  </a>
+  
+</li>
+      
       
       
       
@@ -557,6 +564,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#documentation-for-registry-tool" class="md-nav__link">
+    Documentation for Registry Tool
+  </a>
+  
+</li>
+      
       
       
       
@@ -587,6 +601,7 @@
 <li>Timeout tool to timeout a function in the main thread.        </li>
 <li>Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).</li>
 <li>Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).</li>
+<li>Registry tool to be used as decorators to register functions.</li>
 </ol>
 <h3 id="documentation-for-logging-tool">Documentation for Logging Tool<a class="headerlink" href="#documentation-for-logging-tool" title="Permanent link">&para;</a></h3>
 <p>To create a logging tool instance, please use</p>
@@ -818,6 +833,15 @@
 </ol>
 </li>
 </ul>
+<h3 id="documentation-for-registry-tool">Documentation for Registry Tool<a class="headerlink" href="#documentation-for-registry-tool" title="Permanent link">&para;</a></h3>
+<p>The registry tool can be used as a function decorator to store functions in a dictionary. The following code shows the simple usage of this tool:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.tool.registry_tool</span> <span class="kn">import</span> <span class="n">RegistryTool</span>
+
+<span class="n">registry</span> <span class="o">=</span> <span class="n">RegistryTool</span><span class="p">()</span>
+<span class="nd">@registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;example_func&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">example_func</span><span class="p">():</span> 
+    <span class="o">...</span> <span class="o">...</span>
+</code></pre></div>
                 
                   
                 
