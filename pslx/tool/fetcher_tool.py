@@ -22,11 +22,14 @@ class LocalPartitionerFetcher(Base):
             )
         )
         all_data = proto_table.read_all()
-        max_key = max(all_data.keys())
-        return ProtoUtil.any_to_message(
-            message_type=self.MESSAGE_TYPE,
-            any_message=all_data[max_key]
-        )
+        if all_data:
+            max_key = max(all_data.keys())
+            return ProtoUtil.any_to_message(
+                message_type=self.MESSAGE_TYPE,
+                any_message=all_data[max_key]
+            )
+        else:
+            return None
 
     def fetch_oldest(self):
         oldest_dir = self._partitioner.get_oldest_dir_in_root_directory()
@@ -38,11 +41,14 @@ class LocalPartitionerFetcher(Base):
             )
         )
         all_data = proto_table.read_all()
-        min_key = min(all_data.keys())
-        return ProtoUtil.any_to_message(
-            message_type=self.MESSAGE_TYPE,
-            any_message=all_data[min_key]
-        )
+        if all_data:
+            min_key = min(all_data.keys())
+            return ProtoUtil.any_to_message(
+                message_type=self.MESSAGE_TYPE,
+                any_message=all_data[min_key]
+            )
+        else:
+            return None
 
     def fetch_range(self, start_time, end_time):
         data = self._partitioner.read_range(
@@ -92,11 +98,14 @@ class RemotePartitionerFetcher(Base):
             },
             root_certificate=self._root_certificate
         )
-        max_key = max(all_data.keys())
-        return ProtoUtil.any_to_message(
-            message_type=self.MESSAGE_TYPE,
-            any_message=all_data[max_key]
-        )
+        if all_data:
+            max_key = max(all_data.keys())
+            return ProtoUtil.any_to_message(
+                message_type=self.MESSAGE_TYPE,
+                any_message=all_data[max_key]
+            )
+        else:
+            return None
 
     def fetch_oldest(self):
         all_data = self._rpc_client.read(
@@ -108,11 +117,14 @@ class RemotePartitionerFetcher(Base):
             },
             root_certificate=self._root_certificate
         )
-        min_key = min(all_data.keys())
-        return ProtoUtil.any_to_message(
-            message_type=self.MESSAGE_TYPE,
-            any_message=all_data[min_key]
-        )
+        if all_data:
+            min_key = min(all_data.keys())
+            return ProtoUtil.any_to_message(
+                message_type=self.MESSAGE_TYPE,
+                any_message=all_data[min_key]
+            )
+        else:
+            return None
 
     def fetch_range(self, start_time, end_time):
         data = self._rpc_client.read_range(
