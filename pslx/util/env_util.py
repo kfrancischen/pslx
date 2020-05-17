@@ -27,5 +27,12 @@ class EnvUtil(object):
                 return os.getenv(var, fallback_value)
 
     @classmethod
+    def get_other_env_variable(cls, var, fallback_value=None):
+        try:
+            return os.getenv(var, fallback_value)
+        except Exception as _:
+            raise EnvNotExistException
+
+    @classmethod
     def get_pslx_env_and_default_value(cls):
         return cls.PSLX_ENV_TO_DEFAULT_MAP
