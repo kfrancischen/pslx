@@ -1,12 +1,13 @@
 from pslx.core.operator_base import OperatorBase
 from pslx.schema.enums_pb2 import DataModelType
+from pslx.tool.logging_tool import DummyLogging
 
 
 class BatchOperator(OperatorBase):
     DATA_MODEL = DataModelType.BATCH
 
-    def __init__(self, operator_name):
-        super().__init__(operator_name=operator_name)
+    def __init__(self, operator_name, logger=DummyLogging()):
+        super().__init__(operator_name=operator_name, logger=logger)
         self._config = {
             'save_snapshot': True,
             'allow_container_snapshot': True,
