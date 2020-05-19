@@ -529,7 +529,7 @@ its status to the backend, while <code>DataModelType.STREAMING</code> only suppo
 and the ones for the <code>DataModelType.BATCH</code> and <code>DataModelType.STREAMING</code> are in <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/batch/operator.py">batch/operator.py</a> and
 <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/streaming/operator.py">streaming/operator.py</a>, respectively.</p>
 </div>
-<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">operator_name</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">operator_name</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -537,6 +537,7 @@ and the ones for the <code>DataModelType.BATCH</code> and <code>DataModelType.ST
 <li>Description: Construct an operator.</li>
 <li>Arguments:<ol>
 <li>operator_name: the name of the operator.</li>
+<li>logger: the logger for the operator.</li>
 </ol>
 </li>
 </ul>
