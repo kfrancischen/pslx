@@ -1,14 +1,6 @@
 from pslx.core.operator_base import OperatorBase
-from pslx.tool.logging_tool import LoggingTool
+from pslx.tool.logging_tool import DummyLogging
 from pslx.schema.enums_pb2 import DataModelType
-
-
-class DummyLogging(LoggingTool):
-    def __init__(self, name=None, date=None, ttl=-0):
-        super().__init__(name=None, date=date, ttl=ttl)
-
-    def _write_log(self, string, logger_level):
-        return
 
 
 class DummyOperator(OperatorBase):

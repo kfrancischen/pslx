@@ -24,11 +24,12 @@ its status to the backend, while `DataModelType.STREAMING` only supports sending
     [streaming/operator.py](https://github.com/kfrancischen/pslx/blob/master/pslx/streaming/operator.py), respectively.
  
 ```python       
-__init__(operator_name)
+__init__(operator_name, logger)
 ```
 * Description: Construct an operator.
 * Arguments:
     1. operator_name: the name of the operator.
+    2. logger: the logger for the operator.
 
 ```python       
 set_data_model(model)

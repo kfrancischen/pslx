@@ -58,7 +58,7 @@ class PartitionerBase(StorageBase):
             node_name = node.get_node_name()
             for child_node_name in sorted(FileUtil.list_dirs_in_dir(dir_name=node_name), reverse=from_scratch):
                 if from_scratch and self._file_tree.get_num_nodes() >= self._max_capacity > 0:
-                    self.sys_log("Reach the max number of node: " + str(self._max_capacity))
+                    self.sys_log("Reach the max number of node: " + str(self._max_capacity) + '.')
                     return
 
                 newly_added_string = child_node_name.replace(node_name, '').replace('/', '')

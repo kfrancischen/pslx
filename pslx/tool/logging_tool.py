@@ -99,3 +99,11 @@ class LoggingTool(object):
 
     def error(self, string):
         self._write_log(string=string, logger_level=DiskLoggerLevel.ERROR)
+
+
+class DummyLogging(LoggingTool):
+    def __init__(self, name=None, date=None, ttl=-0):
+        super().__init__(name=None, date=date, ttl=ttl)
+
+    def _write_log(self, string, logger_level):
+        return

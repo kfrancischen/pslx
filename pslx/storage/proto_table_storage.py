@@ -74,8 +74,8 @@ class ProtoTableStorage(StorageBase):
                 self._reader_status = Status.IDLE
                 return result
             except Exception as err:
-                self.sys_log("Got exception: " + str(err))
-                self._logger.error("Got exception: " + str(err))
+                self.sys_log("Got exception: " + str(err) + '.')
+                self._logger.error("Got exception: " + str(err) + '.')
                 raise StorageReadException
         else:
             return None
@@ -95,8 +95,8 @@ class ProtoTableStorage(StorageBase):
             self._reader_status = Status.IDLE
             return dict(self._table_message.data)
         except Exception as err:
-            self.sys_log("Got exception: " + str(err))
-            self._logger.error("Got exception: " + str(err))
+            self.sys_log("Got exception: " + str(err) + '.')
+            self._logger.error("Got exception: " + str(err) + '.')
             raise StorageReadException
 
     def delete(self, key):
@@ -109,7 +109,7 @@ class ProtoTableStorage(StorageBase):
             time.sleep(TimeSleepObj.ONE_SECOND)
 
         if key in self._table_message.data:
-            self._reader_status = Status.RUNNING
+            self._deleter_status = Status.RUNNING
             del self._table_message.data[key]
             try:
                 self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
@@ -118,7 +118,7 @@ class ProtoTableStorage(StorageBase):
                         proto=self._table_message,
                         file_name=self._file_name
                     )
-                    self._reader_status = Status.IDLE
+                    self._deleter_status = Status.IDLE
             except Exception as err:
                 self.sys_log("Read got exception: " + str(err))
                 self._logger.error("Read got exception: " + str(err))
