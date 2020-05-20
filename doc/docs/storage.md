@@ -148,6 +148,12 @@ delete(key)
 * Description: Delete key and the corresponding entry from the proto table.
 * Arguments:
     1. key: the key of the entry to be deleted.
+    
+```python       
+delete_all()
+```
+* Description: Delete all the contents from the proto table.
+
  
 ### Partitioner Storage
 

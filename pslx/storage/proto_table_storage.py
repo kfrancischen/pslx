@@ -1,6 +1,6 @@
 import time
 
-from pslx.core.exception import StorageReadException, StorageWriteException
+from pslx.core.exception import StorageReadException, StorageWriteException, StorageDeleteException
 from pslx.schema.enums_pb2 import StorageType, Status
 from pslx.schema.storage_pb2 import ProtoTable
 from pslx.storage.storage_base import StorageBase
@@ -74,8 +74,8 @@ class ProtoTableStorage(StorageBase):
                 self._reader_status = Status.IDLE
                 return result
             except Exception as err:
-                self.sys_log("Got exception: " + str(err) + '.')
-                self._logger.error("Got exception: " + str(err) + '.')
+                self.sys_log("Read got exception: " + str(err) + '.')
+                self._logger.error("Read got exception: " + str(err) + '.')
                 raise StorageReadException
         else:
             return None
@@ -95,8 +95,8 @@ class ProtoTableStorage(StorageBase):
             self._reader_status = Status.IDLE
             return dict(self._table_message.data)
         except Exception as err:
-            self.sys_log("Got exception: " + str(err) + '.')
-            self._logger.error("Got exception: " + str(err) + '.')
+            self.sys_log("Read all got exception: " + str(err) + '.')
+            self._logger.error("Read all Got exception: " + str(err) + '.')
             raise StorageReadException
 
     def delete(self, key):
@@ -120,9 +120,32 @@ class ProtoTableStorage(StorageBase):
                     )
                     self._deleter_status = Status.IDLE
             except Exception as err:
-                self.sys_log("Read got exception: " + str(err))
-                self._logger.error("Read got exception: " + str(err))
-                raise StorageWriteException
+                self.sys_log("Delete got exception: " + str(err))
+                self._logger.error("Delete got exception: " + str(err))
+                raise StorageDeleteException
+
+    def delete_all(self):
+        while self._reader_status != Status.IDLE:
+            self.sys_log("Waiting for reader to finish.")
+            time.sleep(TimeSleepObj.ONE_SECOND)
+
+        while self._writer_status != Status.IDLE:
+            self.sys_log("Waiting for writer to finish.")
+            time.sleep(TimeSleepObj.ONE_SECOND)
+        self._deleter_status = Status.RUNNING
+        self._table_message.data.clear()
+        try:
+            self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
+            with FileLockTool(self._file_name, read_mode=False):
+                FileUtil.write_proto_to_file(
+                    proto=self._table_message,
+                    file_name=self._file_name
+                )
+                self._deleter_status = Status.IDLE
+        except Exception as err:
+            self.sys_log("Delete all got exception: " + str(err))
+            self._logger.error("Delete all got exception: " + str(err))
+            raise StorageDeleteException
 
     def write(self, data, params=None):
         if not params:

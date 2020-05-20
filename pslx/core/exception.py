@@ -66,6 +66,10 @@ class StorageWriteException(ExceptionBase):
     pass
 
 
+class StorageDeleteException(ExceptionBase):
+    pass
+
+
 class StorageExceedsFixedSizeException(ExceptionBase):
     pass
 
