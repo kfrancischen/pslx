@@ -741,7 +741,7 @@
 <p>Tool to fetch the latest, oldest data or data within a time range. This includes implementation of <code>LocalPartitionerFetcher</code>
  where the partitioner data is local or a <code>RemotePartitionerFetcher</code> what fetches the data from a remote server through rpc.</p>
 <p>To initialize <code>LocalPartitionerFetcher</code></p>
-<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">partitioner</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">partitioner</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -749,11 +749,12 @@
 <li>Description: initialize a <code>LocalPartitionerFetcher</code></li>
 <li>Arguments:<ol>
 <li>partitioner: the partitioner object to fetch. It needs to have underlying storage of a <code>ProtoTableStorage</code>.</li>
+<li>logger: the logger for the fetcher.</li>
 </ol>
 </li>
 </ul>
 <p>To initialize <code>RemotePartitionerFetcher</code></p>
-<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">partitioner</span><span class="p">,</span> <span class="n">server_url</span><span class="p">,</span> <span class="n">root_certificate</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">partitioner</span><span class="p">,</span> <span class="n">server_url</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">root_certificate</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -762,6 +763,7 @@
 <li>Arguments:<ol>
 <li>partitioner_dir: the remote partitioner directory to fetch. It needs to have underlying storage of a <code>ProtoTableStorage</code>.</li>
 <li>server_url: the remote server url.</li>
+<li>logger: the logger for the fetcher.</li>
 <li>root_certificate: the root_certificate for authentication.</li>
 </ol>
 </li>
@@ -792,7 +794,7 @@
 <p>Tool to monitor a specific latest key. This includes implementation of <code>LocalPartitionerWatcher</code>
  where the partitioner data is local or a <code>RemotePartitionerWatcher</code> what watches the data from a remote server through rpc.</p>
 <p>To initialize <code>LocalPartitionerWatcher</code></p>
-<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">partitioner</span><span class="p">,</span> <span class="n">delay</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">partitioner</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">delay</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -800,13 +802,14 @@
 <li>Description: initialize a <code>LocalPartitionerWatcher</code></li>
 <li>Arguments:<ol>
 <li>partitioner: the partitioner object to watch. It needs to have underlying storage of a <code>ProtoTableStorage</code>.</li>
+<li>logger: the logger for the watcher.</li>
 <li>delay: the seconds between each trial.</li>
 <li>timeout: the seconds of watch timeout.</li>
 </ol>
 </li>
 </ul>
 <p>To initialize <code>RemotePartitionerWatcher</code></p>
-<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">partitioner</span><span class="p">,</span> <span class="n">server_url</span><span class="p">,</span> <span class="n">root_certificate</span><span class="p">,</span> <span class="n">delay</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">partitioner</span><span class="p">,</span> <span class="n">server_url</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">root_certificate</span><span class="p">,</span> <span class="n">delay</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -815,6 +818,7 @@
 <li>Arguments:<ol>
 <li>partitioner_dir: the remote partitioner directory to watch. It needs to have underlying storage of a <code>ProtoTableStorage</code>.</li>
 <li>server_url: the remote server url.</li>
+<li>logger: the logger for the fetcher.</li>
 <li>root_certificate: the root_certificate for authentication.</li>
 <li>delay: the seconds between each trial.</li>
 <li>timeout: the seconds of watch timeout.</li>
