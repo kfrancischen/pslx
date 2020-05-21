@@ -33,8 +33,10 @@ class ClientBase(Base):
             generic_request.message_type = ProtoUtil.infer_str_from_message_type(
                     message_type=self.RESPONSE_MESSAGE_TYPE
                 )
-        self._logger.info("Client getting request of uuid " + generic_request.uuid + '.')
-        self.sys_log("Client getting request of uuid " + generic_request.uuid + '.')
+        self._logger.info("Client getting request of uuid [" + generic_request.uuid + '] in client [' +
+                          self.get_client_name() + '].')
+        self.sys_log("Client getting request of uuid [" + generic_request.uuid + '] in client [' +
+                     self.get_client_name() + '].')
         try:
             options = [
                 ('grpc.max_receive_message_length',
@@ -44,12 +46,12 @@ class ClientBase(Base):
             ]
             timeout = int(EnvUtil.get_pslx_env_variable(var='PSLX_GRPC_TIMEOUT'))
             if not root_certificate:
-                self._logger.info("Start with insecure channel.")
+                self._logger.info("Start with insecure channel in client [" + self.get_client_name() + '].')
                 with grpc.insecure_channel(self._server_url, options=options) as channel:
                     stub = GenericRPCServiceStub(channel=channel)
                     response = stub.SendRequest(request=generic_request, timeout=timeout)
             else:
-                self._logger.info("Start with secure channel.")
+                self._logger.info("Start with secure channel in client [" + self.get_client_name() + '].')
                 channel_credential = grpc.ssl_channel_credentials(root_certificate)
                 with grpc.secure_channel(self._server_url, channel_credential, options=options) as channel:
                     stub = GenericRPCServiceStub(channel=channel)
@@ -64,6 +66,6 @@ class ClientBase(Base):
                     any_message=response.response_data
                 )
         except Exception as err:
-            self._logger.error(self.get_client_name() + " send request with error " + str(err) + '.')
-            self.sys_log(self.get_client_name() + " send request with error " + str(err) + '.')
+            self._logger.error("send request with error " + str(err) + ' in client [' + self.get_client_name() + '].')
+            self.sys_log("send request with error " + str(err) + ' in client [' + self.get_client_name() + '].')
             return None

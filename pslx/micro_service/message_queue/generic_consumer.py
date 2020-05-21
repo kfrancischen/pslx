@@ -42,9 +42,9 @@ class GenericQueueConsumer(Base):
             return ''
 
     def create_consumer(self, exchange, connection_str):
-        self.sys_log("Create consumer connection_str = " + connection_str + ' and exchange = ' + exchange + '.')
-        self._logger.info("Create consumer connection_str = " + connection_str + ' and exchange = ' +
-                          exchange + '.')
+        self.sys_log("Create consumer connection_str [" + connection_str + '] and exchange [' + exchange + '].')
+        self._logger.info("Create consumer connection_str [" + connection_str + '] and exchange [' +
+                          exchange + '].')
         self._connection_str = connection_str
         self._exchange = exchange
         self._connection = pika.SelectConnection(
@@ -56,8 +56,11 @@ class GenericQueueConsumer(Base):
         if self._has_added_queue:
             self.sys_log("queue already exist, cannot bind any more.")
             self._logger.error("queue already exist, cannot bind any more.")
-            raise QueueAlreadyExistException
-        self.sys_log("Binding to queue with name " + queue.get_queue_name() + '.')
+            raise QueueAlreadyExistException("queue already exist, cannot bind any more.")
+        self.sys_log("Binding to queue with name [" + queue.get_queue_name() + '] to consumer [' +
+                     self.get_consumer_name() + '].')
+        self._logger.info("Binding to queue with name [" + queue.get_queue_name() + '] to consumer [' +
+                          self.get_consumer_name() + '].')
         self._has_added_queue = True
         self._queue = queue
 
@@ -67,7 +70,8 @@ class GenericQueueConsumer(Base):
                 message_type=GenericRPCRequest,
                 string=base64.b64decode(body)
             )
-            self._logger.info("Getting request with uuid " + generic_request.uuid)
+            self._logger.info("Getting request with uuid [" + generic_request.uuid + '] in consumer ['
+                              + self.get_consumer_name() + '].')
             response = self._queue.send_request(request=generic_request)
             response_str = ProtoUtil.message_to_string(proto_message=response)
             ch.basic_publish(exchange=self._exchange,
@@ -75,7 +79,8 @@ class GenericQueueConsumer(Base):
                              properties=pika.BasicProperties(correlation_id=props.correlation_id),
                              body=base64.b64encode(response_str))
         except Exception as err:
-            self._logger.error("Error: " + str(err))
+            self._logger.error("Consumer [" + self.get_consumer_name() + "] processing message with error: " +
+                               str(err) + '.')
 
     def on_open(self, connection):
         connection.channel(on_open_callback=self._on_channel_open)
@@ -128,8 +133,8 @@ class GenericConsumer(Base):
 
     def bind_queue(self, exchange, queue):
         queue_consumer = GenericQueueConsumer(consumer_name=queue.get_queue_name() + '_consumer')
-        self._logger.info("Adding queue of " + queue.get_queue_name() + " to consumer " +
-                          queue_consumer.get_consumer_name() + '.')
+        self._logger.info("Adding queue [" + queue.get_queue_name() + "] to consumer [" +
+                          queue_consumer.get_consumer_name() + '].')
         queue_consumer.create_consumer(exchange=exchange, connection_str=self._connection_str)
         queue_consumer.bind_queue(queue=queue)
         self._queue_consumers.append(queue_consumer)
@@ -137,7 +142,7 @@ class GenericConsumer(Base):
     def start_consumer(self):
         try:
             for consumer in self._queue_consumers:
-                self._logger.info("Starting consumer " + consumer.get_consumer_name() + '.')
+                self._logger.info("Starting consumer [" + consumer.get_consumer_name() + '].')
                 consumer.start_consumer()
             while True:
                 time.sleep(TimeSleepObj.ONE_SECOND)

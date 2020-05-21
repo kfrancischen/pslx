@@ -11,7 +11,7 @@ server_urls = []
 for server_config in pslx_frontend_ui_app.config['frontend_config'].file_viewer_config:
     url = server_config.server_url
     certificate_path = server_config.root_certificate_path
-    pslx_frontend_logger.info("Getting url of " + url + " and certificate path " + certificate_path + '.')
+    pslx_frontend_logger.info("File viewer getting url [" + url + "] and certificate path [" + certificate_path + '].')
     root_certificate = None
     if certificate_path:
         with open(FileUtil.die_if_file_not_exist(file_name=certificate_path), 'r') as infile:
@@ -55,7 +55,7 @@ def view_file():
                 server_urls=all_urls
             )
         except Exception as err:
-            pslx_frontend_logger.error("Got error: " + str(err))
+            pslx_frontend_logger.error("File viewer got error: " + str(err) + '.')
             return render_template(
                 'file_viewer.html',
                 files_info={},

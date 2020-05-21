@@ -37,8 +37,10 @@ class RPCBase(GenericRPCServiceServicer, Base):
         return self._rpc_storage
 
     def SendRequest(self, request, context):
-        self.sys_log("rpc getting request with uuid " + request.uuid + '.')
-        self._logger.info("rpc getting request with uuid " + request.uuid + '.')
+        self.sys_log("rpc getting request with uuid [" + request.uuid + '] in service [' +
+                     self.get_rpc_service_name() + '].')
+        self._logger.info("rpc getting request with uuid [" + request.uuid + '] in service [' +
+                          self.get_rpc_service_name() + '].')
         decomposed_request = self.request_decomposer(request=request)
         response, status = self.get_response_and_status_impl(request=decomposed_request)
         generic_response = ProtoUtil.compose_generic_response(response=response)
@@ -64,7 +66,10 @@ class RPCBase(GenericRPCServiceServicer, Base):
                         'make_partition': True,
                     }
                 )
-                self.sys_log("Request response pairs flushed to " + self._rpc_storage.get_latest_dir() + '.')
+                self.sys_log("Request response pairs flushed to [" + self._rpc_storage.get_latest_dir() +
+                             '] in service [' + self.get_rpc_service_name() + '].')
+                self._logger.info("Request response pairs flushed to [" + self._rpc_storage.get_latest_dir() +
+                                  '] in service [' + self.get_rpc_service_name() + '].')
                 self._request_response_pair.clear()
 
         self._add_request_timestamp()
@@ -72,8 +77,8 @@ class RPCBase(GenericRPCServiceServicer, Base):
         return generic_response
 
     def CheckHealth(self, request, context):
-        self.sys_log("Checking health for url " + request.server_url + '.')
-        self._logger.info("Checking health for url " + request.server_url + '.')
+        self.sys_log("Checking health for url [" + request.server_url + '].')
+        self._logger.info("Checking health for url [" + request.server_url + '].')
         response = HealthCheckerResponse()
         response.server_url = request.server_url
         response.server_status = Status.RUNNING

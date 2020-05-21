@@ -28,7 +28,8 @@ def login():
     login_credential = pslx_frontend_ui_app.config['frontend_config'].credential
 
     if request.method == 'POST':
-        pslx_frontend_logger.info('Logging in with ' + str(dict(request.form)) + " from ip " + request.remote_addr + '.')
+        pslx_frontend_logger.info('Index logging in with ' + str(dict(request.form)) + " from ip [" +
+                                  request.remote_addr + '].')
         if request.form['username'] == login_credential.user_name and \
                 request.form['password'] == login_credential.password:
             user = User.query.filter_by(username=request.form['username']).first()
@@ -61,7 +62,7 @@ def index():
     service_info = []
     if config.container_backend_config.server_url:
         server, port = config.container_backend_config.server_url.split(':')
-        pslx_frontend_logger.info("Checking health for url " + config.container_backend_config.server_url + '.')
+        pslx_frontend_logger.info("Index checking health for url [" + config.container_backend_config.server_url + '].')
         status, qps = RPCUtil.check_health_and_qps(
             server_url=config.container_backend_config.server_url,
             root_certificate_path=config.container_backend_config.root_certificate_path
@@ -79,7 +80,7 @@ def index():
             server_url=server_config.server_url,
             root_certificate_path=server_config.root_certificate_path
         )
-        pslx_frontend_logger.info("Checking health for url " + server_config.server_url + '.')
+        pslx_frontend_logger.info("Index checking health for url [" + server_config.server_url + '].')
         service_info.append({
             'name': 'proto_viewer',
             'server': server,
@@ -94,7 +95,7 @@ def index():
             server_url=server_config.server_url,
             root_certificate_path=server_config.root_certificate_path
         )
-        pslx_frontend_logger.info("Checking health for url " + server_config.server_url + '.')
+        pslx_frontend_logger.info("Index checking health for url [" + server_config.server_url + '].')
         service_info.append({
             'name': 'file_viewer',
             'server': server,
@@ -109,7 +110,7 @@ def index():
             server_url=server_config.server_url,
             root_certificate_path=server_config.root_certificate_path
         )
-        pslx_frontend_logger.info("Checking health for url " + server_config.server_url + '.')
+        pslx_frontend_logger.info("Index checking health for url [" + server_config.server_url + '].')
         service_info.append({
             'name': 'instant_messaging',
             'server': server,
@@ -124,7 +125,7 @@ def index():
             server_url=server_config.server_url,
             root_certificate_path=server_config.root_certificate_path
         )
-        pslx_frontend_logger.info("Checking health for url " + server_config.server_url + '.')
+        pslx_frontend_logger.info("Index checking health for url [" + server_config.server_url + '].')
         service_info.append({
             'name': 'rpc_io',
             'server': server,
@@ -139,7 +140,7 @@ def index():
             server_url=server_config.server_url,
             root_certificate_path=server_config.root_certificate_path
         )
-        pslx_frontend_logger.info("Checking health for url " + server_config.server_url + '.')
+        pslx_frontend_logger.info("Index checking health for url [" + server_config.server_url + '].')
         service_info.append({
             'name': 'email',
             'server': server,

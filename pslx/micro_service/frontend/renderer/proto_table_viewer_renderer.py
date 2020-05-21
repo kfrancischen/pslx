@@ -40,8 +40,9 @@ def view_proto_table():
             proto_table_path = request.form['proto_table_path'].strip()
             value_type = request.form['value_type'].strip()
             module = request.form['module'].strip()
-            pslx_frontend_logger.info("Select url " + server_url + ' and input path ' + proto_table_path + '.' +
-                                      " with value type " + value_type + ' in module name ' + module + '.')
+            pslx_frontend_logger.info("Proto table viewer selecting url [" + server_url + '] and input path [' +
+                                      proto_table_path + '] with value type [' + value_type +
+                                      '] in module name [' + module + '].')
             result = client_map[server_url]['client'].view_proto(
                 proto_file_path=proto_table_path,
                 message_type="ProtoTable",
@@ -68,7 +69,7 @@ def view_proto_table():
                         }
                     )
                 except Exception as err:
-                    pslx_frontend_logger.error("Parsing proto with error " + str(err) + '.')
+                    pslx_frontend_logger.error("Proto table viewer Parsing proto with error " + str(err) + '.')
                     proto_contents.append(
                         {
                             'key': key,
@@ -84,7 +85,7 @@ def view_proto_table():
                 server_urls=all_urls
             )
         except Exception as err:
-            pslx_frontend_logger.error("Got error: " + str(err))
+            pslx_frontend_logger.error("Got error rendering proto_table_viewer.html: " + str(err) + '.')
             return render_template(
                 'proto_table_viewer.html',
                 proto_contents=[],

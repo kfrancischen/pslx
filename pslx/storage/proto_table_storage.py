@@ -74,9 +74,9 @@ class ProtoTableStorage(StorageBase):
                 self._reader_status = Status.IDLE
                 return result
             except Exception as err:
-                self.sys_log("Read got exception: " + str(err) + '.')
-                self._logger.error("Read got exception: " + str(err) + '.')
-                raise StorageReadException
+                self.sys_log("Read file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
+                self._logger.error("Read file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
+                raise StorageReadException("Read file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
         else:
             return None
 
@@ -120,9 +120,9 @@ class ProtoTableStorage(StorageBase):
                     )
                     self._deleter_status = Status.IDLE
             except Exception as err:
-                self.sys_log("Delete got exception: " + str(err))
-                self._logger.error("Delete got exception: " + str(err))
-                raise StorageDeleteException
+                self.sys_log("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
+                self._logger.error("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
+                raise StorageDeleteException("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
 
     def delete_all(self):
         while self._reader_status != Status.IDLE:
@@ -143,9 +143,10 @@ class ProtoTableStorage(StorageBase):
                 )
                 self._deleter_status = Status.IDLE
         except Exception as err:
-            self.sys_log("Delete all got exception: " + str(err))
-            self._logger.error("Delete all got exception: " + str(err))
-            raise StorageDeleteException
+            self.sys_log("Delete all of file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
+            self._logger.error("Delete all of file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
+            raise StorageDeleteException("Delete all of file [" + self.get_file_name() +
+                                         "] got exception: " + str(err) + '.')
 
     def write(self, data, params=None):
         if not params:
@@ -180,6 +181,6 @@ class ProtoTableStorage(StorageBase):
                 )
                 self._writer_status = Status.IDLE
         except Exception as err:
-            self.sys_log("Write got exception: " + str(err) + '.')
-            self._logger.error("Write got exception: " + str(err) + '.')
-            raise StorageWriteException
+            self.sys_log("Write to file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
+            self._logger.error("Write to file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
+            raise StorageWriteException("Write to file [" + self.get_file_name() + "] got exception: " + str(err) + '.')

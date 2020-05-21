@@ -85,11 +85,13 @@ class DefaultStorage(StorageBase):
 
                 new_line_number = self._last_read_line + params['num_line']
                 if new_line_number > len(lines):
-                    self.sys_log(str(new_line_number) + " exceeds the file limit. " + self.get_file_name() +
-                                 " only has " + str(len(lines)) + " lines.")
-                    self._logger.error(str(new_line_number) + " exceeds the file limit. " + self.get_file_name() +
-                                       " only has " + str(len(lines)) + " lines.")
-                    raise StoragePastLineException
+                    self.sys_log(str(new_line_number) + " exceeds the file limit. [" + self.get_file_name() +
+                                 "] only has " + str(len(lines)) + " lines.")
+                    self._logger.error(str(new_line_number) + " exceeds the file limit. [" + self.get_file_name() +
+                                       "] only has " + str(len(lines)) + " lines.")
+                    raise StoragePastLineException(
+                        str(new_line_number) + " exceeds the file limit. [" + self.get_file_name() +
+                        "] only has " + str(len(lines)) + " lines.")
                 else:
                     try:
                         result = lines[self._last_read_line:new_line_number]
@@ -99,9 +101,10 @@ class DefaultStorage(StorageBase):
                         self._reader_status = Status.IDLE
                         return result
                     except Exception as err:
-                        self.sys_log("Read got exception " + str(err) + '.')
-                        self._logger.error("Read got exception " + str(err) + '.')
-                        raise StorageReadException
+                        self.sys_log("Read file [" + self._file_name + "] got exception: " + str(err) + '.')
+                        self._logger.error("Read file [" + self._file_name + "] got exception: " + str(err) + '.')
+                        raise StorageReadException(
+                            "Read file [" + self._file_name + "] got exception: " + str(err) + '.')
 
     def write(self, data, params=None):
         if not isinstance(data, str):
@@ -144,6 +147,6 @@ class DefaultStorage(StorageBase):
 
             self._writer_status = Status.IDLE
         except Exception as err:
-            self.sys_log("Write got exception: " + str(err) + '.')
-            self._logger.error("Write got exception: " + str(err) + '.')
-            raise StorageWriteException
+            self.sys_log("Write to file [" + self._file_name + "] got exception: " + str(err) + '.')
+            self._logger.error("Write to file [" + self._file_name + "] got exception: " + str(err) + '.')
+            raise StorageWriteException("Write to file [" + self._file_name + "] got exception: " + str(err) + '.')

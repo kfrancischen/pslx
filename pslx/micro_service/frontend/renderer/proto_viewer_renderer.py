@@ -11,7 +11,7 @@ server_urls = []
 for server_config in pslx_frontend_ui_app.config['frontend_config'].proto_viewer_config:
     url = server_config.server_url
     certificate_path = server_config.root_certificate_path
-    pslx_frontend_logger.info("Getting url of " + url + " and certificate path " + certificate_path + '.')
+    pslx_frontend_logger.info("Proto viewer Getting url [" + url + "] and certificate path [" + certificate_path + '].')
     root_certificate = None
     if certificate_path:
         with open(FileUtil.die_if_file_not_exist(file_name=certificate_path), 'r') as infile:
@@ -38,8 +38,9 @@ def view_proto():
             proto_file_path = request.form['proto_file_path'].strip()
             message_type = request.form['message_type'].strip()
             module = request.form['module'].strip()
-            pslx_frontend_logger.info("Select url " + server_url + ' and input path ' + proto_file_path + '.' +
-                                      " with message type " + message_type + ' in module name ' + module + '.')
+            pslx_frontend_logger.info("Proto viewer selecting url [" + server_url + '] and input path [' +
+                                      proto_file_path + '] with message type [' + message_type +
+                                      '] in module name [' + module + '].')
             result = client_map[server_url]['client'].view_proto(
                 proto_file_path=proto_file_path,
                 message_type=message_type,
@@ -60,10 +61,10 @@ def view_proto():
                 server_urls=all_urls
             )
         except Exception as err:
-            pslx_frontend_logger.error("Got error: " + str(err))
+            pslx_frontend_logger.error("Got error rendering proto_viewer.html: " + str(err) + '.')
             return render_template(
                 'proto_viewer.html',
-                proto_content="Got error: " + str(err),
+                proto_content="Got error rendering proto_viewer.html: " + str(err) + '.',
                 server_urls=all_urls
             )
     else:

@@ -42,8 +42,8 @@ class PartitionerBase(StorageBase):
         self._max_capacity = int(max_capacity)
 
     def initialize_from_file(self, file_name):
-        self.sys_log("Initialize_from_file function is not implemented for storage type "
-                     + ProtoUtil.get_name_by_value(enum_type=StorageType, value=self.STORAGE_TYPE) + '.')
+        self.sys_log("Initialize_from_file function is not implemented for storage type ["
+                     + ProtoUtil.get_name_by_value(enum_type=StorageType, value=self.STORAGE_TYPE) + '].')
         pass
 
     def initialize_from_dir(self, dir_name, force=False):
@@ -51,8 +51,8 @@ class PartitionerBase(StorageBase):
         def _recursive_initialize_from_dir(node, max_recursion):
             self.sys_log("Starting recursion of " + str(max_recursion) + '.')
             if max_recursion == 0:
-                self.sys_log("Exhausted all recursions.")
-                self._logger.info("Exhausted all recursions.")
+                self.sys_log("Exhausted all recursions for dir [" + dir_name + '].')
+                self._logger.info("Exhausted all recursions for dir [" + dir_name + '].')
                 return
 
             node_name = node.get_node_name()
@@ -83,9 +83,9 @@ class PartitionerBase(StorageBase):
                         child_node=child_node,
                         order=order
                     )
-                    self.sys_log("Adding new node with name " + child_node_name + node.get_node_name() + '.')
-                    self._logger.info("Adding new node with name " + child_node_name + " to parent node "
-                                      + node.get_node_name() + '.')
+                    self.sys_log("Adding new node [" + child_node_name + node.get_node_name() + '].')
+                    self._logger.info("Adding new node [" + child_node_name + "] to parent node ["
+                                      + node.get_node_name() + '].')
 
                     if not from_scratch:
                         self._file_tree.trim_tree(max_capacity=self._max_capacity)
@@ -288,8 +288,8 @@ class PartitionerBase(StorageBase):
 
         file_name = FileUtil.join_paths_to_file(root_dir=latest_dir, base_name=file_base_name)
         if not FileUtil.does_file_exist(file_name):
-            self.sys_log("The file to read does not exist.")
-            raise StorageReadException
+            self.sys_log("The file [" + file_name + "] to read does not exist.")
+            raise StorageReadException("The file [" + file_name + "] to read does not exist.")
 
         if file_name != self._underlying_storage.get_file_name():
             self.sys_log("Sync to the latest file to " + file_name)
@@ -299,9 +299,9 @@ class PartitionerBase(StorageBase):
             self._reader_status = Status.IDLE
             return result
         except Exception as err:
-            self.sys_log(str(err) + '.')
-            self._logger.error(str(err) + '.')
-            raise StorageReadException
+            self.sys_log("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
+            self._logger.error("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
+            raise StorageReadException("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
 
     def read_range(self, params):
 
@@ -329,7 +329,9 @@ class PartitionerBase(StorageBase):
         oldest_dir, latest_dir = self.get_oldest_dir(), self.get_latest_dir()
         if not latest_dir or not oldest_dir:
             if self.is_empty():
-                self.sys_log("Current partitioner is empty, cannot read anything.")
+                self._logger.warning("Current partitioner [" + self.get_dir_name() +
+                                     "] is empty, cannot read anything.")
+                self.sys_log("Current partitioner [" + self.get_dir_name() + "] is empty, cannot read anything.")
                 return {}
 
         oldest_dir = oldest_dir.replace(self._file_tree.get_root_name(), '')
@@ -380,9 +382,9 @@ class PartitionerBase(StorageBase):
             self._reader_status = Status.IDLE
             return result
         except Exception as err:
-            self.sys_log("Read got exception " + str(err) + '.')
-            self._logger.error("Read got exception " + str(err) + '.')
-            raise StorageReadException
+            self.sys_log("Read range in dir [" + self.get_dir_name() + "] got exception " + str(err) + '.')
+            self._logger.error("Read range in dir [" + self.get_dir_name() + "] got exception " + str(err) + '.')
+            raise StorageReadException("Read range in dir [" + self.get_dir_name() + "] got exception " + str(err) + '.')
 
     def make_new_partition(self, timestamp):
         new_dir_list = FileUtil.parse_timestamp_to_dir(timestamp=timestamp).split('/')
@@ -394,11 +396,11 @@ class PartitionerBase(StorageBase):
             )
         )
         if FileUtil.does_dir_exist(dir_name=child_node.get_node_name()):
-            self.sys_log(child_node.get_node_name() + " exist. Don't make new partition.")
+            self.sys_log('Node [' + child_node.get_node_name() + "] exist. Don't make new partition.")
             return None
         else:
-            self.sys_log(child_node.get_node_name() + " doesn't exist. Make new partition.")
-            self._logger.info(child_node.get_node_name() + " doesn't exist. Make new partition.")
+            self.sys_log('Node [' + child_node.get_node_name() + "] doesn't exist. Make new partition.")
+            self._logger.info('Node [' + child_node.get_node_name() + "] doesn't exist. Make new partition.")
             FileUtil.create_dir_if_not_exist(dir_name=child_node.get_node_name())
             self.initialize_from_dir(dir_name=self._file_tree.get_root_name())
             return child_node.get_node_name()
@@ -447,9 +449,9 @@ class PartitionerBase(StorageBase):
             self._underlying_storage.write(data=data, params=params)
             self._writer_status = Status.IDLE
         except Exception as err:
-            self.sys_log("Write got exception " + str(err) + '.')
-            self._logger.error("Write got exception " + str(err) + '.')
-            raise StorageWriteException
+            self.sys_log("Write to dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
+            self._logger.error("Write to dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
+            raise StorageWriteException("Write to dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
 
     def print_self(self):
         # for debug only

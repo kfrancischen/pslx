@@ -48,7 +48,7 @@ class TTLCleanerOp(BatchOperator):
                 except Exception as err:
                     num_file_failed += 1
                     self.counter_increment("num_file_failed_to_be_removed")
-                    self._logger.error("Removing file " + cur_time + ' failed with err ' + str(err) + '.')
+                    self._logger.error("Removing file " + path_name + ' failed with err ' + str(err) + '.')
         else:
             for file_name in FileUtil.list_files_in_dir(dir_name=path_name):
                 stats = self._delete_file(cur_time=cur_time, path_name=file_name)

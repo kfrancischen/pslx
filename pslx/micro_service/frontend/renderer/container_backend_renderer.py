@@ -39,7 +39,7 @@ def get_containers_info():
                 break
             if dir_to_containers:
                 for dir_name in FileUtil.list_dirs_in_dir(dir_name=dir_to_containers):
-                    pslx_frontend_logger.info("Checking folder " + dir_name + '.')
+                    pslx_frontend_logger.info("Container backend checking folder [" + dir_name + '].')
                     container_name = dir_name.strip('/').split('/')[-1]
                     partitioner_storage = pslx_partitioner_lru_cache.get(key=dir_name)
                     if not partitioner_storage:
@@ -48,7 +48,9 @@ def get_containers_info():
                         pslx_partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
 
                     latest_dir = partitioner_storage.get_latest_dir()
-                    pslx_frontend_logger.info("Checking latest dir " + latest_dir + '.')
+                    pslx_frontend_logger.info("Container backend checking latest dir [" + latest_dir + '].')
+                    if not latest_dir:
+                        continue
                     files = FileUtil.list_files_in_dir(dir_name=latest_dir)
                     if not files:
                         continue
@@ -99,7 +101,7 @@ def get_container_info(container_name, mode, data_model):
         root_dir=backend_folder,
         base_name=data_model + '/' + mode
     )
-    pslx_frontend_logger.info("Checking folder " + container_folder + '.')
+    pslx_frontend_logger.info("Container backend checking folder [" + container_folder + '].')
     if not FileUtil.does_dir_exist(dir_name=container_folder):
         return container_info, operators_info
 
@@ -114,7 +116,7 @@ def get_container_info(container_name, mode, data_model):
             root_dir=container_folder,
             base_name=container_name
         )
-    pslx_frontend_logger.info("Checking folder " + container_folder + '.')
+    pslx_frontend_logger.info("Container backend checking folder [" + container_folder + '].')
     if not FileUtil.does_dir_exist(dir_name=dir_name):
         return container_info, operators_info
 
@@ -124,11 +126,11 @@ def get_container_info(container_name, mode, data_model):
         partitioner_storage.initialize_from_dir(dir_name=dir_name)
         pslx_partitioner_lru_cache.set(key=dir_name, value=partitioner_storage)
 
-    pslx_frontend_logger.info("Checking folder " + dir_name + '.')
+    pslx_frontend_logger.info("Container backend checking folder [" + dir_name + '].')
     latest_dir = partitioner_storage.get_latest_dir()
     files = FileUtil.list_files_in_dir(dir_name=latest_dir)
 
-    pslx_frontend_logger.info("Checking folder " + latest_dir + '.')
+    pslx_frontend_logger.info("Container backend checking folder [" + latest_dir + '].')
     if not files:
         return container_info, operators_info
 
@@ -177,7 +179,7 @@ def container_backend():
             containers_info=sorted(containers_info, key=lambda x: x['container_name'])
         )
     except Exception as err:
-        pslx_frontend_logger.error("Got error rendering index.html: " + str(err))
+        pslx_frontend_logger.error("Got error rendering container_backend.html: " + str(err) + '.')
         return render_template(
             'container_backend.html',
             containers_info=[]
@@ -203,7 +205,7 @@ def view_container():
             operators_info=operators_info
         )
     except Exception as err:
-        pslx_frontend_logger.error("Got error: " + str(err))
+        pslx_frontend_logger.error("Got error rendering container_backend.html: " + str(err) + '.')
         return render_template(
             'container_backend_container_viewer.html',
             container_name=str(err),

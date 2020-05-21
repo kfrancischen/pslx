@@ -33,8 +33,9 @@ class OperatorBase(OrderedNodeBase):
         return self._config['allow_container_snapshot']
 
     def set_data_model(self, model):
-        self.sys_log("Switching to " + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=model) +
-                     " model from " + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=self.DATA_MODEL) + '.')
+        self.sys_log("Switching to [" + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=model) +
+                     "] model from [" + ProtoUtil.get_name_by_value(enum_type=DataModelType, value=self.DATA_MODEL)
+                     + '].')
         self.DATA_MODEL = model
 
     def unset_data_model(self):
@@ -44,8 +45,9 @@ class OperatorBase(OrderedNodeBase):
         return self.DATA_MODEL
 
     def set_status(self, status):
-        self.sys_log(self._node_name + " switching to " + ProtoUtil.get_name_by_value(enum_type=Status, value=status)
-                     + " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self._status) + '.')
+        self.sys_log('Node [' + self._node_name + "] switching to [" + ProtoUtil.get_name_by_value(
+            enum_type=Status, value=status) + "] status from [" +
+                     ProtoUtil.get_name_by_value(enum_type=Status, value=self._status) + '].')
         self._status = status
 
     def unset_status(self):
@@ -72,8 +74,8 @@ class OperatorBase(OrderedNodeBase):
         self._container.counter_increment(counter_name=self.get_node_name() + ':' + counter_name, n=n)
 
     def mark_as_done(self):
-        self.sys_log("Mark " + self.get_node_name() + ' as done.')
-        self._logger.info("Mark " + self.get_node_name() + ' as done.')
+        self.sys_log("Mark [" + self.get_node_name() + '] as done.')
+        self._logger.info("Mark [" + self.get_node_name() + '] as done.')
         self.set_status(status=Status.SUCCEEDED)
 
     def mark_as_persistent(self):
@@ -117,13 +119,13 @@ class OperatorBase(OrderedNodeBase):
         if self.DATA_MODEL != DataModelType.DEFAULT:
             for parent in self.get_parents_nodes():
                 if parent.get_status() in [Status.IDLE, Status.WAITING, Status.RUNNING]:
-                    self.sys_log("Upstream operator " + parent.get_node_name() + " is still in status: " +
-                                 ProtoUtil.get_name_by_value(enum_type=Status, value=parent.get_status()) + '.')
-                    self._logger.info("Upstream operator " + parent.get_node_name() + " is still in status: " +
-                                      ProtoUtil.get_name_by_value(enum_type=Status, value=parent.get_status()) + '.')
+                    self.sys_log("Upstream operator [" + parent.get_node_name() + "] is still in status [" +
+                                 ProtoUtil.get_name_by_value(enum_type=Status, value=parent.get_status()) + '].')
+                    self._logger.info("Upstream operator [" + parent.get_node_name() + "] is still in status [" +
+                                      ProtoUtil.get_name_by_value(enum_type=Status, value=parent.get_status()) + '].')
                     unfinished_op.append(parent.get_node_name())
                 elif parent.get_status() == Status.FAILED:
-                    self.sys_log("Upstream operator " + parent.get_node_name() + " failed.")
+                    self.sys_log("Upstream operator [" + parent.get_node_name() + "] failed.")
                     # streaming mode allows failure from its dependencies.
                     if not self._config['allow_failure']:
                         self.sys_log('This results in failure of all the following descendant operators.')
@@ -180,10 +182,10 @@ class OperatorBase(OrderedNodeBase):
     def execute(self):
         assert self.is_data_model_consistent() and self.is_status_consistent()
         if self.get_status() == Status.SUCCEEDED:
-            self.sys_log("Operator " + self.get_node_name() +
-                         " already succeeded. It might have been finished by another process.")
-            self._logger.info("Operator " + self.get_node_name() +
-                              " already succeeded. It might have been finished by another process.")
+            self.sys_log("Operator [" + self.get_node_name() +
+                         "] already succeeded. It might have been finished by another process.")
+            self._logger.info("Operator [" + self.get_node_name() +
+                              "] already succeeded. It might have been finished by another process.")
             return
 
         unfinished_parent_ops = self.wait_for_upstream_status()
@@ -194,9 +196,9 @@ class OperatorBase(OrderedNodeBase):
             unfinished_parent_ops = self.wait_for_upstream_status()
 
         if self.get_status() == Status.FAILED:
-            self.sys_log("Operator " + self.get_node_name() + " already failed because of upstream jobs. Existing...")
-            self._logger.error("Operator " + self.get_node_name() +
-                               " already failed because of upstream jobs. Existing...")
+            self.sys_log("Operator [" + self.get_node_name() + "] already failed because of upstream jobs. Existing...")
+            self._logger.error("Operator [" + self.get_node_name() +
+                               "] already failed because of upstream jobs. Existing...")
             return
 
         self.set_status(status=Status.RUNNING)
@@ -212,8 +214,8 @@ class OperatorBase(OrderedNodeBase):
                 self._end_time = TimezoneUtil.cur_time_in_pst()
                 self.set_status(status=Status.SUCCEEDED)
         except OperatorFailureException as err:
-            self.sys_log("Execute " + self.get_node_name() + " with err: " + str(err) + '.')
-            self._logger.error("Execute " + self.get_node_name() + " with err: " + str(err) + '.')
+            self.sys_log("Execute operator [" + self.get_node_name() + "] with error " + str(err) + '.')
+            self._logger.error("Execute operator [" + self.get_node_name() + "] with error " + str(err) + '.')
             self.set_status(status=Status.FAILED)
 
     def _execute_impl(self):
@@ -221,9 +223,10 @@ class OperatorBase(OrderedNodeBase):
             self.execute_impl()
             return Signal.STOP
         except Exception as err:
-            self.sys_log("operator " + self.get_node_name() + " failed with error " + str(err) + '.')
-            self._logger.error("operator " + self.get_node_name() + " failed with error " + str(err) + '.')
-            raise OperatorFailureException
+            self.sys_log("operator [" + self.get_node_name() + "] failed with error " + str(err) + '.')
+            self._logger.error("operator [" + self.get_node_name() + "] failed with error " + str(err) + '.')
+            raise OperatorFailureException("operator [" + self.get_node_name() + "] failed with error " +
+                                           str(err) + '.')
 
     def execute_impl(self):
         raise NotImplementedError

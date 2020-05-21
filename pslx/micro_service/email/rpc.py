@@ -22,7 +22,7 @@ class EmailRPC(RPCBase):
 
     def _login(self, credentials):
         if not credentials.password:
-            self._logger.error("Failed in logging to email " + credentials.user_name + '.')
+            self._logger.error("Failed in logging to email [" + credentials.user_name + '].')
         else:
             self._credentials[credentials.user_name] = credentials
             email_server = smtplib.SMTP(
@@ -35,7 +35,7 @@ class EmailRPC(RPCBase):
                 credentials.password
             )
             self._email_servers[credentials.user_name] = email_server
-            self._logger.info("Successfully login to email " + credentials.user_name + '.')
+            self._logger.info("Successfully login to email [" + credentials.user_name + '].')
 
     def add_email_credentials(self, credentials):
         self._credentials[credentials.user_name] = credentials

@@ -56,28 +56,38 @@ class ContainerBase(GraphBase):
     def initialize(self, force=False):
         for operator in self._node_name_to_node_dict.values():
             if operator.get_status() != self._status:
-                self.sys_log("Status of " + operator.get_node_name() + " is not consistent.")
+                self._logger.error("Status of [" + operator.get_node_name() + "] is not consistent for container ["
+                                   + self.get_container_name() + '].')
+                self.sys_log("Status of [" + operator.get_node_name() + "] is not consistent for container ["
+                             + self.get_container_name() + '].')
                 if not force:
-                    raise exception.OperatorStatusInconsistentException
+                    raise exception.OperatorStatusInconsistentException(
+                        "Status of [" + operator.get_node_name() + "] is not consistent for container ["
+                        + self.get_container_name() + '].')
                 else:
                     operator.set_status(self._status)
             if operator.get_data_model() != self.DATA_MODEL:
-                self.sys_log("Data model of " + operator.get_node_name() + " is not consistent.")
+                self._logger.error("Data model of [" + operator.get_node_name() + "] is not consistent for container ["
+                                   + self.get_container_name() + '].')
+                self.sys_log("Data model of [" + operator.get_node_name() + "] is not consistent for container ["
+                             + self.get_container_name() + '].')
                 if not force:
-                    raise exception.OperatorDataModelInconsistentException
+                    raise exception.OperatorDataModelInconsistentException(
+                        "Data model of [" + operator.get_node_name() + "] is not consistent for container ["
+                        + self.get_container_name() + '].')
                 else:
                     operator.set_data_model(self.DATA_MODEL)
 
         self._is_initialized = True
 
     def set_status(self, status):
-        self.sys_log(self.get_class_name() + "Switching to " +
+        self.sys_log('Container [' + self.get_container_name() + "] switching to [" +
                      ProtoUtil.get_name_by_value(enum_type=Status, value=status) +
-                     " status from " + ProtoUtil.get_name_by_value(enum_type=Status, value=self._status) + '.')
+                     "] status from [" + ProtoUtil.get_name_by_value(enum_type=Status, value=self._status) + '].')
         self._status = status
 
     def unset_status(self):
-        self.sys_log("Unset status.")
+        self.sys_log("Unset status for container [" + self.get_container_name() + '].')
         self.set_status(status=Status.IDLE)
 
     def uninitialize(self):
@@ -85,8 +95,13 @@ class ContainerBase(GraphBase):
 
     def add_operator_edge(self, from_operator, to_operator):
         if self._is_initialized:
-            self.sys_log("Cannot add more connections if the container is already initialized.")
-            raise exception.ContainerAlreadyInitializedException
+            self._logger.error("Cannot add more connections if the container [" + self.get_container_name() +
+                               "] is already initialized.")
+            self.sys_log("Cannot add more connections if the container [" + self.get_container_name() +
+                         "] is already initialized.")
+            raise exception.ContainerAlreadyInitializedException(
+                "Cannot add more connections if the container [" + self.get_container_name() +
+                "] is already initialized.")
         self.add_direct_edge(from_node=from_operator, to_node=to_operator)
         from_operator.bind_to_container(container=self)
         to_operator.bind_to_container(container=self)
@@ -102,7 +117,10 @@ class ContainerBase(GraphBase):
 
     def get_container_snapshot(self, send_backend=True):
         if not self._is_initialized:
-            self.sys_log("Warning: taking snapshot when the container is not initialized.")
+            self._logger.error("Warning: taking snapshot when the container [" + self.get_container_name() +
+                               "] is not initialized.")
+            self.sys_log("Warning: taking snapshot when the container [" + self.get_container_name() +
+                         "] is not initialized.")
 
         snapshot = ContainerSnapshot()
         snapshot.container_name = self._container_name
@@ -128,8 +146,8 @@ class ContainerBase(GraphBase):
             )
             snapshot.operator_snapshot_map[op_name].CopyFrom(op.get_operator_snapshot(output_file=op_output_file))
 
-        self.sys_log("Snapshot saved to folder " + self._snapshot_file_folder + '.')
-        self._logger.info("Snapshot saved to folder " + self._snapshot_file_folder + '.')
+        self.sys_log("Snapshot saved to folder [" + self._snapshot_file_folder + '].')
+        self._logger.info("Snapshot saved to folder [" + self._snapshot_file_folder + '].')
         output_file_name = FileUtil.join_paths_to_file(
             root_dir=FileUtil.dir_name(self._snapshot_file_folder),
             base_name='SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' + self._container_name + '.pb'
@@ -149,30 +167,37 @@ class ContainerBase(GraphBase):
 
     def _execute(self, task_queue, finished_queue):
         for operator_name in iter(task_queue.get, Signal.STOP):
-            self.sys_log("Starting task: " + operator_name)
-            self._logger.info("Starting task: " + operator_name)
+            self.sys_log("Starting task [" + operator_name + "] for container [" + self.get_container_name() + '].')
+            self._logger.info("Starting task [" + operator_name + "] for container [" +
+                              self.get_container_name() + '].')
             op = self._node_name_to_node_dict[operator_name]
             op.execute()
-            self.sys_log("Taking snapshot after executing " + operator_name)
+            self.sys_log("Taking snapshot after executing [" + operator_name + "] for container [" +
+                         self.get_container_name() + '].')
             self.get_container_snapshot(send_backend=op.allow_container_snapshot())
             finished_queue.put(operator_name)
-            self.sys_log("Finished task: " + operator_name)
-            self._logger.info("Finished task: " + operator_name)
+            self.sys_log("Finished task [" + operator_name + "] for container [" +
+                         self.get_container_name() + '].')
+            self._logger.info("Finished task [" + operator_name + "] for container [" +
+                              self.get_container_name() + '].')
             task_queue.task_done()
         task_queue.task_done()
 
     def execute(self, is_backfill=False, num_threads=1):
         if is_backfill:
             if self.DATA_MODEL == DataModelType.STREAMING:
-                self._logger.warning('STREAMING container does not support backfill mode.')
+                self._logger.warning('STREAMING container [' + self.get_container_name() +
+                                     '] does not support backfill mode.')
                 return
-            self.sys_log("Running in backfill mode.")
-            self._logger.debug("Running in backfill mode.")
+            self.sys_log("Running in backfill mode for container [" + self.get_container_name() + '].')
+            self._logger.debug("Running in backfill mode for container [" + self.get_container_name() + '].')
 
         if not self._is_initialized:
-            self.sys_log("Cannot execute if the container is not initialized.")
-            self._logger.error("Cannot execute if the container is not initialized.")
-            raise exception.ContainerUninitializedException
+            self.sys_log("Cannot execute if the container [" + self.get_container_name() + "] is not initialized.")
+            self._logger.error("Cannot execute if the container [" + self.get_container_name() +
+                               "] is not initialized.")
+            raise exception.ContainerUninitializedException(
+                "Cannot execute if the container [" + self.get_container_name() + "] is not initialized.")
 
         self.sys_log('Upstream operators are: ' + ', '.join(self._upstream_ops))
         unblocked_blocker = 0
@@ -188,7 +213,8 @@ class ContainerBase(GraphBase):
                     unblocked_blocker += 1
 
         self.set_status(status=Status.RUNNING)
-        self.sys_log("Taking snapshot at start.")
+        self.sys_log("Taking snapshot of container [" + self.get_container_name() + "] at start.")
+        self._logger.info("Taking snapshot of container [" + self.get_container_name() + "] at start.")
         self.get_container_snapshot()
         operator_status = {}
         if is_backfill:
@@ -205,8 +231,10 @@ class ContainerBase(GraphBase):
                 if is_backfill and operator_status[operator_name] == Status.SUCCEEDED:
                     self._node_name_to_node_dict[operator_name].set_status(status=Status.SUCCEEDED)
                     continue
-                self.sys_log("Adding " + operator_name + " to task queue.")
-                self._logger.info("Adding " + operator_name + " to task queue.")
+                self.sys_log("Adding operator [" + operator_name + "] to task queue for container [" +
+                             self.get_container_name() + '].')
+                self._logger.info("Adding operator [" + operator_name + "] to task queue for container [" +
+                                  self.get_container_name() + '].')
                 task_queue.put(operator_name)
                 num_tasks += 1
 
@@ -215,7 +243,7 @@ class ContainerBase(GraphBase):
 
         if num_threads > 1:
             thread_list = []
-            self._logger.info("Using " + str(num_threads) + " threads. Enter multi-threading mode.")
+            self._logger.info("Using [" + str(num_threads) + "] threads. Enter multi-threading mode.")
             for _ in range(num_threads):
                 thread = threading.Thread(target=self._execute, args=(task_queue, finished_queue))
                 thread.daemon = True
@@ -239,18 +267,19 @@ class ContainerBase(GraphBase):
                 self.set_status(status=Status.FAILED)
                 break
 
-        log_str = 'Finishing order is: '
+        log_str = 'Tasks finishing order is: '
         tasks_list = []
         for _ in range(num_tasks):
             tasks_list.append(finished_queue.get())
 
-        log_str += ', '.join(tasks_list)
+        log_str += '-->'.join(tasks_list)
             
         self._logger.info(log_str + '.')
         self.sys_log(log_str + '.')
 
         self.get_container_snapshot()
-        self.sys_log("Taking snapshot in the end.")
+        self.sys_log("Taking snapshot of container [" + self.get_container_name() + "] in the end.")
+        self._logger.info("Taking snapshot of container [" + self.get_container_name() + "] in the end.")
 
     def _get_latest_status_of_operators(self):
         operator_status = {}
@@ -259,12 +288,13 @@ class ContainerBase(GraphBase):
         for snapshot_file in snapshot_files[::-1]:
             operator_name = snapshot_file.split('_')[1]
             if operator_name not in operator_status:
-                self.sys_log("Getting status for operator " + operator_name + '.')
+                self._logger.info("Getting status for operator [" + operator_name + '].')
+                self.sys_log("Getting status for operator [" + operator_name + '].')
                 operator_status[operator_name] = self._node_name_to_node_dict[operator_name].get_status_from_snapshot(
                     snapshot_file=snapshot_file
                 )
-                self.sys_log("Status for operator " + operator_name + ' is ' + ProtoUtil.get_name_by_value(
-                    enum_type=Status, value=operator_status[operator_name]) + '.')
+                self.sys_log("Status for operator [" + operator_name + '] is [' + ProtoUtil.get_name_by_value(
+                    enum_type=Status, value=operator_status[operator_name]) + '].')
             if len(operator_status) == len(self._node_name_to_node_dict):
                 break
         return operator_status

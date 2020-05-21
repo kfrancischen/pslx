@@ -118,22 +118,23 @@ Tool to fetch the latest, oldest data or data within a time range. This includes
 
 To initialize `LocalPartitionerFetcher`
 ```python
-__init__(partitioner)
+__init__(partitioner, logger)
 ```
 * Description: initialize a `LocalPartitionerFetcher`
 * Arguments:
     1. partitioner: the partitioner object to fetch. It needs to have underlying storage of a `ProtoTableStorage`.
-
+    2. logger: the logger for the fetcher.
 
 To initialize `RemotePartitionerFetcher`
 ```python
-__init__(partitioner, server_url, root_certificate)
+__init__(partitioner, server_url, logger, root_certificate)
 ```
 * Description: initialize a `RemotePartitionerFetcher`
 * Arguments:
     1. partitioner_dir: the remote partitioner directory to fetch. It needs to have underlying storage of a `ProtoTableStorage`.
     2. server_url: the remote server url.
-    3. root_certificate: the root_certificate for authentication.
+    3. logger: the logger for the fetcher.
+    4. root_certificate: the root_certificate for authentication.
     
 Both `LocalPartitionerFetcher` and `RemotePartitionerFetcher` have the following implementations:
 ```python
@@ -159,26 +160,28 @@ Tool to monitor a specific latest key. This includes implementation of `LocalPar
 
 To initialize `LocalPartitionerWatcher`
 ```python
-__init__(partitioner, delay, timeout)
+__init__(partitioner, logger, delay, timeout)
 ```
 * Description: initialize a `LocalPartitionerWatcher`
 * Arguments:
     1. partitioner: the partitioner object to watch. It needs to have underlying storage of a `ProtoTableStorage`.
-    2. delay: the seconds between each trial.
-    3. timeout: the seconds of watch timeout.
+    2. logger: the logger for the watcher.
+    3. delay: the seconds between each trial.
+    4. timeout: the seconds of watch timeout.
 
 
 To initialize `RemotePartitionerWatcher`
 ```python
-__init__(partitioner, server_url, root_certificate, delay, timeout)
+__init__(partitioner, server_url, logger, root_certificate, delay, timeout)
 ```
 * Description: initialize a `RemotePartitionerWatcher`
 * Arguments:
     1. partitioner_dir: the remote partitioner directory to watch. It needs to have underlying storage of a `ProtoTableStorage`.
     2. server_url: the remote server url.
-    3. root_certificate: the root_certificate for authentication.
-    4. delay: the seconds between each trial.
-    5. timeout: the seconds of watch timeout.
+    3. logger: the logger for the fetcher.
+    4. root_certificate: the root_certificate for authentication.
+    5. delay: the seconds between each trial.
+    6. timeout: the seconds of watch timeout.
 
     
 Both `LocalPartitionerWatcher` and `RemotePartitionerWatcher` have the following implementations:

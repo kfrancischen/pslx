@@ -70,7 +70,9 @@ class FixedSizeStorage(DefaultStorage):
                                    str(self._fixed_size) + '!')
                 self.sys_log("Failed to read size of " + str(params['num_line']) + ' . Exceeds ' +
                              str(self._fixed_size) + '!')
-                raise StorageExceedsFixedSizeException
+                raise StorageExceedsFixedSizeException(
+                    "Failed to read size of " + str(params['num_line']) + ' . Exceeds ' +
+                    str(self._fixed_size) + '!')
 
     def write(self, data, params=None):
         if not isinstance(data, str):
@@ -98,6 +100,7 @@ class FixedSizeStorage(DefaultStorage):
 
         if not isinstance(data, str):
             self.sys_log("Data is not str instance, joining them with preset delimiter.")
+            self._logger.error("Data is not str instance, joining them with preset delimiter.")
             data_to_write = params['delimiter'].join([str(val) for val in data])
         else:
             data_to_write = data
@@ -119,6 +122,6 @@ class FixedSizeStorage(DefaultStorage):
             self._writer_status = Status.IDLE
 
         except Exception as err:
-            self.sys_log("Write got exception " + str(err) + '.')
-            self._logger.error("Write got exception " + str(err) + '.')
-            raise StorageWriteException
+            self.sys_log("Write to file [" + self._file_name + "] got exception: " + str(err) + '.')
+            self._logger.error("Write to file [" + self._file_name + "] got exception " + str(err) + '.')
+            raise StorageWriteException("Write to file [" + self._file_name + "] got exception " + str(err) + '.')

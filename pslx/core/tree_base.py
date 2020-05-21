@@ -28,7 +28,7 @@ class TreeBase(Base):
         return
 
     def add_node(self, parent_node, child_node, order=SortOrder.ORDER):
-        self.sys_log("Adding parent node " + parent_node.get_node_name() + " to " + child_node.get_node_name() + '.')
+        self.sys_log("Adding parent node [" + parent_node.get_node_name() + "] to " + child_node.get_node_name() + '.')
         assert child_node.get_num_parents() == 0 and parent_node != child_node
         if parent_node != self._root:
             assert parent_node.get_num_parents() != 0
@@ -37,13 +37,13 @@ class TreeBase(Base):
         if parent_node.get_node_name() in self._node_name_to_node_dict:
             self.sys_log(string=parent_node.get_node_name() + " already exists.")
         else:
-            self.sys_log("Adding new parent node to tree " + parent_node.get_node_name() + '.')
+            self.sys_log("Adding new parent node to tree [" + parent_node.get_node_name() + '].')
             self._node_name_to_node_dict[parent_node.get_node_name()] = parent_node
 
         if child_node.get_node_name() in self._node_name_to_node_dict:
-            self.sys_log(string=child_node.get_node_name() + " already exists.")
+            self.sys_log(string='Node [' + child_node.get_node_name() + "] already exists.")
         else:
-            self.sys_log("Adding new child node to tree " + child_node.get_node_name() + '.')
+            self.sys_log("Adding new child node to tree [" + child_node.get_node_name() + '].')
             self._node_name_to_node_dict[child_node.get_node_name()] = child_node
 
         self._clean_dict()
@@ -54,7 +54,7 @@ class TreeBase(Base):
 
     def find_node(self, node_name):
         if node_name in self._node_name_to_node_dict:
-            self.sys_log("Successfully found the node with name " + node_name + '.')
+            self.sys_log("Successfully found the node with name [" + node_name + '].')
             return self._node_name_to_node_dict[node_name]
         search_queue = deque()
         search_queue.append(self._root)
@@ -111,7 +111,7 @@ class TreeBase(Base):
         return result
 
     def _trim_tree_from_right(self, node, max_capacity=-1):
-        self.sys_log("Trimming with capacity " + str(max_capacity) + " from node " + node.get_node_name() + '.')
+        self.sys_log("Trimming with capacity " + str(max_capacity) + " from node [" + node.get_node_name() + '].')
         if not node.is_children_ordered():
             self.sys_log(string=node.get_node_name() + ' is not ordered. Be careful when you trim the tree.')
 
@@ -146,9 +146,10 @@ class TreeBase(Base):
             return
 
     def _trim_tree_from_left(self, node, max_capacity=-1):
-        self.sys_log("Trimming with capacity " + str(max_capacity) + " from node " + node.get_node_name() + '.')
+        self.sys_log("Trimming with capacity " + str(max_capacity) + " from node [" + node.get_node_name() + '].')
         if not node.is_children_ordered():
-            self.sys_log(string=node.get_node_name() + ' is not ordered. Be careful when you trim the tree.')
+            self.sys_log(string='Node [' + node.get_node_name() +
+                                '] is not ordered. Be careful when you trim the tree.')
 
         cumulative_size = self.get_num_nodes_subtree(node=node)
         if max_capacity <= 0 or cumulative_size <= max_capacity:

@@ -54,7 +54,9 @@ class ProducerBase(Base):
             generic_request.message_type = ProtoUtil.infer_str_from_message_type(
                     message_type=self.RESPONSE_MESSAGE_TYPE
                 )
-        self.sys_log("Getting request of uuid " + generic_request.uuid + '.')
+        self.sys_log("Getting request of uuid [" + generic_request.uuid + '] in queue [' + self.get_queue_name() + '].')
+        self._logger.info("Getting request of uuid [" + generic_request.uuid + '] in queue [' +
+                          self.get_queue_name() + '].')
         try:
             generic_request_str = ProtoUtil.message_to_string(
                 proto_message=generic_request
@@ -83,7 +85,5 @@ class ProducerBase(Base):
                     any_message=self._response.response_data
                 )
         except Exception as err:
-            self._logger.error(self.get_class_name() + " send request with error " + str(err) + '.')
-            self.sys_log(self.get_class_name() + " send request with error " + str(err) + '.')
-            pass
-
+            self._logger.error('Queue [' + self.get_queue_name() + "] send request with error " + str(err) + '.')
+            self.sys_log('Queue [' + self.get_queue_name() + "] send request with error " + str(err) + '.')
