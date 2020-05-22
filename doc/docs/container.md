@@ -274,7 +274,7 @@ execute_now(is_backfill, num_threads)
  Also for `CronBatchContainer` and `CronStreamingContainer`, we do have
  
 ```python
-add_schedule(day_of_week, hour, minute=None, second=None)
+add_schedule(day_of_week, hour, minute=None, second=None, misfire_grace_time=None)
 ```
 * Description: Add cron like schedule to the container. There could be multiple if schedules.
 * Arguments: please check the related arguments in [apscheduler](https://apscheduler.readthedocs.io/en/stable/modules/triggers/cron.html).
@@ -282,7 +282,7 @@ add_schedule(day_of_week, hour, minute=None, second=None)
 For `IntervalBatchContainer` and `IntervalStreamingContainer`, we do have
  
 ```python
-add_schedule(days, hours=0, minutes=0, seconds=0)
+add_schedule(days, hours=0, minutes=0, seconds=0, misfire_grace_time=None)
 ```
 * Description: Add interval schedule to the container. There could be multiple if schedules.
 * Arguments: please check the related arguments in [apscheduler](https://apscheduler.readthedocs.io/en/stable/modules/triggers/interval.html#module-apscheduler.triggers.interval).

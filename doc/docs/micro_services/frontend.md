@@ -90,6 +90,10 @@ FILE_VIEWER_CONFIG:
   SERVER_1:
     SERVER_URL: "localhost:11445"
     ROOT_CERTIFICATE_PATH: ""
+LOGGING_QUEUE_CONFIG:
+  EXCHANGE: "prod.pubsub.pslx_dedicated_logging"
+  TOPIC: "PSLX_DEDICATED_LOGGING"
+  CONNECTION_STR: "amqp://guest:guest@localhost:5672"
 USER_NAME: "guest"
 PASSWORD: "guest"
 ```

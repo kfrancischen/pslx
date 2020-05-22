@@ -117,3 +117,9 @@ message FileViewerRPCResponse {
     repeated FileInfo files_info = 1;
     repeated FileInfo directories_info = 2;
 }
+
+// the next will be 3
+message LoggingMessageRequest {
+    string message = 1;
+    DiskLoggerLevel level = 2;
+}

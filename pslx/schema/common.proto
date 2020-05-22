@@ -23,13 +23,20 @@ message FrontendConfig {
         string root_certificate_path = 2;
     }
 
-    string sqlalchemy_database_path = 4;
-    ServerConfig container_backend_config = 5;
-    repeated ServerConfig proto_viewer_config = 6;
-    repeated ServerConfig file_viewer_config = 7;
-    repeated ServerConfig instant_messaging_config = 8;
-    repeated ServerConfig rpc_io_config = 9;
-    repeated ServerConfig email_config = 10;
+    message MessageQueueConfig {
+        string exchange = 3;
+        string topic = 4;
+        string connection_str = 5;
+    }
 
-    Credentials credential = 11;
+    string sqlalchemy_database_path = 6;
+    ServerConfig container_backend_config = 7;
+    repeated ServerConfig proto_viewer_config = 8;
+    repeated ServerConfig file_viewer_config = 9;
+    repeated ServerConfig instant_messaging_config = 10;
+    repeated ServerConfig rpc_io_config = 11;
+    repeated ServerConfig email_config = 12;
+
+    Credentials credential = 13;
+    MessageQueueConfig logging_queue_config = 14;
 }

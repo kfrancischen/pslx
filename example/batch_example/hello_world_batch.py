@@ -1,7 +1,15 @@
 import time
 from pslx.batch.operator import BatchOperator
 from pslx.batch.container import DefaultBatchContainer
+from pslx.micro_service.pubsub.publisher import Publisher
 from pslx.util.dummy_util import DummyUtil
+
+
+pslx_dedicated_logging_publisher = Publisher(
+    exchange_name="prod.pubsub.pslx_dedicated_logging",
+    topic_name="PSLX_DEDICATED_LOGGING",
+    connection_str="amqp://guest:guest@localhost:5672"
+)
 
 
 class HelloWorldOp(BatchOperator):
@@ -19,6 +27,7 @@ class HelloWorldOp(BatchOperator):
 class HelloWorldContainer(DefaultBatchContainer):
     def __init__(self, container_name='hello_world_container', ttl=7):
         super().__init__(container_name=container_name, ttl=ttl)
+        self._logger.set_publisher(publisher=pslx_dedicated_logging_publisher)
 
 
 if __name__ == "__main__":

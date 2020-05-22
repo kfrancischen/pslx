@@ -31,12 +31,13 @@ class CronStreamingContainer(DefaultStreamingContainer):
         super().__init__(container_name, ttl=ttl)
         self._scheduler_specs = []
 
-    def add_schedule(self, day_of_week, hour, minute=None, second=None):
+    def add_schedule(self, day_of_week, hour, minute=None, second=None, misfire_grace_time=None):
         scheduler_spec = {
             'day_of_week': day_of_week,
             'hour': hour,
             'minute': minute,
             'second': second,
+            'misfire_grace_time': misfire_grace_time,
         }
         self._logger.info("Adding schedule spec: " + str(scheduler_spec))
         self.sys_log("Adding schedule spec: " + str(scheduler_spec))
@@ -59,7 +60,8 @@ class CronStreamingContainer(DefaultStreamingContainer):
                 day_of_week=scheduler_spec['day_of_week'],
                 hour=scheduler_spec['hour'],
                 minute=scheduler_spec['minute'],
-                second=scheduler_spec['second']
+                second=scheduler_spec['second'],
+                misfire_grace_time=scheduler_spec['misfire_grace_time']
             )
         background_scheduler.start()
         try:
@@ -76,12 +78,13 @@ class IntervalStreamingContainer(DefaultStreamingContainer):
         super().__init__(container_name, ttl=ttl)
         self._scheduler_specs = []
 
-    def add_schedule(self, days, hours=0, minutes=0, seconds=0):
+    def add_schedule(self, days, hours=0, minutes=0, seconds=0, misfire_grace_time=None):
         scheduler_spec = {
             'days': days,
             'hours': hours,
             'minutes': minutes,
             'seconds': seconds,
+            'misfire_grace_time': misfire_grace_time,
         }
         self._scheduler_specs.append(scheduler_spec)
         self._logger.info("Spec sets to " + str(scheduler_spec))
@@ -106,6 +109,7 @@ class IntervalStreamingContainer(DefaultStreamingContainer):
                 hours=scheduler_spec['hours'],
                 minutes=scheduler_spec['minutes'],
                 seconds=scheduler_spec['seconds'],
+                misfire_grace_time=scheduler_spec['misfire_grace_time']
             )
         background_scheduler.start()
         try:

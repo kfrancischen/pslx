@@ -2,6 +2,7 @@ import logging
 import datetime
 from inspect import getframeinfo, stack
 from pslx.schema.enums_pb2 import DiskLoggerLevel
+from pslx.schema.rpc_pb2 import LoggingMessageRequest
 from pslx.util.color_util import ColorsUtil
 from pslx.util.env_util import EnvUtil
 from pslx.util.timezone_util import TimezoneUtil
@@ -12,6 +13,7 @@ class LoggingTool(object):
     def __init__(self, name, date=datetime.datetime.utcnow(),
                  ttl=EnvUtil.get_pslx_env_variable(var="PSLX_INTERNAL_TTL")):
         self._log_file_dir = ''
+        self._publisher = None
         if name:
             self._start_date = date
             assert '-' not in name
@@ -39,9 +41,18 @@ class LoggingTool(object):
                 DiskLoggerLevel.DEBUG: logging.DEBUG,
                 DiskLoggerLevel.ERROR: logging.ERROR,
             }
+            self._level_to_logger_short_level_map = {
+                DiskLoggerLevel.INFO: 'I',
+                DiskLoggerLevel.WARNING: 'W',
+                DiskLoggerLevel.DEBUG: 'D',
+                DiskLoggerLevel.ERROR: 'E',
+            }
 
     def get_log_dir(self):
         return self._log_file_dir
+
+    def set_publisher(self, publisher):
+        self._publisher = publisher
 
     def _new_logger(self):
         logging.basicConfig(
@@ -87,6 +98,12 @@ class LoggingTool(object):
 
         self._logger.setLevel(level=self._level_to_logger_level_map[logger_level])
         self._level_to_caller_map[logger_level](message)
+        message_proto = LoggingMessageRequest()
+        message_proto.message = ('[' + self._level_to_logger_short_level_map[logger_level] + ' ' + self._name +
+                                 ' ' + message)
+        message_proto.level = logger_level
+        if self._publisher:
+            self._publisher.publish(message=message_proto)
 
     def info(self, string):
         self._write_log(string=string, logger_level=DiskLoggerLevel.INFO)

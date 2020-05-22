@@ -10,6 +10,7 @@
 
     <script type="text/javascript" src="static/js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
 </head>
 <body>
 
@@ -22,7 +23,7 @@
 </div>
 
 <ul class="nav justify-content-center nav-pills navbar-right">
-    <li class="nav-item active">
+    <li class="nav-item">
       <a class="nav-link" href="proto_viewer.html">
         <i class="fa fa-file"></i>
         <span>Proto Viewer</span></a>
@@ -42,70 +43,59 @@
         <i class="fa fa-table"></i>
         <span>Container Backend</span></a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item active">
       <a class="nav-link" href="realtime_logging.html">
         <i class="fa fa-desktop"></i>
         <span>Realtime Logging</span></a>
     </li>
 </ul>
 
-<!-- Contact Form - START -->
+    <!-- Contact Form - START -->
 <div class="container">
     <div class="row">
         <div class="col-md-12">
             <div class="well well-sm">
-                <form class="form-horizontal" method="POST" action="view_proto">
+                <form class="form-horizontal" method="POST" action="view_logging">
                     <fieldset>
-                        <legend class="text-center header">Enter proto information</legend>
                         <div class="form-group">
-                            <span class="col-md-1 col-md-offset-1 text-center"><i class="fa fa-link bigicon"></i></span>
-                            <div class="col-md-9">
-                                <select name="server_url" class="form-control">
-                                 {% for server_url in server_urls %}
-                                    <option value="{{ server_url }} ">{{ server_url }}</option>
-                                {% endfor %}
-                              </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <span class="col-md-1 col-md-offset-1 text-center"><i class="fa fa-file bigicon"></i></span>
-                            <div class="col-md-9">
-                                <input id="proto_file_path" name="proto_file_path" type="text" placeholder="proto file path" class="form-control" value="{{ request.form['proto_file_path'] }}">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <span class="col-md-1 col-md-offset-1 text-center"><i class="fa fa-comments bigicon"></i></span>
-                            <div class="col-md-9">
-                                <input id="message_type" name="message_type" type="text" placeholder="message type" class="form-control" value="{{ request.form['message_type'] }}">
+                            <span class="col-md-1 text-center"></span>
+                            <div class="col-md-10">
+                                <input id="key_words" name="key_words" type="text" placeholder="key words (separated by ',')" class="form-control" value="{{ key_words }}">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <span class="col-md-1 col-md-offset-1 text-center"><i class="fa fa-archive bigicon"></i></span>
-                            <div class="col-md-9">
-                                <input id="module" name="module" type="text" placeholder="module" class="form-control" value="{{ request.form['module'] }}">
+                            <span class="col-md-1 text-center"></span>
+                            <div class="col-md-10">
+                                <label class="checkbox-inline"><input type="checkbox" name="log_level" value="INFO" {{ 'checked' if logging_levels['INFO'] else '' }}>INFO</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="log_level" value="WARNING"  {{ 'checked' if logging_levels['WARNING'] else '' }}>WARNING</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="log_level" value="ERROR"  {{ 'checked' if logging_levels['ERROR'] else '' }}>ERROR</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="log_level" value="DEBUG"  {{ 'checked' if logging_levels['DEBUG'] else '' }}>DEBUG</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-md-12 text-center">
-                                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                                <button type="submit" class="btn btn-primary btn-lg">Click to Start</button>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <span class="col-md-1 col-md-offset-1 text-center"><i class="fa fa-envelope bigicon"></i></span>
-                            <div class="col-md-9">
-                                <textarea disabled class="form-control" id="response" name="response" rows="50" placeholder="Proto content will show here." >{{ proto_content }}</textarea>
+                            <div class="col-md-12">
+                                <textarea disabled class="form-control" id="logging_data" name="logging_data" rows="70"></textarea>
+                                {% for entry in logging_data: %}
+                                    <script>
+                                      $("#logging_data").text("{{ entry }}")
+                                      var textarea = document.getElementById("logging_data");
+                                      textarea.scrollTop = textarea.scrollHeight;
+                                    </script>
+                                {% endfor %}
                             </div>
                         </div>
-
                     </fieldset>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
 <style>
     .header {
         color: #36A0FF;

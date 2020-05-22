@@ -150,4 +150,3 @@ class GenericConsumer(Base):
         except KeyboardInterrupt:
             for consumer in self._queue_consumers:
                 consumer.stop_consumer()
-

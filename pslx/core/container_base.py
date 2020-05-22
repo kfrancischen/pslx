@@ -21,7 +21,7 @@ from pslx.util.dummy_util import DummyUtil
 class ContainerBase(GraphBase):
     DATA_MODEL = DataModelType.DEFAULT
 
-    def __init__(self, container_name, ttl=-1):
+    def __init__(self, container_name, logger=DummyUtil.dummy_logging(), ttl=-1):
         super().__init__()
         self._container_name = container_name
         self._is_initialized = False
@@ -35,7 +35,7 @@ class ContainerBase(GraphBase):
         )
         self._start_time = None
         self._end_time = None
-        self._logger = DummyUtil.dummy_logging()
+        self._logger = logger
         self._upstream_ops = []
         self._backend = None
         self._status = Status.IDLE
@@ -243,7 +243,8 @@ class ContainerBase(GraphBase):
 
         if num_threads > 1:
             thread_list = []
-            self._logger.info("Using [" + str(num_threads) + "] threads. Enter multi-threading mode.")
+            self._logger.info("Using [" + str(num_threads) + "] threads. Enter multi-threading mode. Note that "
+                                                             "realtime logging will possibly fail in this case.")
             for _ in range(num_threads):
                 thread = threading.Thread(target=self._execute, args=(task_queue, finished_queue))
                 thread.daemon = True

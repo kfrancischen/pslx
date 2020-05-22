@@ -67,6 +67,12 @@ class CommonUtil(object):
                     server_config.server_url = val['SERVER_URL']
                     server_config.root_certificate_path = val['ROOT_CERTIFICATE_PATH']
 
+            msg_queue_config = FrontendConfig.MessageQueueConfig()
+            msg_queue_config.exchange = dict_config['LOGGING_QUEUE_CONFIG']['EXCHANGE']
+            msg_queue_config.topic = dict_config['LOGGING_QUEUE_CONFIG']['TOPIC']
+            msg_queue_config.connection_str = dict_config['LOGGING_QUEUE_CONFIG']['CONNECTION_STR']
+            config.logging_queue_config.CopyFrom(msg_queue_config)
+
             credential = Credentials()
             credential.user_name = dict_config['USER_NAME']
             credential.password = dict_config['PASSWORD']

@@ -13,7 +13,8 @@ server_urls = []
 for server_config in pslx_frontend_ui_app.config['frontend_config'].proto_viewer_config:
     url = server_config.server_url
     certificate_path = server_config.root_certificate_path
-    pslx_frontend_logger.info("Getting url of " + url + " and certificate path " + certificate_path + '.')
+    pslx_frontend_logger.info("Proto table viewer getting url [" + url + "] and certificate path [" +
+                              certificate_path + '].')
     root_certificate = None
     if certificate_path:
         with open(FileUtil.die_if_file_not_exist(file_name=certificate_path), 'r') as infile:
