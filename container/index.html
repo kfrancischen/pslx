@@ -880,7 +880,7 @@ input will be ignored and only one thread is allowed.</li>
 </li>
 </ul>
 <p>Also for <code>CronBatchContainer</code> and <code>CronStreamingContainer</code>, we do have</p>
-<div class="codehilite"><pre><span></span><code><span class="n">add_schedule</span><span class="p">(</span><span class="n">day_of_week</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="n">add_schedule</span><span class="p">(</span><span class="n">day_of_week</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">misfire_grace_time</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -889,7 +889,7 @@ input will be ignored and only one thread is allowed.</li>
 <li>Arguments: please check the related arguments in <a href="https://apscheduler.readthedocs.io/en/stable/modules/triggers/cron.html">apscheduler</a>.</li>
 </ul>
 <p>For <code>IntervalBatchContainer</code> and <code>IntervalStreamingContainer</code>, we do have</p>
-<div class="codehilite"><pre><span></span><code><span class="n">add_schedule</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minutes</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="n">add_schedule</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minutes</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">misfire_grace_time</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
 
