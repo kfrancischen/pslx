@@ -1,5 +1,6 @@
 import base64
 import pika
+import threading
 from pslx.core.base import Base
 from pslx.tool.logging_tool import LoggingTool
 from pslx.util.env_util import EnvUtil
@@ -27,6 +28,7 @@ class Publisher(Base):
         )
         self._logger.info("Start publisher with topic name [" + self._topic_name + '] in exchange [' +
                           self._exchange_name + '].')
+        self._emit_lock = threading.Lock()
 
     def get_topic_name(self):
         return self._topic_name
@@ -38,6 +40,7 @@ class Publisher(Base):
         return self._connection_str
 
     def publish(self, message):
+        self._emit_lock.acquire()
         try:
             message_str = ProtoUtil.message_to_string(
                 proto_message=message
@@ -51,3 +54,5 @@ class Publisher(Base):
                               "] with topic name [" + self._topic_name + '].')
         except Exception as err:
             self._logger.error("publish message failed with error " + str(err) + '.')
+        finally:
+            self._emit_lock.release()

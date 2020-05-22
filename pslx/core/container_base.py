@@ -243,8 +243,7 @@ class ContainerBase(GraphBase):
 
         if num_threads > 1:
             thread_list = []
-            self._logger.info("Using [" + str(num_threads) + "] threads. Enter multi-threading mode. Note that "
-                                                             "realtime logging will possibly fail in this case.")
+            self._logger.info("Using [" + str(num_threads) + "] threads. Enter multi-threading mode.")
             for _ in range(num_threads):
                 thread = threading.Thread(target=self._execute, args=(task_queue, finished_queue))
                 thread.daemon = True

@@ -71,7 +71,6 @@ def stream_template(template_name, **context):
     pslx_frontend_ui_app.update_template_context(context)
     t = pslx_frontend_ui_app.jinja_env.get_template(template_name)
     rv = t.stream(context)
-    rv.enable_buffering(5)
     return rv
 
 
