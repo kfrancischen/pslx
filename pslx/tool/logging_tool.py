@@ -1,6 +1,7 @@
 import logging
 import datetime
 from inspect import getframeinfo, stack
+import traceback
 from pslx.schema.enums_pb2 import DiskLoggerLevel
 from pslx.schema.rpc_pb2 import LoggingMessageRequest
 from pslx.util.color_util import ColorsUtil
@@ -92,7 +93,8 @@ class LoggingTool(object):
         if logger_level == DiskLoggerLevel.WARNING:
             message += ColorsUtil.make_foreground_yellow(text=string)
         elif logger_level == DiskLoggerLevel.ERROR:
-            message += ColorsUtil.make_foreground_red(text=string)
+            message += ColorsUtil.make_foreground_red(
+                text=string + '\n\nENTERING TRACEBACK:\n' + traceback.format_exc() + '.')
         else:
             message += ColorsUtil.make_foreground_green(text=string)
 
