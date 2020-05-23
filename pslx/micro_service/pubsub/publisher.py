@@ -2,19 +2,15 @@ import base64
 import pika
 import threading
 from pslx.core.base import Base
-from pslx.tool.logging_tool import LoggingTool
-from pslx.util.env_util import EnvUtil
+from pslx.util.dummy_util import DummyUtil
 from pslx.util.proto_util import ProtoUtil
 
 
 class Publisher(Base):
 
-    def __init__(self, exchange_name, topic_name, connection_str):
+    def __init__(self, exchange_name, topic_name, connection_str, logger=DummyUtil.dummy_logging()):
         super().__init__()
-        self._logger = LoggingTool(
-            name=exchange_name + '_' + topic_name + '_publisher',
-            ttl=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_TTL')
-        )
+        self._logger = logger
         self._connection_str = connection_str
         self._topic_name = topic_name
         self._exchange_name = exchange_name
@@ -48,7 +44,8 @@ class Publisher(Base):
             self._channel.basic_publish(
                 exchange=self._exchange_name,
                 routing_key=self._topic_name,
-                body=base64.b64encode(message_str)
+                body=base64.b64encode(message_str),
+                properties=pika.BasicProperties(delivery_mode=2)
             )
             self._logger.info("Succeeded in publishing the data to exchange [" + self._exchange_name +
                               "] with topic name [" + self._topic_name + '].')

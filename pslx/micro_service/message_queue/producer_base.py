@@ -12,9 +12,9 @@ from pslx.util.timezone_util import TimezoneUtil, TimeSleepObj
 class ProducerBase(Base):
     RESPONSE_MESSAGE_TYPE = None
 
-    def __init__(self, exchange, queue_name, connection_str):
+    def __init__(self, exchange, queue_name, connection_str, logger=DummyUtil.dummy_logging()):
         super().__init__()
-        self._logger = DummyUtil.dummy_logging()
+        self._logger = logger
         self._connection = pika.BlockingConnection(
             pika.URLParameters(connection_str)
         )

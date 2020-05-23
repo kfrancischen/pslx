@@ -87,7 +87,16 @@ def realtime_logging():
                               '] and log levels changed to [' + ', '.join(log_levels) + '] for realtime logging.')
 
     def streaming_data_generator():
-        for val in iter(pslx_dedicated_logging_queue.get, None):
+        while True:
+            if pslx_dedicated_logging_queue.empty():
+                time.sleep(TimeSleepObj.ONE_THOUSANDTH_SECOND)
+                continue
+            try:
+                val = pslx_dedicated_logging_queue.get(block=False)
+            except Exception as _:
+                time.sleep(TimeSleepObj.ONE_THOUSANDTH_SECOND)
+                continue
+
             if ProtoUtil.get_name_by_value(enum_type=DiskLoggerLevel, value=val.level) in log_levels:
                 message = val.message
                 for string_to_replace in strings_to_replace:
@@ -103,10 +112,9 @@ def realtime_logging():
                     if len(pslx_dedicated_logging_list) >= max(
                             int(EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_CACHE')), 700):
                         pslx_dedicated_logging_list.pop(0)
-
                     yield '\\n'.join([val for val in pslx_dedicated_logging_list])
 
-            time.sleep(TimeSleepObj.ONE_TENTH_SECOND)
+            time.sleep(TimeSleepObj.ONE_THOUSANDTH_SECOND)
     return Response(stream_template('realtime_logging.html',
                                     logging_data=streaming_data_generator(),
                                     key_words=','.join(key_words),
