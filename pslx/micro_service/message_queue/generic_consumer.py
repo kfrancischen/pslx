@@ -89,7 +89,7 @@ class GenericQueueConsumer(Base):
         channel.exchange_declare(
             exchange=self._exchange,
             durable=True)
-
+        channel.queue_delete(queue=self.get_queue_name())
         channel.queue_declare(queue=self.get_queue_name(), durable=True)
         channel.queue_bind(
             exchange=self._exchange,
