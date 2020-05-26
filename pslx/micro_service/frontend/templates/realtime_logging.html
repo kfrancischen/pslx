@@ -81,7 +81,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-md-12">
-                                <textarea disabled class="form-control" id="logging_data" name="logging_data" rows="65"></textarea>
+                                <textarea readonly class="form-control" id="logging_data" name="logging_data" rows="65"></textarea>
                                 {% for entry in logging_data: %}
                                     <script>
                                       $("#logging_data").text("{{ entry }}")

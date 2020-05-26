@@ -83,8 +83,14 @@ def listening_to_log():
 dedicated_logging_thread = threading.Thread(target=listening_to_log)
 dedicated_logging_thread.start()
 
-strings_to_replace = [ColorsUtil.Foreground.GREEN, ColorsUtil.RESET, ColorsUtil.Foreground.YELLOW,
-                      ColorsUtil.Foreground.RED]
+strings_to_replace = {
+    ColorsUtil.Foreground.GREEN: '', 
+    ColorsUtil.RESET: '', 
+    ColorsUtil.Foreground.YELLOW: '',
+    ColorsUtil.Foreground.RED: '', 
+    '\n': '\\n',
+    '\"': '',
+}
 
 
 def stream_template(template_name, **context):
@@ -132,8 +138,8 @@ def realtime_logging():
                 )
                 if ProtoUtil.get_name_by_value(enum_type=DiskLoggerLevel, value=val.level) in log_levels:
                     message = val.message
-                    for string_to_replace in strings_to_replace:
-                        message = message.replace(string_to_replace, '')
+                    for string_to_replace, string_after_replacing in strings_to_replace.items():
+                        message = message.replace(string_to_replace, string_after_replacing)
                     contain_key_word = False if key_words else True
                     for key_word in key_words:
                         if key_word in message:
@@ -142,7 +148,6 @@ def realtime_logging():
 
                     if contain_key_word:
                         pslx_dedicated_logging_list.append(message)
-
             yield '\\n'.join(pslx_dedicated_logging_list)
 
             time.sleep(TimeSleepObj.ONE_TENTH_SECOND)
