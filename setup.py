@@ -1,6 +1,6 @@
+import subprocess
 import setuptools
 from setuptools.command.install import install
-import subprocess
 
 
 class CustomInstallCommand(install):
@@ -18,7 +18,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pslx",
-    version="0.9",
+    version="1.0",
     scripts=['compile_protos.sh', 'run_unittests.sh'],
     cmdclass={
         'install': CustomInstallCommand,

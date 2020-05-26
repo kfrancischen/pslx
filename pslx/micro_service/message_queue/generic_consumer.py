@@ -1,8 +1,8 @@
 import base64
 import os
-import pika
 import threading
 import time
+import pika
 from pslx.core.base import Base
 from pslx.core.exception import QueueAlreadyExistException, QueueConsumerNotInitializedException
 from pslx.schema.rpc_pb2 import GenericRPCRequest
@@ -104,7 +104,8 @@ class GenericQueueConsumer(Base):
 
     def start_consumer(self):
         if not self._connection:
-            raise QueueConsumerNotInitializedException
+            raise QueueConsumerNotInitializedException("Queue not initialized for consumer [" +
+                                                       self.get_consumer_name() + '].')
 
         self._thread = threading.Thread(
             target=self._connection.ioloop.start,

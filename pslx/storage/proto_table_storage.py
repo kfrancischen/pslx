@@ -133,7 +133,9 @@ class ProtoTableStorage(StorageBase):
             self.sys_log("Waiting for writer to finish.")
             time.sleep(TimeSleepObj.ONE_SECOND)
         self._deleter_status = Status.RUNNING
-        self._table_message.data.clear()
+        all_keys = list(dict(self._table_message.data).keys())
+        for key in all_keys:
+            del self._table_message.data[key]
         try:
             self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
             with FileLockTool(self._file_name, read_mode=False):

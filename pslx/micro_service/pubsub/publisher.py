@@ -1,6 +1,6 @@
 import base64
-import pika
 import threading
+import pika
 from pslx.core.base import Base
 from pslx.util.dummy_util import DummyUtil
 from pslx.util.proto_util import ProtoUtil
