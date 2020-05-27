@@ -84,10 +84,10 @@ dedicated_logging_thread = threading.Thread(target=listening_to_log)
 dedicated_logging_thread.start()
 
 strings_to_replace = {
-    ColorsUtil.Foreground.GREEN: '', 
-    ColorsUtil.RESET: '', 
+    ColorsUtil.Foreground.GREEN: '',
+    ColorsUtil.RESET: '',
     ColorsUtil.Foreground.YELLOW: '',
-    ColorsUtil.Foreground.RED: '', 
+    ColorsUtil.Foreground.RED: '',
     '\n': '\\n',
     '\"': '',
 }
@@ -105,12 +105,18 @@ def stream_template(template_name, **context):
 @login_required
 def realtime_logging():
     try:
-        key_words = request.form['key_words'].replace(' ', '').split(',')
+        key_words = [word for word in request.form['key_words'].replace(' ', '').split(',') if word]
     except Exception as _:
         key_words = []
+    try:
+        blacklist_words = [word for word in request.form['blacklist_words'].replace(' ', '').split(',') if word]
+    except Exception as _:
+        blacklist_words = []
     log_levels = request.form.getlist('log_level')
-    pslx_frontend_logger.info('Key words changed to [' + ', '.join(key_words) +
-                              '] and log levels changed to [' + ', '.join(log_levels) + '] for realtime logging.')
+    pslx_frontend_logger.info(
+        'Key words changed to [' + ', '.join(key_words) + '],  blacklisted words changed to [' +
+        ', '.join(blacklist_words) + '] and log levels changed to [' + ', '.join(log_levels) +
+        '] for realtime logging.')
 
     def streaming_data_generator():
         last_checked_key = None
@@ -147,11 +153,18 @@ def realtime_logging():
                             break
 
                     if contain_key_word:
-                        pslx_dedicated_logging_list.append(message)
+                        contain_backlist_word = False
+                        for blacklist_word in blacklist_words:
+                            if blacklist_word in message:
+                                contain_backlist_word = True
+                                break
+                        if not contain_backlist_word:
+                            pslx_dedicated_logging_list.append(message)
             yield '\\n'.join(pslx_dedicated_logging_list)
 
             time.sleep(TimeSleepObj.ONE_TENTH_SECOND)
     return Response(stream_template('realtime_logging.html',
                                     logging_data=streaming_data_generator(),
                                     key_words=','.join(key_words),
+                                    blacklist_words=','.join(blacklist_words),
                                     logging_levels={level: True for level in log_levels}))

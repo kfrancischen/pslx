@@ -143,8 +143,9 @@ class NonStoppingBatchContainer(DefaultBatchContainer):
         self.unset_counters()
         super().execute(is_backfill=False, num_threads=num_threads)
 
-    def execute(self, is_backfill=False, num_threads=1):
+    def execute(self, is_backfill=False, num_threads=1, sleep_between_execution=TimeSleepObj.HALF_SECOND):
         while True:
             self._logger.info("Entering executing loop. Starting one execution...")
             self._execute_wrapper(num_threads=num_threads)
-            time.sleep(TimeSleepObj.HALF_SECOND)
+            if sleep_between_execution > 0:
+                time.sleep(sleep_between_execution)
