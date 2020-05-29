@@ -14,6 +14,13 @@ message ProtoTable {
     string updated_time = 5;
 }
 
+// the next will be 4
+message ProtoTableIndexMap {
+    map<string, uint64> index_map = 1;
+    uint64 cur_shard = 2;
+    uint64 size_per_shard  = 3;
+}
+
 // the next will be 11
 message ContainerBackendValue {
     string container_name = 1;

@@ -35,7 +35,7 @@ class PartitionerBase(StorageBase):
         return self.PARTITIONER_TYPE
 
     def set_underlying_storage(self, storage):
-        assert storage.STORAGE_TYPE != StorageType.PARTITIONER_STORAGE
+        assert storage.STORAGE_TYPE not in [StorageType.PARTITIONER_STORAGE, StorageType.SHARDED_PROTO_TABLE_STORAGE]
         self._underlying_storage = storage
 
     def set_max_capacity(self, max_capacity):

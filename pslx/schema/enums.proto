@@ -37,12 +37,13 @@ enum DiskLoggerLevel {
     ERROR = 4;
 }
 
-// the next will be 4
+// the next will be 5
 enum StorageType {
     DEFAULT_STORAGE = 0;
     PARTITIONER_STORAGE = 1;
     FIXED_SIZE_STORAGE = 2;
     PROTO_TABLE_STORAGE = 3;
+    SHARDED_PROTO_TABLE_STORAGE = 4;
 }
 
 // the next will be 2
