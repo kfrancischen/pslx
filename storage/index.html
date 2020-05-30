@@ -296,6 +296,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sharded-proto-table-storage" class="md-nav__link">
+    Sharded Proto Table Storage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#partitioner-storage" class="md-nav__link">
     Partitioner Storage
   </a>
@@ -509,6 +516,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sharded-proto-table-storage" class="md-nav__link">
+    Sharded Proto Table Storage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#partitioner-storage" class="md-nav__link">
     Partitioner Storage
   </a>
@@ -536,10 +550,10 @@
                 
                   <h1>Data Storage</h1>
                 
-                <p>PSLX supports in total four different types of storage: <code>StorageType.DEFAULT_STORAGE</code>, <code>StorageType.FIXED_SIZE_STORAGE</code>,
-<code>StorageType.PROTO_TABLE_STORAGE</code> and <code>StorageType.PARTITIONER_STORAGE</code>, and the <code>StorageType.PARTITIONER_STORAGE</code> also support
+                <p>PSLX supports in total five different types of storage: <code>StorageType.DEFAULT_STORAGE</code>, <code>StorageType.FIXED_SIZE_STORAGE</code>,
+<code>StorageType.PROTO_TABLE_STORAGE</code>, <code>StorageType.SHARDED_PROTO_TABLE_STORAGE</code> and <code>StorageType.PARTITIONER_STORAGE</code>, and the <code>StorageType.PARTITIONER_STORAGE</code> also support
 five different types of timestamp based partitions: <code>PartitionerStorageType.MINUTELY</code>, <code>PartitionerStorageType.HOURLY</code>, <code>PartitionerStorageType.DAILY</code>,
-<code>PartitionerStorageType.MONTHLY</code>, <code>PartitionerStorageType.YEARLY</code>. The related enums are defined in <a href="../schema/">schema</a>, and their implementations are 
+<code>PartitionerStorageType.MONTHLY</code>, <code>PartitionerStorageType.YEARLY</code>. The related enums are defined in <a href="../schema/">schema</a>, and their implementations are
 in the <a href="https://github.com/kfrancischen/pslx/tree/master/pslx/storage">storage</a> folder.</p>
 <p>The four stage all inherit from a parent class and <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/storage/storage_base.py"><code>storage_base.py</code></a>, where
 each inheritance needs to implement its own read and write functions. Besides these two functions, there are a few functions
@@ -611,10 +625,10 @@ and <code>StorageType.PROTO_TABLE_STORAGE</code>.</li>
 </li>
 <li>Explanation:<ol>
 <li>The underlying file needs to be a text file, and the default storage supports read/write from both top and down (see
-the definition of <code>ReadRuleType</code> and <code>WriteRuleType</code> in <a href="../schema/">schema</a>), and can be set by function <code>set_config(config)</code> 
+the definition of <code>ReadRuleType</code> and <code>WriteRuleType</code> in <a href="../schema/">schema</a>), and can be set by function <code>set_config(config)</code>
 by overwriting string <code>read_rule_type</code> and <code>write_rule_type</code> with the correct enum. The default values for them are <code>ReadRuleType.READ_FROM_BEGINNING</code> and
 <code>WriteRuleType.WRITE_FROM_END</code>.</li>
-<li>The params in the <code>read(params)</code> function supports the number of lines to read from the file. The way to set this field is 
+<li>The params in the <code>read(params)</code> function supports the number of lines to read from the file. The way to set this field is
 to pass <code>num_line</code> to the param (a dictionary). If the <code>num_line</code> exceeds the total number of lines in the file, an error will be raised.</li>
 <li>After reading the underlying file, the file handler will move accordingly. For example, after reading one line from the file, the second time
 the storage will start by reading the second line of the file. The can be reset by calling <code>start_from_first_line()</code>.</li>
@@ -653,7 +667,7 @@ the storage will start by reading the second line of the file. The can be reset 
 <li>Description: Overrides the default constructor.</li>
 <li>Arguments:<ol>
 <li>logger: the logging tool (see <a href="../tool/">tool</a>) for this storage. Default value is None.</li>
-<li>fixed_size: the maximum data size that this storage will hold in memory, negative meaning the maximum size is infinity. </li>
+<li>fixed_size: the maximum data size that this storage will hold in memory, negative meaning the maximum size is infinity.</li>
 </ol>
 </li>
 </ul>
@@ -703,7 +717,7 @@ size, error will be raised. If <code>force_load</code> is true, the storage will
 </ol>
 </li>
 <li>Explanation:<ol>
-<li>proto table is a key-value storage, and therefore the params need to contain field of <code>key</code>. </li>
+<li>proto table is a key-value storage, and therefore the params need to contain field of <code>key</code>.</li>
 <li>The value of the proto table is a proto message, and if the field of <code>message_type</code> is provided,
  the reader will correctly deserialize to the desired protobuf. Otherwise it will only an <code>Any</code> type message.</li>
 <li>Under PSLX convention, the underlying file name needs to end with <code>.pb</code>.</li>
@@ -731,7 +745,7 @@ size, error will be raised. If <code>force_load</code> is true, the storage will
 <li>Explanation:<ol>
 <li>The data needs to be a dictionary of <code>key, value</code> with key being a string and value being a protobuf message of any user defined
 types.</li>
-<li>The params can contain <code>overwrite</code> with its value a boolean indicating whether to overwrite the value if the key already 
+<li>The params can contain <code>overwrite</code> with its value a boolean indicating whether to overwrite the value if the key already
 exists in the proto table.</li>
 </ol>
 </li>
@@ -754,18 +768,66 @@ exists in the proto table.</li>
 <ul>
 <li>Description: Delete all the contents from the proto table.</li>
 </ul>
+<h3 id="sharded-proto-table-storage">Sharded Proto Table Storage<a class="headerlink" href="#sharded-proto-table-storage" title="Permanent link">&para;</a></h3>
+<p>Sharded proto table storage will shard the data into different proto tables, denoted by <code>data@SHARD.pb</code>, where the <code>SHARD</code> is an integer that starts from <code>0</code>. In addition to these tables, there also exists a <code>index_map.pb</code> protobuf that stores the metadata information such as the mapping between each key and the shard that it belongs to, the latest shard, and the maximum size per shard.</p>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">size_per_shard</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: To initialize a sharded proto table storage with <code>size_per_shard</code> for each shard.</li>
+<li>Arguments:<ol>
+<li>size_per_shard: the size per shard. This has to be set if the sharded proto table is newly created, and can be set <code>None</code> if the table already exists.</li>
+<li>logger: please see the <code>storage_base</code> definition.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">read</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: Read from the storage.</li>
+<li>Arguments:<ol>
+<li>params: the read parameters.</li>
+</ol>
+</li>
+<li>Explanation:<ol>
+<li>proto table is a key-value storage, and therefore the params need to contain field of <code>keys</code>, which is a list of keys in the storage.</li>
+</ol>
+</li>
+<li>Return: a dictionary of key-values, where keys might be a subset of the input keys in the params for which the key exists in the sharded proto table storage.</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: Write to the storage.</li>
+<li>Arguments:<ol>
+<li>data: the write parameters.</li>
+</ol>
+</li>
+<li>Explanation:<ol>
+<li>The data needs to be a dictionary of <code>key, value</code> with key being a string and value being a protobuf message of any user defined
+types.</li>
+<li>The params can contain <code>overwrite</code> with its value a boolean indicating whether to overwrite the value if the key already
+exists in the proto table.</li>
+</ol>
+</li>
+</ul>
 <h3 id="partitioner-storage">Partitioner Storage<a class="headerlink" href="#partitioner-storage" title="Permanent link">&para;</a></h3>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The base class implementation of partitioners is in <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/storage/partitioner_base.py">partitioner_base.py</a>, 
+<p>The base class implementation of partitioners is in <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/storage/partitioner_base.py">partitioner_base.py</a>,
 it uses an underlying tree structure defined in <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/core/tree_base.py">tree_base.py</a>.</p>
 </div>
-<p>In PSLX, five types of partitioners are supported:   <br />
-1. <code>PartitionerStorageType.MINUTELY</code>: the underlying directory will be format of <code>2020/03/01/00/59/</code>.     <br />
+<p>In PSLX, five types of partitioners are supported:
+1. <code>PartitionerStorageType.MINUTELY</code>: the underlying directory will be format of <code>2020/03/01/00/59/</code>.
 2. <code>PartitionerStorageType.HOURLY</code>:  the underlying directory will be format of <code>2020/03/01/00/</code>.
-3. <code>PartitionerStorageType.DAILY</code>:  the underlying directory will be format of <code>2020/03/01/</code>.                           <br />
-4. <code>PartitionerStorageType.MONTHLY</code>: the underlying directory will be format of <code>2020/03/</code>.         <br />
-5. <code>PartitionerStorageType.YEARLY</code> the underlying directory will be format of <code>2020/</code>.         </p>
+3. <code>PartitionerStorageType.DAILY</code>:  the underlying directory will be format of <code>2020/03/01/</code>.
+4. <code>PartitionerStorageType.MONTHLY</code>: the underlying directory will be format of <code>2020/03/</code>.
+5. <code>PartitionerStorageType.YEARLY</code> the underlying directory will be format of <code>2020/</code>.</p>
 <p>All the partitioners share with the following functions. The choice of partition type would depend on the data size. It is recommended
 that if the data size is huge, a more fine grained storage (<code>PartitionerStorageType.MINUTELY</code>) is used, and vice versa.</p>
 <div class="codehilite"><pre><span></span><code><span class="n">set_underlying_storage</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span>
@@ -913,7 +975,7 @@ to be reinitialized.</li>
 with partition within the given time range. The interval is a close interval.</li>
 <li>The return from this function will be a dictionary with file name as the key and file content
 as the value.</li>
-<li>If the underlying storage is a proto table, the value in the output dict will be in the format of 
+<li>If the underlying storage is a proto table, the value in the output dict will be in the format of
 <code>{key_1: val_1, ... ..., key_n: val_n}</code> with all the <code>val_i</code> being an <code>Any</code> type message.</li>
 </ol>
 </li>

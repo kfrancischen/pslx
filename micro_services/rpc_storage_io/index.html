@@ -437,8 +437,8 @@
                   <h1>RPC Storage IO</h1>
                 
                 <p>PSLX supports reading from any remote storage. The detailed RPC implementation is located at <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/rpc_io/rpc.py">rpc_io/rpc.py</a>,
-and all the storage types defined in <a href="../../storage/">storage</a> are supported. One can also take a look at the example in 
-<a href="https://github.com/kfrancischen/pslx/tree/master/example/rpc_io_example">example/rpc_io_example</a>. Like other services, the 
+and all the storage types defined in <a href="../../storage/">storage</a> are supported. One can also take a look at the example in
+<a href="https://github.com/kfrancischen/pslx/tree/master/example/rpc_io_example">example/rpc_io_example</a>. Like other services, the
 server can be launched with following code:</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.rpc_io.rpc</span> <span class="kn">import</span> <span class="n">RPCIO</span>
 <span class="kn">from</span> <span class="nn">pslx.micro_service.rpc.generic_server</span> <span class="kn">import</span> <span class="n">GenericServer</span>
@@ -471,7 +471,7 @@ server can be launched with following code:</p>
 <p>The example clients are defined in <a href="https://github.com/kfrancischen/pslx/blob/master/example/rpc_io_example/client.py">rpc_io_example/client.py</a></p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">from</span> <span class="nn">pslx.micro_service.rpc_io.client</span> <span class="kn">import</span> <span class="n">DefaultStorageRPC</span><span class="p">,</span> <span class="n">FixedSizeStorageRPC</span><span class="p">,</span> <span class="n">ProtoTableStorageRPC</span><span class="p">,</span>\
-    <span class="n">PartitionerStorageRPC</span>
+    <span class="n">PartitionerStorageRPC</span><span class="p">,</span> <span class="n">ShardedProtoTableStorageRPC</span>
 <span class="kn">from</span> <span class="nn">pslx.schema.enums_pb2</span> <span class="kn">import</span> <span class="n">PartitionerStorageType</span>
 <span class="kn">from</span> <span class="nn">pslx.schema.snapshots_pb2</span> <span class="kn">import</span> <span class="n">NodeSnapshot</span>
 
@@ -579,11 +579,55 @@ server can be launched with following code:</p>
             <span class="s1">&#39;is_proto_table&#39;</span><span class="p">:</span> <span class="kc">True</span>
         <span class="p">}</span>
     <span class="p">))</span>
+
+    <span class="n">dir_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/yearly_partitioner_5/&quot;</span>
+    <span class="n">example_client</span> <span class="o">=</span> <span class="n">PartitionerStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+        <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">dir_name</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;PartitionerStorageType&#39;</span><span class="p">:</span> <span class="n">PartitionerStorageType</span><span class="o">.</span><span class="n">YEARLY</span><span class="p">,</span>
+            <span class="s1">&#39;is_proto_table&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;base_name&#39;</span><span class="p">:</span> <span class="s1">&#39;some_data.pb&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">))</span>
+
+    <span class="n">dir_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/yearly_partitioner_5/&quot;</span>
+    <span class="n">example_client</span> <span class="o">=</span> <span class="n">PartitionerStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+        <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">dir_name</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;PartitionerStorageType&#39;</span><span class="p">:</span> <span class="n">PartitionerStorageType</span><span class="o">.</span><span class="n">YEARLY</span><span class="p">,</span>
+            <span class="s1">&#39;is_proto_table&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;read_oldest&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;base_name&#39;</span><span class="p">:</span> <span class="s1">&#39;some_data.pb&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">))</span>
+
+    <span class="n">dir_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/yearly_partitioner_5/&quot;</span>
+    <span class="n">example_client</span> <span class="o">=</span> <span class="n">PartitionerStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read_range</span><span class="p">(</span>
+        <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">dir_name</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;PartitionerStorageType&#39;</span><span class="p">:</span> <span class="n">PartitionerStorageType</span><span class="o">.</span><span class="n">YEARLY</span><span class="p">,</span>
+            <span class="s1">&#39;start_time&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2019</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+            <span class="s1">&#39;end_time&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+            <span class="s1">&#39;is_proto_table&#39;</span><span class="p">:</span> <span class="kc">True</span>
+        <span class="p">}</span>
+    <span class="p">))</span>
+
+    <span class="n">dir_name</span> <span class="o">=</span> <span class="s2">&quot;pslx/test/storage/test_data/sharded_proto_table_1&quot;</span>
+    <span class="n">example_client</span> <span class="o">=</span> <span class="n">ShardedProtoTableStorageRPC</span><span class="p">(</span><span class="n">client_name</span><span class="o">=</span><span class="s1">&#39;example_rpc_io&#39;</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">example_client</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+        <span class="n">file_or_dir_path</span><span class="o">=</span><span class="n">dir_name</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;keys&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;test_0&#39;</span><span class="p">,</span> <span class="s1">&#39;test_1&#39;</span><span class="p">,</span> <span class="s1">&#39;test_100&#39;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">))</span>
 </code></pre></div>
 
 
-<p>We can see that in addition to the required parameter for the storage, we also need to pass the following parameters:  <br />
-1. <code>PartitionerStorageType</code> for <code>PartitionerStorageRPC</code>.  <br />
+<p>We can see that in addition to the required parameter for the storage, we also need to pass the following parameters:
+1. <code>PartitionerStorageType</code> for <code>PartitionerStorageRPC</code>.
 2. <code>proto_module</code> for <code>ProtoTableStorageRPC</code> if one wants the message to be deserialized to the desired format.</p>
 <p>As a side note, the <code>DefaultStorageRPC</code> will now ignore the parameter of <code>num_line</code> as in the RPC case, the function call will
 always return the content of the whole underlying file.</p>

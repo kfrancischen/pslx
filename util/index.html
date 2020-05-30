@@ -455,6 +455,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#documentation-of-decorator-utilities" class="md-nav__link">
+    Documentation of Decorator Utilities
+  </a>
+  
+</li>
+      
       
       
       
@@ -557,6 +564,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#documentation-of-decorator-utilities" class="md-nav__link">
+    Documentation of Decorator Utilities
+  </a>
+  
+</li>
+      
       
       
       
@@ -587,6 +601,8 @@
 <li><a href="https://github.com/kfrancischen/pslx/blob/master/pslx/util/yaml_util.py">yaml.util.py</a>: utility for yaml files.</li>
 <li><a href="https://github.com/kfrancischen/pslx/blob/master/pslx/util/common_util.py">common_util.py</a>: utility for creating credentials.</li>
 <li><a href="https://github.com/kfrancischen/pslx/blob/master/pslx/util/env_util.py">env_util.py</a>: utility for PSLX built-in environment variables.</li>
+<li><a href="https://github.com/kfrancischen/pslx/blob/master/pslx/util/decorator_util.py">decorator_util.py</a>: utility for commonly used
+decorators.</li>
 </ol>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
@@ -1246,8 +1262,8 @@ are dummy function calls.</p>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The above operators are very helpful for containers that have only one meaningful operator. Please check 
-<a href="https://github.com/kfrancischen/pslx/tree/master/example/batch_example">batch_container_example</a> and 
+<p>The above operators are very helpful for containers that have only one meaningful operator. Please check
+<a href="https://github.com/kfrancischen/pslx/tree/master/example/batch_example">batch_container_example</a> and
 <a href="https://github.com/kfrancischen/pslx/tree/master/example/streaming_example">streaming_container_example</a>.</p>
 </div>
 <div class="codehilite"><pre><span></span><code><span class="n">dummy_streaming_operator</span><span class="p">(</span><span class="n">operator_name</span><span class="p">)</span>
@@ -1336,8 +1352,10 @@ are dummy function calls.</p>
     <span class="s1">&#39;PSLX_LOG&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="s1">&#39;PSLX_DATABASE&#39;</span><span class="p">:</span> <span class="s1">&#39;database/&#39;</span><span class="p">,</span>
     <span class="s1">&#39;PSLX_GRPC_MAX_MESSAGE_LENGTH&#39;</span><span class="p">:</span> <span class="mi">512</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>  <span class="c1"># 512MB,</span>
+    <span class="s1">&#39;PSLX_GRPC_TIMEOUT&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># 1 second</span>
     <span class="s1">&#39;PSLX_FRONTEND_CONFIG_PROTO_PATH&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
     <span class="s2">&quot;PSLX_RPC_FLUSH_RATE&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_RPC_PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 
@@ -1354,6 +1372,19 @@ are dummy function calls.</p>
 </ol>
 </li>
 </ul>
+<h3 id="documentation-of-decorator-utilities">Documentation of Decorator Utilities<a class="headerlink" href="#documentation-of-decorator-utilities" title="Permanent link">&para;</a></h3>
+<p>The decorator utility currently supports adding a runtime range in PST timezone to a function. For example:</p>
+<div class="codehilite"><pre><span></span><code><span class="nd">@DecoratorUtil</span><span class="o">.</span><span class="n">pst_runtime</span><span class="p">(</span><span class="n">weekdays</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_func</span><span class="p">(</span><span class="n">test_string</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">test_string</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">test_func</span><span class="p">(</span><span class="s2">&quot;test here&quot;</span><span class="p">))</span>
+</code></pre></div>
+
+
+<p>Then this function will only print out the string on Saturday. The decorator also supports adding ranges to hours and minutes.</p>
                 
                   
                 

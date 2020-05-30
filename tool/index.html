@@ -597,8 +597,8 @@
 <li>Logging tool for ttl-ed logging.</li>
 <li>File locker to ensure the atomic io of files.</li>
 <li>LRU cache for caching.</li>
-<li>SQL tool for connecting to SQL database and executing queries.          </li>
-<li>Timeout tool to timeout a function in the main thread.        </li>
+<li>SQL tool for connecting to SQL database and executing queries.</li>
+<li>Timeout tool to timeout a function in the main thread.</li>
 <li>Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).</li>
 <li>Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).</li>
 <li>Registry tool to be used as decorators to register functions.</li>
@@ -620,16 +620,17 @@
 <p>The logger supports multiple level logging, and one can call these by using the following functions</p>
 <ol>
 <li>
-<p><code>info(string)</code>: for level = info.</p>
+<p><code>info(string, publish)</code>: for level = info.</p>
 </li>
 <li>
-<p><code>warning(string)</code>: for level = warning.</p>
+<p><code>warning(string, publish)</code>: for level = warning.</p>
 </li>
-<li><code>debug(string)</code>: for level = debug.</li>
-<li><code>error(string)</code>: for level = error.</li>
+<li><code>debug(string, publish)</code>: for level = debug.</li>
+<li><code>error(string, publish)</code>: for level = error.</li>
 </ol>
-<p>The logger output will be the format of </p>
+<p>The logger output will be the format of</p>
 <p><code>[initial_letter_of_logger_level logger_name file_name:line_number timestamp]: the logged information</code></p>
+<p>Here one can send the log to backend realtime logging by setting the publisher with <code>set_publisher(publisher)</code> function and <code>publish=True</code> in the above function. The default value for <code>publish</code> is also <code>True</code>.</p>
 <h3 id="documentation-for-file-locker">Documentation for File Locker<a class="headerlink" href="#documentation-for-file-locker" title="Permanent link">&para;</a></h3>
 <p>FileLocker tool is used in combination within a with sentence, for instance for reading a file:</p>
 <div class="codehilite"><pre><span></span><code><span class="k">with</span> <span class="n">FileLocker</span><span class="p">(</span><span class="n">protected_file_path</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">read_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -843,7 +844,7 @@
 
 <span class="n">registry</span> <span class="o">=</span> <span class="n">RegistryTool</span><span class="p">()</span>
 <span class="nd">@registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;example_func&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">example_func</span><span class="p">():</span> 
+<span class="k">def</span> <span class="nf">example_func</span><span class="p">():</span>
     <span class="o">...</span> <span class="o">...</span>
 </code></pre></div>
                 
