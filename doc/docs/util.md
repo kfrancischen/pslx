@@ -7,6 +7,9 @@ PSLX provides a comprehensive set of utility functions including
 5. [yaml.util.py](https://github.com/kfrancischen/pslx/blob/master/pslx/util/yaml_util.py): utility for yaml files.
 6. [common_util.py](https://github.com/kfrancischen/pslx/blob/master/pslx/util/common_util.py): utility for creating credentials.
 7. [env_util.py](https://github.com/kfrancischen/pslx/blob/master/pslx/util/env_util.py): utility for PSLX built-in environment variables.
+8. [decorator_util.py](https://github.com/kfrancischen/pslx/blob/master/pslx/util/decorator_util.py): utility for commonly used
+decorators.
+
 
 !!! info
     All the below functions are labeled as `classmethods`, and can be called without initiating any instance of the class.
@@ -525,3 +528,19 @@ get_pslx_env_variable(var, fallback_value)
 * Arguments:
     1. var: the environment variable name.
     2. fallback_value: the fallback value if the var does not have a default value defined by PSLX.
+
+
+### Documentation of Decorator Utilities
+
+The decorator utility currently supports adding a runtime range in PST timezone to a function. For example:
+```python
+
+@DecoratorUtil.pst_runtime(weekdays=[5])
+def test_func(test_string):
+    return test_string
+
+
+if __name__ == "__main__":
+    print(test_func("test here"))
+```
+Then this function will only print out the string on Saturday. The decorator also supports adding ranges to hours and minutes.

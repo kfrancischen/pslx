@@ -1,8 +1,8 @@
 ### Package PSLX
 **P**ython **S**tandard **L**ibrary e**X**tension.
 
-A standard library for job scheduling, micro services including message queue, RPC, instant messaging and monitoring, tooling 
-such as logging, file storage and caching. The library is written 
+A standard library for job scheduling, micro services including message queue, RPC, instant messaging and monitoring, tooling
+such as logging, file storage and caching. The library is written
 compatible to Python 3.7+. To use the program, please install the latest [protobuf compiler](https://github.com/protocolbuffers/protobuf)
 and [gRPC](https://grpc.io/) tools. This document covers the APIs of PSLX provided, and is organized as follows:
 
@@ -30,8 +30,8 @@ and [gRPC](https://grpc.io/) tools. This document covers the APIs of PSLX provid
 * [Tools](tool.md) provided by PSLX for thread-safe file io, LRC caching, ttl-ed logging, SQL server read/write, timestamp key-ed partitioner local/remote fetcher and watcher, function registration.
 
 #### Utilities
-* [Utilities](util.md) provided by PSLX for file operation, protobuf related utilities, async unittesting, timezone related utilities, 
-yaml file io, text coloring, and credential composing and environment variables access.
+* [Utilities](util.md) provided by PSLX for file operation, protobuf related utilities, async unittesting, timezone related utilities,
+yaml file io, text coloring, and credential composing, environment variables access and decorators.
 
 #### TTL Cleaner
 * Internally built [ttl_cleaner](ttl_cleaner.md) for temporary/ttl-ed file removing and garbage collection.
