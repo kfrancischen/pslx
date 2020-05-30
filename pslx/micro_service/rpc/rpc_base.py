@@ -2,6 +2,7 @@ import collections
 import datetime
 
 from pslx.core.base import Base
+from pslx.core.exception import RPCNotAuthenticatedException
 from pslx.schema.enums_pb2 import StorageType, Status
 from pslx.schema.rpc_pb2 import GenericRPCRequestResponsePair, HealthCheckerResponse
 from pslx.schema.rpc_pb2_grpc import GenericRPCServiceServicer
@@ -36,7 +37,22 @@ class RPCBase(GenericRPCServiceServicer, Base):
     def get_storage(self):
         return self._rpc_storage
 
+    def _auth(self, context):
+        if context:
+            auth = {}
+            for key, value in context.invocation_metadata():
+                auth[key] = value
+
+            if ('pslx_rpc_password' not in auth or
+                    auth['pslx_rpc_password'] != EnvUtil.get_pslx_env_variable('PSLX_RPC_PASSWORD')):
+                return False
+        return True
+
     def SendRequest(self, request, context):
+        if not self._auth(context=context):
+            raise RPCNotAuthenticatedException("rpc call not authenticated for uuid [" + request.uuid +
+                                               '] in service [' + self.get_rpc_service_name() + '].')
+
         self.sys_log("rpc getting request with uuid [" + request.uuid + '] in service [' +
                      self.get_rpc_service_name() + '].')
         self._logger.info("rpc getting request with uuid [" + request.uuid + '] in service [' +
@@ -77,6 +93,10 @@ class RPCBase(GenericRPCServiceServicer, Base):
         return generic_response
 
     def CheckHealth(self, request, context):
+        if not self._auth(context=context):
+            raise RPCNotAuthenticatedException("Checking health not authenticated for service [" +
+                                               self.get_rpc_service_name() + '].')
+
         self.sys_log("Checking health for url [" + request.server_url + '].')
         self._logger.info("Checking health for url [" + request.server_url + '].')
         response = HealthCheckerResponse()

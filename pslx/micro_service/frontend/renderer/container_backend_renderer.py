@@ -66,6 +66,8 @@ def get_containers_info():
                             'message_type': ContainerBackendValue,
                         }
                     )
+                    if not result_proto:
+                        continue
                     if TimezoneUtil.cur_time_in_pst() - TimezoneUtil.cur_time_from_str(
                             time_str=result_proto.updated_time) > \
                             datetime.timedelta(days=int(EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL'))):

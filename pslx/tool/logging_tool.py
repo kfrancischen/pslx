@@ -76,7 +76,7 @@ class LoggingTool(object):
         fh.setFormatter(formatter)
         self._logger.addHandler(fh)
 
-    def _write_log(self, string, logger_level):
+    def _write_log(self, string, logger_level, publish=True):
         now = datetime.datetime.utcnow()
         if now.date() != self._start_date.date():
             self._start_date = now
@@ -104,25 +104,25 @@ class LoggingTool(object):
         message_proto.message = ('[' + self._level_to_logger_short_level_map[logger_level] + ' ' + self._name +
                                  ' ' + message)
         message_proto.level = logger_level
-        if self._publisher:
+        if self._publisher and publish:
             self._publisher.publish(message=message_proto)
 
-    def info(self, string):
-        self._write_log(string=string, logger_level=DiskLoggerLevel.INFO)
+    def info(self, string, publish=True):
+        self._write_log(string=string, logger_level=DiskLoggerLevel.INFO, publish=publish)
 
-    def warning(self, string):
-        self._write_log(string=string, logger_level=DiskLoggerLevel.WARNING)
+    def warning(self, string, publish=True):
+        self._write_log(string=string, logger_level=DiskLoggerLevel.WARNING, publish=publish)
 
-    def debug(self, string):
-        self._write_log(string=string, logger_level=DiskLoggerLevel.DEBUG)
+    def debug(self, string, publish=True):
+        self._write_log(string=string, logger_level=DiskLoggerLevel.DEBUG, publish=publish)
 
-    def error(self, string):
-        self._write_log(string=string, logger_level=DiskLoggerLevel.ERROR)
+    def error(self, string, publish=True):
+        self._write_log(string=string, logger_level=DiskLoggerLevel.ERROR, publish=publish)
 
 
 class DummyLogging(LoggingTool):
     def __init__(self, name=None, date=None, ttl=-0):
         super().__init__(name=None, date=date, ttl=ttl)
 
-    def _write_log(self, string, logger_level):
+    def _write_log(self, string, logger_level, publish=False):
         return

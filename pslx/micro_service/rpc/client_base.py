@@ -49,13 +49,21 @@ class ClientBase(Base):
                 self._logger.info("Start with insecure channel in client [" + self.get_client_name() + '].')
                 with grpc.insecure_channel(self._server_url, options=options) as channel:
                     stub = GenericRPCServiceStub(channel=channel)
-                    response = stub.SendRequest(request=generic_request, timeout=timeout)
+                    response = stub.SendRequest(
+                        request=generic_request,
+                        metadata=[('pslx_rpc_password', EnvUtil.get_pslx_env_variable('PSLX_RPC_PASSWORD'))],
+                        timeout=timeout
+                    )
             else:
                 self._logger.info("Start with secure channel in client [" + self.get_client_name() + '].')
                 channel_credential = grpc.ssl_channel_credentials(root_certificate)
                 with grpc.secure_channel(self._server_url, channel_credential, options=options) as channel:
                     stub = GenericRPCServiceStub(channel=channel)
-                    response = stub.SendRequest(request=generic_request, timeout=timeout)
+                    response = stub.SendRequest(
+                        request=generic_request,
+                        metadata=[('pslx_rpc_password', EnvUtil.get_pslx_env_variable('PSLX_RPC_PASSWORD'))],
+                        timeout=timeout
+                    )
 
             if not self.RESPONSE_MESSAGE_TYPE:
                 self.sys_log("Response message type unset, return None instead.")

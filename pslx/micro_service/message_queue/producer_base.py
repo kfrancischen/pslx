@@ -72,9 +72,9 @@ class ProducerBase(Base):
                 body=base64.b64encode(generic_request_str))
             wait_start_time = TimezoneUtil.cur_time_in_pst()
             while not self._response:
-                self._connection.process_data_events(time_limit=TimeSleepObj.ONE_MINUTE)
+                self._connection.process_data_events(time_limit=TimeSleepObj.TEN_SECONDS)
                 if TimezoneUtil.cur_time_in_pst() - wait_start_time > \
-                        datetime.timedelta(seconds=TimeSleepObj.ONE_MINUTE):
+                        datetime.timedelta(seconds=TimeSleepObj.TEN_SECONDS):
                     break
 
             if not self.RESPONSE_MESSAGE_TYPE or self._response is None:

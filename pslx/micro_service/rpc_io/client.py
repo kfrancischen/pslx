@@ -98,6 +98,26 @@ class ProtoTableStorageRPC(RPCIOClient):
         return response
 
 
+class ShardedProtoTableStorageRPC(RPCIOClient):
+    STORAGE_TYPE = StorageType.SHARDED_PROTO_TABLE_STORAGE
+
+    def read(self, file_or_dir_path, params=None, is_test=False, root_certificate=None):
+        assert 'keys' in params
+        request = RPCIORequest()
+        request.is_test = is_test
+        request.type = self.STORAGE_TYPE
+        request.dir_name = file_or_dir_path
+
+        for key in params['keys']:
+            request.params[str(key)] = ''
+
+        response = self.send_request(request=request, root_certificate=root_certificate)
+        result = {}
+        for key, val in dict(response.dict_data).items():
+            result[key] = val.data[0].proto_data
+        return result
+
+
 class PartitionerStorageRPC(RPCIOClient):
     STORAGE_TYPE = StorageType.PARTITIONER_STORAGE
 

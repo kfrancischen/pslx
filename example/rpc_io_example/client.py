@@ -1,6 +1,6 @@
 import datetime
 from pslx.micro_service.rpc_io.client import DefaultStorageRPC, FixedSizeStorageRPC, ProtoTableStorageRPC,\
-    PartitionerStorageRPC
+    PartitionerStorageRPC, ShardedProtoTableStorageRPC
 from pslx.schema.enums_pb2 import PartitionerStorageType
 from pslx.schema.snapshots_pb2 import NodeSnapshot
 
@@ -141,5 +141,14 @@ if __name__ == "__main__":
             'start_time': datetime.datetime(2019, 1, 5),
             'end_time': datetime.datetime(2020, 1, 5),
             'is_proto_table': True
+        }
+    ))
+
+    dir_name = "pslx/test/storage/test_data/sharded_proto_table_1"
+    example_client = ShardedProtoTableStorageRPC(client_name='example_rpc_io', server_url=server_url)
+    print(example_client.read(
+        file_or_dir_path=dir_name,
+        params={
+            'keys': ['test_0', 'test_1', 'test_100']
         }
     ))

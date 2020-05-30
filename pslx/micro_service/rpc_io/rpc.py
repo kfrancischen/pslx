@@ -6,6 +6,7 @@ from pslx.storage.default_storage import DefaultStorage
 from pslx.storage.fixed_size_storage import FixedSizeStorage
 from pslx.storage.proto_table_storage import ProtoTableStorage
 import pslx.storage.partitioner_storage as partitioner
+from pslx.storage.sharded_proto_table_storage import ShardedProtoTableStorage
 from pslx.tool.logging_tool import LoggingTool
 from pslx.tool.lru_cache_tool import LRUCacheTool
 from pslx.util.env_util import EnvUtil
@@ -34,6 +35,7 @@ class RPCIO(RPCBase):
             StorageType.FIXED_SIZE_STORAGE: self._fixed_size_storage_impl,
             StorageType.PROTO_TABLE_STORAGE: self._proto_table_storage_impl,
             StorageType.PARTITIONER_STORAGE: self._partitioner_storage_impl,
+            StorageType.SHARDED_PROTO_TABLE_STORAGE: self._sharded_proto_table_storage_impl,
         }
         self._logger = LoggingTool(
             name='PSLX_RPC_IO_RPC',
@@ -134,6 +136,34 @@ class RPCIO(RPCBase):
         self._logger.info('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
         read_params.pop('proto_module', None)
         return storage.read(params=read_params)
+
+    def _sharded_proto_table_storage_impl(self, request):
+        self._logger.info("Getting request of sharded proto table storage read.")
+        keys = list(dict(request.params).keys())
+        lru_key = (request.type, request.dir_name)
+        storage = self._lru_cache_tool.get(key=lru_key)
+        if not storage:
+            self.sys_log("Did not find the storage in cache. Making a new one...")
+            storage = ShardedProtoTableStorage()
+            storage.initialize_from_dir(dir_name=request.dir_name)
+            self._lru_cache_tool.set(
+                key=lru_key,
+                value=storage
+            )
+        else:
+            self.sys_log("Found key in LRU cache.")
+        self._logger.info('Current cache size ' + str(self._lru_cache_tool.get_cur_capacity()))
+        data = storage.read(
+            params={'keys': keys}
+        )
+        response = RPCIOResponse()
+        for key, val in data.items():
+            rpc_list_data = RPCIOResponse.RPCListData()
+            rpc_data = rpc_list_data.data.add()
+            rpc_data.proto_data.CopyFrom(val)
+            response.dict_data[key].CopyFrom(rpc_list_data)
+        return response
+
 
     def _partitioner_storage_impl(self, request):
         self._logger.info("Getting request of partitioner storage read.")

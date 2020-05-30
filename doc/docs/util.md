@@ -259,7 +259,7 @@ get_file_size(file_name)
 * Description: get a string representation of the size of the file.
 * Arguments:
     1. file_name: the name of the file.
-    
+
 ### Documentation of Protobuf Utilities
 THe following functions are related to protobuf.
 
@@ -331,7 +331,7 @@ json_to_message(message_type, json_str)
 * Arguments:
     1. message_type: the type of the output proto message.
     2. json_str: the json to be converted.
-    
+
 ```python
 string_to_message(message_type, string)
 ```
@@ -387,48 +387,48 @@ utc_to_pst(utc_time)
 * Description: convert a utc datetime object to a pst datetime object.
 * Arguments:
     1. utc_time: the utc datetime object.
-    
+
 ```python
 utc_to_est(utc_time)
 ```
 * Description: convert a utc datetime object to an est datetime object.
 * Arguments:
     1. utc_time: the utc datetime object.
-    
+
 ```python
 pst_to_est(western_time)
 ```
 * Description: convert a pst datetime object to an est datetime object.
 * Arguments:
     1. western_time: the pst datetime object.
-    
+
 ```python
 est_to_pst(eastern_time)
 ```
 * Description: convert an est datetime object to a pst datetime object.
 * Arguments:
     1. eastern_time: the est datetime object.
-    
+
 ```python
 cur_time_in_local()
 ```
 * Description: the current time in local timezone.
-    
+
 ```python
 cur_time_in_utc()
 ```
 * Description: the current time in utc timezone.
-    
+
 ```python
 cur_time_in_pst()
 ```
 * Description: the current time in pst timezone.
-    
+
 ```python
 cur_time_in_est()
 ```
 * Description: the current time in est timezone.
-    
+
 ```python
 cur_time_in_est(time_str)
 ```
@@ -445,8 +445,8 @@ dummy_logging()
 * Description: return a dummy logger that acts as a placeholder but does not log.
 
 !!! note
-    The above operators are very helpful for containers that have only one meaningful operator. Please check 
-    [batch_container_example](https://github.com/kfrancischen/pslx/tree/master/example/batch_example) and 
+    The above operators are very helpful for containers that have only one meaningful operator. Please check
+    [batch_container_example](https://github.com/kfrancischen/pslx/tree/master/example/batch_example) and
     [streaming_container_example](https://github.com/kfrancischen/pslx/tree/master/example/streaming_example).
 
 ```python
@@ -472,7 +472,7 @@ yaml_to_dict(file_name)
 * Arguments:
     1. file_name: the yaml file name.
 * Return: the dictionary representation of the content in the yaml file.
-    
+
 ### Documentation of Common Utilities
 The following methods are provided
 ```python
@@ -512,8 +512,10 @@ PSLX_ENV_TO_DEFAULT_MAP = {
     'PSLX_LOG': False,
     'PSLX_DATABASE': 'database/',
     'PSLX_GRPC_MAX_MESSAGE_LENGTH': 512 * 1024 * 1024,  # 512MB,
+    'PSLX_GRPC_TIMEOUT': 1,  # 1 second
     'PSLX_FRONTEND_CONFIG_PROTO_PATH': '',
     "PSLX_RPC_FLUSH_RATE": 1,
+    'PSLX_RPC_PASSWORD': 'admin',
 }
 ```
 , and this utility allows user to access the above variables by
