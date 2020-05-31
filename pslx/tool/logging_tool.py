@@ -76,7 +76,7 @@ class LoggingTool(object):
         fh.setFormatter(formatter)
         self._logger.addHandler(fh)
 
-    def _write_log(self, string, logger_level, publish=True):
+    def _write_log(self, string, logger_level, publish):
         now = datetime.datetime.utcnow()
         if now.date() != self._start_date.date():
             self._start_date = now
@@ -107,16 +107,16 @@ class LoggingTool(object):
         if self._publisher and publish:
             self._publisher.publish(message=message_proto)
 
-    def info(self, string, publish=True):
+    def info(self, string, publish=False):
         self._write_log(string=string, logger_level=DiskLoggerLevel.INFO, publish=publish)
 
-    def warning(self, string, publish=True):
+    def warning(self, string, publish=False):
         self._write_log(string=string, logger_level=DiskLoggerLevel.WARNING, publish=publish)
 
-    def debug(self, string, publish=True):
+    def debug(self, string, publish=False):
         self._write_log(string=string, logger_level=DiskLoggerLevel.DEBUG, publish=publish)
 
-    def error(self, string, publish=True):
+    def error(self, string, publish=False):
         self._write_log(string=string, logger_level=DiskLoggerLevel.ERROR, publish=publish)
 
 

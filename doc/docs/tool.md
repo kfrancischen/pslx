@@ -4,10 +4,9 @@ PSLX provides a set of tools to assist development, and they include
 2. File locker to ensure the atomic io of files.
 3. LRU cache for caching.
 4. SQL tool for connecting to SQL database and executing queries.
-5. Timeout tool to timeout a function in the main thread.
-6. Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
-7. Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
-8. Registry tool to be used as decorators to register functions.
+5. Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
+6. Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
+7. Registry tool to be used as decorators to register functions.
 
 ### Documentation for Logging Tool
 To create a logging tool instance, please use
@@ -31,7 +30,7 @@ The logger output will be the format of
 
 `[initial_letter_of_logger_level logger_name file_name:line_number timestamp]: the logged information`
 
-Here one can send the log to backend realtime logging by setting the publisher with `set_publisher(publisher)` function and `publish=True` in the above function. The default value for `publish` is also `True`.
+Here one can send the log to backend realtime logging by setting the publisher with `set_publisher(publisher)` function and `publish=True` in the above function. The default value for `publish` is `False`.
 
 ### Documentation for File Locker
 FileLocker tool is used in combination within a with sentence, for instance for reading a file:
@@ -47,14 +46,6 @@ with FileLocker(protected_file_path=file_name, read_mode=False):
         ... ...
 ```
 FileLocker will raise error if the `protected_file_path` does not exist if `read_mode` is True.
-
-### Documentation for Timeout Tool
-The TimeoutTool can only be used in the main thread in the following way:
-```python
-with TimeoutTool(timeout=10):
-    ... ...
-```
-then the enclosed program will time out after 10 seconds.
 
 ### Documentation for LRU Caching
 LRU caching supports the following methods:

@@ -151,4 +151,3 @@ def index():
 
     return render_template("index.html",
                            service_info=sorted(service_info, key=lambda x: x['name']))
-

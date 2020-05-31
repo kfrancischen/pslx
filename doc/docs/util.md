@@ -532,10 +532,20 @@ get_pslx_env_variable(var, fallback_value)
 
 ### Documentation of Decorator Utilities
 
-The decorator utility currently supports adding a runtime range in PST timezone to a function. For example:
+The decorator utility currently supports adding a run condition (a callback function returns `True` for `False`) to a function. For example:
 ```python
+from pslx.util.decorator_util import DecoratorUtil
+from pslx.util.timezone_util import TimezoneUtil
 
-@DecoratorUtil.pst_runtime(weekdays=[5])
+
+def condition_func(weekday):
+    cur_time = TimezoneUtil.cur_time_in_pst()
+    if cur_time.weekday() == weekday:
+        return True
+    else:
+        return False
+
+@DecoratorUtil.run_on_condition(condition_func=condition_func, weekday=5)
 def test_func(test_string):
     return test_string
 
@@ -544,3 +554,22 @@ if __name__ == "__main__":
     print(test_func("test here"))
 ```
 Then this function will only print out the string on Saturday. The decorator also supports adding ranges to hours and minutes.
+
+
+Decorator utility also supports timeout inside thread or in the main thread. The usage is
+```python
+from pslx.util.decorator_util import DecoratorUtil
+@DecoratorUtil.DefaultTimeout(time_out=6)
+def f():
+    time.sleep(5)
+
+
+@DecoratorUtil.ThreadSafeTimeout(time_out=2)
+def g():
+    time.sleep(5)
+
+
+if __name__ == "__main__":
+    f()
+    g()
+```
