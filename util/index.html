@@ -1373,8 +1373,19 @@ are dummy function calls.</p>
 </li>
 </ul>
 <h3 id="documentation-of-decorator-utilities">Documentation of Decorator Utilities<a class="headerlink" href="#documentation-of-decorator-utilities" title="Permanent link">&para;</a></h3>
-<p>The decorator utility currently supports adding a runtime range in PST timezone to a function. For example:</p>
-<div class="codehilite"><pre><span></span><code><span class="nd">@DecoratorUtil</span><span class="o">.</span><span class="n">pst_runtime</span><span class="p">(</span><span class="n">weekdays</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+<p>The decorator utility currently supports adding a run condition (a callback function returns <code>True</code> for <code>False</code>) to a function. For example:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.util.decorator_util</span> <span class="kn">import</span> <span class="n">DecoratorUtil</span>
+<span class="kn">from</span> <span class="nn">pslx.util.timezone_util</span> <span class="kn">import</span> <span class="n">TimezoneUtil</span>
+
+
+<span class="k">def</span> <span class="nf">condition_func</span><span class="p">(</span><span class="n">weekday</span><span class="p">):</span>
+    <span class="n">cur_time</span> <span class="o">=</span> <span class="n">TimezoneUtil</span><span class="o">.</span><span class="n">cur_time_in_pst</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">cur_time</span><span class="o">.</span><span class="n">weekday</span><span class="p">()</span> <span class="o">==</span> <span class="n">weekday</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<span class="nd">@DecoratorUtil</span><span class="o">.</span><span class="n">run_on_condition</span><span class="p">(</span><span class="n">condition_func</span><span class="o">=</span><span class="n">condition_func</span><span class="p">,</span> <span class="n">weekday</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_func</span><span class="p">(</span><span class="n">test_string</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">test_string</span>
 
@@ -1385,6 +1396,22 @@ are dummy function calls.</p>
 
 
 <p>Then this function will only print out the string on Saturday. The decorator also supports adding ranges to hours and minutes.</p>
+<p>Decorator utility also supports timeout inside thread or in the main thread. The usage is</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.util.decorator_util</span> <span class="kn">import</span> <span class="n">DecoratorUtil</span>
+<span class="nd">@DecoratorUtil</span><span class="o">.</span><span class="n">DefaultTimeout</span><span class="p">(</span><span class="n">time_out</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+
+<span class="nd">@DecoratorUtil</span><span class="o">.</span><span class="n">ThreadSafeTimeout</span><span class="p">(</span><span class="n">time_out</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">g</span><span class="p">():</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">f</span><span class="p">()</span>
+    <span class="n">g</span><span class="p">()</span>
+</code></pre></div>
                 
                   
                 

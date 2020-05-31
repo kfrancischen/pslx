@@ -409,13 +409,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#documentation-for-timeout-tool" class="md-nav__link">
-    Documentation for Timeout Tool
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#documentation-for-lru-caching" class="md-nav__link">
     Documentation for LRU Caching
   </a>
@@ -530,13 +523,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#documentation-for-timeout-tool" class="md-nav__link">
-    Documentation for Timeout Tool
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#documentation-for-lru-caching" class="md-nav__link">
     Documentation for LRU Caching
   </a>
@@ -598,7 +584,6 @@
 <li>File locker to ensure the atomic io of files.</li>
 <li>LRU cache for caching.</li>
 <li>SQL tool for connecting to SQL database and executing queries.</li>
-<li>Timeout tool to timeout a function in the main thread.</li>
 <li>Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).</li>
 <li>Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).</li>
 <li>Registry tool to be used as decorators to register functions.</li>
@@ -630,7 +615,7 @@
 </ol>
 <p>The logger output will be the format of</p>
 <p><code>[initial_letter_of_logger_level logger_name file_name:line_number timestamp]: the logged information</code></p>
-<p>Here one can send the log to backend realtime logging by setting the publisher with <code>set_publisher(publisher)</code> function and <code>publish=True</code> in the above function. The default value for <code>publish</code> is also <code>True</code>.</p>
+<p>Here one can send the log to backend realtime logging by setting the publisher with <code>set_publisher(publisher)</code> function and <code>publish=True</code> in the above function. The default value for <code>publish</code> is <code>False</code>.</p>
 <h3 id="documentation-for-file-locker">Documentation for File Locker<a class="headerlink" href="#documentation-for-file-locker" title="Permanent link">&para;</a></h3>
 <p>FileLocker tool is used in combination within a with sentence, for instance for reading a file:</p>
 <div class="codehilite"><pre><span></span><code><span class="k">with</span> <span class="n">FileLocker</span><span class="p">(</span><span class="n">protected_file_path</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">read_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -647,14 +632,6 @@
 
 
 <p>FileLocker will raise error if the <code>protected_file_path</code> does not exist if <code>read_mode</code> is True.</p>
-<h3 id="documentation-for-timeout-tool">Documentation for Timeout Tool<a class="headerlink" href="#documentation-for-timeout-tool" title="Permanent link">&para;</a></h3>
-<p>The TimeoutTool can only be used in the main thread in the following way:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">with</span> <span class="n">TimeoutTool</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-    <span class="o">...</span> <span class="o">...</span>
-</code></pre></div>
-
-
-<p>then the enclosed program will time out after 10 seconds.</p>
 <h3 id="documentation-for-lru-caching">Documentation for LRU Caching<a class="headerlink" href="#documentation-for-lru-caching" title="Permanent link">&para;</a></h3>
 <p>LRU caching supports the following methods:</p>
 <div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">max_capacity</span><span class="p">)</span>
