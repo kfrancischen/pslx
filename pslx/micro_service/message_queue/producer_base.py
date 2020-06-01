@@ -21,6 +21,15 @@ class ProducerBase(Base):
         self._channel = self._connection.channel()
         self._queue_name = queue_name
         self._exchange = exchange
+        self._channel.exchange_declare(
+            exchange=self._exchange,
+            durable=True)
+        self._channel.queue_declare(queue=self._queue_name, durable=True)
+        self._channel.queue_bind(
+            exchange=self._exchange,
+            queue=self._queue_name,
+            routing_key=self._queue_name
+        )
         self._channel.confirm_delivery()
         self._channel.basic_consume(
             queue=queue_name,
