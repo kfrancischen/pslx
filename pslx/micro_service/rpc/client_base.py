@@ -74,6 +74,7 @@ class ClientBase(Base):
                     any_message=response.response_data
                 )
         except Exception as err:
-            self._logger.error("send request with error " + str(err) + ' in client [' + self.get_client_name() + '].')
+            self._logger.error("send request with error " + str(err) + ' in client [' + self.get_client_name() + '].',
+                               publish=True)
             self.sys_log("send request with error " + str(err) + ' in client [' + self.get_client_name() + '].')
             return None

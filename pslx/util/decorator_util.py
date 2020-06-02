@@ -1,9 +1,11 @@
+import datetime
 from functools import wraps
 import multiprocessing
 import signal
 import sys
 import time
 from pslx.core.exception import TimeoutException
+from pslx.util.timezone_util import TimezoneUtil
 
 
 class ThreadedTimeout(object):
@@ -58,6 +60,25 @@ class ThreadedTimeout(object):
             raise load
 
 
+class RaterLimiter(object):
+    def __init__(self, interval=0):
+        self._rate_limit = datetime.timedelta(seconds=interval) if interval > 0 else datetime.timedelta(seconds=0)
+        self._time_of_last_call = None
+
+    def __call__(self, function):
+        @wraps(function)
+        def wrapper(*args, **kwargs):
+            cur_time = TimezoneUtil.cur_time_in_pst()
+            time_since_last_call = cur_time - self._time_of_last_call if self._time_of_last_call else None
+
+            if time_since_last_call and time_since_last_call < self._rate_limit:
+                time.sleep((self._rate_limit - time_since_last_call).total_seconds())
+
+            self._time_of_last_call = cur_time
+            return function(*args, **kwargs)
+        return wrapper
+
+
 class DecoratorUtil(object):
 
     @classmethod
@@ -73,7 +94,7 @@ class DecoratorUtil(object):
         return decorator
 
     @classmethod
-    def DefaultTimeout(cls, time_out=None, exception_message='Timeout occurs.'):
+    def default_timeout(cls, time_out=None, exception_message='Timeout occurs.'):
         def decorate(function):
             if not time_out or time_out <= 0:
                 return function
@@ -98,7 +119,7 @@ class DecoratorUtil(object):
         return decorate
 
     @classmethod
-    def ThreadSafeTimeout(cls, time_out=None, exception_message='Timeout occurs.'):
+    def thread_safe_timeout(cls, time_out=None, exception_message='Timeout occurs.'):
         def decorate(function):
             if not time_out or time_out <= 0:
                 return function
@@ -111,3 +132,7 @@ class DecoratorUtil(object):
             return new_function
 
         return decorate
+
+    @classmethod
+    def rate_limiter(cls, interval=0):
+        return RaterLimiter(interval=interval)

@@ -22,7 +22,7 @@ class EmailRPC(RPCBase):
 
     def _login(self, credentials):
         if not credentials.password:
-            self._logger.error("Failed in logging to email [" + credentials.user_name + '].')
+            self._logger.error("Failed in logging to email [" + credentials.user_name + '].', publish=True)
         else:
             self._credentials[credentials.user_name] = credentials
             email_server = smtplib.SMTP(
@@ -35,7 +35,7 @@ class EmailRPC(RPCBase):
                 credentials.password
             )
             self._email_servers[credentials.user_name] = email_server
-            self._logger.info("Successfully login to email [" + credentials.user_name + '].')
+            self._logger.info("Successfully login to email [" + credentials.user_name + '].', publish=True)
 
     def add_email_credentials(self, credentials):
         self._credentials[credentials.user_name] = credentials
@@ -55,10 +55,10 @@ class EmailRPC(RPCBase):
                 )
         try:
             _send_email()
-            self._logger.info("Succeeded in sending email directly to " + request.to_email + '.')
+            self._logger.info("Succeeded in sending email directly to " + request.to_email + '.', publish=True)
         except (smtplib.SMTPSenderRefused, smtplib.SMTPServerDisconnected, smtplib.SMTPConnectError,
                 smtplib.SMTPAuthenticationError) as err:
-            self._logger.error("Sending email with exception: " + str(err) + '. Retry.')
+            self._logger.error("Sending email with exception: " + str(err) + '. Retry.', publish=True)
             self._login(credentials=self._credentials[request.from_email])
             _send_email()
         return None, Status.SUCCEEDED

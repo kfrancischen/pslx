@@ -94,5 +94,6 @@ class ProducerBase(Base):
                     any_message=self._response.response_data
                 )
         except Exception as err:
-            self._logger.error('Queue [' + self.get_queue_name() + "] send request with error " + str(err) + '.')
+            self._logger.error('Queue [' + self.get_queue_name() + "] send request with error " + str(err) + '.',
+                               publish=True)
             self.sys_log('Queue [' + self.get_queue_name() + "] send request with error " + str(err) + '.')

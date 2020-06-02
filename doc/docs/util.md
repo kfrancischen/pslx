@@ -559,12 +559,12 @@ Then this function will only print out the string on Saturday. The decorator als
 Decorator utility also supports timeout inside thread or in the main thread. The usage is
 ```python
 from pslx.util.decorator_util import DecoratorUtil
-@DecoratorUtil.DefaultTimeout(time_out=6)
+@DecoratorUtil.default_timeout(time_out=6)
 def f():
     time.sleep(5)
 
 
-@DecoratorUtil.ThreadSafeTimeout(time_out=2)
+@DecoratorUtil.thread_safe_timeout(time_out=2)
 def g():
     time.sleep(5)
 
@@ -572,4 +572,16 @@ def g():
 if __name__ == "__main__":
     f()
     g()
+```
+
+In decorator utils, function rate limit decorated is implemented and can be used as
+```python
+from pslx.util.decorator_util import DecoratorUtil
+@DecoratorUtil.rate_limiter(interval=1)
+def f():
+    print("hello world")
+
+if __name__ == "__main__":
+    for _ in range(10):
+        f()  # will be rated limited to 1s per print
 ```
