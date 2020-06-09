@@ -1,4 +1,4 @@
-import datetime
+import time
 from functools import wraps
 import multiprocessing
 import signal
@@ -62,19 +62,16 @@ class ThreadedTimeout(object):
 
 class RaterLimiter(object):
     def __init__(self, interval=0):
-        self._rate_limit = datetime.timedelta(seconds=interval) if interval > 0 else datetime.timedelta(seconds=0)
-        self._time_of_last_call = None
+        self._rate_limit = interval if interval > 0 else 0
+        self._tic_of_last_call = None
 
     def __call__(self, function):
         @wraps(function)
         def wrapper(*args, **kwargs):
-            cur_time = TimezoneUtil.cur_time_in_pst()
-            time_since_last_call = cur_time - self._time_of_last_call if self._time_of_last_call else None
+            if self._tic_of_last_call and time.time() - self._tic_of_last_call < self._rate_limit:
+                time.sleep(abs(self._rate_limit - (time.time() - self._tic_of_last_call)))
 
-            if time_since_last_call and time_since_last_call < self._rate_limit:
-                time.sleep((self._rate_limit - time_since_last_call).total_seconds())
-
-            self._time_of_last_call = cur_time
+            self._tic_of_last_call = time.time()
             return function(*args, **kwargs)
         return wrapper
 
