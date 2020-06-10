@@ -1,11 +1,9 @@
-import time
 from functools import wraps
 import multiprocessing
 import signal
 import sys
 import time
 from pslx.core.exception import TimeoutException
-from pslx.util.timezone_util import TimezoneUtil
 
 
 class ThreadedTimeout(object):
