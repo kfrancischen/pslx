@@ -5,8 +5,9 @@ import uuid
 from pslx.core.base import Base
 from pslx.schema.rpc_pb2 import GenericRPCRequest, GenericRPCResponse
 from pslx.util.dummy_util import DummyUtil
+from pslx.util.env_util import EnvUtil
 from pslx.util.proto_util import ProtoUtil
-from pslx.util.timezone_util import TimezoneUtil, TimeSleepObj
+from pslx.util.timezone_util import TimezoneUtil
 
 
 class ProducerBase(Base):
@@ -81,9 +82,10 @@ class ProducerBase(Base):
                 body=base64.b64encode(generic_request_str))
             wait_start_time = TimezoneUtil.cur_time_in_pst()
             while not self._response:
-                self._connection.process_data_events(time_limit=TimeSleepObj.TEN_SECONDS)
+                self._connection.process_data_events(
+                    time_limit=int(EnvUtil.get_pslx_env_variable('PSLX_QUEUE_TIMEOUT')))
                 if TimezoneUtil.cur_time_in_pst() - wait_start_time > \
-                        datetime.timedelta(seconds=TimeSleepObj.TEN_SECONDS):
+                        datetime.timedelta(seconds=int(EnvUtil.get_pslx_env_variable('PSLX_QUEUE_TIMEOUT'))):
                     break
 
             if not self.RESPONSE_MESSAGE_TYPE or self._response is None:
