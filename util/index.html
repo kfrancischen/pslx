@@ -1425,6 +1425,24 @@ are dummy function calls.</p>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
         <span class="n">f</span><span class="p">()</span>  <span class="c1"># will be rated limited to 1s per print</span>
 </code></pre></div>
+
+
+<p>The retry decorator can be used in the following way</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.util.decorator_util</span> <span class="kn">import</span> <span class="n">DecoratorUtil</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">hit</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nd">@DecoratorUtil</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="n">retry_on_exception</span><span class="o">=</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">num_retry</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+            <span class="n">hit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">hit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">10</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">test</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</code></pre></div>
                 
                   
                 
