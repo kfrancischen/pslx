@@ -586,3 +586,21 @@ if __name__ == "__main__":
     for _ in range(10):
         f()  # will be rated limited to 1s per print
 ```
+
+The retry decorator can be used in the following way
+```python
+from pslx.util.decorator_util import DecoratorUtil
+
+if __name__ == "__main__":
+    hit = [0]
+    @DecoratorUtil.retry(retry_on_exception=ValueError, num_retry=1)
+    def test(val):
+        for _ in range(val):
+            hit[0] += 1
+            if hit[0] == 5:
+                return 10
+            else:
+                raise ValueError
+
+    print(test(3))
+```

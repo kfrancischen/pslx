@@ -131,3 +131,26 @@ class DecoratorUtil(object):
     @classmethod
     def rate_limiter(cls, interval=0):
         return RaterLimiter(interval=interval)
+
+    @classmethod
+    def retry(cls, retry_on_exception=Exception, num_retry=-1, delay=0, max_delay=None, backoff=1):
+        def decorator(func):
+            def wrapper(*args, **kwargs):
+                retry_val, delay_val = num_retry, delay
+                while retry_val:
+                    try:
+                        return func(*args, **kwargs)
+                    except retry_on_exception as _:
+                        retry_val -= 1
+                        if not retry_val:
+                            raise
+
+                        if delay_val > 0:
+                            time.sleep(delay_val)
+                        delay_val *= backoff
+
+                        if max_delay:
+                            delay_val = min(delay_val, max_delay)
+            return wrapper
+
+        return decorator
