@@ -423,6 +423,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#documentation-for-mongodb-tool" class="md-nav__link">
+    Documentation for Mongodb Tool
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#documentation-for-fetcher-tool" class="md-nav__link">
     Documentation for Fetcher Tool
   </a>
@@ -537,6 +544,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#documentation-for-mongodb-tool" class="md-nav__link">
+    Documentation for Mongodb Tool
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#documentation-for-fetcher-tool" class="md-nav__link">
     Documentation for Fetcher Tool
   </a>
@@ -584,6 +598,7 @@
 <li>File locker to ensure the atomic io of files.</li>
 <li>LRU cache for caching.</li>
 <li>SQL tool for connecting to SQL database and executing queries.</li>
+<li>Mongodb tool for connection to mongodb.</li>
 <li>Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).</li>
 <li>Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).</li>
 <li>Registry tool to be used as decorators to register functions.</li>
@@ -715,6 +730,67 @@
 </li>
 </ul>
 <p>Note that before executing any queries, please connect to a database first.</p>
+<h3 id="documentation-for-mongodb-tool">Documentation for Mongodb Tool<a class="headerlink" href="#documentation-for-mongodb-tool" title="Permanent link">&para;</a></h3>
+<p>Mongodb tool supports the following methods:</p>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">()</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: create an instance of the Mongodb tool.</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">connect_to_database</span><span class="p">(</span><span class="n">credential</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: connect to mongodb with credential.</li>
+<li>Arguments:<ol>
+<li>credential: the credential used to the connect to mongodb.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">list_databases</span><span class="p">()</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: list all the database names.</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">list_collections</span><span class="p">(</span><span class="n">database_name</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Description: list the collection names in the database.</li>
+<li>Arguments:<ol>
+<li>database_name: the name of the database.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">get_database</span><span class="p">(</span><span class="n">database_name</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Decription: get the database with database name.</li>
+<li>Arguments:<ol>
+<li>database_name: the name of the database.</li>
+</ol>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">get_collection</span><span class="p">(</span><span class="n">database_name</span><span class="p">,</span> <span class="n">collection_name</span><span class="p">)</span>
+</code></pre></div>
+
+
+<ul>
+<li>Decription: get the collection with collection name in a database.</li>
+<li>Arguments:<ol>
+<li>database_name: the name of the database.</li>
+<li>collection_name: the name of the collection.</li>
+</ol>
+</li>
+</ul>
 <h3 id="documentation-for-fetcher-tool">Documentation for Fetcher Tool<a class="headerlink" href="#documentation-for-fetcher-tool" title="Permanent link">&para;</a></h3>
 <p>Tool to fetch the latest, oldest data or data within a time range. This includes implementation of <code>LocalPartitionerFetcher</code>
  where the partitioner data is local or a <code>RemotePartitionerFetcher</code> what fetches the data from a remote server through rpc.</p>
