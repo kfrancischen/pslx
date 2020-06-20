@@ -110,6 +110,18 @@ class SQLExecutionException(ExceptionBase):
     pass
 
 
+class MongodbConnectionException(ExceptionBase):
+    pass
+
+
+class MongodbNotInitializedException(ExceptionBase):
+    pass
+
+
+class MongodbExecutionException(ExceptionBase):
+    pass
+
+
 class EnvNotExistException(ExceptionBase):
     pass
 

@@ -21,8 +21,8 @@ class SQLTool(Base):
             )
             self.sys_log("Connection successful.")
         except mysql.connector.Error as err:
-            self.sys_log("Connection exception: " + str(err))
-            raise SQLConnectionException
+            self.sys_log("Connection exception: " + str(err) + '.')
+            raise SQLConnectionException("Connection exception: " + str(err) + '.')
 
     @staticmethod
     def _query_file_to_str(query_file):
@@ -35,7 +35,7 @@ class SQLTool(Base):
 
     def execute_query_str(self, query_str, modification):
         if not self._connector:
-            raise SQLNotInitializedException
+            raise SQLNotInitializedException("SQl client not initialized.")
 
         try:
             cursor = self._connector.cursor()
@@ -50,10 +50,10 @@ class SQLTool(Base):
             self._connector.close()
 
         except mysql.connector.Error as err:
-            self.sys_log("Query exception: " + str(err))
+            self.sys_log("Query exception: " + str(err) + '.')
             if modification:
                 self._connector.rollback()
-            raise SQLExecutionException
+            raise SQLExecutionException("Query exception: " + str(err) + '.')
 
         return result
 

@@ -23,6 +23,15 @@ class CommonUtil(object):
         return credential
 
     @classmethod
+    def make_mongodb_server_credentials(cls, mongodb_host_ip, mongodb_port, user_name, password):
+        credential = Credentials()
+        credential.user_name = user_name
+        credential.password = password
+        credential.others['mongodb_host_ip'] = mongodb_host_ip
+        credential.others['mongodb_port'] = mongodb_port
+        return credential
+
+    @classmethod
     def make_frontend_config(cls, yaml_path):
         if not FileUtil.does_file_exist(file_name=yaml_path):
             return FrontendConfig()
