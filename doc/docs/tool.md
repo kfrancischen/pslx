@@ -4,9 +4,10 @@ PSLX provides a set of tools to assist development, and they include
 2. File locker to ensure the atomic io of files.
 3. LRU cache for caching.
 4. SQL tool for connecting to SQL database and executing queries.
-5. Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
-6. Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
-7. Registry tool to be used as decorators to register functions.
+5. Mongodb tool for connection to mongodb.
+6. Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
+7. Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
+8. Registry tool to be used as decorators to register functions.
 
 ### Documentation for Logging Tool
 To create a logging tool instance, please use
@@ -104,6 +105,48 @@ execute_query_file(query_file, modification)
     2. modification: boolean indicating whether the query will modify the database.
 
 Note that before executing any queries, please connect to a database first.
+
+### Documentation for Mongodb Tool
+Mongodb tool supports the following methods:
+```python
+__init__()
+```
+* Description: create an instance of the Mongodb tool.
+
+```python
+connect_to_database(credential)
+```
+* Description: connect to mongodb with credential.
+* Arguments:
+    1. credential: the credential used to the connect to mongodb.
+
+```python
+list_databases()
+```
+* Description: list all the database names.
+
+```python
+list_collections(database_name)
+```
+* Description: list the collection names in the database.
+* Arguments:
+    1. database_name: the name of the database.
+
+```python
+get_database(database_name)
+```
+* Decription: get the database with database name.
+* Arguments:
+    1. database_name: the name of the database.
+
+```python
+get_collection(database_name, collection_name)
+```
+* Decription: get the collection with collection name in a database.
+* Arguments:
+    1. database_name: the name of the database.
+    2. collection_name: the name of the collection.
+
 
 ### Documentation for Fetcher Tool
 Tool to fetch the latest, oldest data or data within a time range. This includes implementation of `LocalPartitionerFetcher`
