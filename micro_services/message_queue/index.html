@@ -437,9 +437,9 @@
                   <h1>Message Queue</h1>
                 
                 <p>PSLX also implements a message queue API, the application needs to inherit <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/message_queue/queue_base.py">queue_base.py</a>,
-especially overriding the function of <code>get_response_and_status_impl</code> that takes a user defined request proto message to 
+especially overriding the function of <code>get_response_and_status_impl</code> that takes a user defined request proto message to
 a user defined response message. If the queue does not need response, please return None as the response.</p>
-<p>An <a href="https://github.com/kfrancischen/pslx/blob/master/example/message_queue_example/consumer.py">example</a> of this implementation of a queue for instant messaging including its consumer (like the RPC implementation) is </p>
+<p>An <a href="https://github.com/kfrancischen/pslx/blob/master/example/message_queue_example/consumer.py">example</a> of this implementation of a queue for instant messaging including its consumer (like the RPC implementation) is</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 
 <span class="kn">from</span> <span class="nn">pslx.micro_service.message_queue.queue_base</span> <span class="kn">import</span> <span class="n">QueueBase</span>
@@ -495,7 +495,7 @@ a user defined response message. If the queue does not need response, please ret
         <span class="n">queue_name</span><span class="o">=</span><span class="s1">&#39;slack_queue&#39;</span><span class="p">,</span>
         <span class="n">queue_storage</span><span class="o">=</span><span class="n">storage</span>
     <span class="p">)</span>
-    <span class="n">consumer</span><span class="o">.</span><span class="n">bind_queue</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;slack_exchange&#39;</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="n">slack_queue</span><span class="p">)</span>
+    <span class="n">consumer</span><span class="o">.</span><span class="n">bind_queue</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="n">slack_queue</span><span class="p">)</span>
     <span class="n">consumer</span><span class="o">.</span><span class="n">start_consumer</span><span class="p">()</span>
 </code></pre></div>
 
@@ -520,7 +520,6 @@ a user defined response message. If the queue does not need response, please ret
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">producer</span> <span class="o">=</span> <span class="n">SlackProducer</span><span class="p">(</span>
-        <span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;slack_exchange&#39;</span><span class="p">,</span>
         <span class="n">queue_name</span><span class="o">=</span><span class="s1">&#39;slack_queue&#39;</span><span class="p">,</span>
         <span class="n">connection_str</span><span class="o">=</span><span class="s1">&#39;amqp://guest:guest@localhost:5672&#39;</span>
     <span class="p">)</span>
