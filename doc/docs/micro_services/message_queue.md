@@ -1,8 +1,8 @@
 PSLX also implements a message queue API, the application needs to inherit [queue_base.py](https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/message_queue/queue_base.py),
-especially overriding the function of `get_response_and_status_impl` that takes a user defined request proto message to 
+especially overriding the function of `get_response_and_status_impl` that takes a user defined request proto message to
 a user defined response message. If the queue does not need response, please return None as the response.
 
-An [example](https://github.com/kfrancischen/pslx/blob/master/example/message_queue_example/consumer.py) of this implementation of a queue for instant messaging including its consumer (like the RPC implementation) is 
+An [example](https://github.com/kfrancischen/pslx/blob/master/example/message_queue_example/consumer.py) of this implementation of a queue for instant messaging including its consumer (like the RPC implementation) is
 ```python
 import requests
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
         queue_name='slack_queue',
         queue_storage=storage
     )
-    consumer.bind_queue(exchange='slack_exchange', queue=slack_queue)
+    consumer.bind_queue(queue=slack_queue)
     consumer.start_consumer()
 ```
 
@@ -85,7 +85,6 @@ class SlackProducer(ProducerBase):
 
 if __name__ == "__main__":
     producer = SlackProducer(
-        exchange='slack_exchange',
         queue_name='slack_queue',
         connection_str='amqp://guest:guest@localhost:5672'
     )

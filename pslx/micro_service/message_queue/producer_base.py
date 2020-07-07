@@ -13,7 +13,7 @@ from pslx.util.timezone_util import TimezoneUtil
 class ProducerBase(Base):
     RESPONSE_MESSAGE_TYPE = None
 
-    def __init__(self, exchange, queue_name, connection_str, logger=DummyUtil.dummy_logging()):
+    def __init__(self, queue_name, connection_str, logger=DummyUtil.dummy_logging()):
         super().__init__()
         self._logger = logger
         self._connection = pika.BlockingConnection(
@@ -21,19 +21,11 @@ class ProducerBase(Base):
         )
         self._channel = self._connection.channel()
         self._queue_name = queue_name
-        self._exchange = exchange
-        self._channel.exchange_declare(
-            exchange=self._exchange,
-            durable=True)
-        self._channel.queue_declare(queue=self._queue_name, durable=True)
-        self._channel.queue_bind(
-            exchange=self._exchange,
-            queue=self._queue_name,
-            routing_key=self._queue_name
-        )
-        self._channel.confirm_delivery()
+        result = self._channel.queue_declare(queue='', exclusive=True)
+        self._callback_queue = result.method.queue
+        self._logger.info("Callback queue is [" + self._callback_queue + '].')
         self._channel.basic_consume(
-            queue=queue_name,
+            queue=self._callback_queue,
             on_message_callback=self.on_response,
             auto_ack=True)
 
@@ -72,12 +64,11 @@ class ProducerBase(Base):
                 proto_message=generic_request
             )
             self._channel.basic_publish(
-                exchange=self._exchange,
+                exchange='',
                 routing_key=self._queue_name,
                 properties=pika.BasicProperties(
-                    reply_to=self._queue_name,
-                    correlation_id=self._corr_id,
-                    delivery_mode=2
+                    reply_to=self._callback_queue,
+                    correlation_id=self._corr_id
                 ),
                 body=base64.b64encode(generic_request_str))
             wait_start_time = TimezoneUtil.cur_time_in_pst()

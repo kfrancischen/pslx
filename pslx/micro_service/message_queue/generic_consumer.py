@@ -22,7 +22,6 @@ class GenericQueueConsumer(Base):
             ttl=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_TTL')
         )
         self._connection_str = ''
-        self._exchange = ''
         self._connection = None
         self._queue = None
         self._thread = None
@@ -41,12 +40,10 @@ class GenericQueueConsumer(Base):
         else:
             return ''
 
-    def create_consumer(self, exchange, connection_str):
-        self.sys_log("Create consumer connection_str [" + connection_str + '] and exchange [' + exchange + '].')
-        self._logger.info("Create consumer connection_str [" + connection_str + '] and exchange [' +
-                          exchange + '].')
+    def create_consumer(self, connection_str):
+        self.sys_log("Create consumer connection_str [" + connection_str + '].')
+        self._logger.info("Create consumer connection_str [" + connection_str + '.')
         self._connection_str = connection_str
-        self._exchange = exchange
         self._connection = pika.SelectConnection(
             parameters=pika.URLParameters(connection_str),
             on_open_callback=self.on_open
@@ -74,10 +71,11 @@ class GenericQueueConsumer(Base):
                               + self.get_consumer_name() + '].')
             response = self._queue.send_request(request=generic_request)
             response_str = ProtoUtil.message_to_string(proto_message=response)
-            ch.basic_publish(exchange=self._exchange,
+            ch.basic_publish(exchange='',
                              routing_key=props.reply_to,
                              properties=pika.BasicProperties(correlation_id=props.correlation_id),
                              body=base64.b64encode(response_str))
+            ch.basic_ack(delivery_tag=method.delivery_tag)
         except Exception as err:
             self._logger.error("Consumer [" + self.get_consumer_name() + "] processing message with error: " +
                                str(err) + '.')
@@ -86,19 +84,11 @@ class GenericQueueConsumer(Base):
         connection.channel(on_open_callback=self._on_channel_open)
 
     def _on_channel_open(self, channel):
-        channel.exchange_declare(
-            exchange=self._exchange,
-            durable=True)
-        channel.queue_declare(queue=self.get_queue_name(), durable=True)
-        channel.queue_bind(
-            exchange=self._exchange,
-            queue=self.get_queue_name(),
-            routing_key=self.get_queue_name()
-        )
+        channel.queue_declare(queue=self.get_queue_name())
+        channel.basic_qos(prefetch_count=1)
         channel.basic_consume(
             queue=self.get_queue_name(),
-            on_message_callback=self._process_message,
-            auto_ack=True
+            on_message_callback=self._process_message
         )
 
     def start_consumer(self):
@@ -131,11 +121,11 @@ class GenericConsumer(Base):
         self._connection_str = connection_str
         self._queue_consumers = []
 
-    def bind_queue(self, exchange, queue):
+    def bind_queue(self, queue):
         queue_consumer = GenericQueueConsumer(consumer_name=queue.get_queue_name() + '_consumer')
         self._logger.info("Adding queue [" + queue.get_queue_name() + "] to consumer [" +
                           queue_consumer.get_consumer_name() + '].')
-        queue_consumer.create_consumer(exchange=exchange, connection_str=self._connection_str)
+        queue_consumer.create_consumer(connection_str=self._connection_str)
         queue_consumer.bind_queue(queue=queue)
         self._queue_consumers.append(queue_consumer)
 

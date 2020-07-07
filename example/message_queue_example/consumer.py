@@ -53,5 +53,5 @@ if __name__ == "__main__":
         queue_name='slack_queue',
         queue_storage=storage
     )
-    consumer.bind_queue(exchange='slack_exchange', queue=slack_queue)
+    consumer.bind_queue(queue=slack_queue)
     consumer.start_consumer()

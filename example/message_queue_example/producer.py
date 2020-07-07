@@ -17,7 +17,6 @@ class SlackProducer(ProducerBase):
 
 if __name__ == "__main__":
     producer = SlackProducer(
-        exchange='slack_exchange',
         queue_name='slack_queue',
         connection_str='amqp://guest:guest@localhost:5672'
     )
@@ -26,4 +25,3 @@ if __name__ == "__main__":
         webhook_url='https://hooks.slack.com/services/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',
         message="hello world"
     )
-
