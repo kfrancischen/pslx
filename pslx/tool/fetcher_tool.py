@@ -15,15 +15,15 @@ class LocalPartitionerFetcher(Base):
         self._logger = logger
 
     def fetch_latest(self):
-        latest_dir = self._partitioner.get_latest_dir()
-        proto_table = ProtoTableStorage()
-        proto_table.initialize_from_file(
-            file_name=FileUtil.join_paths_to_file(
-                root_dir=latest_dir,
-                base_name='data.pb'
-            )
-        )
         try:
+            latest_dir = self._partitioner.get_latest_dir()
+            proto_table = ProtoTableStorage()
+            proto_table.initialize_from_file(
+                file_name=FileUtil.join_paths_to_file(
+                    root_dir=latest_dir,
+                    base_name='data.pb'
+                )
+            )
             all_data = proto_table.read_all()
             if all_data:
                 self._logger.info("Successfully get the latest data in partition dir [" +
@@ -41,15 +41,15 @@ class LocalPartitionerFetcher(Base):
         return None
 
     def fetch_oldest(self):
-        oldest_dir = self._partitioner.get_oldest_dir_in_root_directory()
-        proto_table = ProtoTableStorage()
-        proto_table.initialize_from_file(
-            file_name=FileUtil.join_paths_to_file(
-                root_dir=oldest_dir,
-                base_name='data.pb'
-            )
-        )
         try:
+            oldest_dir = self._partitioner.get_oldest_dir_in_root_directory()
+            proto_table = ProtoTableStorage()
+            proto_table.initialize_from_file(
+                file_name=FileUtil.join_paths_to_file(
+                    root_dir=oldest_dir,
+                    base_name='data.pb'
+                )
+            )
             all_data = proto_table.read_all()
             if all_data:
                 self._logger.info("Successfully get the oldest data in partition dir [" +

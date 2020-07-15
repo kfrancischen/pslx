@@ -56,7 +56,7 @@ class FileUtil(object):
     def die_if_file_not_exist(cls, file_name):
         file_name = cls.normalize_file_name(file_name=file_name)
         if not cls.does_file_exist(file_name=file_name):
-            raise FileNotExistException
+            raise FileNotExistException(file_name + " does not exist.")
         else:
             return file_name
 
@@ -64,7 +64,7 @@ class FileUtil(object):
     def die_if_dir_not_exist(cls, dir_name):
         dir_name = cls.normalize_dir_name(dir_name=dir_name)
         if not cls.does_dir_exist(dir_name=dir_name):
-            raise DirNotExistException
+            raise DirNotExistException(dir_name + " does not exist.")
         else:
             return dir_name
 
