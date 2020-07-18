@@ -27,39 +27,51 @@ class TimeSleepObj(object):
 class TimezoneUtil(object):
 
     @classmethod
+    def naive_to_utc(cls, naive_time):
+        return TimezoneObj.UTC_TIMEZONE.localize(naive_time)
+
+    @classmethod
+    def naive_to_pst(cls, naive_time):
+        return TimezoneObj.WESTERN_TIMEZONE.localize(naive_time)
+
+    @classmethod
+    def naive_to_est(cls, naive_time):
+        return TimezoneObj.EASTERN_TIMEZONE.localize(naive_time)
+
+    @classmethod
     def utc_to_pst(cls, utc_time):
         if utc_time.tzinfo is None:
-            utc_time = utc_time.replace(tzinfo=TimezoneObj.UTC_TIMEZONE)
+            utc_time = cls.naive_to_utc(naive_time=utc_time)
         return utc_time.astimezone(TimezoneObj.WESTERN_TIMEZONE)
 
     @classmethod
     def utc_to_est(cls, utc_time):
         if utc_time.tzinfo is None:
-            utc_time = utc_time.replace(tzinfo=TimezoneObj.UTC_TIMEZONE)
+            utc_time = cls.naive_to_utc(naive_time=utc_time)
         return utc_time.astimezone(TimezoneObj.EASTERN_TIMEZONE)
 
     @classmethod
     def pst_to_est(cls, western_time):
         if western_time.tzinfo is None:
-            western_time = western_time.replace(tzinfo=TimezoneObj.WESTERN_TIMEZONE)
+            western_time = cls.naive_to_pst(naive_time=western_time)
         return western_time.astimezone(TimezoneObj.EASTERN_TIMEZONE)
 
     @classmethod
     def pst_to_utc(cls, western_time):
         if western_time.tzinfo is None:
-            western_time = western_time.replace(tzinfo=TimezoneObj.WESTERN_TIMEZONE)
+            western_time = cls.naive_to_pst(naive_time=western_time)
         return western_time.astimezone(TimezoneObj.UTC_TIMEZONE)
 
     @classmethod
     def est_to_pst(cls, eastern_time):
         if eastern_time.tzinfo is None:
-            eastern_time = eastern_time.replace(tzinfo=TimezoneObj.EASTERN_TIMEZONE)
+            eastern_time = cls.naive_to_est(naive_time=eastern_time)
         return eastern_time.astimezone(TimezoneObj.WESTERN_TIMEZONE)
 
     @classmethod
     def est_to_utc(cls, eastern_time):
         if eastern_time.tzinfo is None:
-            eastern_time = eastern_time.replace(tzinfo=TimezoneObj.EASTERN_TIMEZONE)
+            eastern_time = cls.naive_to_est(naive_time=eastern_time)
         return eastern_time.astimezone(TimezoneObj.UTC_TIMEZONE)
 
     @classmethod

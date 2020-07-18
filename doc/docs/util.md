@@ -385,6 +385,28 @@ infer_str_from_message_type(message_type)
 The timestamp related utility class includes the following methods:
 
 ```python
+naive_to_utc(naive_time)
+```
+* Description: convert a naive datetime object to a utc datetime object.
+* Arguments:
+    1. naive_time: the naive datetime object.
+
+
+```python
+naive_to_pst(naive_time)
+```
+* Description: convert a naive datetime object to a pst datetime object.
+* Arguments:
+    1. naive_time: the naive datetime object.
+
+```python
+naive_to_est(naive_time)
+```
+* Description: convert a naive datetime object to an etc datetime object.
+* Arguments:
+    1. naive_time: the naive datetime object.
+
+```python
 utc_to_pst(utc_time)
 ```
 * Description: convert a utc datetime object to a pst datetime object.
