@@ -326,7 +326,7 @@ class PartitionerBase(StorageBase):
 
         self._reader_status = Status.RUNNING
 
-        oldest_dir, latest_dir = self.get_oldest_dir(), self.get_latest_dir()
+        oldest_dir, latest_dir = self.get_oldest_dir_in_root_directory(), self.get_latest_dir()
         if not latest_dir or not oldest_dir:
             if self.is_empty():
                 self._logger.warning("Current partitioner [" + self.get_dir_name() +

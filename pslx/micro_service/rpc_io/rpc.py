@@ -164,7 +164,6 @@ class RPCIO(RPCBase):
             response.dict_data[key].CopyFrom(rpc_list_data)
         return response
 
-
     def _partitioner_storage_impl(self, request):
         self._logger.info("Getting request of partitioner storage read.")
         read_params = dict(request.params)
