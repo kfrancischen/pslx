@@ -17,6 +17,9 @@ class LocalPartitionerFetcher(Base):
     def fetch_latest(self):
         try:
             latest_dir = self._partitioner.get_latest_dir()
+            if not latest_dir:
+                self._logger.warning('[' + self._partitioner.get_dir_name() + '] is empty.')
+                return None
             proto_table = ProtoTableStorage()
             proto_table.initialize_from_file(
                 file_name=FileUtil.join_paths_to_file(
@@ -43,6 +46,9 @@ class LocalPartitionerFetcher(Base):
     def fetch_oldest(self):
         try:
             oldest_dir = self._partitioner.get_oldest_dir_in_root_directory()
+            if not oldest_dir:
+                self._logger.warning('[' + self._partitioner.get_dir_name() + '] is empty.')
+                return None
             proto_table = ProtoTableStorage()
             proto_table.initialize_from_file(
                 file_name=FileUtil.join_paths_to_file(
