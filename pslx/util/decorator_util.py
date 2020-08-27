@@ -154,3 +154,15 @@ class DecoratorUtil(object):
             return wrapper
 
         return decorator
+
+    @classmethod
+    def exception_safe_return(cls, default_return=None):
+        def decorator(func):
+            def wrapper(*args, **kwargs):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as _:
+                    return default_return
+            return wrapper
+
+        return decorator

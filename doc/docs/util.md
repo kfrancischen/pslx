@@ -626,3 +626,16 @@ if __name__ == "__main__":
 
     print(test(3))
 ```
+
+
+The exception_safe_return decorator can be used in the following way
+```python
+from pslx.util.decorator_util import DecoratorUtil
+
+if __name__ == "__main__":
+    @DecoratorUtil.exception_safe_return(default_return=None)
+    def test(val):
+        return 100 / val
+
+    print(test(0))
+```
