@@ -92,6 +92,7 @@ class TimezoneUtil(object):
 
     @classmethod
     def cur_time_from_str(cls, time_str):
+        time_str = time_str.replace('T', '')
         string_formats = [
             "%Y-%m-%d %H:%M:%S.%f%z",
             "%Y-%m-%d %H:%M:%S.%f",
