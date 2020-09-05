@@ -49,3 +49,7 @@ class ColorsUtil(object):
     @classmethod
     def make_foreground_light_grey(cls, text):
         return ColorsUtil.Foreground.LIGHT_GREY + text + ColorsUtil.RESET
+
+    @classmethod
+    def make_text_bold(cls, text):
+        return ColorsUtil.BOLD + text + ColorsUtil.RESET
