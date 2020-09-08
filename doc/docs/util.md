@@ -639,3 +639,15 @@ if __name__ == "__main__":
 
     print(test(0))
 ```
+
+The experimental decorator can be used in the following way
+```python
+from pslx.util.decorator_util import DecoratorUtil
+
+if __name__ == "__main__":
+    @DecoratorUtil.experimental
+    def test():
+        return "Something might not work and need debugging"
+
+    print(test())
+```
