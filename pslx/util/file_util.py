@@ -1,7 +1,7 @@
 import datetime
 import glob
 import os
-import shutil
+from galaxy_py import gclient, gclient_ext
 from pslx.core.exception import FileNotExistException, DirNotExistException
 from pslx.schema.enums_pb2 import ModeType
 from pslx.util.env_util import EnvUtil
@@ -19,38 +19,39 @@ class FileUtil(object):
 
     @classmethod
     def does_file_exist(cls, file_name):
-        return os.path.exists(file_name)
+        file_name = gclient.file_or_die(path=file_name)
+        if file_name:
+            return True
+        else:
+            return False
 
     @classmethod
     def does_dir_exist(cls, dir_name):
-        return os.path.exists(dir_name)
+        dir_name = gclient.dir_or_die(path=dir_name)
+        if dir_name:
+            return True
+        else:
+            return False
 
     @classmethod
     def is_file_empty(cls, file_name):
         cls.die_if_file_not_exist(file_name=file_name)
-        return os.stat(file_name).st_size == 0
+        return gclient.read(path=file_name) == ""
 
     @classmethod
     def is_dir_empty(cls, dir_name):
         cls.die_if_dir_not_exist(dir_name=dir_name)
-        return len(os.listdir(dir_name)) == 0
+        return len(gclient_ext.list_all_in_dir(dir_name)) == 0
 
     @classmethod
     def create_file_if_not_exist(cls, file_name):
         file_name = cls.normalize_file_name(file_name=file_name)
-        cls.create_dir_if_not_exist(dir_name=cls.dir_name(file_name=file_name))
-        if not cls.does_file_exist(file_name=file_name):
-            with open(file_name, 'w') as _:
-                pass
-
-        return file_name
+        return gclient.create_file_if_not_exist(path=file_name)
 
     @classmethod
     def create_dir_if_not_exist(cls, dir_name):
         dir_name = cls.normalize_dir_name(dir_name=dir_name)
-        if not cls.does_dir_exist(dir_name=dir_name):
-            os.makedirs(dir_name)
-        return dir_name
+        return gclient.create_dir_if_not_exist(path=dir_name)
 
     @classmethod
     def die_if_file_not_exist(cls, file_name):
@@ -77,13 +78,6 @@ class FileUtil(object):
         return os.path.isdir(path_name)
 
     @classmethod
-    def _list_dir(cls, dir_name):
-        cls.normalize_dir_name(dir_name=dir_name)
-        cls.die_if_dir_not_exist(dir_name=dir_name)
-        items = os.listdir(dir_name)
-        return [cls.join_paths_to_file(dir_name, item) for item in items if not item.startswith('.')]
-
-    @classmethod
     def normalize_file_name(cls, file_name):
         return os.path.normpath(path=file_name)
 
@@ -93,71 +87,29 @@ class FileUtil(object):
 
     @classmethod
     def list_files_in_dir(cls, dir_name):
-        everything = cls._list_dir(dir_name=dir_name)
-        return [cls.normalize_file_name(item) for item in everything if cls.is_file(item) and '.lock' not in item and
-                '.DS_Store' not in item]
+        return list(gclient.list_files_in_dir(path=dir_name).keys())
 
     @classmethod
     def list_dirs_in_dir(cls, dir_name):
-        everything = cls._list_dir(dir_name=dir_name)
-        return [cls.normalize_dir_name(item) for item in everything if cls.is_dir(item)]
+        return list(gclient.list_dirs_in_dir(path=dir_name).keys())
 
     @classmethod
     def list_files_in_dir_recursively(cls, dir_name):
-        dir_name = cls.normalize_dir_name(dir_name=dir_name)
-        result = []
-        if not cls.does_dir_exist(dir_name=dir_name):
-            return result
-        for sub_dir, _, file_names in os.walk(dir_name):
-            for file_name in file_names:
-                result.append(cls.join_paths_to_file(root_dir=sub_dir, base_name=file_name))
-
-        return result
+        return list(gclient.list_files_in_dir_recursive(path=dir_name).keys())
 
     @classmethod
     def list_dirs_in_dir_recursively(cls, dir_name):
-        dir_name = cls.normalize_dir_name(dir_name=dir_name)
-        result = []
-        if not cls.does_dir_exist(dir_name=dir_name):
-            return result
-        for sub_dir, _, file_names in os.walk(dir_name):
-            result.append(sub_dir)
-
-        return result
+        return list(gclient.list_dirs_in_dir_recursive(path=dir_name).keys())
 
     @classmethod
     def remove_file(cls, file_name):
         file_name = cls.normalize_file_name(file_name=file_name)
-        if cls.does_file_exist(file_name=file_name):
-            os.remove(file_name)
+        gclient.rm_file(path=file_name)
 
     @classmethod
     def remove_dir_recursively(cls, dir_name):
         dir_name = cls.normalize_dir_name(dir_name=dir_name)
-        if cls.does_dir_exist(dir_name=dir_name):
-            shutil.rmtree(dir_name)
-
-    @classmethod
-    def get_file_modified_time(cls, file_name):
-        if not cls.does_file_exist(file_name=file_name):
-            return None
-        mod_time = os.path.getmtime(file_name)
-        return datetime.datetime.fromtimestamp(mod_time)
-
-    @classmethod
-    def get_ttl_from_path(cls, path_name):
-        for item in path_name.split('/'):
-            if 'ttl=' in item:
-                item = item.replace('ttl=', '').lower()
-                if 'd' == item[-1]:
-                    return datetime.timedelta(days=int(item.replace('d', '')))
-                elif 'h' == item[-1]:
-                    return datetime.timedelta(hours=int(item.replace('h', '')))
-                elif 'm' == item[-1]:
-                    return datetime.timedelta(minutes=int(item.replace('m', '')))
-                elif int(item) > 0:
-                    return datetime.timedelta(days=int(item))
-        return None
+        gclient.rm_dir_recursive(path=dir_name)
 
     @classmethod
     def join_paths_to_file_with_mode(cls, root_dir, base_name, ttl=-1):
@@ -189,15 +141,6 @@ class FileUtil(object):
         return path
 
     @classmethod
-    def get_file_names_in_dir(cls, dir_name):
-        if not os.path.exists(dir_name):
-            return []
-        file_names = sorted([
-            file_name for file_name in os.listdir(dir_name) if os.path.isfile(os.path.join(dir_name, file_name))]
-        )
-        return [os.path.join(dir_name, file_name) for file_name in file_names]
-
-    @classmethod
     def get_file_names_from_pattern(cls, pattern):
         return sorted(glob.glob(pattern))
 
@@ -210,17 +153,11 @@ class FileUtil(object):
 
     @classmethod
     def write_proto_to_file(cls, proto, file_name):
-        with open(FileUtil.create_file_if_not_exist(file_name=file_name), 'wb') as outfile:
-            outfile.write(proto.SerializeToString())
+        gclient_ext.write_proto_message(path=file_name, data=proto)
 
     @classmethod
     def read_proto_from_file(cls, proto_type, file_name):
-        proto = proto_type()
-        try:
-            with open(FileUtil.die_if_file_not_exist(file_name=file_name), 'rb') as infile:
-                proto.ParseFromString(infile.read())
-        except FileNotExistException as _:
-            pass
+        proto = gclient_ext.read_proto_message(path=file_name, message_type=proto_type)
         return proto
 
     @classmethod
@@ -264,16 +201,3 @@ class FileUtil(object):
             root_dir=FileUtil.join_paths_to_dir(FileUtil.dir_name(contain_snapshot_dir), 'operators'),
             base_name='SNAPSHOT_*_' + operator_name + '.pb'
         )
-
-    @classmethod
-    def get_file_size(cls, file_name):
-        block_size = 1024
-        file_name = cls.die_if_file_not_exist(file_name=file_name)
-        file_size = os.path.getsize(file_name)
-
-        if file_size < block_size ** 2:
-            return str(round(1.0 * file_size / block_size, 3)) + ' KB'
-        elif block_size ** 2 <= file_size < block_size ** 3:
-            return str(round(1.0 * file_size / block_size ** 2, 3)) + ' MB'
-        else:
-            return str(round(1.0 * file_size / block_size ** 3, 3)) + ' GB'
