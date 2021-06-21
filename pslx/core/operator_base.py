@@ -1,11 +1,10 @@
 import time
 
+from pslx.core.base import DummyLogger
 from pslx.core.exception import OperatorFailureException, FileNotExistException
 from pslx.core.node_base import OrderedNodeBase
 from pslx.schema.enums_pb2 import DataModelType, Status, Signal
 from pslx.schema.snapshots_pb2 import OperatorSnapshot
-from pslx.tool.filelock_tool import FileLockTool
-from pslx.util.dummy_util import DummyUtil
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil, TimeSleepObj
@@ -15,7 +14,7 @@ class OperatorBase(OrderedNodeBase):
     DATA_MODEL = DataModelType.DEFAULT
     CONTENT_MESSAGE_TYPE = None
 
-    def __init__(self, operator_name, logger=DummyUtil.dummy_logger()):
+    def __init__(self, operator_name, logger=DummyLogger()):
         super().__init__(node_name=operator_name)
         self._config = {
             'save_snapshot': False,

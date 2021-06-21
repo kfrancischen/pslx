@@ -1,3 +1,4 @@
+from pslx.core.base import DummyLogger
 from pslx.core.operator_base import OperatorBase
 from pslx.schema.enums_pb2 import DataModelType
 
@@ -10,34 +11,11 @@ class DummyOperator(OperatorBase):
         pass
 
 
-class DummyLogger(object):
-    def __init__(self, log_name, log_dir):
-        pass
-
-    def info(self, *args, **kwargs):
-        pass
-
-    def warning(self, *args, **kwargs):
-        pass
-
-    def error(self, *args, **kwargs):
-        pass
-
-    def debug(self, *args, **kwargs):
-        pass
-
-    def fatal(self, *args, **kwargs):
-        pass
-
-    def critical(self, *args, **kwargs):
-        pass
-
-
 class DummyUtil(object):
 
     @classmethod
     def dummy_logger(cls):
-        return DummyLogger("", "")
+        return DummyLogger()
 
     @classmethod
     def dummy_operator(cls, operator_name='dummy_operator'):

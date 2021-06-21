@@ -2,14 +2,36 @@ import os
 from inspect import getmodule
 from galaxy_py import glogging
 from pslx.schema.enums_pb2 import ModeType
-from pslx.util.dummy_util import DummyUtil
 from pslx.util.env_util import EnvUtil
+
+
+class DummyLogger(object):
+    def __init__(self):
+        pass
+
+    def info(self, *args, **kwargs):
+        pass
+
+    def warning(self, *args, **kwargs):
+        pass
+
+    def error(self, *args, **kwargs):
+        pass
+
+    def debug(self, *args, **kwargs):
+        pass
+
+    def fatal(self, *args, **kwargs):
+        pass
+
+    def critical(self, *args, **kwargs):
+        pass
 
 
 class Base(object):
 
     _SYS_LOGGER = (glogging.get_logger("PSLX_SYS_LOG", EnvUtil.get_pslx_env_variable("PSLX_SYS_LOG_DIR")) if
-                   EnvUtil.get_pslx_env_variable("PSLX_ENABLE_SYS_LOG") else DummyUtil.dummy_logger())
+                   EnvUtil.get_pslx_env_variable("PSLX_ENABLE_SYS_LOG") else DummyLogger())
 
     def __init__(self):
         if 'PSLX_TEST' not in os.environ or not os.environ['PSLX_TEST']:
