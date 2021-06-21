@@ -17,8 +17,8 @@ class LinkedListBase(Base):
 
     def add_to_head(self, node):
         if node.get_node_name() == 'LINKED_LIST_BASE_DUMMY_NODE':
-            self.sys_log('LINKED_LIST_BASE_DUMMY_NODE is a reserved name. Please consider changing name.')
-        self.sys_log("Adding " + node.get_node_name() + " to head.")
+            self._SYS_LOGGER.info('LINKED_LIST_BASE_DUMMY_NODE is a reserved name. Please consider changing name.')
+        self._SYS_LOGGER.info("Adding " + node.get_node_name() + " to head.")
         if node.get_node_name() in self._node_dict:
             self.delete_by_node(node=node)
 
@@ -36,7 +36,7 @@ class LinkedListBase(Base):
     def delete_by_node(self, node):
         if not node or node.get_num_parents() == 0:
             return
-        self.sys_log("Deleting " + node.get_node_name() + ".")
+        self._SYS_LOGGER.info("Deleting " + node.get_node_name() + ".")
 
         node_parent = node.get_parents_nodes()[0]
         node_parent.delete_child(child_node=node)
