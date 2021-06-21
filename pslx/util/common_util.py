@@ -52,21 +52,9 @@ class CommonUtil(object):
                     server_config.server_url = val['SERVER_URL']
                     server_config.root_certificate_path = val['ROOT_CERTIFICATE_PATH']
 
-            if 'FILE_VIEWER_CONFIG' in dict_config:
-                for val in dict_config['FILE_VIEWER_CONFIG'].values():
-                    server_config = config.file_viewer_config.add()
-                    server_config.server_url = val['SERVER_URL']
-                    server_config.root_certificate_path = val['ROOT_CERTIFICATE_PATH']
-
             if 'INSTANT_MESSAGING_CONFIG' in dict_config:
                 for val in dict_config['INSTANT_MESSAGING_CONFIG'].values():
                     server_config = config.instant_messaging_config.add()
-                    server_config.server_url = val['SERVER_URL']
-                    server_config.root_certificate_path = val['ROOT_CERTIFICATE_PATH']
-
-            if 'RPC_IO_CONFIG' in dict_config:
-                for val in dict_config['RPC_IO_CONFIG'].values():
-                    server_config = config.rpc_io_config.add()
                     server_config.server_url = val['SERVER_URL']
                     server_config.root_certificate_path = val['ROOT_CERTIFICATE_PATH']
 

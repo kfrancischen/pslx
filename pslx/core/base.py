@@ -1,13 +1,15 @@
 import os
-from inspect import getmodule, getframeinfo, stack
+from inspect import getmodule
+from galaxy_py import glogging
 from pslx.schema.enums_pb2 import ModeType
-from pslx.util.color_util import ColorsUtil
+from pslx.util.dummy_util import DummyUtil
 from pslx.util.env_util import EnvUtil
-from pslx.util.file_util import FileUtil
-from pslx.util.timezone_util import TimezoneUtil
 
 
 class Base(object):
+
+    _SYS_LOGGER = (glogging.get_logger("PSLX_SYS_LOG", EnvUtil.get_pslx_env_variable("PSLX_SYS_LOG_DIR")) if
+                   EnvUtil.get_pslx_env_variable("PSLX_ENABLE_SYS_LOG") else DummyUtil.dummy_logger())
 
     def __init__(self):
         if 'PSLX_TEST' not in os.environ or not os.environ['PSLX_TEST']:
@@ -39,19 +41,3 @@ class Base(object):
         for class_obj in mro[::-1][1:]:
             inheritance_level.append(class_obj.__name__)
         return '->'.join(inheritance_level)
-
-    @classmethod
-    def sys_log(cls, string):
-        if EnvUtil.get_pslx_env_variable(var='PSLX_LOG'):
-            try:
-                caller = getframeinfo(stack()[1][0])
-                print('[SYS-LOG] ' +
-                      ColorsUtil.make_foreground_green('[file: %s]' % FileUtil.base_name(caller.filename)) + ' ' +
-                      ColorsUtil.make_foreground_yellow('[line: %d]' % caller.lineno) + ' ' +
-                      ColorsUtil.make_foreground_red('[%s]' % str(TimezoneUtil.cur_time_in_pst())) + ': ' +
-                      string)
-
-            except Exception as _:
-                print('[SYS-LOG] ' +
-                      ColorsUtil.make_foreground_red('[%s]' % str(TimezoneUtil.cur_time_in_pst())) + ': ' +
-                      string)
