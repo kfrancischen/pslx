@@ -1,5 +1,4 @@
 from pslx.core.base import Base
-from pslx.schema.enums_pb2 import Status
 from pslx.util.dummy_util import DummyUtil
 
 
@@ -9,12 +8,9 @@ class StorageBase(Base):
     def __init__(self, logger=None):
         super().__init__()
         if not logger:
-            self._logger = DummyUtil.dummy_logging()
+            self._logger = DummyUtil.dummy_logger()
         else:
             self._logger = logger
-
-        self._reader_status = Status.IDLE
-        self._writer_status = Status.IDLE
 
     def get_storage_type(self):
         return self.STORAGE_TYPE

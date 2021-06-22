@@ -1,12 +1,12 @@
-from shutil import copyfile
+from galaxy_py import gclient_ext
 import unittest
 from pslx.schema.enums_pb2 import ReadRuleType, WriteRuleType
 from pslx.storage.default_storage import DefaultStorage
 
 
 class DefaultStorageTest(unittest.TestCase):
-    TEST_DATA_1 = "pslx/test/storage/test_data/test_default_storage_data.txt"
-    TEST_DATA_2 = "pslx/test/storage/test_data/test_default_storage_data_2.txt"
+    TEST_DATA_1 = "/galaxy/bb-d/pslx/test_data/test_default_storage_data.txt"
+    TEST_DATA_2 = "/galaxy/bb-d/pslx/test_data/test_default_storage_data_2.txt"
 
     def test_initialize_from_file(self):
         default_storage = DefaultStorage()
@@ -67,7 +67,7 @@ class DefaultStorageTest(unittest.TestCase):
         )
         default_storage.write(data=data)
         data = default_storage.read()
-        copyfile(self.TEST_DATA_1, self.TEST_DATA_2)
+        gclient_ext.cp_file(self.TEST_DATA_1, self.TEST_DATA_2)
         self.assertListEqual(data, ['3,4,5'])
 
     def test_write_from_beginning(self):
@@ -81,5 +81,5 @@ class DefaultStorageTest(unittest.TestCase):
         )
         default_storage.write(data=data)
         data = default_storage.read()
-        copyfile(self.TEST_DATA_1, self.TEST_DATA_2)
+        gclient_ext.cp_file(self.TEST_DATA_1, self.TEST_DATA_2)
         self.assertListEqual(data, ['3,4,5'])

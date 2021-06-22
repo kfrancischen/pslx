@@ -1,4 +1,4 @@
-from shutil import copytree, rmtree
+from galaxy_py import gclient, gclient_ext
 import unittest
 
 from pslx.schema.snapshots_pb2 import NodeSnapshot
@@ -15,9 +15,9 @@ class ShardedProtoTableStorageTest(unittest.TestCase):
         parents_names: ["parent_1", "parent_2"]
         """
     )
-    TEST_DATA_DIR_1 = 'pslx/test/storage/test_data/sharded_proto_table_1'
-    TEST_DATA_DIR_2 = 'pslx/test/storage/test_data/sharded_proto_table_2'
-    TEST_DATA_DIR_3 = 'pslx/test/storage/test_data/sharded_proto_table_3'
+    TEST_DATA_DIR_1 = '/galaxy/bb-d/pslx/test_data/sharded_proto_table_1'
+    TEST_DATA_DIR_2 = '/galaxy/bb-d/pslx/test_data/sharded_proto_table_2'
+    TEST_DATA_DIR_3 = '/galaxy/bb-d/pslx/test_data/sharded_proto_table_3'
 
     def test_initialize_from_dir(self):
         shared_proto_table_storage = ShardedProtoTableStorage(size_per_shard=3)
@@ -34,8 +34,8 @@ class ShardedProtoTableStorageTest(unittest.TestCase):
         )
         self.assertFalse(shared_proto_table_storage.is_empty())
         self.assertEqual(shared_proto_table_storage.get_num_shards(), 3)
-        rmtree(self.TEST_DATA_DIR_1)
-        copytree(self.TEST_DATA_DIR_2, self.TEST_DATA_DIR_1)
+        gclient.rm_dir(self.TEST_DATA_DIR_1)
+        gclient_ext.cp_folder(self.TEST_DATA_DIR_2, self.TEST_DATA_DIR_1)
 
     def test_write_2(self):
         shared_proto_table_storage = ShardedProtoTableStorage(size_per_shard=3)
@@ -49,8 +49,8 @@ class ShardedProtoTableStorageTest(unittest.TestCase):
         )
         self.assertEqual(shared_proto_table_storage.get_num_entries(), 10)
         self.assertEqual(shared_proto_table_storage.get_num_shards(), 4)
-        rmtree(self.TEST_DATA_DIR_1)
-        copytree(self.TEST_DATA_DIR_2, self.TEST_DATA_DIR_1)
+        gclient.rm_dir(self.TEST_DATA_DIR_1)
+        gclient_ext.cp_folder(self.TEST_DATA_DIR_2, self.TEST_DATA_DIR_1)
 
     def test_write_3(self):
         shared_proto_table_storage = ShardedProtoTableStorage(size_per_shard=3)
@@ -64,8 +64,8 @@ class ShardedProtoTableStorageTest(unittest.TestCase):
         )
         self.assertEqual(shared_proto_table_storage.get_num_entries(), 9)
         self.assertEqual(shared_proto_table_storage.get_num_shards(), 3)
-        rmtree(self.TEST_DATA_DIR_1)
-        copytree(self.TEST_DATA_DIR_2, self.TEST_DATA_DIR_1)
+        gclient.rm_dir(self.TEST_DATA_DIR_1)
+        gclient_ext.cp_folder(self.TEST_DATA_DIR_2, self.TEST_DATA_DIR_1)
 
     def test_read_1(self):
         shared_proto_table_storage = ShardedProtoTableStorage()
@@ -123,8 +123,8 @@ class ShardedProtoTableStorageTest(unittest.TestCase):
             }
         )
         self.assertTrue('test_9' in data)
-        rmtree(self.TEST_DATA_DIR_1)
-        copytree(self.TEST_DATA_DIR_2, self.TEST_DATA_DIR_1)
+        gclient.rm_dir(self.TEST_DATA_DIR_1)
+        gclient_ext.cp_folder(self.TEST_DATA_DIR_2, self.TEST_DATA_DIR_1)
 
     def test_resize_to_new_table(self):
         shared_proto_table_storage = ShardedProtoTableStorage()
@@ -135,4 +135,4 @@ class ShardedProtoTableStorageTest(unittest.TestCase):
         )
         self.assertEqual(new_table.get_num_entries(), 9)
         self.assertEqual(new_table.get_num_shards(), 5)
-        rmtree(self.TEST_DATA_DIR_3)
+        gclient.rm_dir(self.TEST_DATA_DIR_3)

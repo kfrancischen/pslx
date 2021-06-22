@@ -97,7 +97,7 @@ class FileUtil(object):
 
     @classmethod
     def list_dirs_in_dir(cls, dir_name):
-        return list(gclient.list_dirs_in_dir(path=dir_name).keys())
+        return [dir + '/' for dir in gclient.list_dirs_in_dir(path=dir_name).keys()]
 
     @classmethod
     def list_files_in_dir_recursively(cls, dir_name):

@@ -1,4 +1,4 @@
-from shutil import copyfile
+from galaxy_py import gclient_ext
 import unittest
 
 from pslx.schema.snapshots_pb2 import NodeSnapshot, OperatorSnapshot
@@ -41,10 +41,10 @@ class ProtoTableStorageTest(unittest.TestCase):
         }
         """
     )
-    TEST_DATA_1 = "pslx/test/storage/test_data/test_proto_table_data.pb"
-    TEST_DATA_2 = "pslx/test/storage/test_data/test_proto_table_data_2.pb"
-    TEST_DATA_3 = "pslx/test/storage/test_data/test_proto_table_data_3.pb"
-    TEST_DATA_4 = "pslx/test/storage/test_data/test_proto_table_data_4.pb"
+    TEST_DATA_1 = "/galaxy/bb-d/pslx/test_data/test_proto_table_data.pb"
+    TEST_DATA_2 = "/galaxy/bb-d/pslx/test_data/test_proto_table_data_2.pb"
+    TEST_DATA_3 = "/galaxy/bb-d/pslx/test_data/test_proto_table_data_3.pb"
+    TEST_DATA_4 = "/galaxy/bb-d/pslx/test_data/test_proto_table_data_4.pb"
 
     def test_read_1(self):
         proto_table_storage = ProtoTableStorage()
@@ -98,7 +98,7 @@ class ProtoTableStorageTest(unittest.TestCase):
             }
         )
         self.assertEqual(result_proto, self.EXAMPLE_PROTO_1)
-        copyfile(self.TEST_DATA_1, self.TEST_DATA_3)
+        gclient_ext.cp_file(self.TEST_DATA_1, self.TEST_DATA_3)
 
     def test_write_2(self):
         proto_table_storage = ProtoTableStorage()
@@ -137,7 +137,7 @@ class ProtoTableStorageTest(unittest.TestCase):
         })
 
         self.assertEqual(proto_table_storage.get_num_entries(), 2)
-        copyfile(self.TEST_DATA_2, self.TEST_DATA_4)
+        gclient_ext.cp_file(self.TEST_DATA_2, self.TEST_DATA_4)
 
     def test_write_3(self):
         proto_table_storage = ProtoTableStorage()
@@ -172,5 +172,4 @@ class ProtoTableStorageTest(unittest.TestCase):
         )
         self.assertEqual(result_proto, self.EXAMPLE_PROTO_2)
         self.assertEqual(proto_table_storage.get_num_entries(), 2)
-        copyfile(self.TEST_DATA_2, self.TEST_DATA_4)
-
+        gclient_ext.cp_file(self.TEST_DATA_2, self.TEST_DATA_4)

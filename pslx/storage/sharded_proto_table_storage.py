@@ -1,15 +1,11 @@
-import time
-
 from collections import defaultdict
 from pslx.core.exception import StorageReadException, StorageWriteException
-from pslx.schema.enums_pb2 import StorageType, Status
+from pslx.schema.enums_pb2 import StorageType
 from pslx.schema.storage_pb2 import ProtoTableIndexMap
 from pslx.storage.proto_table_storage import ProtoTableStorage
 from pslx.storage.storage_base import StorageBase
-from pslx.tool.filelock_tool import FileLockTool
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
-from pslx.util.timezone_util import TimeSleepObj
 
 
 class ShardedProtoTableStorage(StorageBase):
@@ -21,8 +17,8 @@ class ShardedProtoTableStorage(StorageBase):
         self._size_per_shard = size_per_shard
 
     def initialize_from_file(self, file_name):
-        self.sys_log("Initialize_from_file function is not implemented for storage type "
-                     + ProtoUtil.get_name_by_value(enum_type=StorageType, value=self.STORAGE_TYPE) + '.')
+        self._SYS_LOGGER.fatal("Initialize_from_file function is not implemented for storage type "
+                               + ProtoUtil.get_name_by_value(enum_type=StorageType, value=self.STORAGE_TYPE) + '.')
         return
 
     def initialize_from_dir(self, dir_name):
@@ -38,15 +34,14 @@ class ShardedProtoTableStorage(StorageBase):
             assert self._size_per_shard > 0
             self._index_map.size_per_shard = self._size_per_shard
         else:
-            with FileLockTool(protected_file_path=self._index_map_file, read_mode=True):
-                self._index_map = FileUtil.read_proto_from_file(
-                    proto_type=ProtoTableIndexMap,
-                    file_name=self._index_map_file
-                )
-                if self._size_per_shard and self._index_map.size_per_shard != self._size_per_shard:
-                    self._logger.error("Please use the correct size per shard of [" + str(self._size_per_shard) + '].')
-                self._size_per_shard = self._index_map.size_per_shard
-                self._logger.info("Using size per shard of [" + str(self._size_per_shard) + '].')
+            self._index_map = FileUtil.read_proto_from_file(
+                proto_type=ProtoTableIndexMap,
+                file_name=self._index_map_file
+            )
+            if self._size_per_shard and self._index_map.size_per_shard != self._size_per_shard:
+                self._logger.error("Please use the correct size per shard of [" + str(self._size_per_shard) + '].')
+            self._size_per_shard = self._index_map.size_per_shard
+            self._logger.info("Using size per shard of [" + str(self._size_per_shard) + '].')
 
     def is_empty(self):
         return self.get_num_shards() == 0
@@ -77,11 +72,7 @@ class ShardedProtoTableStorage(StorageBase):
         assert 'keys' in params
         all_keys = params['keys']
         assert isinstance(all_keys, list)
-        while self._writer_status != Status.IDLE:
-            self.sys_log("Waiting for writer to finish.")
-            time.sleep(TimeSleepObj.ONE_SECOND)
 
-        self._reader_status = Status.RUNNING
         related_shards = set()
         shard_to_key_map = defaultdict(list)
         for key in all_keys:
@@ -98,10 +89,9 @@ class ShardedProtoTableStorage(StorageBase):
                 for key in shard_to_key_map[shard]:
                     result[key] = all_data[key]
 
-            self._reader_status = Status.IDLE
             return result
         except Exception as err:
-            self.sys_log("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
+            self._SYS_LOGGER.error("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
             self._logger.error("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
             raise StorageReadException("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
 
@@ -111,11 +101,7 @@ class ShardedProtoTableStorage(StorageBase):
         if 'overwrite' not in params:
             params['overwrite'] = True
         assert isinstance(data, dict)
-        while self._reader_status != Status.IDLE:
-            self.sys_log("Waiting for reader to finish.")
-            time.sleep(TimeSleepObj.ONE_SECOND)
 
-        self._writer_status = Status.RUNNING
         exising_shard_to_data_map = defaultdict(dict)
         new_data = {}
         for key, val in data.items():
@@ -169,9 +155,9 @@ class ShardedProtoTableStorage(StorageBase):
                     proto=self._index_map,
                     file_name=self._index_map_file
                 )
-                self._writer_status = Status.IDLE
+
         except Exception as err:
-            self.sys_log("Write to dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
+            self._SYS_LOGGER.error("Write to dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
             self._logger.error("Write to dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
             raise StorageWriteException("Write to dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
 

@@ -1,13 +1,10 @@
-import time
-
 from pslx.core.exception import StorageReadException, StorageWriteException, StorageDeleteException
-from pslx.schema.enums_pb2 import StorageType, Status
+from pslx.schema.enums_pb2 import StorageType
 from pslx.schema.storage_pb2 import ProtoTable
 from pslx.storage.storage_base import StorageBase
-from pslx.tool.filelock_tool import FileLockTool
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
-from pslx.util.timezone_util import TimezoneUtil, TimeSleepObj
+from pslx.util.timezone_util import TimezoneUtil
 
 
 class ProtoTableStorage(StorageBase):
@@ -17,26 +14,24 @@ class ProtoTableStorage(StorageBase):
         super().__init__(logger=logger)
         self._file_name = None
         self._table_message = None
-        self._deleter_status = Status.IDLE
 
     def initialize_from_dir(self, dir_name):
-        self.sys_log("Initialize_from_dir function is not implemented for storage type "
-                     + ProtoUtil.get_name_by_value(enum_type=StorageType, value=self.STORAGE_TYPE) + '.')
+        self._SYS_LOGGER.fatal("Initialize_from_dir function is not implemented for storage type "
+                               + ProtoUtil.get_name_by_value(enum_type=StorageType, value=self.STORAGE_TYPE) + '.')
         return
 
     def initialize_from_file(self, file_name):
         if '.pb' not in file_name:
-            self.sys_log("Please use .pb extension for proto files.")
+            self._SYS_LOGGER.warning("Please use .pb extension for proto files.")
 
         self._file_name = FileUtil.create_file_if_not_exist(file_name=file_name)
         if FileUtil.is_file_empty(file_name=self._file_name):
             self._table_message = ProtoTable()
         else:
-            with FileLockTool(self._file_name, read_mode=True):
-                self._table_message = FileUtil.read_proto_from_file(
-                    proto_type=ProtoTable,
-                    file_name=self._file_name
-                )
+            self._table_message = FileUtil.read_proto_from_file(
+                proto_type=ProtoTable,
+                file_name=self._file_name
+            )
         if not self._table_message.table_path:
             self._table_message.table_path = self._file_name
         if not self._table_message.table_name:
@@ -52,16 +47,6 @@ class ProtoTableStorage(StorageBase):
 
     def read(self, params=None):
         assert 'key' in params
-
-        while self._writer_status != Status.IDLE:
-            self.sys_log("Waiting for writer to finish.")
-            time.sleep(TimeSleepObj.ONE_SECOND)
-
-        while self._deleter_status != Status.IDLE:
-            self.sys_log("Waiting for deleter to finish.")
-            time.sleep(TimeSleepObj.ONE_SECOND)
-
-        self._reader_status = Status.RUNNING
         if params['key'] in self._table_message.data:
             try:
                 if 'message_type' in params:
@@ -71,81 +56,53 @@ class ProtoTableStorage(StorageBase):
                     )
                 else:
                     result = self._table_message.data[params['key']]
-                self._reader_status = Status.IDLE
+
                 return result
             except Exception as err:
-                self.sys_log("Read file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
+                self._SYS_LOGGER.error("Read file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
                 self._logger.error("Read file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
                 raise StorageReadException("Read file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
         else:
             return None
 
     def read_all(self):
-
-        while self._writer_status != Status.IDLE:
-            self.sys_log("Waiting for writer to finish.")
-            time.sleep(TimeSleepObj.ONE_SECOND)
-
-        while self._deleter_status != Status.IDLE:
-            self.sys_log("Waiting for deleter to finish.")
-            time.sleep(TimeSleepObj.ONE_SECOND)
-
-        self._reader_status = Status.RUNNING
         try:
-            self._reader_status = Status.IDLE
             return dict(self._table_message.data)
         except Exception as err:
-            self.sys_log("Read all got exception: " + str(err) + '.')
+            self._SYS_LOGGER.error("Read all got exception: " + str(err) + '.')
             self._logger.error("Read all Got exception: " + str(err) + '.')
             raise StorageReadException
 
     def delete(self, key):
-        while self._reader_status != Status.IDLE:
-            self.sys_log("Waiting for reader to finish.")
-            time.sleep(TimeSleepObj.ONE_SECOND)
-
-        while self._writer_status != Status.IDLE:
-            self.sys_log("Waiting for writer to finish.")
-            time.sleep(TimeSleepObj.ONE_SECOND)
 
         if key in self._table_message.data:
-            self._deleter_status = Status.RUNNING
             del self._table_message.data[key]
             try:
                 self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
-                with FileLockTool(self._file_name, read_mode=False):
-                    FileUtil.write_proto_to_file(
-                        proto=self._table_message,
-                        file_name=self._file_name
-                    )
-                    self._deleter_status = Status.IDLE
+                FileUtil.write_proto_to_file(
+                    proto=self._table_message,
+                    file_name=self._file_name
+                )
+
             except Exception as err:
-                self.sys_log("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
+                self._SYS_LOGGER.error("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
                 self._logger.error("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
                 raise StorageDeleteException("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
 
     def delete_all(self):
-        while self._reader_status != Status.IDLE:
-            self.sys_log("Waiting for reader to finish.")
-            time.sleep(TimeSleepObj.ONE_SECOND)
 
-        while self._writer_status != Status.IDLE:
-            self.sys_log("Waiting for writer to finish.")
-            time.sleep(TimeSleepObj.ONE_SECOND)
-        self._deleter_status = Status.RUNNING
         all_keys = list(dict(self._table_message.data).keys())
         for key in all_keys:
             del self._table_message.data[key]
         try:
             self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
-            with FileLockTool(self._file_name, read_mode=False):
-                FileUtil.write_proto_to_file(
-                    proto=self._table_message,
-                    file_name=self._file_name
-                )
-                self._deleter_status = Status.IDLE
+            FileUtil.write_proto_to_file(
+                proto=self._table_message,
+                file_name=self._file_name
+            )
+
         except Exception as err:
-            self.sys_log("Delete all of file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
+            self._SYS_LOGGER.error("Delete all of file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
             self._logger.error("Delete all of file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
             raise StorageDeleteException("Delete all of file [" + self.get_file_name() +
                                          "] got exception: " + str(err) + '.')
@@ -156,15 +113,6 @@ class ProtoTableStorage(StorageBase):
         if 'overwrite' not in params:
             params['overwrite'] = True
 
-        while self._reader_status != Status.IDLE:
-            self.sys_log("Waiting for reader to finish.")
-            time.sleep(TimeSleepObj.ONE_SECOND)
-
-        while self._deleter_status != Status.IDLE:
-            self.sys_log("Waiting for deleter to finish.")
-            time.sleep(TimeSleepObj.ONE_SECOND)
-
-        self._writer_status = Status.RUNNING
         assert isinstance(data, dict)
         try:
             for key, val in data.items():
@@ -173,16 +121,16 @@ class ProtoTableStorage(StorageBase):
                 any_message = ProtoUtil.message_to_any(message=val)
                 self._table_message.data[key].CopyFrom(any_message)
             if len(self._table_message.data) > 1000:
-                self.sys_log("Warning: the table content is too large, considering using Partitioner "
-                             "combined with proto table.")
+                self._SYS_LOGGER.warning("Warning: the table content is too large, considering using Partitioner "
+                                         "combined with proto table.")
             self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
-            with FileLockTool(self._file_name, read_mode=False):
-                FileUtil.write_proto_to_file(
-                    proto=self._table_message,
-                    file_name=self._file_name
-                )
-                self._writer_status = Status.IDLE
+
+            FileUtil.write_proto_to_file(
+                proto=self._table_message,
+                file_name=self._file_name
+            )
+
         except Exception as err:
-            self.sys_log("Write to file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
+            self._SYS_LOGGER.error("Write to file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
             self._logger.error("Write to file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
             raise StorageWriteException("Write to file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
