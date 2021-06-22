@@ -50,8 +50,8 @@ class ContainerBase(GraphBase):
             if operator.get_status() != self._status:
                 self._logger.error("Status of [" + operator.get_node_name() + "] is not consistent for container ["
                                    + self.get_container_name() + '].')
-                self._SYS_LOGGER.info("Status of [" + operator.get_node_name() + "] is not consistent for container ["
-                                      + self.get_container_name() + '].')
+                self._SYS_LOGGER.error("Status of [" + operator.get_node_name() + "] is not consistent for container ["
+                                       + self.get_container_name() + '].')
                 if not force:
                     raise exception.OperatorStatusInconsistentException(
                         "Status of [" + operator.get_node_name() + "] is not consistent for container ["
@@ -61,8 +61,8 @@ class ContainerBase(GraphBase):
             if operator.get_data_model() != self.DATA_MODEL:
                 self._logger.error("Data model of [" + operator.get_node_name() + "] is not consistent for container ["
                                    + self.get_container_name() + '].')
-                self._SYS_LOGGER.info("Data model of [" + operator.get_node_name() + "] is not consistent for container ["
-                                      + self.get_container_name() + '].')
+                self._SYS_LOGGER.error("Data model of [" + operator.get_node_name() + "] is not consistent for container ["
+                                       + self.get_container_name() + '].')
                 if not force:
                     raise exception.OperatorDataModelInconsistentException(
                         "Data model of [" + operator.get_node_name() + "] is not consistent for container ["
@@ -89,8 +89,8 @@ class ContainerBase(GraphBase):
         if self._is_initialized:
             self._logger.error("Cannot add more connections if the container [" + self.get_container_name() +
                                "] is already initialized.")
-            self._SYS_LOGGER.info("Cannot add more connections if the container [" + self.get_container_name() +
-                                  "] is already initialized.")
+            self._SYS_LOGGER.error("Cannot add more connections if the container [" + self.get_container_name() +
+                                   "] is already initialized.")
             raise exception.ContainerAlreadyInitializedException(
                 "Cannot add more connections if the container [" + self.get_container_name() +
                 "] is already initialized.")
@@ -111,8 +111,8 @@ class ContainerBase(GraphBase):
         if not self._is_initialized:
             self._logger.error("Warning: taking snapshot when the container [" + self.get_container_name() +
                                "] is not initialized.")
-            self._SYS_LOGGER.info("Warning: taking snapshot when the container [" + self.get_container_name() +
-                                  "] is not initialized.")
+            self._SYS_LOGGER.error("Warning: taking snapshot when the container [" + self.get_container_name() +
+                                   "] is not initialized.")
 
         snapshot = ContainerSnapshot()
         snapshot.container_name = self._container_name
@@ -181,12 +181,12 @@ class ContainerBase(GraphBase):
                 self._logger.warning('STREAMING container [' + self.get_container_name() +
                                      '] does not support backfill mode.')
                 return
-            self._SYS_LOGGER.info("Running in backfill mode for container [" + self.get_container_name() + '].')
+            self._SYS_LOGGER.debug("Running in backfill mode for container [" + self.get_container_name() + '].')
             self._logger.debug("Running in backfill mode for container [" + self.get_container_name() + '].')
 
         if not self._is_initialized:
-            self._SYS_LOGGER.info("Cannot execute if the container [" + self.get_container_name() +
-                                  "] is not initialized.")
+            self._SYS_LOGGER.error("Cannot execute if the container [" + self.get_container_name() +
+                                   "] is not initialized.")
             self._logger.error("Cannot execute if the container [" + self.get_container_name() +
                                "] is not initialized.")
             raise exception.ContainerUninitializedException(
@@ -276,10 +276,10 @@ class ContainerBase(GraphBase):
 
     def _get_latest_status_of_operators(self):
         operator_status = {}
-        snapshot_files = FileUtil.get_file_names_in_dir(
+        snapshot_files = FileUtil.list_files_in_dir(
             dir_name=FileUtil.join_paths_to_dir(FileUtil.dir_name(self._snapshot_file_folder), 'operators'))
         for snapshot_file in snapshot_files[::-1]:
-            operator_name = snapshot_file.split('_')[1]
+            operator_name = snapshot_file.split('/')[-1].split('_')[1]
             if operator_name not in operator_status:
                 self._logger.info("Getting status for operator [" + operator_name + '].')
                 self._SYS_LOGGER.info("Getting status for operator [" + operator_name + '].')

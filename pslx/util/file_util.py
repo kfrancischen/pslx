@@ -1,5 +1,6 @@
 import datetime
 import glob
+import json
 import os
 from galaxy_py import gclient, gclient_ext
 from pslx.core.exception import FileNotExistException, DirNotExistException
@@ -36,7 +37,10 @@ class FileUtil(object):
     @classmethod
     def is_file_empty(cls, file_name):
         cls.die_if_file_not_exist(file_name=file_name)
-        return gclient.read(path=file_name) == ""
+        attr = json.loads(gclient.get_attr(path=file_name))
+        if 'size' in attr:
+            return int(attr['size']) == 0
+        return True
 
     @classmethod
     def is_dir_empty(cls, dir_name):
@@ -46,12 +50,14 @@ class FileUtil(object):
     @classmethod
     def create_file_if_not_exist(cls, file_name):
         file_name = cls.normalize_file_name(file_name=file_name)
-        return gclient.create_file_if_not_exist(path=file_name)
+        gclient.create_file_if_not_exist(path=file_name)
+        return file_name
 
     @classmethod
     def create_dir_if_not_exist(cls, dir_name):
         dir_name = cls.normalize_dir_name(dir_name=dir_name)
-        return gclient.create_dir_if_not_exist(path=dir_name)
+        gclient.create_dir_if_not_exist(path=dir_name)
+        return dir_name
 
     @classmethod
     def die_if_file_not_exist(cls, file_name):

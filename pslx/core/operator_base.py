@@ -127,14 +127,14 @@ class OperatorBase(OrderedNodeBase):
                     self._SYS_LOGGER.info("Upstream operator [" + parent.get_node_name() + "] failed.")
                     # streaming mode allows failure from its dependencies.
                     if not self._config['allow_failure']:
-                        self._SYS_LOGGER.info('This results in failure of all the following descendant operators.')
+                        self._SYS_LOGGER.error('This results in failure of all the following descendant operators.')
                         self._logger.error('This results in failure of all the following descendant operators.')
                         self.set_status(status=Status.FAILED)
                         unfinished_op = []
                         break
                     else:
-                        self._SYS_LOGGER.info("Failure is allowed in Streaming mode. The rest of operators will" +
-                                              " continue.")
+                        self._SYS_LOGGER.warning("Failure is allowed in Streaming mode. The rest of operators will" +
+                                                 " continue.")
                         self._logger.warning('This results in failure of all the following descendant operators.')
 
         return unfinished_op
@@ -215,7 +215,7 @@ class OperatorBase(OrderedNodeBase):
                 self._end_time = TimezoneUtil.cur_time_in_pst()
                 self.set_status(status=Status.SUCCEEDED)
         except OperatorFailureException as err:
-            self._SYS_LOGGER.info("Execute operator [" + self.get_node_name() + "] with error " + str(err) + '.')
+            self._SYS_LOGGER.error("Execute operator [" + self.get_node_name() + "] with error " + str(err) + '.')
             self._logger.error("Execute operator [" + self.get_node_name() + "] with error " + str(err) + '.')
             self.set_status(status=Status.FAILED)
 
@@ -224,7 +224,7 @@ class OperatorBase(OrderedNodeBase):
             self.execute_impl()
             return Signal.STOP
         except Exception as err:
-            self._SYS_LOGGER.info("operator [" + self.get_node_name() + "] failed with error " + str(err) + '.')
+            self._SYS_LOGGER.error("operator [" + self.get_node_name() + "] failed with error " + str(err) + '.')
             self._logger.error("operator [" + self.get_node_name() + "] failed with error " + str(err) + '.',
                                publish=True)
             raise OperatorFailureException("operator [" + self.get_node_name() + "] failed with error " +
