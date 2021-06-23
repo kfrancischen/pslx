@@ -18,12 +18,12 @@ class RPCBase(GenericRPCServiceServicer, Base):
 
     def __init__(self, service_name, rpc_storage=None):
         Base.__init__(self)
-        self._logger = DummyUtil.dummy_logging()
+        self._logger = DummyUtil.dummy_logger()
         self._service_name = service_name
         if rpc_storage:
             assert rpc_storage.get_storage_type() == StorageType.PARTITIONER_STORAGE
             if 'ttl' not in rpc_storage.get_dir_name():
-                self.sys_log("Warning. Please ttl the request log table.")
+                self._SYS_LOGGER.warning("Warning. Please ttl the request log table.")
             underlying_storage = ProtoTableStorage()
             rpc_storage.set_underlying_storage(storage=underlying_storage)
             rpc_storage.set_max_capacity(max_capacity=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE'))
@@ -53,8 +53,8 @@ class RPCBase(GenericRPCServiceServicer, Base):
             raise RPCNotAuthenticatedException("rpc call not authenticated for uuid [" + request.uuid +
                                                '] in service [' + self.get_rpc_service_name() + '].')
 
-        self.sys_log("rpc getting request with uuid [" + request.uuid + '] in service [' +
-                     self.get_rpc_service_name() + '].')
+        self._SYS_LOGGER.info("rpc getting request with uuid [" + request.uuid + '] in service [' +
+                              self.get_rpc_service_name() + '].')
         self._logger.info("rpc getting request with uuid [" + request.uuid + '] in service [' +
                           self.get_rpc_service_name() + '].')
         decomposed_request = self.request_decomposer(request=request)
@@ -82,8 +82,8 @@ class RPCBase(GenericRPCServiceServicer, Base):
                         'make_partition': True,
                     }
                 )
-                self.sys_log("Request response pairs flushed to [" + self._rpc_storage.get_latest_dir() +
-                             '] in service [' + self.get_rpc_service_name() + '].')
+                self._SYS_LOGGER.info("Request response pairs flushed to [" + self._rpc_storage.get_latest_dir() +
+                                      '] in service [' + self.get_rpc_service_name() + '].')
                 self._logger.info("Request response pairs flushed to [" + self._rpc_storage.get_latest_dir() +
                                   '] in service [' + self.get_rpc_service_name() + '].')
                 self._request_response_pair.clear()
@@ -97,7 +97,7 @@ class RPCBase(GenericRPCServiceServicer, Base):
             raise RPCNotAuthenticatedException("Checking health not authenticated for service [" +
                                                self.get_rpc_service_name() + '].')
 
-        self.sys_log("Checking health for url [" + request.server_url + '].')
+        self._SYS_LOGGER.info("Checking health for url [" + request.server_url + '].')
         self._logger.info("Checking health for url [" + request.server_url + '].')
         response = HealthCheckerResponse()
         response.server_url = request.server_url

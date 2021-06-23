@@ -1,7 +1,7 @@
 import mysql.connector
+from galaxy_py import gclient_ext
 from pslx.core.base import Base
 from pslx.core.exception import SQLConnectionException, SQLNotInitializedException, SQLExecutionException
-from pslx.tool.filelock_tool import FileLockTool
 from pslx.util.file_util import FileUtil
 
 
@@ -19,18 +19,14 @@ class SQLTool(Base):
                 password=credential.password,
                 database=database
             )
-            self.sys_log("Connection successful.")
+            self._SYS_LOGGER.info("Connection successful.")
         except mysql.connector.Error as err:
-            self.sys_log("Connection exception: " + str(err) + '.')
+            self._SYS_LOGGER.info("Connection exception: " + str(err) + '.')
             raise SQLConnectionException("Connection exception: " + str(err) + '.')
 
     @staticmethod
     def _query_file_to_str(query_file):
-        query_str = ''
-        with FileLockTool(protected_file_path=query_file, read_mode=True):
-            with open(query_file, 'r') as infile:
-                for line in infile:
-                    query_str += line
+        query_str = gclient_ext.read_txt(path=query_file)
         return query_str
 
     def execute_query_str(self, query_str, modification):
@@ -50,7 +46,7 @@ class SQLTool(Base):
             self._connector.close()
 
         except mysql.connector.Error as err:
-            self.sys_log("Query exception: " + str(err) + '.')
+            self._SYS_LOGGER.info("Query exception: " + str(err) + '.')
             if modification:
                 self._connector.rollback()
             raise SQLExecutionException("Query exception: " + str(err) + '.')
@@ -59,7 +55,7 @@ class SQLTool(Base):
 
     def execute_query_file(self, query_file, modification):
         if not FileUtil.does_file_exist(file_name=query_file):
-            self.sys_log("Query file " + query_file + " does not exist")
+            self._SYS_LOGGER.info("Query file " + query_file + " does not exist")
 
         query_str = self._query_file_to_str(query_file=query_file)
 

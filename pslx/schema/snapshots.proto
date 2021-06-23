@@ -35,7 +35,7 @@ message ContainerSnapshot {
     string class_name = 7;
     ModeType mode = 8;
     DataModelType data_model = 9;
-    string log_dir = 10;
+    string log_file = 10;
     map<string, int32> counters = 11;
 }
 

@@ -35,7 +35,7 @@ class SubscriberExampleOp(StreamingOperator):
 
 class SubscriberExampleContainer(DefaultStreamingContainer):
     def __init__(self):
-        super().__init__(container_name='subscriber_example_container', ttl=7)
+        super().__init__(container_name='subscriber_example_container')
 
 
 if __name__ == "__main__":

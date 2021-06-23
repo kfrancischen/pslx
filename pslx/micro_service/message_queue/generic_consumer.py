@@ -3,10 +3,10 @@ import os
 import threading
 import time
 import pika
+from galaxy_py import glogging
 from pslx.core.base import Base
 from pslx.core.exception import QueueAlreadyExistException, QueueConsumerNotInitializedException
 from pslx.schema.rpc_pb2 import GenericRPCRequest
-from pslx.tool.logging_tool import LoggingTool
 from pslx.util.env_util import EnvUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimeSleepObj
@@ -17,13 +17,14 @@ class GenericQueueConsumer(Base):
     def __init__(self, consumer_name):
         super().__init__()
         self._consumer_name = consumer_name
-        self._logger = LoggingTool(
-            name=consumer_name,
-            ttl=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_TTL')
+        self._logger = glogging.get_logger(
+            log_name=consumer_name,
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/msg_queue_consumer'
         )
+
         self._connection_str = ''
         self._connection = None
-        self._queue = None
+        self._queue = Noney
         self._thread = None
 
         self._has_added_queue = False
@@ -41,7 +42,7 @@ class GenericQueueConsumer(Base):
             return ''
 
     def create_consumer(self, connection_str):
-        self.sys_log("Create consumer connection_str [" + connection_str + '].')
+        self._SYS_LOGGER.info("Create consumer connection_str [" + connection_str + '].')
         self._logger.info("Create consumer connection_str [" + connection_str + '.')
         self._connection_str = connection_str
         self._connection = pika.SelectConnection(
@@ -51,11 +52,11 @@ class GenericQueueConsumer(Base):
 
     def bind_queue(self, queue):
         if self._has_added_queue:
-            self.sys_log("queue already exist, cannot bind any more.")
+            self._SYS_LOGGER.error("queue already exist, cannot bind any more.")
             self._logger.error("queue already exist, cannot bind any more.")
             raise QueueAlreadyExistException("queue already exist, cannot bind any more.")
-        self.sys_log("Binding to queue with name [" + queue.get_queue_name() + '] to consumer [' +
-                     self.get_consumer_name() + '].')
+        self._SYS_LOGGER.info("Binding to queue with name [" + queue.get_queue_name() + '] to consumer [' +
+                              self.get_consumer_name() + '].')
         self._logger.info("Binding to queue with name [" + queue.get_queue_name() + '] to consumer [' +
                           self.get_consumer_name() + '].')
         self._has_added_queue = True
@@ -114,9 +115,9 @@ class GenericConsumer(Base):
 
     def __init__(self, connection_str):
         super().__init__()
-        self._logger = LoggingTool(
-            name=self.get_class_name(),
-            ttl=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_TTL')
+        self._logger = glogging.get_logger(
+            log_name=self.get_class_name(),
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/msg_queue_consumer'
         )
         self._connection_str = connection_str
         self._queue_consumers = []

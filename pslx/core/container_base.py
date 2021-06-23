@@ -1,6 +1,7 @@
 from collections import defaultdict
 from queue import Queue
 import threading
+from galaxy_py import glogging
 
 from pslx.core.graph_base import GraphBase
 import pslx.core.exception as exception
@@ -37,11 +38,10 @@ class ContainerBase(GraphBase):
     def get_container_name(self):
         return self._container_name
 
-    def bind_backend(self, server_url, root_certificate=None):
+    def bind_backend(self, server_url):
         self._backend = ContainerBackendRPCClient(
             client_name=self._container_name + '_backend',
-            server_url=server_url,
-            root_certificate=root_certificate
+            server_url=server_url
         )
         self._logger.info("Bind to backend with name " + self._backend.get_client_name() + " at server url " +
                           server_url + '.')
@@ -122,6 +122,7 @@ class ContainerBase(GraphBase):
         snapshot.class_name = self.get_full_class_name()
         snapshot.mode = self._mode
         snapshot.data_model = self.DATA_MODEL
+        snapshot.log_file = glogging.get_logger_file(self._logger)
         for key, val in self._counter.items():
             snapshot.counters[key] = val
         if self._start_time:

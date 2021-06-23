@@ -27,4 +27,4 @@ if __name__ == "__main__":
         module=args.module
     )
     for key, val in result.items():
-        print('\n' + key + ': ' + val)
+        print('\n' + key + ': ' + str(val))

@@ -7,7 +7,7 @@ from pslx.util.proto_util import ProtoUtil
 
 class Subscriber(Base):
 
-    def __init__(self, connection_str, logger=DummyUtil.dummy_logging()):
+    def __init__(self, connection_str, logger=DummyUtil.dummy_logger()):
         super().__init__()
         self._logger = logger
         self._connection_str = connection_str
@@ -22,7 +22,7 @@ class Subscriber(Base):
 
     def subscribe(self, exchange_name, topic_name, message_type):
         # declare tmp queue
-        self.sys_log("Please make sure topic name is in the exchange.")
+        self._SYS_LOGGER.info("Please make sure topic name is in the exchange.")
         try:
             self._channel.queue_bind(
                 exchange=exchange_name,

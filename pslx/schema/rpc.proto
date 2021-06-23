@@ -67,32 +67,6 @@ message EmailPRCRequest {
     string content = 4;
 }
 
-// the next will be 6
-message RPCIORequest {
-    bool is_test = 1;
-    StorageType type = 2;
-    oneof path {
-        string file_name = 3;
-        string dir_name = 4;
-    }
-    map<string, string> params = 5;
-}
-
-// the next will be 4
-message RPCIOResponse {
-    message RPCData {
-        oneof raw_data {
-            string string_data = 1;
-            google.protobuf.Any proto_data = 2;
-        }
-    }
-    message RPCListData {
-        repeated RPCData data = 3;
-    }
-    RPCListData list_data = 4;
-    map<string, RPCListData> dict_data = 5;
-}
-
 // the next will be 4
 message ProtoViewerRPCRequest {
     string proto_file_path = 1;
@@ -100,22 +74,10 @@ message ProtoViewerRPCRequest {
     string proto_module = 3;
 }
 
-
 // the next will be 3
 message ProtoViewerRPCResponse {
     string proto_content = 1;
     FileInfo file_info = 2;
-}
-
-// the next will be 2
-message FileViewerRPCRequest {
-    string file_path = 1;
-}
-
-// the next will be 3
-message FileViewerRPCResponse {
-    repeated FileInfo files_info = 1;
-    repeated FileInfo directories_info = 2;
 }
 
 // the next will be 3

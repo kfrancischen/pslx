@@ -8,7 +8,7 @@ from pslx.util.proto_util import ProtoUtil
 
 class Publisher(Base):
 
-    def __init__(self, exchange_name, topic_name, connection_str, logger=DummyUtil.dummy_logging()):
+    def __init__(self, exchange_name, topic_name, connection_str, logger=DummyUtil.dummy_logger()):
         super().__init__()
         self._logger = logger
         self._connection_str = connection_str

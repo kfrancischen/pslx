@@ -13,7 +13,7 @@ from pslx.util.timezone_util import TimezoneUtil
 class ProducerBase(Base):
     RESPONSE_MESSAGE_TYPE = None
 
-    def __init__(self, queue_name, connection_str, logger=DummyUtil.dummy_logging()):
+    def __init__(self, queue_name, connection_str, logger=DummyUtil.dummy_logger()):
         super().__init__()
         self._logger = logger
         self._connection = pika.BlockingConnection(
@@ -56,7 +56,8 @@ class ProducerBase(Base):
             generic_request.message_type = ProtoUtil.infer_str_from_message_type(
                     message_type=self.RESPONSE_MESSAGE_TYPE
                 )
-        self.sys_log("Getting request of uuid [" + generic_request.uuid + '] in queue [' + self.get_queue_name() + '].')
+        self._SYS_LOGGER.info("Getting request of uuid [" + generic_request.uuid + '] in queue [' +
+                              self.get_queue_name() + '].')
         self._logger.info("Getting request of uuid [" + generic_request.uuid + '] in queue [' +
                           self.get_queue_name() + '].')
         try:
@@ -89,4 +90,4 @@ class ProducerBase(Base):
         except Exception as err:
             self._logger.error('Queue [' + self.get_queue_name() + "] send request with error " + str(err) + '.',
                                publish=True)
-            self.sys_log('Queue [' + self.get_queue_name() + "] send request with error " + str(err) + '.')
+            self._SYS_LOGGER.error('Queue [' + self.get_queue_name() + "] send request with error " + str(err) + '.')

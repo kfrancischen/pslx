@@ -1,10 +1,10 @@
+from galaxy_py import glogging
 from pslx.micro_service.rpc.rpc_base import RPCBase
 from pslx.schema.enums_pb2 import DataModelType, Status, ModeType
 from pslx.schema.snapshots_pb2 import ContainerSnapshot
 from pslx.schema.storage_pb2 import ContainerBackendValue
 from pslx.storage.proto_table_storage import ProtoTableStorage
 from pslx.storage.partitioner_storage import DailyPartitionerStorage
-from pslx.tool.logging_tool import LoggingTool
 from pslx.tool.lru_cache_tool import LRUCacheTool
 from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
@@ -17,15 +17,15 @@ class ContainerBackendRPC(RPCBase):
 
     def __init__(self, rpc_storage):
         super().__init__(service_name=self.get_class_name(), rpc_storage=rpc_storage)
-        self._logger = LoggingTool(
-            name='PSLX_CONTAINER_BACKEND_RPC',
-            ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
+        self._logger = glogging.get_logger(
+            log_name='PSLX_CONTAINER_BACKEND_RPC',
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/container_backend_rpc'
         )
         self._lru_cache_tool = LRUCacheTool(
             max_capacity=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_CACHE')
         )
         self._backend_folder = FileUtil.join_paths_to_dir(
-            root_dir=EnvUtil.get_pslx_env_variable('PSLX_DATABASE'),
+            root_dir=FileUtil.join_paths_to_dir(EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_METADATA_DIR'), 'RPC'),
             base_name='PSLX_CONTAINER_BACKEND_TABLE'
         )
 
@@ -48,7 +48,7 @@ class ContainerBackendRPC(RPCBase):
         storage_value.updated_time = str(TimezoneUtil.cur_time_in_pst())
         storage_value.start_time = request.start_time
         storage_value.end_time = request.end_time
-        storage_value.log_dir = request.log_dir
+        storage_value.log_file = request.log_file
         for key in request.counters:
             storage_value.counters[key] = request.counters[key]
         partitioner_dir = FileUtil.join_paths_to_dir_with_mode(
@@ -66,7 +66,7 @@ class ContainerBackendRPC(RPCBase):
             partitioner_dir = partitioner_dir.replace('PROD', 'TEST')
         storage = self._lru_cache_tool.get(key=partitioner_dir)
         if not storage:
-            self.sys_log("Did not find the storage in cache. Making a new one...")
+            self._SYS_LOGGER.info("Did not find the storage in cache. Making a new one...")
             storage = DailyPartitionerStorage()
             proto_table = ProtoTableStorage()
             storage.set_underlying_storage(storage=proto_table)
@@ -76,7 +76,7 @@ class ContainerBackendRPC(RPCBase):
                 value=storage
             )
         else:
-            self.sys_log("Found key in LRU cache.")
+            self._SYS_LOGGER.info("Found key in LRU cache.")
 
         storage.write(
             data={storage_value.container_name: storage_value},

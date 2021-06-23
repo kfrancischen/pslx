@@ -1,9 +1,9 @@
 import smtplib
+from galaxy_py import glogging
 
 from pslx.micro_service.rpc.rpc_base import RPCBase
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.rpc_pb2 import EmailPRCRequest
-from pslx.tool.logging_tool import LoggingTool
 from pslx.util.env_util import EnvUtil
 
 
@@ -13,9 +13,9 @@ class EmailRPC(RPCBase):
     def __init__(self, rpc_storage):
         super().__init__(service_name=self.get_class_name(), rpc_storage=rpc_storage)
 
-        self._logger = LoggingTool(
-            name="PSLX_EMAIL_RPC",
-            ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
+        self._logger = glogging.get_logger(
+            log_name="PSLX_EMAIL_RPC",
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/email_rpc'
         )
         self._credentials = {}
         self._email_servers = {}

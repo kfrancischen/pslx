@@ -12,8 +12,8 @@ message Credentials {
 // the next will be 4
 message FileInfo {
     string file_path = 1;
-    string file_size = 2;
-    string modified_time = 3;
+    int32 file_size = 2;
+    int32 modified_time = 3;
 }
 
 // the next will be 12
@@ -32,11 +32,9 @@ message FrontendConfig {
     string sqlalchemy_database_path = 6;
     ServerConfig container_backend_config = 7;
     repeated ServerConfig proto_viewer_config = 8;
-    repeated ServerConfig file_viewer_config = 9;
-    repeated ServerConfig instant_messaging_config = 10;
-    repeated ServerConfig rpc_io_config = 11;
-    repeated ServerConfig email_config = 12;
+    repeated ServerConfig instant_messaging_config = 9;
+    repeated ServerConfig email_config = 10;
 
-    Credentials credential = 13;
-    MessageQueueConfig logging_queue_config = 14;
+    Credentials credential = 11;
+    MessageQueueConfig logging_queue_config = 12;
 }

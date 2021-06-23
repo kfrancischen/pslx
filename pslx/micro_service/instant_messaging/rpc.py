@@ -1,10 +1,9 @@
 import json
 import requests
-
+from galaxy_py import glogging
 from pslx.micro_service.rpc.rpc_base import RPCBase
 from pslx.schema.enums_pb2 import InstantMessagingType, Status
 from pslx.schema.rpc_pb2 import InstantMessagingRPCRequest
-from pslx.tool.logging_tool import LoggingTool
 from pslx.util.env_util import EnvUtil
 from pslx.util.timezone_util import TimezoneUtil
 
@@ -19,9 +18,9 @@ class InstantMessagingRPC(RPCBase):
             InstantMessagingType.ROCKETCHAT: self._send_by_rocketchat,
             InstantMessagingType.TEAMS: self._send_by_teams,
         }
-        self._logger = LoggingTool(
-            name='PSLX_INSTANT_MESSAGING_RPC',
-            ttl=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_TTL')
+        self._logger = glogging.get_logger(
+            log_name='PSLX_INSTANT_MESSAGING_RPC',
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/im_rpc'
         )
 
     def get_response_and_status_impl(self, request):
