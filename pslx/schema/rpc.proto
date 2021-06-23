@@ -21,10 +21,9 @@ message GenericRPCRequest {
     Status status = 5;
 }
 
-// the next will be 3
+// the next will be 2
 message HealthCheckerRequest {
     string server_url = 1;
-    bool secure = 2;
 }
 
 // the next will be 4

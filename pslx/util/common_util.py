@@ -38,37 +38,21 @@ class CommonUtil(object):
         else:
             dict_config = YamlUtil.yaml_to_dict(file_name=yaml_path)
             config = FrontendConfig()
-            config.sqlalchemy_database_path = dict_config['SQLALCHEMY_DATABASE_PATH']
 
             container_backend_config = FrontendConfig.ServerConfig()
             container_backend_config.server_url = dict_config['CONTAINER_BACKEND_CONFIG']['SERVER_URL']
-            container_backend_config.root_certificate_path = \
-                dict_config['CONTAINER_BACKEND_CONFIG']['ROOT_CERTIFICATE_PATH']
             config.container_backend_config.CopyFrom(container_backend_config)
 
-            if 'PROTO_VIEWER_CONFIG' in dict_config:
-                for val in dict_config['PROTO_VIEWER_CONFIG'].values():
-                    server_config = config.proto_viewer_config.add()
-                    server_config.server_url = val['SERVER_URL']
-                    server_config.root_certificate_path = val['ROOT_CERTIFICATE_PATH']
 
             if 'INSTANT_MESSAGING_CONFIG' in dict_config:
                 for val in dict_config['INSTANT_MESSAGING_CONFIG'].values():
                     server_config = config.instant_messaging_config.add()
                     server_config.server_url = val['SERVER_URL']
-                    server_config.root_certificate_path = val['ROOT_CERTIFICATE_PATH']
 
             if 'EMAIL_CONFIG' in dict_config:
                 for val in dict_config['EMAIL_CONFIG'].values():
                     server_config = config.email_config.add()
                     server_config.server_url = val['SERVER_URL']
-                    server_config.root_certificate_path = val['ROOT_CERTIFICATE_PATH']
-
-            msg_queue_config = FrontendConfig.MessageQueueConfig()
-            msg_queue_config.exchange = dict_config['LOGGING_QUEUE_CONFIG']['EXCHANGE']
-            msg_queue_config.topic = dict_config['LOGGING_QUEUE_CONFIG']['TOPIC']
-            msg_queue_config.connection_str = dict_config['LOGGING_QUEUE_CONFIG']['CONNECTION_STR']
-            config.logging_queue_config.CopyFrom(msg_queue_config)
 
             credential = Credentials()
             credential.user_name = dict_config['USER_NAME']

@@ -16,25 +16,16 @@ message FileInfo {
     int32 modified_time = 3;
 }
 
-// the next will be 12
+// the next will be 7
 message FrontendConfig {
     message ServerConfig {
         string server_url = 1;
-        string root_certificate_path = 2;
     }
 
-    message MessageQueueConfig {
-        string exchange = 3;
-        string topic = 4;
-        string connection_str = 5;
-    }
+    ServerConfig container_backend_config = 2;
+    ServerConfig proto_viewer_config = 3;
+    repeated ServerConfig instant_messaging_config = 4;
+    repeated ServerConfig email_config = 5;
 
-    string sqlalchemy_database_path = 6;
-    ServerConfig container_backend_config = 7;
-    repeated ServerConfig proto_viewer_config = 8;
-    repeated ServerConfig instant_messaging_config = 9;
-    repeated ServerConfig email_config = 10;
-
-    Credentials credential = 11;
-    MessageQueueConfig logging_queue_config = 12;
+    Credentials credential = 6;
 }

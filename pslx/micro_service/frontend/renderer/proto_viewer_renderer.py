@@ -1,76 +1,43 @@
 from flask import render_template, request
 from flask_login import login_required
 from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logger
-from pslx.micro_service.proto_viewer.client import ProtoViewerRPCClient
 from pslx.util.file_util import FileUtil
-
-
-client_map = {}
-
-server_urls = []
-for server_config in pslx_frontend_ui_app.config['frontend_config'].proto_viewer_config:
-    url = server_config.server_url
-    certificate_path = server_config.root_certificate_path
-    pslx_frontend_logger.info("Proto viewer Getting url [" + url + "] and certificate path [" + certificate_path + '].')
-    root_certificate = None
-    if certificate_path:
-        with open(FileUtil.die_if_file_not_exist(file_name=certificate_path), 'r') as infile:
-            root_certificate = infile.read()
-
-    proto_viewer_client = ProtoViewerRPCClient(
-        server_url=url
-    )
-    client_map[url] = {
-        'client': proto_viewer_client,
-        'root_certificate': root_certificate,
-    }
-    server_urls.append(url)
+from pslx.util.proto_util import ProtoUtil
 
 
 @pslx_frontend_ui_app.route('/proto_viewer.html', methods=['GET', 'POST'])
 @pslx_frontend_ui_app.route('/view_proto', methods=['GET', 'POST'])
 @login_required
 def view_proto():
-    all_urls = sorted(server_urls)
     if request.method == 'POST':
         try:
-            server_url = request.form['server_url'].strip()
             proto_file_path = request.form['proto_file_path'].strip()
-            message_type = request.form['message_type'].strip()
-            module = request.form['module'].strip()
-            pslx_frontend_logger.info("Proto viewer selecting url [" + server_url + '] and input path [' +
-                                      proto_file_path + '] with message type [' + message_type +
-                                      '] in module name [' + module + '].')
-            result = client_map[server_url]['client'].view_proto(
-                proto_file_path=proto_file_path,
-                message_type=message_type,
-                module=module,
-                root_certificate=client_map[server_url]['root_certificate']
+            message = request.form['message'].strip()
+            modules = message.split('.')
+            module, message_type_str = '.'.join(modules[:-1]), modules[-1]
+            pslx_frontend_logger.info("Proto viewer input path [" + proto_file_path + '] with message type [' +
+                                      message_type_str + '] in module name [' + module + '].')
+            message_type = ProtoUtil.infer_message_type_from_str(
+                message_type_str=message_type_str,
+                modules=module
             )
-            result_ui = ''
-            for key in sorted(result.keys()):
-                if key == 'proto_content':
-                    result_ui += key + ':\n\n' + result[key] + '\n\n'
-                else:
-                    result_ui += key + ': ' + result[key] + '\n\n'
-            all_urls.remove(server_url)
-            all_urls = [server_url] + all_urls
+            proto_message = FileUtil.read_proto_from_file(
+                proto_type=message_type, file_name=proto_file_path)
+
+            result_ui = ProtoUtil.message_to_text(proto_message=proto_message)
+
             return render_template(
                 'proto_viewer.html',
-                proto_content=result_ui,
-                server_urls=all_urls
+                proto_content=result_ui
             )
         except Exception as err:
             pslx_frontend_logger.error("Got error rendering proto_viewer.html: " + str(err) + '.')
             return render_template(
                 'proto_viewer.html',
-                proto_content="Got error rendering proto_viewer.html: " + str(err) + '.',
-                server_urls=all_urls
+                proto_content="Got error rendering proto_viewer.html: " + str(err) + '.'
             )
     else:
         return render_template(
             'proto_viewer.html',
-            proto_content="",
-            selected_server_url='',
-            server_urls=server_urls
+            proto_content=""
         )

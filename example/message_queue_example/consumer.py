@@ -5,8 +5,6 @@ from pslx.micro_service.message_queue.generic_consumer import GenericConsumer
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.rpc_pb2 import InstantMessagingRPCRequest
 from pslx.storage.partitioner_storage import DailyPartitionerStorage
-from pslx.util.env_util import EnvUtil
-from pslx.util.file_util import FileUtil
 from pslx.util.timezone_util import TimezoneUtil
 
 
@@ -38,16 +36,8 @@ if __name__ == "__main__":
         connection_str='amqp://guest:guest@localhost:5672'
     )
 
-    partitioner_dir = FileUtil.join_paths_to_dir_with_mode(
-        root_dir=FileUtil.join_paths_to_dir(
-                    root_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DATABASE'),
-                    base_name='msg_queue'
-                ),
-        base_name='msg_queue_example',
-        ttl='1h'
-    )
     storage = DailyPartitionerStorage()
-    storage.initialize_from_dir(dir_name=partitioner_dir)
+    storage.initialize_from_dir(dir_name="/galaxy/bb-d/pslx/test_data/storage2")
 
     slack_queue = SlackQueue(
         queue_name='slack_queue',

@@ -40,6 +40,6 @@ message ContainerBackendValue {
     string updated_time = 6;
     string start_time = 7;
     string end_time = 8;
-    string log_dir = 9;
+    string log_file = 9;
     map<string, int32> counters = 10;
 }

@@ -105,6 +105,7 @@ class GenericQueueConsumer(Base):
         self._thread.start()
 
     def stop_consumer(self):
+        self._connection.close()
         if self._thread:
             self._thread.join()
 

@@ -3,8 +3,7 @@ from pslx.micro_service.rpc.rpc_base import RPCBase
 from pslx.schema.enums_pb2 import DataModelType, Status, ModeType
 from pslx.schema.snapshots_pb2 import ContainerSnapshot
 from pslx.schema.storage_pb2 import ContainerBackendValue
-from pslx.storage.proto_table_storage import ProtoTableStorage
-from pslx.storage.partitioner_storage import DailyPartitionerStorage
+from pslx.storage.sharded_proto_table_storage import ShardedProtoTableStorage
 from pslx.tool.lru_cache_tool import LRUCacheTool
 from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
@@ -25,7 +24,7 @@ class ContainerBackendRPC(RPCBase):
             max_capacity=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_CACHE')
         )
         self._backend_folder = FileUtil.join_paths_to_dir(
-            root_dir=FileUtil.join_paths_to_dir(EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_METADATA_DIR'), 'RPC'),
+            root_dir=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_METADATA_DIR'),
             base_name='PSLX_CONTAINER_BACKEND_TABLE'
         )
 
@@ -51,38 +50,28 @@ class ContainerBackendRPC(RPCBase):
         storage_value.log_file = request.log_file
         for key in request.counters:
             storage_value.counters[key] = request.counters[key]
-        partitioner_dir = FileUtil.join_paths_to_dir_with_mode(
-            root_dir=FileUtil.join_paths_to_dir(
-                root_dir=self._backend_folder,
-                base_name=ProtoUtil.get_name_by_value(
-                    enum_type=DataModelType,
-                    value=storage_value.data_model
-                )
-            ),
-            base_name=storage_value.container_name,
-            ttl=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_TTL')
+        storage_dir = FileUtil.join_paths_to_dir(
+            root_dir=self._backend_folder,
+            base_name=ProtoUtil.get_name_by_value(
+                enum_type=DataModelType,
+                value=storage_value.data_model
+            )
         )
         if storage_value.mode == ModeType.TEST:
-            partitioner_dir = partitioner_dir.replace('PROD', 'TEST')
-        storage = self._lru_cache_tool.get(key=partitioner_dir)
+            storage_dir = storage_dir.replace('PROD', 'TEST')
+        storage = self._lru_cache_tool.get(key=storage_dir)
         if not storage:
             self._SYS_LOGGER.info("Did not find the storage in cache. Making a new one...")
-            storage = DailyPartitionerStorage()
-            proto_table = ProtoTableStorage()
-            storage.set_underlying_storage(storage=proto_table)
-            storage.initialize_from_dir(dir_name=partitioner_dir)
+            storage = ShardedProtoTableStorage(size_per_shard=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE'))
+            storage.initialize_from_dir(dir_name=storage_dir)
             self._lru_cache_tool.set(
-                key=partitioner_dir,
+                key=storage_dir,
                 value=storage
             )
         else:
             self._SYS_LOGGER.info("Found key in LRU cache.")
 
         storage.write(
-            data={storage_value.container_name: storage_value},
-            params={
-                'overwrite': True,
-                'make_partition': True,
-            }
+            data={storage_value.container_name: storage_value}
         )
         return None, Status.SUCCEEDED

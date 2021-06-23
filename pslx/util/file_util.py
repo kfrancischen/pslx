@@ -5,7 +5,6 @@ import os
 from galaxy_py import gclient, gclient_ext
 from pslx.core.exception import FileNotExistException, DirNotExistException
 from pslx.schema.enums_pb2 import ModeType
-from pslx.util.env_util import EnvUtil
 from pslx.util.proto_util import ProtoUtil
 
 
@@ -118,30 +117,24 @@ class FileUtil(object):
         gclient.rm_dir_recursive(path=dir_name)
 
     @classmethod
-    def join_paths_to_file_with_mode(cls, root_dir, base_name, ttl=-1):
+    def join_paths_to_file_with_mode(cls, root_dir, base_name):
         if 'PSLX_TEST' not in os.environ or not os.environ['PSLX_TEST']:
             pre_path = os.path.join(root_dir, ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.PROD))
         else:
             pre_path = os.path.join(root_dir, ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.TEST))
-        if isinstance(ttl, int) and ttl < 0:
-            return os.path.join(pre_path, base_name)
-        else:
-            return os.path.join(pre_path, 'ttl=' + str(ttl), base_name)
+        return os.path.join(pre_path, base_name)
 
     @classmethod
-    def join_paths_to_dir_with_mode(cls, root_dir, base_name, ttl=-1):
-        return cls.join_paths_to_file_with_mode(root_dir=root_dir, base_name=base_name, ttl=ttl) + '/'
+    def join_paths_to_dir_with_mode(cls, root_dir, base_name):
+        return cls.join_paths_to_file_with_mode(root_dir=root_dir, base_name=base_name) + '/'
 
     @classmethod
-    def join_paths_to_file(cls, root_dir, base_name, ttl=-1):
-        if isinstance(ttl, int) and ttl < 0:
-            return os.path.join(root_dir, base_name)
-        else:
-            return os.path.join(root_dir, 'ttl=' + str(ttl), base_name)
+    def join_paths_to_file(cls, root_dir, base_name):
+        return os.path.join(root_dir, base_name)
 
     @classmethod
-    def join_paths_to_dir(cls, root_dir, base_name, ttl=-1):
-        path = cls.join_paths_to_file(root_dir=root_dir, base_name=base_name, ttl=ttl)
+    def join_paths_to_dir(cls, root_dir, base_name):
+        path = cls.join_paths_to_file(root_dir=root_dir, base_name=base_name)
         if path[-1] != '/':
             path += '/'
         return path
@@ -183,27 +176,3 @@ class FileUtil(object):
             dir_name_list.append(0)
         return datetime.datetime(dir_name_list[0], dir_name_list[1], dir_name_list[2], dir_name_list[3],
                                  dir_name_list[4])
-
-    @classmethod
-    def create_container_snapshot_pattern(cls, container_name, container_class, container_ttl=-1):
-        contain_snapshot_dir = cls.join_paths_to_dir_with_mode(
-            root_dir=EnvUtil.get_pslx_env_variable('PSLX_DATABASE'),
-            base_name=container_class.get_class_name() + '__' + container_name,
-            ttl=container_ttl
-        )
-        return FileUtil.join_paths_to_file(
-            root_dir=FileUtil.dir_name(contain_snapshot_dir),
-            base_name='SNAPSHOT_*_' + container_name + '.pb'
-        )
-
-    @classmethod
-    def create_operator_snapshot_pattern(cls, container_name, operator_name, container_class, container_ttl=-1):
-        contain_snapshot_dir = cls.join_paths_to_dir_with_mode(
-            root_dir=EnvUtil.get_pslx_env_variable('PSLX_DATABASE'),
-            base_name=container_class.get_class_name() + '__' + container_name,
-            ttl=container_ttl
-        )
-        return FileUtil.join_paths_to_file(
-            root_dir=FileUtil.join_paths_to_dir(FileUtil.dir_name(contain_snapshot_dir), 'operators'),
-            base_name='SNAPSHOT_*_' + operator_name + '.pb'
-        )

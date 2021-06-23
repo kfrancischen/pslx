@@ -14,10 +14,6 @@ from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil
 
 container_backend_config = pslx_frontend_ui_app.config['frontend_config'].container_backend_config
-root_certificate = None
-if container_backend_config.root_certificate_path:
-    with open(FileUtil.die_if_file_not_exist(file_name=container_backend_config.root_certificate_path), 'r') as infile:
-        root_certificate = infile.read()
 
 
 def get_containers_info():
