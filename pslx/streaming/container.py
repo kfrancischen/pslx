@@ -1,9 +1,10 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 import time
+from galaxy_py import glogging
 
 from pslx.core.container_base import ContainerBase
 from pslx.schema.enums_pb2 import DataModelType
-from pslx.tool.logging_tool import LoggingTool
+from pslx.util.env_util import EnvUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneObj, TimeSleepObj
 
@@ -11,24 +12,24 @@ from pslx.util.timezone_util import TimezoneObj, TimeSleepObj
 class DefaultStreamingContainer(ContainerBase):
     DATA_MODEL = DataModelType.STREAMING
 
-    def __init__(self, container_name, ttl=-1):
-        super().__init__(container_name, ttl=ttl)
-        self._logger = LoggingTool(
-            name=(ProtoUtil.get_name_by_value(enum_type=DataModelType, value=self.DATA_MODEL) + '__' +
-                  self.get_class_name() + '__' + container_name),
-            ttl=ttl
+    def __init__(self, container_name):
+        super().__init__(container_name)
+        self._logger = glogging.get_logger(
+            log_name=(ProtoUtil.get_name_by_value(enum_type=DataModelType, value=self.DATA_MODEL) + '__' +
+                      self.get_class_name() + '__' + container_name),
+            log_dir=EnvUtil.get_pslx_env_variable('PSLX_DEFAULT_LOG_DIR')
         )
 
     def execute(self, is_backfill=False, num_threads=1):
-        self.sys_log(string='Streaming Container does not allow multi-processing.')
+        self._SYS_LOGGER.info(string='Streaming Container does not allow multi-processing.')
         super().execute(is_backfill=is_backfill, num_threads=1)
 
 
 class CronStreamingContainer(DefaultStreamingContainer):
     DATA_MODEL = DataModelType.STREAMING
 
-    def __init__(self, container_name, ttl=-1):
-        super().__init__(container_name, ttl=ttl)
+    def __init__(self, container_name):
+        super().__init__(container_name)
         self._scheduler_specs = []
 
     def add_schedule(self, day_of_week, hour, minute=None, second=None, misfire_grace_time=None):
@@ -40,7 +41,7 @@ class CronStreamingContainer(DefaultStreamingContainer):
             'misfire_grace_time': misfire_grace_time,
         }
         self._logger.info("Adding schedule spec: " + str(scheduler_spec))
-        self.sys_log("Adding schedule spec: " + str(scheduler_spec))
+        self._SYS_LOGGER.info("Adding schedule spec: " + str(scheduler_spec))
         self._scheduler_specs.append(scheduler_spec)
 
     def _execute_wrapper(self):
@@ -74,8 +75,8 @@ class CronStreamingContainer(DefaultStreamingContainer):
 class IntervalStreamingContainer(DefaultStreamingContainer):
     DATA_MODEL = DataModelType.STREAMING
 
-    def __init__(self, container_name, ttl=-1):
-        super().__init__(container_name, ttl=ttl)
+    def __init__(self, container_name):
+        super().__init__(container_name)
         self._scheduler_specs = []
 
     def add_schedule(self, days, hours=0, minutes=0, seconds=0, misfire_grace_time=None):
@@ -88,7 +89,7 @@ class IntervalStreamingContainer(DefaultStreamingContainer):
         }
         self._scheduler_specs.append(scheduler_spec)
         self._logger.info("Spec sets to " + str(scheduler_spec))
-        self.sys_log("Spec sets to " + str(scheduler_spec))
+        self._SYS_LOGGER.info("Spec sets to " + str(scheduler_spec))
 
     def _execute_wrapper(self):
         self.unset_status()
@@ -122,8 +123,8 @@ class IntervalStreamingContainer(DefaultStreamingContainer):
 class NonStoppingStreamingContainer(DefaultStreamingContainer):
     DATA_MODEL = DataModelType.STREAMING
 
-    def __init__(self, container_name, ttl=-1):
-        super().__init__(container_name, ttl=ttl)
+    def __init__(self, container_name):
+        super().__init__(container_name)
 
     def _execute_wrapper(self):
         self.unset_status()

@@ -30,7 +30,8 @@ class DummyLogger(object):
 
 class Base(object):
 
-    _SYS_LOGGER = (glogging.get_logger("PSLX_SYS_LOG", EnvUtil.get_pslx_env_variable("PSLX_SYS_LOG_DIR")) if
+    _SYS_LOGGER = (glogging.get_logger("PSLX_SYS_LOG", EnvUtil.get_pslx_env_variable("PSLX_DEFAULT_LOG_DIR") +
+                                       'sys_log/') if
                    EnvUtil.get_pslx_env_variable("PSLX_ENABLE_SYS_LOG") else DummyLogger())
 
     def __init__(self):

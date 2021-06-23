@@ -20,11 +20,12 @@ from pslx.util.dummy_util import DummyUtil
 class ContainerBase(GraphBase):
     DATA_MODEL = DataModelType.DEFAULT
 
-    def __init__(self, container_name, logger=DummyUtil.dummy_logger(), ttl=-1):
+    def __init__(self, container_name, logger=DummyUtil.dummy_logger()):
         super().__init__()
         self._container_name = container_name
         self._is_initialized = False
-        self._snapshot_file_folder = EnvUtil.get_pslx_env_variable(var='PSLX_SNAPSHOT_DIR')
+        self._snapshot_file_folder = FileUtil.join_paths_to_dir(
+            EnvUtil.get_pslx_env_variable(var='PSLX_SNAPSHOT_DIR'), self._container_name)
         self._start_time = None
         self._end_time = None
         self._logger = logger
@@ -132,16 +133,18 @@ class ContainerBase(GraphBase):
             if 'Dummy' in op.get_class_name():
                 continue
             op_output_file = FileUtil.join_paths_to_file(
-                root_dir=FileUtil.join_paths_to_dir(FileUtil.dir_name(self._snapshot_file_folder), 'operators'),
-                base_name='SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' + op_name + '.pb'
+                root_dir=FileUtil.join_paths_to_dir(FileUtil.dir_name(
+                    self._snapshot_file_folder), 'operators'),
+                base_name=op_name + '_SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '.pb'
             )
             snapshot.operator_snapshot_map[op_name].CopyFrom(op.get_operator_snapshot(output_file=op_output_file))
 
         self._SYS_LOGGER.info("Snapshot saved to folder [" + self._snapshot_file_folder + '].')
         self._logger.info("Snapshot saved to folder [" + self._snapshot_file_folder + '].')
         output_file_name = FileUtil.join_paths_to_file(
-            root_dir=FileUtil.dir_name(self._snapshot_file_folder),
-            base_name='SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '_' + self._container_name + '.pb'
+            root_dir=FileUtil.join_paths_to_dir(FileUtil.dir_name(
+                self._snapshot_file_folder), 'containers'),
+            base_name=self._container_name + '_SNAPSHOT_' + str(TimezoneUtil.cur_time_in_pst()) + '.pb'
         )
 
         FileUtil.write_proto_to_file(
