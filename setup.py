@@ -8,8 +8,6 @@ class CustomInstallCommand(install):
     def run(self):
         subprocess.check_call(['chmod', '+x', 'compile_protos.sh'])
         subprocess.check_call(['./compile_protos.sh'])
-        subprocess.check_call(['chmod', '+x', 'run_unittests.sh'])
-        subprocess.check_call(['./run_unittests.sh'])
         install.run(self)
 
 
@@ -18,8 +16,8 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pslx",
-    version="1.1",
-    scripts=['compile_protos.sh', 'run_unittests.sh'],
+    version="2.0",
+    scripts=['compile_protos.sh'],
     cmdclass={
         'install': CustomInstallCommand,
     },
