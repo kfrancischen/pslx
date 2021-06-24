@@ -1,5 +1,5 @@
-PSLX supports binding to Slack, Rocketchat and Microsoft Teams webhooks through RPC. The detailed 
-implementation of the RPC can be found at [instant_messaging/rpc.py](https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/instant_messaging/rpc.py). 
+PSLX supports binding to Slack, Rocketchat and Microsoft Teams webhooks through RPC. The detailed
+implementation of the RPC can be found at [instant_messaging/rpc.py](https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/instant_messaging/rpc.py).
 
 To start a RPC server, one can take a look at the [example](https://github.com/kfrancischen/pslx/blob/master/example/instant_messaging_example/server.py). The server's
 implementation is easy:

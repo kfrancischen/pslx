@@ -178,6 +178,11 @@ read(params)
     1. proto table is a key-value storage, and therefore the params need to contain field of `keys`, which is a list of keys in the storage.
 * Return: a dictionary of key-values, where keys might be a subset of the input keys in the params for which the key exists in the sharded proto table storage.
 
+```python
+read_all()
+```
+* Description: Read all the data from the storage
+
 
 ```python
 write(data, params)

@@ -39,7 +39,7 @@ For subscriber, the user needs to wrap it in an operator with the following func
 ```python
 pubsub_parse_message(exchange_name, topic_name, message)
 ```
-which takes in the exchange and topic (routing_key) of the message. The purpose of this function to allow user to have the access of handling the message. 
+which takes in the exchange and topic (routing_key) of the message. The purpose of this function to allow user to have the access of handling the message.
 
 To bind the subscriber to the operator, one can use:
 ```python
@@ -49,7 +49,7 @@ An example subscriber of the above publisher is
 ```python
 from pslx.streaming.operator import StreamingOperator
 from pslx.streaming.container import DefaultStreamingContainer
-from pslx.micro_service.pubsub.subscriber_base import Subscriber
+from pslx.micro_service.pubsub.subscriber import Subscriber
 from pslx.schema.rpc_pb2 import HealthCheckerRequest
 from pslx.util.dummy_util import DummyUtil
 
@@ -84,17 +84,13 @@ class SubscriberExampleOp(StreamingOperator):
 
 class SubscriberExampleContainer(DefaultStreamingContainer):
     def __init__(self):
-        super().__init__(container_name='subscriber_example_container', ttl=7)
+        super().__init__(container_name='subscriber_example_container')
 
 
 if __name__ == "__main__":
     op = SubscriberExampleOp()
     container = SubscriberExampleContainer()
     container.add_operator_edge(from_operator=op, to_operator=DummyUtil.dummy_streaming_operator())
-    container.add_operator_edge(
-        from_operator=op,
-        to_operator=DummyUtil.dummy_streaming_operator(operator_name='dummy_streaming_operator')
-    )
 
     container.initialize()
     container.execute()

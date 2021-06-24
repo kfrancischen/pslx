@@ -158,54 +158,20 @@ remove_dir_recursively(dir_name)
     1. dir_name: the name of the directory.
 
 ```python
-get_file_modified_time(file_name)
-```
-* Description: get the last modified time of a file.
-* Arguments:
-    1. file_name: the name of the file.
-
-```python
-get_ttl_from_path(path_name)
-```
-* Description: get the ttl from a path.
-* Arguments:
-    1. path_name: the path, a file or directory.
-
-```python
-join_paths_to_file_with_mode(root_dir, base_name, ttl)
-```
-* Description: join root directory, base name, ttl, and the mode, to a file name.
-* Arguments:
-    1. root_dir: the root directory of the file.
-    2. base_name: the base name of the file.
-    3. ttl: the ttl of the file.
-
-```python
-join_paths_to_dir_with_mode(root_dir, base_name, ttl)
-```
-* Description: join root directory, base name, ttl, and the mode, to a directory name.
-* Arguments:
-    1. root_dir: the root directory of the directory.
-    2. base_name: the base name of the directory.
-    3. ttl: the ttl of the file.
-
-```python
-join_paths_to_file(root_dir, base_name, ttl)
+join_paths_to_file(root_dir, base_name)
 ```
 * Description: join root directory, base name, and ttl, to a file name.
 * Arguments:
     1. root_dir: the root directory of the file.
     2. base_name: the base name of the file.
-    3. ttl: the ttl of the file.
 
 ```python
-join_paths_to_dir(root_dir, base_name, ttl)
+join_paths_to_dir(root_dir, base_name)
 ```
 * Description: join root directory, base name, and ttl, to a directory name.
 * Arguments:
     1. root_dir: the root directory of the directory.
     2. base_name: the base name of the directory.
-    3. ttl: the ttl of the file.
 
 ```python
 get_file_names_from_pattern(pattern)
@@ -236,32 +202,6 @@ read_proto_from_file(proto_type, file_name)
 * Arguments:
     1. proto_type: the type of the proto message.
     2. file_name: the name of the file containing the message.
-
-```python
-create_container_snapshot_pattern(container_name, container_class, container_ttl)
-```
-* Description: get the container snapshot pattern.
-* Arguments:
-    1. container_name: the name of the container.
-    2. container_class: the class of the container.
-    3. container_ttl: the ttl of the container.
-
-```python
-create_operator_snapshot_pattern(container_name, operator_name, container_class, container_ttl)
-```
-* Description: get the operator snapshot pattern.
-* Arguments:
-    1. container_name: the name of the container.
-    2. operator_name: the name of the operator.
-    3. container_class: the class of the container.
-    4. container_ttl: the ttl of the container.
-
-```python
-get_file_size(file_name)
-```
-* Description: get a string representation of the size of the file.
-* Arguments:
-    1. file_name: the name of the file.
 
 ### Documentation of Protobuf Utilities
 THe following functions are related to protobuf.
@@ -465,7 +405,7 @@ cur_time_in_est(time_str)
 The `DummyUtil` class is a wrapper of a few dummy entities that can be used. Here dummy means that any method inside them
 are dummy function calls.
 ```python
-dummy_logging()
+dummy_logger()
 ```
 * Description: return a dummy logger that acts as a placeholder but does not log.
 
@@ -534,8 +474,10 @@ PSLX_ENV_TO_DEFAULT_MAP = {
     'PSLX_INTERNAL_TTL': 7,
     'PSLX_INTERNAL_CACHE': 100,
     'PSLX_TEST': False,
-    'PSLX_LOG': False,
-    'PSLX_DATABASE': 'database/',
+    'PSLX_ENABLE_SYS_LOG': False,
+    'PSLX_SNAPSHOT_DIR': "/galaxy/bb-d/ttl=7d/snapshots/",
+    'PSLX_DEFAULT_LOG_DIR': '/galaxy/bb-d/ttl=7d/logs/',
+    'PSLX_INTERNAL_METADATA_DIR': '/galaxy/bb-d/ttl=-1/metadata/',
     'PSLX_GRPC_MAX_MESSAGE_LENGTH': 512 * 1024 * 1024,  # 512MB,
     'PSLX_GRPC_TIMEOUT': 1,  # 1 second
     'PSLX_QUEUE_TIMEOUT': 10,  # 10 seconds

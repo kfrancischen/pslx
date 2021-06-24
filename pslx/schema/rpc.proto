@@ -78,9 +78,3 @@ message ProtoViewerRPCResponse {
     string proto_content = 1;
     FileInfo file_info = 2;
 }
-
-// the next will be 3
-message LoggingMessageRequest {
-    string message = 1;
-    DiskLoggerLevel level = 2;
-}

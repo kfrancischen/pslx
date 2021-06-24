@@ -1,52 +1,11 @@
 PSLX provides a set of tools to assist development, and they include
 
-1. Logging tool for ttl-ed logging.
-2. File locker to ensure the atomic io of files.
-3. LRU cache for caching.
-4. SQL tool for connecting to SQL database and executing queries.
-5. Mongodb tool for connection to mongodb.
-6. Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
-7. Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
-8. Registry tool to be used as decorators to register functions.
-
-### Documentation for Logging Tool
-To create a logging tool instance, please use
-```python
-__init__(name, date, ttl)
-```
-* Arguments:
-    1. name: the name of the logger instance.
-    2. date: the date that this logger is created, default to the current time.
-    3. ttl: the ttl policy, default to be -1.
-
-The logger supports multiple level logging, and one can call these by using the following functions
-
-1. `info(string, publish)`: for level = info.
-
-2. `warning(string, publish)`: for level = warning.
-3. `debug(string, publish)`: for level = debug.
-4. `error(string, publish)`: for level = error.
-
-The logger output will be the format of
-
-`[initial_letter_of_logger_level logger_name file_name:line_number timestamp]: the logged information`
-
-Here one can send the log to backend realtime logging by setting the publisher with `set_publisher(publisher)` function and `publish=True` in the above function. The default value for `publish` is `False`.
-
-### Documentation for File Locker
-FileLocker tool is used in combination within a with sentence, for instance for reading a file:
-```python
-with FileLocker(protected_file_path=file_name, read_mode=True):
-    with open(file_name, 'r') as infile:
-        ... ...
-```
-and for writing data to a file:
-```python
-with FileLocker(protected_file_path=file_name, read_mode=False):
-    with open(file_name, 'w') as outfile:
-        ... ...
-```
-FileLocker will raise error if the `protected_file_path` does not exist if `read_mode` is True.
+1. LRU cache for caching.
+2. SQL tool for connecting to SQL database and executing queries.
+3. Mongodb tool for connection to mongodb.
+4. Fetcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
+5. Watcher tool to fetch partitioned ProtoTable (whose values are of the same proto message type and keys are timestamps).
+6. Registry tool to be used as decorators to register functions.
 
 ### Documentation for LRU Caching
 LRU caching supports the following methods:
@@ -149,30 +108,17 @@ get_collection(database_name, collection_name)
 
 
 ### Documentation for Fetcher Tool
-Tool to fetch the latest, oldest data or data within a time range. This includes implementation of `LocalPartitionerFetcher`
- where the partitioner data is local or a `RemotePartitionerFetcher` what fetches the data from a remote server through rpc.
+Tool to fetch the latest, oldest data or data within a time range.
 
-To initialize `LocalPartitionerFetcher`
+To initialize `PartitionerFetcher`
 ```python
 __init__(partitioner, logger)
 ```
-* Description: initialize a `LocalPartitionerFetcher`
+* Description: initialize a `PartitionerFetcher`
 * Arguments:
     1. partitioner: the partitioner object to fetch. It needs to have underlying storage of a `ProtoTableStorage`.
     2. logger: the logger for the fetcher.
 
-To initialize `RemotePartitionerFetcher`
-```python
-__init__(partitioner, server_url, logger, root_certificate)
-```
-* Description: initialize a `RemotePartitionerFetcher`
-* Arguments:
-    1. partitioner_dir: the remote partitioner directory to fetch. It needs to have underlying storage of a `ProtoTableStorage`.
-    2. server_url: the remote server url.
-    3. logger: the logger for the fetcher.
-    4. root_certificate: the root_certificate for authentication.
-
-Both `LocalPartitionerFetcher` and `RemotePartitionerFetcher` have the following implementations:
 ```python
 fetch_latest()
 ```
@@ -183,7 +129,6 @@ fetch_oldest()
 ```
 * Description: fetch the oldest data entry, sorted by the key.
 
-
 ```python
 fetch_range(start_time, end_time)
 ```
@@ -191,36 +136,19 @@ fetch_range(start_time, end_time)
 
 
 ### Documentation for Watcher Tool
-Tool to monitor a specific latest key. This includes implementation of `LocalPartitionerWatcher`
- where the partitioner data is local or a `RemotePartitionerWatcher` what watches the data from a remote server through rpc.
+Tool to monitor a specific latest key.
 
-To initialize `LocalPartitionerWatcher`
+To initialize `PartitionerWatcher`
 ```python
 __init__(partitioner, logger, delay, timeout)
 ```
-* Description: initialize a `LocalPartitionerWatcher`
+* Description: initialize a `PartitionerWatcher`
 * Arguments:
     1. partitioner: the partitioner object to watch. It needs to have underlying storage of a `ProtoTableStorage`.
     2. logger: the logger for the watcher.
     3. delay: the seconds between each trial.
     4. timeout: the seconds of watch timeout.
 
-
-To initialize `RemotePartitionerWatcher`
-```python
-__init__(partitioner, server_url, logger, root_certificate, delay, timeout)
-```
-* Description: initialize a `RemotePartitionerWatcher`
-* Arguments:
-    1. partitioner_dir: the remote partitioner directory to watch. It needs to have underlying storage of a `ProtoTableStorage`.
-    2. server_url: the remote server url.
-    3. logger: the logger for the fetcher.
-    4. root_certificate: the root_certificate for authentication.
-    5. delay: the seconds between each trial.
-    6. timeout: the seconds of watch timeout.
-
-
-Both `LocalPartitionerWatcher` and `RemotePartitionerWatcher` have the following implementations:
 ```python
 watch_key(key)
 ```

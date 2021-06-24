@@ -30,7 +30,7 @@ if __name__ == "__main__":
     example_server.create_server(max_worker=1, server_url=server_url)
     example_server.bind_rpc(rpc=example_rpc)
     example_server.start_server()
-``` 
+```
 
 
 The client of the email service also has an example int [example/email_example/client.py](https://github.com/kfrancischen/pslx/blob/master/example/email_example/client.py).
@@ -47,4 +47,3 @@ if __name__ == "__main__":
         content='this is a test.'
     )
 ```
-
