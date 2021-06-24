@@ -30,6 +30,7 @@ message ContainerBackendValue {
         string start_time = 3;
         string end_time = 4;
         Status status = 5;
+        string log_file = 6;
     }
 
     map<string, OperatorInfo> operator_info_map = 2;

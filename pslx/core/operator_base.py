@@ -1,5 +1,5 @@
 import time
-
+from galaxy_py import glogging
 from pslx.core.base import DummyLogger
 from pslx.core.exception import OperatorFailureException, FileNotExistException
 from pslx.core.node_base import OrderedNodeBase
@@ -163,6 +163,7 @@ class OperatorBase(OrderedNodeBase):
         snapshot.status = self.get_status()
         snapshot.node_snapshot.CopyFrom(self.get_node_snapshot())
         snapshot.class_name = self.get_full_class_name()
+        snapshot.log_file = glogging.get_logger_file(self._logger)
         if self._start_time:
             snapshot.start_time = str(self._start_time)
         if self.get_status() == Status.SUCCEEDED and self._end_time:

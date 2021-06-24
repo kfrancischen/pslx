@@ -12,7 +12,7 @@ message NodeSnapshot {
     repeated string parents_names = 3;
 }
 
-// the next will be 9
+// the next will be 10
 message OperatorSnapshot {
     string operator_name = 1;
     DataModelType data_model = 2;
@@ -22,6 +22,7 @@ message OperatorSnapshot {
     string end_time = 6;
     google.protobuf.Any content = 7;
     string class_name = 8;
+    string log_file = 9;
 }
 
 // the next will be 12

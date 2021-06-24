@@ -1,13 +1,12 @@
 from galaxy_py import glogging
 from pslx.micro_service.rpc.rpc_base import RPCBase
-from pslx.schema.enums_pb2 import DataModelType, Status, ModeType
+from pslx.schema.enums_pb2 import Status
 from pslx.schema.snapshots_pb2 import ContainerSnapshot
 from pslx.schema.storage_pb2 import ContainerBackendValue
 from pslx.storage.sharded_proto_table_storage import ShardedProtoTableStorage
 from pslx.tool.lru_cache_tool import LRUCacheTool
 from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
-from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil
 
 
@@ -40,6 +39,7 @@ class ContainerBackendRPC(RPCBase):
 
             operator_info.start_time = operator_snapshot.start_time
             operator_info.end_time = operator_snapshot.end_time
+            operator_info.log_file = operator_snapshot.log_file
             storage_value.operator_info_map[operator_name].CopyFrom(operator_info)
 
         storage_value.mode = request.mode
@@ -50,22 +50,14 @@ class ContainerBackendRPC(RPCBase):
         storage_value.log_file = request.log_file
         for key in request.counters:
             storage_value.counters[key] = request.counters[key]
-        storage_dir = FileUtil.join_paths_to_dir(
-            root_dir=self._backend_folder,
-            base_name=ProtoUtil.get_name_by_value(
-                enum_type=DataModelType,
-                value=storage_value.data_model
-            )
-        )
-        if storage_value.mode == ModeType.TEST:
-            storage_dir = storage_dir.replace('PROD', 'TEST')
-        storage = self._lru_cache_tool.get(key=storage_dir)
+
+        storage = self._lru_cache_tool.get(key=self._backend_folder)
         if not storage:
             self._SYS_LOGGER.info("Did not find the storage in cache. Making a new one...")
             storage = ShardedProtoTableStorage(size_per_shard=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE'))
-            storage.initialize_from_dir(dir_name=storage_dir)
+            storage.initialize_from_dir(dir_name=self._backend_folder)
             self._lru_cache_tool.set(
-                key=storage_dir,
+                key=self._backend_folder,
                 value=storage
             )
         else:

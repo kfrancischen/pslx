@@ -11,7 +11,7 @@ class EnvUtil(object):
         'PSLX_ENABLE_SYS_LOG': False,
         'PSLX_SNAPSHOT_DIR': "/galaxy/bb-d/ttl=7d/snapshots/",
         'PSLX_DEFAULT_LOG_DIR': '/galaxy/bb-d/ttl=7d/logs/',
-        'PSLX_INTERNAL_METADATA_DIR': '/galaxy/bb-d/ttl=7d/metadata/',
+        'PSLX_INTERNAL_METADATA_DIR': '/galaxy/bb-d/ttl=-1/metadata/',
         'PSLX_GRPC_MAX_MESSAGE_LENGTH': 512 * 1024 * 1024,  # 512MB,
         'PSLX_GRPC_TIMEOUT': 1,  # 1 second
         'PSLX_QUEUE_TIMEOUT': 10,  # 10 seconds

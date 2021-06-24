@@ -5,7 +5,6 @@ import os
 from galaxy_py import gclient, gclient_ext
 from pslx.core.exception import FileNotExistException, DirNotExistException
 from pslx.schema.enums_pb2 import ModeType
-from pslx.util.proto_util import ProtoUtil
 
 
 class FileUtil(object):
@@ -115,18 +114,6 @@ class FileUtil(object):
     def remove_dir_recursively(cls, dir_name):
         dir_name = cls.normalize_dir_name(dir_name=dir_name)
         gclient.rm_dir_recursive(path=dir_name)
-
-    @classmethod
-    def join_paths_to_file_with_mode(cls, root_dir, base_name):
-        if 'PSLX_TEST' not in os.environ or not os.environ['PSLX_TEST']:
-            pre_path = os.path.join(root_dir, ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.PROD))
-        else:
-            pre_path = os.path.join(root_dir, ProtoUtil.get_name_by_value(enum_type=ModeType, value=ModeType.TEST))
-        return os.path.join(pre_path, base_name)
-
-    @classmethod
-    def join_paths_to_dir_with_mode(cls, root_dir, base_name):
-        return cls.join_paths_to_file_with_mode(root_dir=root_dir, base_name=base_name) + '/'
 
     @classmethod
     def join_paths_to_file(cls, root_dir, base_name):

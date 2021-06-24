@@ -95,6 +95,23 @@ class ShardedProtoTableStorage(StorageBase):
             self._logger.error("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
             raise StorageReadException("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
 
+    def read_all(self):
+        num_shards = self.get_num_shards()
+        result = {}
+        try:
+            for shard in range(num_shards):
+                related_proto_file = self._shard_to_file(shard=shard)
+                proto_table = ProtoTableStorage()
+                proto_table.initialize_from_file(file_name=related_proto_file)
+                all_data = proto_table.read_all()
+                result.update(all_data)
+
+            return result
+        except Exception as err:
+            self._SYS_LOGGER.error("Read all dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
+            self._logger.error("Read all dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
+            raise StorageReadException("Read all dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
+
     def write(self, data, params=None):
         if not params:
             params = {}

@@ -42,6 +42,7 @@ class CommonUtil(object):
             container_backend_config = FrontendConfig.ServerConfig()
             container_backend_config.server_url = dict_config['CONTAINER_BACKEND_CONFIG']['SERVER_URL']
             config.container_backend_config.CopyFrom(container_backend_config)
+            config.galaxy_viewer_url = dict_config['GALAXY_VIEWER_URL']
 
 
             if 'INSTANT_MESSAGING_CONFIG' in dict_config:

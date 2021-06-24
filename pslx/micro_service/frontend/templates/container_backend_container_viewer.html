@@ -55,16 +55,16 @@
                             <table class="table table-bordered" id="container_info_table" width="100%" cellspacing="0">
                               <thead>
                                 <tr>
-                                  <th>Log Directory</th>
-                                  <th>Container Start Time (PST)</th>
-                                  <th>Container End Time (PST)</th>
+                                  <th>Start Time (PST)</th>
+                                  <th>End Time (PST)</th>
+                                  <th>Log File</th>
                                 </tr>
                               </thead>
                                 <tbody>
                                   <tr>
-                                    <td>{{ container_info['log_dir'] }}</td>
                                     <td>{{ container_info['start_time'] }}</td>
                                     <td>{{ container_info['end_time'] }}</td>
+                                    <td><a href="{{ container_info['log_file'] }}" target="_blank">Link</a></td>
                                   </tr>
                                 </tbody>
                             </table>
@@ -102,18 +102,17 @@
                               <thead>
                                 <tr>
                                   <th>Operator Name</th>
-                                  <th>Num Dependencies</th>
                                   <th>Dependencies</th>
                                   <th>Status</th>
-                                  <th>Operator Start Time (PST)</th>
-                                  <th>Operator End Time (PST)</th>
+                                  <th>Start Time (PST)</th>
+                                  <th>End Time (PST)</th>
+                                  <th>Log File</th>
                                 </tr>
                               </thead>
                               {% for operator_info in operators_info %}
                                 <tbody>
                                   <tr>
                                     <td>{{ operator_info['operator_name'] }}</td>
-                                    <td>{{ operator_info['num_of_dependencies'] }}</td>
                                     <td>{{ operator_info['dependencies'] }}</td>
                                     {% if operator_info['status'] == "FAILED" %}
                                         <td><font color="red">{{ operator_info['status'] }}</font></td>
@@ -128,6 +127,7 @@
                                     {% endif %}
                                     <td>{{ operator_info['start_time'] }}</td>
                                     <td>{{ operator_info['end_time'] }}</td>
+                                    <td><a href="{{ operator_info['log_file'] }}" target="_blank">Link</a></td>
                                   </tr>
                                 </tbody>
                               {% endfor %}

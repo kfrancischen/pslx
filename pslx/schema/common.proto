@@ -28,4 +28,5 @@ message FrontendConfig {
     repeated ServerConfig email_config = 5;
 
     Credentials credential = 6;
+    string galaxy_viewer_url = 7;
 }
