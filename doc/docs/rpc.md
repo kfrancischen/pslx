@@ -1,5 +1,5 @@
-RPC is a core component, and micro services built inside PSLX (for example [instant messaging](micro_services/instant_messaging.md),
-[email](micro_services/email.md), [rpc storage io](micro_services/rpc_storage_io.md)) are concrete implementations of RPC. To build
+RPC is a core component, and micro services built inside PSLX (for example [instant messaging](micro_services/instant_messaging.md) and
+[email](micro_services/email.md)) are concrete implementations of RPC. To build
 an RPC service using PSLX, one first needs to take a look at the abstract class implementation defined in [rpc_base](https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/rpc/rpc_base.py).
 The following functions are provided
 
