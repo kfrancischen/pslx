@@ -319,18 +319,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../micro_services/rpc_storage_io/" title="RPC Storage IO" class="md-nav__link">
-      RPC Storage IO
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
     <a href="../micro_services/message_queue/" title="Message Queue" class="md-nav__link">
       Message Queue
     </a>
@@ -470,18 +458,6 @@
   
 </nav>
     
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="../ttl_cleaner/" title="TTL Cleaner" class="md-nav__link">
-      TTL Cleaner
-    </a>
   </li>
 
     
@@ -830,55 +806,7 @@ decorators.</li>
 </ol>
 </li>
 </ul>
-<div class="codehilite"><pre><span></span><code><span class="n">get_file_modified_time</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
-</code></pre></div>
-
-
-<ul>
-<li>Description: get the last modified time of a file.</li>
-<li>Arguments:<ol>
-<li>file_name: the name of the file.</li>
-</ol>
-</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="n">get_ttl_from_path</span><span class="p">(</span><span class="n">path_name</span><span class="p">)</span>
-</code></pre></div>
-
-
-<ul>
-<li>Description: get the ttl from a path.</li>
-<li>Arguments:<ol>
-<li>path_name: the path, a file or directory.</li>
-</ol>
-</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="n">join_paths_to_file_with_mode</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">base_name</span><span class="p">,</span> <span class="n">ttl</span><span class="p">)</span>
-</code></pre></div>
-
-
-<ul>
-<li>Description: join root directory, base name, ttl, and the mode, to a file name.</li>
-<li>Arguments:<ol>
-<li>root_dir: the root directory of the file.</li>
-<li>base_name: the base name of the file.</li>
-<li>ttl: the ttl of the file.</li>
-</ol>
-</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="n">join_paths_to_dir_with_mode</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">base_name</span><span class="p">,</span> <span class="n">ttl</span><span class="p">)</span>
-</code></pre></div>
-
-
-<ul>
-<li>Description: join root directory, base name, ttl, and the mode, to a directory name.</li>
-<li>Arguments:<ol>
-<li>root_dir: the root directory of the directory.</li>
-<li>base_name: the base name of the directory.</li>
-<li>ttl: the ttl of the file.</li>
-</ol>
-</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="n">join_paths_to_file</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">base_name</span><span class="p">,</span> <span class="n">ttl</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="n">join_paths_to_file</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">base_name</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -887,11 +815,10 @@ decorators.</li>
 <li>Arguments:<ol>
 <li>root_dir: the root directory of the file.</li>
 <li>base_name: the base name of the file.</li>
-<li>ttl: the ttl of the file.</li>
 </ol>
 </li>
 </ul>
-<div class="codehilite"><pre><span></span><code><span class="n">join_paths_to_dir</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">base_name</span><span class="p">,</span> <span class="n">ttl</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="n">join_paths_to_dir</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">base_name</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -900,7 +827,6 @@ decorators.</li>
 <li>Arguments:<ol>
 <li>root_dir: the root directory of the directory.</li>
 <li>base_name: the base name of the directory.</li>
-<li>ttl: the ttl of the file.</li>
 </ol>
 </li>
 </ul>
@@ -947,44 +873,6 @@ decorators.</li>
 <li>Arguments:<ol>
 <li>proto_type: the type of the proto message.</li>
 <li>file_name: the name of the file containing the message.</li>
-</ol>
-</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="n">create_container_snapshot_pattern</span><span class="p">(</span><span class="n">container_name</span><span class="p">,</span> <span class="n">container_class</span><span class="p">,</span> <span class="n">container_ttl</span><span class="p">)</span>
-</code></pre></div>
-
-
-<ul>
-<li>Description: get the container snapshot pattern.</li>
-<li>Arguments:<ol>
-<li>container_name: the name of the container.</li>
-<li>container_class: the class of the container.</li>
-<li>container_ttl: the ttl of the container.</li>
-</ol>
-</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="n">create_operator_snapshot_pattern</span><span class="p">(</span><span class="n">container_name</span><span class="p">,</span> <span class="n">operator_name</span><span class="p">,</span> <span class="n">container_class</span><span class="p">,</span> <span class="n">container_ttl</span><span class="p">)</span>
-</code></pre></div>
-
-
-<ul>
-<li>Description: get the operator snapshot pattern.</li>
-<li>Arguments:<ol>
-<li>container_name: the name of the container.</li>
-<li>operator_name: the name of the operator.</li>
-<li>container_class: the class of the container.</li>
-<li>container_ttl: the ttl of the container.</li>
-</ol>
-</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="n">get_file_size</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
-</code></pre></div>
-
-
-<ul>
-<li>Description: get a string representation of the size of the file.</li>
-<li>Arguments:<ol>
-<li>file_name: the name of the file.</li>
 </ol>
 </li>
 </ul>
@@ -1286,7 +1174,7 @@ decorators.</li>
 <h3 id="documentation-of-dummy-utilities">Documentation of Dummy Utilities<a class="headerlink" href="#documentation-of-dummy-utilities" title="Permanent link">&para;</a></h3>
 <p>The <code>DummyUtil</code> class is a wrapper of a few dummy entities that can be used. Here dummy means that any method inside them
 are dummy function calls.</p>
-<div class="codehilite"><pre><span></span><code><span class="n">dummy_logging</span><span class="p">()</span>
+<div class="codehilite"><pre><span></span><code><span class="n">dummy_logger</span><span class="p">()</span>
 </code></pre></div>
 
 
@@ -1382,8 +1270,10 @@ are dummy function calls.</p>
     <span class="s1">&#39;PSLX_INTERNAL_TTL&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
     <span class="s1">&#39;PSLX_INTERNAL_CACHE&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
     <span class="s1">&#39;PSLX_TEST&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s1">&#39;PSLX_LOG&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s1">&#39;PSLX_DATABASE&#39;</span><span class="p">:</span> <span class="s1">&#39;database/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_ENABLE_SYS_LOG&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_SNAPSHOT_DIR&#39;</span><span class="p">:</span> <span class="s2">&quot;/galaxy/bb-d/ttl=7d/snapshots/&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_DEFAULT_LOG_DIR&#39;</span><span class="p">:</span> <span class="s1">&#39;/galaxy/bb-d/ttl=7d/logs/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_INTERNAL_METADATA_DIR&#39;</span><span class="p">:</span> <span class="s1">&#39;/galaxy/bb-d/ttl=-1/metadata/&#39;</span><span class="p">,</span>
     <span class="s1">&#39;PSLX_GRPC_MAX_MESSAGE_LENGTH&#39;</span><span class="p">:</span> <span class="mi">512</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>  <span class="c1"># 512MB,</span>
     <span class="s1">&#39;PSLX_GRPC_TIMEOUT&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># 1 second</span>
     <span class="s1">&#39;PSLX_QUEUE_TIMEOUT&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>  <span class="c1"># 10 seconds</span>
@@ -1536,13 +1426,13 @@ are dummy function calls.</p>
           </a>
         
         
-          <a href="../ttl_cleaner/" title="TTL Cleaner" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../schema/" title="Proto Schema" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                TTL Cleaner
+                Proto Schema
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">

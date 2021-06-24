@@ -317,18 +317,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../rpc_storage_io/" title="RPC Storage IO" class="md-nav__link">
-      RPC Storage IO
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
     <a href="../message_queue/" title="Message Queue" class="md-nav__link">
       Message Queue
     </a>
@@ -401,18 +389,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../../ttl_cleaner/" title="TTL Cleaner" class="md-nav__link">
-      TTL Cleaner
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
     <a href="../../schema/" title="Proto Schema" class="md-nav__link">
       Proto Schema
     </a>
@@ -436,74 +412,20 @@
                 
                   <h1>PSLX frontend</h1>
                 
-                <p>PSLX supports a frontend UI for viewing proto and browsing files. The implementation is based on Flask, and is in the 
-<a href="https://github.com/kfrancischen/pslx/tree/master/pslx/micro_service/frontend">folder</a>. The frontend UI is made of four parts:    <br />
-1. RPC health checker: The index page will show the connection to the RPC servers, including the proto viewer RPC server, file viewer
-and container backend RPC server.     <br />
-2. Proto Viewer: view the content in the proto.   <br />
-3. File Viewer: browse files in the server.    <br />
-4. Container Backend: the status of the containers and operators.</p>
-<p>On example way of starting proto viewer server is at <a href="https://github.com/kfrancischen/pslx/blob/master/example/proto_viewer_example/server.py">proto_viewer_example/server.py</a>:</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.proto_viewer.rpc</span> <span class="kn">import</span> <span class="n">ProtoViewerRPC</span>
-<span class="kn">from</span> <span class="nn">pslx.micro_service.rpc.generic_server</span> <span class="kn">import</span> <span class="n">GenericServer</span>
-<span class="kn">from</span> <span class="nn">pslx.storage.partitioner_storage</span> <span class="kn">import</span> <span class="n">MinutelyPartitionerStorage</span>
-<span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">server_url</span> <span class="o">=</span> <span class="s2">&quot;localhost:11444&quot;</span>
-    <span class="n">partitioner_dir</span> <span class="o">=</span> <span class="n">FileUtil</span><span class="o">.</span><span class="n">join_paths_to_dir_with_mode</span><span class="p">(</span>
-        <span class="n">root_dir</span><span class="o">=</span><span class="s1">&#39;database/proto_viewer/&#39;</span><span class="p">,</span>
-        <span class="n">base_name</span><span class="o">=</span><span class="s1">&#39;proto_viewer_example&#39;</span><span class="p">,</span>
-        <span class="n">ttl</span><span class="o">=</span><span class="s1">&#39;1h&#39;</span>
-    <span class="p">)</span>
-    <span class="n">storage</span> <span class="o">=</span> <span class="n">MinutelyPartitionerStorage</span><span class="p">()</span>
-    <span class="n">storage</span><span class="o">.</span><span class="n">initialize_from_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="o">=</span><span class="n">partitioner_dir</span><span class="p">)</span>
-    <span class="n">example_rpc</span> <span class="o">=</span> <span class="n">ProtoViewerRPC</span><span class="p">(</span><span class="n">rpc_storage</span><span class="o">=</span><span class="n">storage</span><span class="p">)</span>
-    <span class="n">example_server</span> <span class="o">=</span> <span class="n">GenericServer</span><span class="p">(</span><span class="n">server_name</span><span class="o">=</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
-    <span class="n">example_server</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
-    <span class="n">example_server</span><span class="o">.</span><span class="n">bind_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="o">=</span><span class="n">example_rpc</span><span class="p">)</span>
-    <span class="n">example_server</span><span class="o">.</span><span class="n">start_server</span><span class="p">()</span>
-</code></pre></div>
-
-
-<p>On example way of starting file viewer server is at <a href="https://github.com/kfrancischen/pslx/blob/master/example/file_viewer_example/server.py">file_viewer_example/server.py</a>:</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.file_viewer.rpc</span> <span class="kn">import</span> <span class="n">FileViewerRPC</span>
-<span class="kn">from</span> <span class="nn">pslx.micro_service.rpc.generic_server</span> <span class="kn">import</span> <span class="n">GenericServer</span>
-<span class="kn">from</span> <span class="nn">pslx.storage.partitioner_storage</span> <span class="kn">import</span> <span class="n">MinutelyPartitionerStorage</span>
-<span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">server_url</span> <span class="o">=</span> <span class="s2">&quot;localhost:11445&quot;</span>
-    <span class="n">partitioner_dir</span> <span class="o">=</span> <span class="n">FileUtil</span><span class="o">.</span><span class="n">join_paths_to_dir_with_mode</span><span class="p">(</span>
-        <span class="n">root_dir</span><span class="o">=</span><span class="s1">&#39;database/file_viewer/&#39;</span><span class="p">,</span>
-        <span class="n">base_name</span><span class="o">=</span><span class="s1">&#39;file_viewer_example&#39;</span><span class="p">,</span>
-        <span class="n">ttl</span><span class="o">=</span><span class="s1">&#39;1h&#39;</span>
-    <span class="p">)</span>
-    <span class="n">storage</span> <span class="o">=</span> <span class="n">MinutelyPartitionerStorage</span><span class="p">()</span>
-    <span class="n">storage</span><span class="o">.</span><span class="n">initialize_from_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="o">=</span><span class="n">partitioner_dir</span><span class="p">)</span>
-    <span class="n">example_rpc</span> <span class="o">=</span> <span class="n">FileViewerRPC</span><span class="p">(</span><span class="n">rpc_storage</span><span class="o">=</span><span class="n">storage</span><span class="p">)</span>
-    <span class="n">example_server</span> <span class="o">=</span> <span class="n">GenericServer</span><span class="p">(</span><span class="n">server_name</span><span class="o">=</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
-    <span class="n">example_server</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
-    <span class="n">example_server</span><span class="o">.</span><span class="n">bind_rpc</span><span class="p">(</span><span class="n">rpc</span><span class="o">=</span><span class="n">example_rpc</span><span class="p">)</span>
-    <span class="n">example_server</span><span class="o">.</span><span class="n">start_server</span><span class="p">()</span>
-</code></pre></div>
-
-
+                <p>PSLX supports a frontend UI for viewing proto and browsing containers. The implementation is based on Flask, and is in the
+<a href="https://github.com/kfrancischen/pslx/tree/master/pslx/micro_service/frontend">folder</a>. The frontend UI is made of three parts:
+1. RPC health checker: The index page will show the connection to the RPC servers, including the instant messaging server, email server and container backend RPC server.
+2. Proto Viewer: view the content in the proto.
+3. Container Backend: the status of the containers and operators.</p>
 <p>On example way of starting a container backend is at <a href="https://github.com/kfrancischen/pslx/blob/master/example/container_backend_example/server.py">container_backend_example/server.py</a>:</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.container_backend.rpc</span> <span class="kn">import</span> <span class="n">ContainerBackendRPC</span>
 <span class="kn">from</span> <span class="nn">pslx.micro_service.rpc.generic_server</span> <span class="kn">import</span> <span class="n">GenericServer</span>
 <span class="kn">from</span> <span class="nn">pslx.storage.partitioner_storage</span> <span class="kn">import</span> <span class="n">MinutelyPartitionerStorage</span>
-<span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">server_url</span> <span class="o">=</span> <span class="s2">&quot;localhost:11443&quot;</span>
-    <span class="n">partitioner_dir</span> <span class="o">=</span> <span class="n">FileUtil</span><span class="o">.</span><span class="n">join_paths_to_dir_with_mode</span><span class="p">(</span>
-        <span class="n">root_dir</span><span class="o">=</span><span class="s1">&#39;database/container_backend/&#39;</span><span class="p">,</span>
-        <span class="n">base_name</span><span class="o">=</span><span class="s1">&#39;container_backend_example&#39;</span><span class="p">,</span>
-        <span class="n">ttl</span><span class="o">=</span><span class="mi">1</span>
-    <span class="p">)</span>
     <span class="n">storage</span> <span class="o">=</span> <span class="n">MinutelyPartitionerStorage</span><span class="p">()</span>
-    <span class="n">storage</span><span class="o">.</span><span class="n">initialize_from_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="o">=</span><span class="n">partitioner_dir</span><span class="p">)</span>
+    <span class="n">storage</span><span class="o">.</span><span class="n">initialize_from_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="o">=</span><span class="s2">&quot;/galaxy/bb-d/pslx/test_data/storage&quot;</span><span class="p">)</span>
     <span class="n">example_rpc</span> <span class="o">=</span> <span class="n">ContainerBackendRPC</span><span class="p">(</span><span class="n">rpc_storage</span><span class="o">=</span><span class="n">storage</span><span class="p">)</span>
     <span class="n">example_server</span> <span class="o">=</span> <span class="n">GenericServer</span><span class="p">(</span><span class="n">server_name</span><span class="o">=</span><span class="s1">&#39;example_backend&#39;</span><span class="p">)</span>
     <span class="n">example_server</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">max_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">server_url</span><span class="o">=</span><span class="n">server_url</span><span class="p">)</span>
@@ -512,26 +434,14 @@ and container backend RPC server.     <br />
 </code></pre></div>
 
 
-<p>To start the frontend, one needs to create a YAML file containing the settings. An example of it can be found at 
+<p>To start the frontend, one needs to create a YAML file containing the settings. An example of it can be found at
 <a href="https://github.com/kfrancischen/pslx/blob/master/example/frontend_example/frontend_config.yaml">frontend_example/frontend_config.yaml</a>:</p>
-<div class="codehilite"><pre><span></span><code><span class="nt">SQLALCHEMY_DATABASE_PATH</span><span class="p">:</span> <span class="s">&quot;/home/francischen/Development/pslx/example/frontend_example/frontend_example.db&quot;</span>
-<span class="nt">CONTAINER_BACKEND_CONFIG</span><span class="p">:</span>
+<div class="codehilite"><pre><span></span><code><span class="nt">CONTAINER_BACKEND_CONFIG</span><span class="p">:</span>
   <span class="nt">SERVER_URL</span><span class="p">:</span> <span class="s">&quot;localhost:11443&quot;</span>
   <span class="nt">ROOT_CERTIFICATE_PATH</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
-<span class="nt">PROTO_VIEWER_CONFIG</span><span class="p">:</span>
-  <span class="nt">SERVER_1</span><span class="p">:</span>
-    <span class="nt">SERVER_URL</span><span class="p">:</span> <span class="s">&quot;localhost:11444&quot;</span>
-    <span class="nt">ROOT_CERTIFICATE_PATH</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
-<span class="nt">FILE_VIEWER_CONFIG</span><span class="p">:</span>
-  <span class="nt">SERVER_1</span><span class="p">:</span>
-    <span class="nt">SERVER_URL</span><span class="p">:</span> <span class="s">&quot;localhost:11445&quot;</span>
-    <span class="nt">ROOT_CERTIFICATE_PATH</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
-<span class="nt">LOGGING_QUEUE_CONFIG</span><span class="p">:</span>
-  <span class="nt">EXCHANGE</span><span class="p">:</span> <span class="s">&quot;prod.pubsub.pslx_dedicated_logging&quot;</span>
-  <span class="nt">TOPIC</span><span class="p">:</span> <span class="s">&quot;PSLX_DEDICATED_LOGGING&quot;</span>
-  <span class="nt">CONNECTION_STR</span><span class="p">:</span> <span class="s">&quot;amqp://guest:guest@localhost:5672&quot;</span>
 <span class="nt">USER_NAME</span><span class="p">:</span> <span class="s">&quot;guest&quot;</span>
 <span class="nt">PASSWORD</span><span class="p">:</span> <span class="s">&quot;guest&quot;</span>
+<span class="nt">GALAXY_VIEWER_URL</span><span class="p">:</span> <span class="s">&quot;http://192.168.1.112:8000&quot;</span>
 </code></pre></div>
 
 
@@ -551,20 +461,6 @@ the yaml file into a <code>FrontendConfig</code> proto. One can follow this scri
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div>
-
-
-<p>Then, to enable login, please use the following snippet to create the table</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.micro_service.frontend</span> <span class="kn">import</span> <span class="n">pslx_frontend_db</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">pslx_frontend_db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
-</code></pre></div>
-
-
-<p>, and the related command is</p>
-<div class="codehilite"><pre><span></span><code> <span class="nv">PSLX_FRONTEND_CONFIG_PROTO_PATH</span><span class="o">=</span>example/frontend_example/frontend_config.pb <span class="se">\</span>
- <span class="nv">PYTHONPATH</span><span class="o">=</span>. python example/frontend_example/create_frontend_table.py
 </code></pre></div>
 
 

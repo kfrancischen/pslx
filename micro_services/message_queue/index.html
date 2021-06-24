@@ -315,18 +315,6 @@
           
           
 
-
-  <li class="md-nav__item">
-    <a href="../rpc_storage_io/" title="RPC Storage IO" class="md-nav__link">
-      RPC Storage IO
-    </a>
-  </li>
-
-        
-          
-          
-          
-
   
 
 
@@ -401,18 +389,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../../ttl_cleaner/" title="TTL Cleaner" class="md-nav__link">
-      TTL Cleaner
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
     <a href="../../schema/" title="Proto Schema" class="md-nav__link">
       Proto Schema
     </a>
@@ -447,8 +423,6 @@ a user defined response message. If the queue does not need response, please ret
 <span class="kn">from</span> <span class="nn">pslx.schema.enums_pb2</span> <span class="kn">import</span> <span class="n">Status</span>
 <span class="kn">from</span> <span class="nn">pslx.schema.rpc_pb2</span> <span class="kn">import</span> <span class="n">InstantMessagingRPCRequest</span>
 <span class="kn">from</span> <span class="nn">pslx.storage.partitioner_storage</span> <span class="kn">import</span> <span class="n">DailyPartitionerStorage</span>
-<span class="kn">from</span> <span class="nn">pslx.util.env_util</span> <span class="kn">import</span> <span class="n">EnvUtil</span>
-<span class="kn">from</span> <span class="nn">pslx.util.file_util</span> <span class="kn">import</span> <span class="n">FileUtil</span>
 <span class="kn">from</span> <span class="nn">pslx.util.timezone_util</span> <span class="kn">import</span> <span class="n">TimezoneUtil</span>
 
 
@@ -480,16 +454,8 @@ a user defined response message. If the queue does not need response, please ret
         <span class="n">connection_str</span><span class="o">=</span><span class="s1">&#39;amqp://guest:guest@localhost:5672&#39;</span>
     <span class="p">)</span>
 
-    <span class="n">partitioner_dir</span> <span class="o">=</span> <span class="n">FileUtil</span><span class="o">.</span><span class="n">join_paths_to_dir_with_mode</span><span class="p">(</span>
-        <span class="n">root_dir</span><span class="o">=</span><span class="n">FileUtil</span><span class="o">.</span><span class="n">join_paths_to_dir</span><span class="p">(</span>
-                    <span class="n">root_dir</span><span class="o">=</span><span class="n">EnvUtil</span><span class="o">.</span><span class="n">get_pslx_env_variable</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="s1">&#39;PSLX_DATABASE&#39;</span><span class="p">),</span>
-                    <span class="n">base_name</span><span class="o">=</span><span class="s1">&#39;msg_queue&#39;</span>
-                <span class="p">),</span>
-        <span class="n">base_name</span><span class="o">=</span><span class="s1">&#39;msg_queue_example&#39;</span><span class="p">,</span>
-        <span class="n">ttl</span><span class="o">=</span><span class="s1">&#39;1h&#39;</span>
-    <span class="p">)</span>
     <span class="n">storage</span> <span class="o">=</span> <span class="n">DailyPartitionerStorage</span><span class="p">()</span>
-    <span class="n">storage</span><span class="o">.</span><span class="n">initialize_from_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="o">=</span><span class="n">partitioner_dir</span><span class="p">)</span>
+    <span class="n">storage</span><span class="o">.</span><span class="n">initialize_from_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="o">=</span><span class="s2">&quot;/galaxy/bb-d/pslx/test_data/storage2&quot;</span><span class="p">)</span>
 
     <span class="n">slack_queue</span> <span class="o">=</span> <span class="n">SlackQueue</span><span class="p">(</span>
         <span class="n">queue_name</span><span class="o">=</span><span class="s1">&#39;slack_queue&#39;</span><span class="p">,</span>
@@ -553,7 +519,7 @@ a user defined response message. If the queue does not need response, please ret
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../rpc_storage_io/" title="RPC Storage IO" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../email/" title="Email" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -562,7 +528,7 @@ a user defined response message. If the queue does not need response, please ret
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                RPC Storage IO
+                Email
               </span>
             </div>
           </a>

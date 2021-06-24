@@ -247,13 +247,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#websocket" class="md-nav__link">
-    Websocket
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#job-scheduling" class="md-nav__link">
     Job Scheduling
   </a>
@@ -291,13 +284,6 @@
           <li class="md-nav__item">
   <a href="#utilities" class="md-nav__link">
     Utilities
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ttl-cleaner" class="md-nav__link">
-    TTL Cleaner
   </a>
   
 </li>
@@ -422,18 +408,6 @@
 
 
   <li class="md-nav__item">
-    <a href="micro_services/rpc_storage_io/" title="RPC Storage IO" class="md-nav__link">
-      RPC Storage IO
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
     <a href="micro_services/message_queue/" title="Message Queue" class="md-nav__link">
       Message Queue
     </a>
@@ -499,18 +473,6 @@
 
 
   <li class="md-nav__item">
-    <a href="ttl_cleaner/" title="TTL Cleaner" class="md-nav__link">
-      TTL Cleaner
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
     <a href="schema/" title="Proto Schema" class="md-nav__link">
       Proto Schema
     </a>
@@ -542,13 +504,6 @@
   
     <nav class="md-nav">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#websocket" class="md-nav__link">
-    Websocket
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#job-scheduling" class="md-nav__link">
@@ -593,13 +548,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ttl-cleaner" class="md-nav__link">
-    TTL Cleaner
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#proto-schema" class="md-nav__link">
     Proto Schema
   </a>
@@ -634,14 +582,9 @@
                 
                 <h3 id="package-pslx">Package PSLX<a class="headerlink" href="#package-pslx" title="Permanent link">&para;</a></h3>
 <p><strong>P</strong>ython <strong>S</strong>tandard <strong>L</strong>ibrary e<strong>X</strong>tension.</p>
-<p>A standard library for job scheduling, micro services including message queue, RPC, instant messaging and monitoring, tooling
-such as logging, file storage and caching. The library is written
-compatible to Python 3.7+. To use the program, please install the latest <a href="https://github.com/protocolbuffers/protobuf">protobuf compiler</a>
+<p>A standard library for job scheduling, micro services including message queue, RPC, instant messaging and monitoring, and tooling, developed by <a href="kfrancischen@gmail.com">Kaifeng Chen</a>. The library is written
+compatible to Python 3.7+, and is integrated upon the distributed file system <a href="https://github.com/kfrancischen/galaxy">galaxy</a>. To use the program, please install the latest <a href="https://github.com/protocolbuffers/protobuf">protobuf compiler</a>
 and <a href="https://grpc.io/">gRPC</a> tools. This document covers the APIs of PSLX provided, and is organized as follows:</p>
-<h4 id="websocket">Websocket<a class="headerlink" href="#websocket" title="Permanent link">&para;</a></h4>
-<ul>
-<li>Base class for <a href="websocket/">Websocket</a>, including abstract class for connection and interface for message parsing.</li>
-</ul>
 <h4 id="job-scheduling">Job Scheduling<a class="headerlink" href="#job-scheduling" title="Permanent link">&para;</a></h4>
 <ul>
 <li>Running ad-hoc and scheduled jobs with <a href="container/">operators and operator containers</a>.</li>
@@ -658,23 +601,18 @@ and <a href="https://grpc.io/">gRPC</a> tools. This document covers the APIs of 
 <ul>
 <li><a href="micro_services/instant_messaging/">Instant messaging services</a> built for Slack, Rocketchat and Microsoft Teams using the PSLX RPC framework.</li>
 <li><a href="micro_services/email/">Email service</a> for sending emails through code using the PSLX RPC framework.</li>
-<li><a href="micro_services/rpc_storage_io/">RPC storage io</a> for reading the data storage through remote RPC calls using the PSLX RPC framework.</li>
 <li><a href="micro_services/message_queue/">Message Queue</a> for building simple message queue using proto buffers. Part of the implementation also is shared with the PSLX rpc framework.</li>
-<li><a href="micro_services/pubsub/">Publisher/subscriber</a> for building simple applications with pubsub model.</li>
-<li><a href="micro_services/frontend/">PSLX Frontend</a> Flask frontend built to monitor the health of RPC servers, container status, and browser the content of protobufs and file system for local and remote servers.</li>
+<li><a href="micro_services/pubsub/">Publisher/Subscriber</a> for building simple publisher/subscriber applications.</li>
+<li><a href="micro_services/frontend/">PSLX Frontend</a> Flask frontend built to monitor the health of RPC servers, container status, and browser the content of protobufs.</li>
 </ul>
 <h4 id="tools">Tools<a class="headerlink" href="#tools" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="tool/">Tools</a> provided by PSLX for thread-safe file io, LRC caching, ttl-ed logging, SQL server read/write, Mongodb tool, timestamp key-ed partitioner local/remote fetcher and watcher, function registration.</li>
+<li><a href="tool/">Tools</a> provided by PSLX for galaxy-based file io, LRC caching, SQL server read/write, Mongodb tool, timestamp key-ed partitioner fetcher and watcher, function registration.</li>
 </ul>
 <h4 id="utilities">Utilities<a class="headerlink" href="#utilities" title="Permanent link">&para;</a></h4>
 <ul>
 <li><a href="util/">Utilities</a> provided by PSLX for file operation, protobuf related utilities, async unittesting, timezone related utilities,
 yaml file io, text coloring, and credential composing, environment variables access and decorators.</li>
-</ul>
-<h4 id="ttl-cleaner">TTL Cleaner<a class="headerlink" href="#ttl-cleaner" title="Permanent link">&para;</a></h4>
-<ul>
-<li>Internally built <a href="ttl_cleaner/">ttl_cleaner</a> for temporary/ttl-ed file removing and garbage collection.</li>
 </ul>
 <h4 id="proto-schema">Proto Schema<a class="headerlink" href="#proto-schema" title="Permanent link">&para;</a></h4>
 <ul>

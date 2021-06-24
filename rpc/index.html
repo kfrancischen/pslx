@@ -322,18 +322,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../micro_services/rpc_storage_io/" title="RPC Storage IO" class="md-nav__link">
-      RPC Storage IO
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
     <a href="../micro_services/message_queue/" title="Message Queue" class="md-nav__link">
       Message Queue
     </a>
@@ -399,18 +387,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../ttl_cleaner/" title="TTL Cleaner" class="md-nav__link">
-      TTL Cleaner
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
     <a href="../schema/" title="Proto Schema" class="md-nav__link">
       Proto Schema
     </a>
@@ -434,8 +410,8 @@
                 
                   <h1>RPC</h1>
                 
-                <p>RPC is a core component, and micro services built inside PSLX (for example <a href="../micro_services/instant_messaging/">instant messaging</a>, 
-<a href="../micro_services/email/">email</a>, <a href="../micro_services/rpc_storage_io/">rpc storage io</a>) are concrete implementations of RPC. To build
+                <p>RPC is a core component, and micro services built inside PSLX (for example <a href="../micro_services/instant_messaging/">instant messaging</a> and
+<a href="../micro_services/email/">email</a>) are concrete implementations of RPC. To build
 an RPC service using PSLX, one first needs to take a look at the abstract class implementation defined in <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/micro_service/rpc/rpc_base.py">rpc_base</a>.
 The following functions are provided</p>
 <div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">service_name</span><span class="p">,</span> <span class="n">rpc_storage</span><span class="p">)</span>
@@ -453,7 +429,7 @@ won't be stored.</li>
 </ul>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>Function needs to be implemented by specific application.        </p>
+<p>Function needs to be implemented by specific application.</p>
 </div>
 <div class="codehilite"><pre><span></span><code><span class="n">get_response_and_status_impl</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
 </code></pre></div>
@@ -486,7 +462,7 @@ The <code>client_base.py</code> provides the following functions</p>
 </ol>
 </li>
 </ul>
-<div class="codehilite"><pre><span></span><code><span class="n">send_request</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">root_certificate</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="n">send_request</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -494,7 +470,6 @@ The <code>client_base.py</code> provides the following functions</p>
 <li>Description: Send request to the server and get response.</li>
 <li>Arguments:<ol>
 <li>request: the request proto message.</li>
-<li>root_certificate: the root certificate for the SSL encryption. None if the rpc channel is insecure.</li>
 </ol>
 </li>
 </ul>
@@ -542,17 +517,12 @@ PSLX server, the user of PSLX needs to bind an RPC to a server using the methods
 </ol>
 </li>
 </ul>
-<div class="codehilite"><pre><span></span><code><span class="n">start_server</span><span class="p">(</span><span class="n">private_key</span><span class="p">,</span> <span class="n">certificate_chain</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="n">start_server</span><span class="p">()</span>
 </code></pre></div>
 
 
 <ul>
 <li>Description: Start running the server.</li>
-<li>Arguments:<ol>
-<li>private_key: the private key of the SSL encryption.</li>
-<li>certificate_chain: the certificate chain of the SSL encryption.</li>
-</ol>
-</li>
 </ul>
                 
                   

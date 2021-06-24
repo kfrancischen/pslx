@@ -360,18 +360,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../micro_services/rpc_storage_io/" title="RPC Storage IO" class="md-nav__link">
-      RPC Storage IO
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
     <a href="../micro_services/message_queue/" title="Message Queue" class="md-nav__link">
       Message Queue
     </a>
@@ -427,18 +415,6 @@
   <li class="md-nav__item">
     <a href="../util/" title="Utilities" class="md-nav__link">
       Utilities
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="../ttl_cleaner/" title="TTL Cleaner" class="md-nav__link">
-      TTL Cleaner
     </a>
   </li>
 
@@ -508,13 +484,13 @@
                 
                   <h1>Job Scheduling</h1>
                 
-                <p>PSLX built-in container implements a DAG connected <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/core/graph_base.py">graph structure</a>. 
-For each container (graph), the node is defined as an operator, and therefore, each operator contains a dictionary of 
+                <p>PSLX built-in container implements a DAG connected <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/core/graph_base.py">graph structure</a>.
+For each container (graph), the node is defined as an operator, and therefore, each operator contains a dictionary of
 its children operators and parent operators. The execute flow of the container will then start from the root and finish
-after all the leaf operators are done. </p>
+after all the leaf operators are done.</p>
 <p>Each operator defined in a container will have status of <code>Status.IDLE</code>, <code>Status.WAITING</code>, <code>Status.RUNNING</code>, <code>Status.SUCCEEDED</code> and <code>Status.FAILED</code>. The operator
 will be in <code>Status.IDLE</code> if its parents are not waiting for being executed, and will be in <code>Status.WAITING</code> if its parents in the process
-of being executed now. Then it will turn to the status of <code>Status.RUNNING</code> when all its parents are done executing, and its final 
+of being executed now. Then it will turn to the status of <code>Status.RUNNING</code> when all its parents are done executing, and its final
 status could be one of <code>Status.SUCCEEDED</code> and <code>Status.FAILED</code> depending on the execution. One failure in the container graph will result in
 failure in all the subsequent operators.</p>
 <p>PSLX has two kinds of data models: <code>DataModelType.BATCH</code> and <code>DataModelType.STREAMING</code>, and the enums are defined as protobuf enums (Please check
@@ -565,7 +541,7 @@ and the ones for the <code>DataModelType.BATCH</code> and <code>DataModelType.ST
 
 <ul>
 <li>Description: Get the model of the operator.</li>
-<li>Return: data model of the operator, one of <code>DataModelType.BATCH</code>, <code>DataModelType.STREAMING</code> and <code>DataModelType.DEFAULT</code>. </li>
+<li>Return: data model of the operator, one of <code>DataModelType.BATCH</code>, <code>DataModelType.STREAMING</code> and <code>DataModelType.DEFAULT</code>.</li>
 </ul>
 <div class="codehilite"><pre><span></span><code><span class="n">set_status</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
 </code></pre></div>
@@ -764,16 +740,15 @@ can be used as an entry point to control parameters in the operator.</li>
 and the ones for the <code>DataModelType.BATCH</code> and <code>DataModelType.STREAMING</code> are in <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/batch/container.py">batch/container.py</a> and
 <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/streaming/container.py">streaming/container.py</a>, respectively.</p>
 </div>
-<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">container_name</span><span class="p">,</span> <span class="n">ttl</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">container_name</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
 </code></pre></div>
 
 
 <ul>
-<li>Description: Construct an container with name and ttl. Note that please make sure all the container names are unique across your application.</li>
+<li>Description: Construct an container with given name. Note that please make sure all the container names are unique across your application.</li>
 <li>Arguments:<ol>
 <li>container_name: name of the container.</li>
-<li>ttl: the ttl policy. It could be a string ending with m (for minutes), h (for hours) and d (for days). Negative ttl means
-the container's temporary files will be permanent.</li>
+<li>logger: the logger that record events.</li>
 </ol>
 </li>
 </ul>
@@ -795,7 +770,7 @@ the container's temporary files will be permanent.</li>
 
 <ul>
 <li>Description: Initialize the container. Once a container is initialized, it is then ready for execution. An uninitialized
-container cannot be executed. </li>
+container cannot be executed.</li>
 <li>Arguments:<ol>
 <li>force: whether to force the status and data model of its contained operators to be consistent with self.</li>
 </ol>
@@ -831,7 +806,7 @@ container cannot be executed. </li>
 
 
 <ul>
-<li>Description: Add a dependency edge from a from_operator to a to_operator in the container. </li>
+<li>Description: Add a dependency edge from a from_operator to a to_operator in the container.</li>
 <li>Arguments:<ol>
 <li>from_operator: the upstream operator.</li>
 <li>to_operator: the downstream operator.</li>
@@ -858,7 +833,7 @@ the operator until the status becomes <code>Status.SUCCEEDED</code>.</li>
 <li>Description: Execute the container graph.</li>
 <li>Arguments:<ol>
 <li>is_backfill: whether the execution runs in backfill mode. If so, the successful operators will be executed again.</li>
-<li>num_threads: number of threads used for the execution. If the container is of type <code>DataModelType.STREAMING</code>, this 
+<li>num_threads: number of threads used for the execution. If the container is of type <code>DataModelType.STREAMING</code>, this
 input will be ignored and only one thread is allowed.</li>
 </ol>
 </li>

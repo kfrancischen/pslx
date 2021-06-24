@@ -315,18 +315,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../micro_services/rpc_storage_io/" title="RPC Storage IO" class="md-nav__link">
-      RPC Storage IO
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
     <a href="../micro_services/message_queue/" title="Message Queue" class="md-nav__link">
       Message Queue
     </a>
@@ -390,18 +378,6 @@
       
       
 
-
-  <li class="md-nav__item">
-    <a href="../ttl_cleaner/" title="TTL Cleaner" class="md-nav__link">
-      TTL Cleaner
-    </a>
-  </li>
-
-    
-      
-      
-      
-
   
 
 
@@ -435,14 +411,12 @@
                   <h1>Proto Schema</h1>
                 
                 <p>PSLX uses protobuf to store data. All the schemas are in the folder of <a href="https://github.com/kfrancischen/pslx/tree/master/pslx/schema">schema</a>.
-In the <a href="https://github.com/kfrancischen/pslx/tree/master/pslx/schema/enums.proto">enums.proto</a>, the following enum types are defined: </p>
+In the <a href="https://github.com/kfrancischen/pslx/tree/master/pslx/schema/enums.proto">enums.proto</a>, the following enum types are defined:</p>
 <ol>
-<li><code>ModeType</code>: whether it is in test mode or production mode. The mode is controlled by the environment variable named <code>PSLX_TEST</code>,
-and if in test mode, all the auto generated file will have a <code>TEST/</code> in their path, otherwise it would be <code>PROD/</code>.     </li>
-<li><code>SortOrder</code>: the order of the children nodes and parent nodes in a node.      </li>
-<li><code>DataModelType</code>: the data model type for the containers.     </li>
+<li><code>ModeType</code>: whether it is in test mode or production mode.</li>
+<li><code>SortOrder</code>: the order of the children nodes and parent nodes in a node.</li>
+<li><code>DataModelType</code>: the data model type for the containers.</li>
 <li><code>InstantMessagingType</code>: the type of instant messaging app.</li>
-<li><code>DiskLoggerLevel</code>: the level of logging, similar to the regular logging level.</li>
 <li><code>StorageType</code>: the type of the storage.</li>
 <li><code>ReadRuleType</code>: the read rule for <code>DefaultStorage</code>.</li>
 <li><code>WriteRuleType</code>: the write rule for <code>DefaultStorage</code> and <code>FixedSizeStorage</code>.</li>
@@ -450,23 +424,20 @@ and if in test mode, all the auto generated file will have a <code>TEST/</code> 
 <li><code>Status</code>: status of the operator, container, and RPC response.</li>
 <li><code>Signal</code>: signal for internal usage only.</li>
 </ol>
-<p>In <a href="https://github.com/kfrancischen/pslx/tree/master/pslx/schema/rpc.proto">rpc.proto</a>, RPC-related message types are defined:     </p>
+<p>In <a href="https://github.com/kfrancischen/pslx/tree/master/pslx/schema/rpc.proto">rpc.proto</a>, RPC-related message types are defined:</p>
 <ol>
-<li><code>GenericRPCService</code>: the generic rpc service supported in PSLX.     </li>
-<li><code>HealthCheckerRequest</code>: the health checker request.      </li>
-<li><code>HealthCheckerResponse</code>: the health checker response.       </li>
-<li><code>GenericRPCRequest</code>: generic request that encapsulates the request message in its <code>Any</code> field.        </li>
-<li><code>GenericRPCResponse</code>: generic response that encapsulates the response message in its <code>Any</code> field.        </li>
-<li><code>GenericRPCRequestResponsePair</code>: pair of generic request and response.        </li>
-<li><code>InstantMessagingRPCRequest</code>: instant messaging rpc request.         </li>
+<li><code>GenericRPCService</code>: the generic rpc service supported in PSLX.</li>
+<li><code>HealthCheckerRequest</code>: the health checker request.</li>
+<li><code>HealthCheckerResponse</code>: the health checker response.</li>
+<li><code>GenericRPCRequest</code>: generic request that encapsulates the request message in its <code>Any</code> field.</li>
+<li><code>GenericRPCResponse</code>: generic response that encapsulates the response message in its <code>Any</code> field.</li>
+<li><code>GenericRPCRequestResponsePair</code>: pair of generic request and response.</li>
+<li><code>InstantMessagingRPCRequest</code>: instant messaging rpc request.</li>
 <li><code>EmailPRCRequest</code>: email rpc request.</li>
-<li><code>RPCIOResponse</code>: RPC io rpc request.</li>
 <li><code>ProtoViewerRPCRequest</code>: request for proto viewer service.</li>
 <li><code>ProtoViewerRPCResponse</code>: response from proto viewer service.</li>
-<li><code>FileViewerRPCRequest</code>: request for file viewer service.</li>
-<li><code>FileViewerRPCResponse</code>:response from file viewer service.</li>
 </ol>
-<p>In <a href="https://github.com/kfrancischen/pslx/tree/master/pslx/schema/snapshots.proto">snapshots.proto</a>, the snapshots for node, operator and container are defined:     </p>
+<p>In <a href="https://github.com/kfrancischen/pslx/tree/master/pslx/schema/snapshots.proto">snapshots.proto</a>, the snapshots for node, operator and container are defined:</p>
 <ol>
 <li><code>NodeSnapshot</code>: snapshot for <a href="https://github.com/kfrancischen/pslx/blob/master/pslx/core/node_base.py">node</a>.</li>
 <li><code>OperatorSnapshot</code>:  snapshot for operator.</li>
@@ -475,15 +446,16 @@ and if in test mode, all the auto generated file will have a <code>TEST/</code> 
 <li><code>OperatorContentList</code>: a list representation for content in operator.
 6: <code>OperatorContentDict</code>: a dictionary representation for content in operator</li>
 </ol>
-<p>In <a href="https://github.com/kfrancischen/pslx/tree/master/pslx/schema/storage.proto">storage.proto</a>, the proto table storage type and the value for the container backend storage are defined:     </p>
+<p>In <a href="https://github.com/kfrancischen/pslx/tree/master/pslx/schema/storage.proto">storage.proto</a>, the proto table storage type and the value for the container backend storage are defined:</p>
 <ol>
 <li><code>ProtoTable</code>: generic storage schema for <code>ProtoTableStorage</code>.</li>
+<li><code>ProtoTableIndexMap</code>: generic format for storing index for <code>ShardedProtoTableStorage</code>.</li>
 <li><code>ContainerBackendValue</code>: the value type for container backend service.</li>
 </ol>
-<p>In <a href="https://github.com/kfrancischen/pslx/tree/master/pslx/schema/common.proto">common.proto</a>, various credential formats are defined:     </p>
+<p>In <a href="https://github.com/kfrancischen/pslx/tree/master/pslx/schema/common.proto">common.proto</a>, various credential formats are defined:</p>
 <ol>
-<li><code>EmptyMessage</code>:  a dummy holder for empty message.</li>
 <li><code>Credentials</code>: a specifically designed message to storage credentials.</li>
+<li><code>FileInfo</code>: information about a file.</li>
 <li><code>FrontendConfig</code>:  the config for frontend.</li>
 </ol>
                 
@@ -507,7 +479,7 @@ and if in test mode, all the auto generated file will have a <code>TEST/</code> 
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../ttl_cleaner/" title="TTL Cleaner" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../util/" title="Utilities" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -516,7 +488,7 @@ and if in test mode, all the auto generated file will have a <code>TEST/</code> 
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                TTL Cleaner
+                Utilities
               </span>
             </div>
           </a>

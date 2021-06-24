@@ -317,18 +317,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../rpc_storage_io/" title="RPC Storage IO" class="md-nav__link">
-      RPC Storage IO
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
     <a href="../message_queue/" title="Message Queue" class="md-nav__link">
       Message Queue
     </a>
@@ -391,18 +379,6 @@
   <li class="md-nav__item">
     <a href="../../util/" title="Utilities" class="md-nav__link">
       Utilities
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="../../ttl_cleaner/" title="TTL Cleaner" class="md-nav__link">
-      TTL Cleaner
     </a>
   </li>
 
@@ -477,7 +453,7 @@ In addition, here the message that goes through the pubsub model needs to be a p
 </code></pre></div>
 
 
-<p>which takes in the exchange and topic (routing_key) of the message. The purpose of this function to allow user to have the access of handling the message. </p>
+<p>which takes in the exchange and topic (routing_key) of the message. The purpose of this function to allow user to have the access of handling the message.</p>
 <p>To bind the subscriber to the operator, one can use:</p>
 <div class="codehilite"><pre><span></span><code><span class="n">bind_to_op</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
 </code></pre></div>
@@ -486,7 +462,7 @@ In addition, here the message that goes through the pubsub model needs to be a p
 <p>An example subscriber of the above publisher is</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pslx.streaming.operator</span> <span class="kn">import</span> <span class="n">StreamingOperator</span>
 <span class="kn">from</span> <span class="nn">pslx.streaming.container</span> <span class="kn">import</span> <span class="n">DefaultStreamingContainer</span>
-<span class="kn">from</span> <span class="nn">pslx.micro_service.pubsub.subscriber_base</span> <span class="kn">import</span> <span class="n">Subscriber</span>
+<span class="kn">from</span> <span class="nn">pslx.micro_service.pubsub.subscriber</span> <span class="kn">import</span> <span class="n">Subscriber</span>
 <span class="kn">from</span> <span class="nn">pslx.schema.rpc_pb2</span> <span class="kn">import</span> <span class="n">HealthCheckerRequest</span>
 <span class="kn">from</span> <span class="nn">pslx.util.dummy_util</span> <span class="kn">import</span> <span class="n">DummyUtil</span>
 
@@ -521,17 +497,13 @@ In addition, here the message that goes through the pubsub model needs to be a p
 
 <span class="k">class</span> <span class="nc">SubscriberExampleContainer</span><span class="p">(</span><span class="n">DefaultStreamingContainer</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">container_name</span><span class="o">=</span><span class="s1">&#39;subscriber_example_container&#39;</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">container_name</span><span class="o">=</span><span class="s1">&#39;subscriber_example_container&#39;</span><span class="p">)</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">op</span> <span class="o">=</span> <span class="n">SubscriberExampleOp</span><span class="p">()</span>
     <span class="n">container</span> <span class="o">=</span> <span class="n">SubscriberExampleContainer</span><span class="p">()</span>
     <span class="n">container</span><span class="o">.</span><span class="n">add_operator_edge</span><span class="p">(</span><span class="n">from_operator</span><span class="o">=</span><span class="n">op</span><span class="p">,</span> <span class="n">to_operator</span><span class="o">=</span><span class="n">DummyUtil</span><span class="o">.</span><span class="n">dummy_streaming_operator</span><span class="p">())</span>
-    <span class="n">container</span><span class="o">.</span><span class="n">add_operator_edge</span><span class="p">(</span>
-        <span class="n">from_operator</span><span class="o">=</span><span class="n">op</span><span class="p">,</span>
-        <span class="n">to_operator</span><span class="o">=</span><span class="n">DummyUtil</span><span class="o">.</span><span class="n">dummy_streaming_operator</span><span class="p">(</span><span class="n">operator_name</span><span class="o">=</span><span class="s1">&#39;dummy_streaming_operator&#39;</span><span class="p">)</span>
-    <span class="p">)</span>
 
     <span class="n">container</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
     <span class="n">container</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
