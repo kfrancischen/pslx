@@ -13,7 +13,7 @@ __init__(logger=None)
 ```
 * Description: Construct a storage.
 * Arguments:
-    1. logger: the logging tool (see [tool](tool.md)) for this storage. Default value is None.
+    1. logger: the logger. Default value is None.
 
 ```python
 set_config(config)
@@ -85,7 +85,7 @@ __init__(logger=None, fixed_size=-1)
 ```
 * Description: Overrides the default constructor.
 * Arguments:
-    1. logger: the logging tool (see [tool](tool.md)) for this storage. Default value is None.
+    1. logger: the logger. Default value is None.
     2. fixed_size: the maximum data size that this storage will hold in memory, negative meaning the maximum size is infinity.
 
 ```python

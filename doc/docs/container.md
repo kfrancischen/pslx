@@ -200,12 +200,11 @@ __init__(container_name, logger)
     2. logger: the logger that record events.
 
 ```python
-bind_backend(server_url, root_certificate=None)
+bind_backend(server_url)
 ```
 * Description: Binds to the container backend, described in the [frontend](micro_services/frontend.md) section.
 * Arguments:
     1. server_url: the url to the rpc server.
-    2. root_certificate: the root certificate of the host of rpc server, default to None.
 
 ```python
 initialize(force=False)

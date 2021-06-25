@@ -5,8 +5,8 @@
 
 The site for detailed documentation: https://kfrancischen.github.io/pslx/.
 
-A standard library for job scheduling, micro services including message queue, RPC, instant messaging and monitoring, and tooling, developed by [Kaifeng Chen](<kfrancischen@gmail.com>). The library is written
-compatible to Python 3.7+, and is integrated upon the distributed file system [galaxy](https://github.com/kfrancischen/galaxy). To use the program, please install the latest [protobuf compiler](https://github.com/protocolbuffers/protobuf)
+A standard library for job scheduling, micro services including message queue, RPC, instant messaging and monitoring, and tooling, developed by [Kaifeng Chen](https://www.linkedin.com/in/kaifeng-chen-b37a2b69/). The library is written
+compatible to Python 3.7+, and is integrated upon the distributed file system [Galaxy](https://github.com/kfrancischen/galaxy). To use the program, please install the latest [protobuf compiler](https://github.com/protocolbuffers/protobuf)
 and [gRPC](https://grpc.io/) tools. This document covers the APIs of PSLX provided, and is organized as follows:
 
 #### Job Scheduling
