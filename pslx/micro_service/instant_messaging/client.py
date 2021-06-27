@@ -15,7 +15,7 @@ class InstantMessagingRPCClient(ClientBase):
         self._channel_name = channel_name
         self._logger = glogging.get_logger(
             log_name=channel_name,
-            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/im_client'
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_INTERNAL/im_client'
         )
 
     def get_channel_name(self):

@@ -19,7 +19,7 @@ class GenericQueueConsumer(Base):
         self._consumer_name = consumer_name
         self._logger = glogging.get_logger(
             log_name=consumer_name,
-            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/msg_queue_consumer'
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_INTERNAL/msg_queue_consumer'
         )
 
         self._connection_str = ''
@@ -118,7 +118,7 @@ class GenericConsumer(Base):
         super().__init__()
         self._logger = glogging.get_logger(
             log_name=self.get_class_name(),
-            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/msg_queue_consumer'
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_INTERNAL/msg_queue_consumer'
         )
         self._connection_str = connection_str
         self._queue_consumers = []

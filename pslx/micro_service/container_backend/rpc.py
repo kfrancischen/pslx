@@ -17,7 +17,7 @@ class ContainerBackendRPC(RPCBase):
         super().__init__(service_name=self.get_class_name(), rpc_storage=rpc_storage)
         self._logger = glogging.get_logger(
             log_name='PSLX_CONTAINER_BACKEND_RPC',
-            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/container_backend_rpc'
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_INTERNAL/container_backend_rpc'
         )
         self._lru_cache_tool = LRUCacheTool(
             max_capacity=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_CACHE')

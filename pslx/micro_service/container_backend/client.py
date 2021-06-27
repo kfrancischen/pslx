@@ -10,7 +10,7 @@ class ContainerBackendRPCClient(ClientBase):
         super().__init__(client_name=client_name, server_url=server_url)
         self._logger = glogging.get_logger(
             log_name=self.get_client_name(),
-            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/container_backend_client'
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_INTERNAL/container_backend_client'
         )
 
     def send_to_backend(self, snapshot):

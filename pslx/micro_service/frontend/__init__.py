@@ -12,7 +12,7 @@ pslx_frontend_ui_app.config.update(
 )
 pslx_frontend_logger = glogging.get_logger(
     log_name=CLIENT_NAME,
-    log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_FRONTEND/'
+    log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_INTERNAL/frontend/'
 )
 
 frontend_config_file = EnvUtil.get_pslx_env_variable('PSLX_FRONTEND_CONFIG_PROTO_PATH')

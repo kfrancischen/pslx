@@ -20,7 +20,7 @@ class InstantMessagingRPC(RPCBase):
         }
         self._logger = glogging.get_logger(
             log_name='PSLX_INSTANT_MESSAGING_RPC',
-            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/im_rpc'
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_INTERNAL/im_rpc'
         )
 
     def get_response_and_status_impl(self, request):

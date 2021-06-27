@@ -15,7 +15,7 @@ class EmailRPC(RPCBase):
 
         self._logger = glogging.get_logger(
             log_name="PSLX_EMAIL_RPC",
-            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/email_rpc'
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_INTERNAL/email_rpc'
         )
         self._credentials = {}
         self._email_servers = {}

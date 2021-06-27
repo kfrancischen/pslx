@@ -15,7 +15,7 @@ class GenericServer(Base):
         self._server_name = server_name
         self._logger = glogging.get_logger(
             log_name=self.get_server_name(),
-            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'INTERNAL/generic_server'
+            log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_INTERNAL/generic_server'
         )
         self._url = None
         self._rpc_server = None
