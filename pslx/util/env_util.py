@@ -5,7 +5,6 @@ from pslx.core.exception import EnvNotExistException
 class EnvUtil(object):
 
     PSLX_ENV_TO_DEFAULT_MAP = {
-        'PSLX_INTERNAL_TTL': 7,
         'PSLX_INTERNAL_CACHE': 100,
         'PSLX_TEST': False,
         'PSLX_ENABLE_SYS_LOG': False,
