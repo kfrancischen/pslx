@@ -1267,13 +1267,12 @@ are dummy function calls.</p>
 <h3 id="documentation-of-environment-utilities">Documentation of Environment Utilities<a class="headerlink" href="#documentation-of-environment-utilities" title="Permanent link">&para;</a></h3>
 <p>The environment variables inside PSLX are defined in a dictionary:</p>
 <div class="codehilite"><pre><span></span><code><span class="n">PSLX_ENV_TO_DEFAULT_MAP</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;PSLX_INTERNAL_TTL&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
     <span class="s1">&#39;PSLX_INTERNAL_CACHE&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
     <span class="s1">&#39;PSLX_TEST&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="s1">&#39;PSLX_ENABLE_SYS_LOG&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s1">&#39;PSLX_SNAPSHOT_DIR&#39;</span><span class="p">:</span> <span class="s2">&quot;/galaxy/bb-d/ttl=7d/snapshots/&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_SNAPSHOT_DIR&#39;</span><span class="p">:</span> <span class="s2">&quot;/galaxy/bb-d/PSLX_INTERNAL/ttl=7d/snapshots/&quot;</span><span class="p">,</span>
     <span class="s1">&#39;PSLX_DEFAULT_LOG_DIR&#39;</span><span class="p">:</span> <span class="s1">&#39;/galaxy/bb-d/ttl=7d/logs/&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;PSLX_INTERNAL_METADATA_DIR&#39;</span><span class="p">:</span> <span class="s1">&#39;/galaxy/bb-d/ttl=-1/metadata/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PSLX_INTERNAL_METADATA_DIR&#39;</span><span class="p">:</span> <span class="s1">&#39;/galaxy/bb-d/PSLX_INTERNAL/ttl=-1/metadata/&#39;</span><span class="p">,</span>
     <span class="s1">&#39;PSLX_GRPC_MAX_MESSAGE_LENGTH&#39;</span><span class="p">:</span> <span class="mi">512</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>  <span class="c1"># 512MB,</span>
     <span class="s1">&#39;PSLX_GRPC_TIMEOUT&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># 1 second</span>
     <span class="s1">&#39;PSLX_QUEUE_TIMEOUT&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>  <span class="c1"># 10 seconds</span>
