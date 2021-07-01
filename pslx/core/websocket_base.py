@@ -6,7 +6,7 @@ from pslx.util.dummy_util import DummyUtil
 
 
 class WebsocketBase(Base):
-    def __init__(self, ws_url, params, logger=DummyUtil.dummy_logging()):
+    def __init__(self, ws_url, params, logger=DummyUtil.dummy_logger()):
         super().__init__()
         self._ws_url = ws_url
         self._params = params
