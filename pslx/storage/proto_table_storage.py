@@ -45,25 +45,30 @@ class ProtoTableStorage(StorageBase):
     def get_num_entries(self):
         return len(self._table_message.data)
 
-    def read(self, params=None):
+    def read(self, params):
         assert 'key' in params
-        if params['key'] in self._table_message.data:
-            try:
-                if 'message_type' in params:
-                    result = ProtoUtil.any_to_message(
-                        message_type=params['message_type'],
-                        any_message=self._table_message.data[params['key']]
-                    )
-                else:
-                    result = self._table_message.data[params['key']]
+        try:
+            result = self.read_multiple(params={'keys': [params['key']]})
+            value = list(result.values())[0]
+            if 'message_type' in params:
+                value = ProtoUtil.any_to_message(
+                    message_type=params['message_type'],
+                    any_message=value
+                )
 
-                return result
-            except Exception as err:
-                self._SYS_LOGGER.error("Read file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
-                self._logger.error("Read file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
-                raise StorageReadException("Read file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
-        else:
+            return value
+        except Exception as err:
+            self._SYS_LOGGER.error("Read file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
+            self._logger.error("Read file [" + self.get_file_name() + "] got exception: " + str(err) + '.')
             return None
+
+    def read_multiple(self, params):
+        assert 'keys' in params
+        result = {}
+        for key in params['keys']:
+            if key in self._table_message.data:
+                result[key] = self._table_message.data[key]
+        return result
 
     def read_all(self):
         try:
@@ -74,20 +79,29 @@ class ProtoTableStorage(StorageBase):
             raise StorageReadException
 
     def delete(self, key):
+        try:
+            self.read_multiple(keys=[key])
+        except Exception as err:
+            self._SYS_LOGGER.error("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
+            self._logger.error("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
+            raise StorageDeleteException("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
 
-        if key in self._table_message.data:
-            del self._table_message.data[key]
-            try:
-                self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
-                FileUtil.write_proto_to_file(
-                    proto=self._table_message,
-                    file_name=self._file_name
-                )
+    def delete_multiple(self, keys):
+        for key in keys:
+            if key in self._table_message.data:
+                del self._table_message.data[key]
 
-            except Exception as err:
-                self._SYS_LOGGER.error("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
-                self._logger.error("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
-                raise StorageDeleteException("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
+        try:
+            self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
+            FileUtil.write_proto_to_file(
+                proto=self._table_message,
+                file_name=self._file_name
+            )
+        except Exception as err:
+            self._SYS_LOGGER.error("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
+            self._logger.error("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
+            raise StorageDeleteException("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
+
 
     def delete_all(self):
 

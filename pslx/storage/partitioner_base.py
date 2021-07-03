@@ -1,11 +1,11 @@
 import datetime
-
+from galaxy_py import gclient_ext
 from pslx.core.exception import StorageReadException, StorageWriteException
 from pslx.core.node_base import OrderedNodeBase
 from pslx.core.tree_base import TreeBase
 from pslx.schema.enums_pb2 import StorageType, PartitionerStorageType, SortOrder
+from pslx.schema.storage_pb2 import ProtoTable
 from pslx.storage.default_storage import DefaultStorage
-from pslx.storage.proto_table_storage import ProtoTableStorage
 from pslx.storage.storage_base import StorageBase
 from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
@@ -96,7 +96,7 @@ class PartitionerBase(StorageBase):
         FileUtil.create_dir_if_not_exist(dir_name=dir_name)
         if not self._file_tree or self.is_updated() or force:
             root_node = OrderedNodeBase(
-                node_name=FileUtil.normalize_dir_name(dir_name=dir_name)
+                node_name=dir_name
             )
             self._file_tree = TreeBase(root=root_node, max_dict_size=self._max_capacity)
             from_scratch = True
@@ -332,6 +332,7 @@ class PartitionerBase(StorageBase):
         end_time = min(_reformat_time(params['end_time']), latest_timestamp)
         result = {}
         try:
+            all_file_names = []
             while start_time <= end_time:
                 dir_list = FileUtil.parse_timestamp_to_dir(timestamp=start_time).split('/')
                 dir_name = '/'.join(dir_list[:self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]])
@@ -340,19 +341,8 @@ class PartitionerBase(StorageBase):
                     base_name=dir_name
                 )
                 if FileUtil.does_dir_exist(dir_name=dir_name):
-                    if self._underlying_storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE:
-                        storage = ProtoTableStorage()
-                    else:
-                        storage = DefaultStorage()
                     file_names = FileUtil.list_files_in_dir(dir_name=dir_name)
-                    for file_name in file_names:
-                        storage.initialize_from_file(file_name=file_name)
-                        if storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE:
-                            result[file_name] = storage.read_all()
-                        else:
-                            result[file_name] = storage.read(params={
-                                'num_line': -1
-                            })
+                    all_file_names.extend(file_names)
 
                 if self.PARTITIONER_TYPE == PartitionerStorageType.YEARLY:
                     start_time = start_time.replace(year=start_time.year + 1, month=1, day=1)
@@ -367,6 +357,15 @@ class PartitionerBase(StorageBase):
                     start_time += datetime.timedelta(hours=1)
                 else:
                     start_time += datetime.timedelta(minutes=1)
+            result = {}
+            if self._underlying_storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE:
+                tmp_result = gclient_ext.read_proto_messages(paths=all_file_names, message_type=ProtoTable)
+                for file_name, v in tmp_result.items():
+                    result[file_name] = dict(v.data)
+            else:
+                tmp_result = gclient_ext.read_txts(all_file_names)
+                for file_name, v in tmp_result.items():
+                    result[file_name] = v.rstrip().split('\n')
 
             return result
         except Exception as err:
@@ -406,7 +405,6 @@ class PartitionerBase(StorageBase):
             file_base_name = 'data'
         if params and 'base_name' in params:
             file_base_name = params['base_name']
-            params.pop('base_name', None)
 
         if to_make_partition:
             if not params or 'timezone' not in params or params['timezone'] == 'PST':

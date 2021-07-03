@@ -72,15 +72,15 @@ class ShardedProtoTableStorageTest(unittest.TestCase):
         shared_proto_table_storage.initialize_from_dir(dir_name=self.TEST_DATA_DIR_1)
         data = shared_proto_table_storage.read(
             params={
-                'keys': ['test_0']
+                'key': 'test_0'
             }
         )
-        self.assertTrue('test_0' in data)
+        self.assertTrue(data is not None)
 
     def test_read_2(self):
         shared_proto_table_storage = ShardedProtoTableStorage()
         shared_proto_table_storage.initialize_from_dir(dir_name=self.TEST_DATA_DIR_1)
-        data = shared_proto_table_storage.read(
+        data = shared_proto_table_storage.read_multiple(
             params={
                 'keys': ['test_0', 'test_100']
             }
@@ -92,15 +92,15 @@ class ShardedProtoTableStorageTest(unittest.TestCase):
         shared_proto_table_storage.initialize_from_dir(dir_name=self.TEST_DATA_DIR_1)
         data = shared_proto_table_storage.read(
             params={
-                'keys': ['test_100']
+                'key': 'test_100'
             }
         )
-        self.assertDictEqual(data, {})
+        self.assertIsNone(data)
 
     def test_read_4(self):
         shared_proto_table_storage = ShardedProtoTableStorage()
         shared_proto_table_storage.initialize_from_dir(dir_name=self.TEST_DATA_DIR_1)
-        data = shared_proto_table_storage.read(
+        data = shared_proto_table_storage.read_multiple(
             params={
                 'keys': ['test_0', 'test_1']
             }
@@ -117,7 +117,7 @@ class ShardedProtoTableStorageTest(unittest.TestCase):
                 'test_9': self.EXAMPLE_PROTO,
             }
         )
-        data = shared_proto_table_storage.read(
+        data = shared_proto_table_storage.read_multiple(
             params={
                 'keys': ['test_9']
             }

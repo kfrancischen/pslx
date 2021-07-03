@@ -125,6 +125,16 @@ read(params)
     3. Under PSLX convention, the underlying file name needs to end with `.pb`.
 
 ```python
+read_multiple(params)
+```
+* Description: Read multiple key from the storage.
+* Arguments:
+    1. params: the read parameters.
+* Explanation:
+    1. proto table is a key-value storage, and therefore the params need to contain field of `keys`, which is a list.
+
+
+```python
 read_all()
 ```
 * Description: Read all the data.
@@ -150,6 +160,14 @@ delete(key)
     1. key: the key of the entry to be deleted.
 
 ```python
+delete_multiple(keys)
+```
+* Description: Delete keys and the corresponding entry from the proto table.
+* Arguments:
+    1. keys: the list of keys of the entries to be deleted.
+
+
+```python
 delete_all()
 ```
 * Description: Delete all the contents from the proto table.
@@ -170,6 +188,16 @@ __init__(size_per_shard=None, logger=None)
 
 ```python
 read(params)
+```
+* Description: Read from the storage.
+* Arguments:
+    1. params: the read parameters.
+* Explanation:
+    1. proto table is a key-value storage, and therefore the params need to contain field of `key`.
+* Return: the value to the key, None if key does not exist.
+
+```python
+read_multiple(params)
 ```
 * Description: Read from the storage.
 * Arguments:

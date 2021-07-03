@@ -53,7 +53,7 @@ def get_container_info(container_name):
     pslx_frontend_logger.info("Container backend checking folder [" + backend_folder + '].')
     storage = ShardedProtoTableStorage()
     storage.initialize_from_dir(backend_folder)
-    data = storage.read(params={'keys': [container_name]})[container_name]
+    data = storage.read(params={'key': container_name})
     result_proto = ProtoUtil.any_to_message(
         message_type=ContainerBackendValue,
         any_message=data

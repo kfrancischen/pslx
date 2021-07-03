@@ -68,14 +68,12 @@ class ShardedProtoTableStorage(StorageBase):
         base_name = FileUtil.base_name(file)
         return int(base_name.replace('.pb', '').split('@')[1])
 
-    def read(self, params=None):
+    def read_multiple(self, params):
         assert 'keys' in params
-        all_keys = params['keys']
-        assert isinstance(all_keys, list)
 
         related_shards = set()
         shard_to_key_map = defaultdict(list)
-        for key in all_keys:
+        for key in params['keys']:
             if key in self._index_map.index_map:
                 related_shards.add(self._index_map.index_map[key])
                 shard_to_key_map[self._index_map.index_map[key]].append(key)
@@ -94,6 +92,23 @@ class ShardedProtoTableStorage(StorageBase):
             self._SYS_LOGGER.error("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
             self._logger.error("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
             raise StorageReadException("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
+
+    def read(self, params):
+        assert 'key' in params
+        try:
+            result = self.read_multiple(params={'keys': [params['key']]})
+            value = list(result.values())[0]
+            if 'message_type' in params:
+                value = ProtoUtil.any_to_message(
+                    any_message=value,
+                    message_type=params['message_type']
+                )
+
+            return value
+        except Exception as err:
+            self._SYS_LOGGER.error("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
+            self._logger.error("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
+            return None
 
     def read_all(self):
         num_shards = self.get_num_shards()
