@@ -78,38 +78,6 @@ start_from_first_line()
 ```
 * Description: Reset the reader to read from the first line (from top or bottom).
 
-### Fixed Size Storage Documentation
-
-```python
-__init__(logger=None, fixed_size=-1)
-```
-* Description: Overrides the default constructor.
-* Arguments:
-    1. logger: the logger. Default value is None.
-    2. fixed_size: the maximum data size that this storage will hold in memory, negative meaning the maximum size is infinity.
-
-```python
-read(params)
-```
-* Description: Read from the storage.
-* Arguments:
-    1. params: the read parameters.
-* Explanation:
-    1. Like the default storage, the underlying file needs to be a text file. The difference between fixed size storage and default storage
-    is that fixed size storage will hold data in memory (while default storage will by default read the underlying file). The params supported here are `num_line`
-    and `force_load`. `num_line` indicates the number of lines to read. If `force_load` if False and the `num_lines` exceeds the internal maximum
-    size, error will be raised. If `force_load` is true, the storage will search for the file.
-    2. Due to the nature of the fixed size storage, it could be used a buffer storage between disk and application.
-
-```python
-write(data, params)
-```
-* Description: Write to the storage.
-* Arguments:
-    1. data: the write parameters.
-* Explanation:
-    1. Same as the writer implementation of default storage.
-
 ### Proto Table Storage
 
 ```python

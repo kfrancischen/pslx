@@ -13,7 +13,7 @@ and [gRPC](https://grpc.io/) tools. This document covers the APIs of PSLX provid
 * Running ad-hoc and scheduled jobs with [operators and operator containers](doc/docs/container.md).
 
 #### Data Storage
-* Data storage using [plain text file, in-memory fixed size file, proto table, and timestamp-based partitioner](doc/docs/storage.md).
+* Data storage using [plain text file, proto table, sharded proto table and timestamp-based partitioner](doc/docs/storage.md).
 
 #### RPC
 * [General framework of RPC](doc/docs/rpc.md) used in PSLX.
