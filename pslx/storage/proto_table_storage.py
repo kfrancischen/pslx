@@ -102,7 +102,6 @@ class ProtoTableStorage(StorageBase):
             self._logger.error("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
             raise StorageDeleteException("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
 
-
     def delete_all(self):
 
         all_keys = list(dict(self._table_message.data).keys())
