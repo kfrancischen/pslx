@@ -72,13 +72,12 @@ def index():
             'status': ProtoUtil.get_name_by_value(enum_type=Status, value=status),
             'qps': round(qps, 3),
         })
-
-    for server_config in pslx_frontend_ui_app.config['frontend_config'].instant_messaging_config:
-        server, port = server_config.server_url.split(':')
+    if config.instant_messaging_config.server_url:
+        server, port = config.instant_messaging_config.server_url.split(':')
         status, qps = RPCUtil.check_health_and_qps(
-            server_url=server_config.server_url
+            server_url=config.instant_messaging_config.server_url
         )
-        pslx_frontend_logger.info("Index checking health for url [" + server_config.server_url + '].')
+        pslx_frontend_logger.info("Index checking health for url [" + config.instant_messaging_config.server_url + '].')
         service_info.append({
             'name': 'instant_messaging',
             'server': server,
@@ -87,12 +86,12 @@ def index():
             'qps': round(qps, 3),
         })
 
-    for server_config in pslx_frontend_ui_app.config['frontend_config'].email_config:
-        server, port = server_config.server_url.split(':')
+    if config.email_config.server_url:
+        server, port = config.email_config.server_url.split(':')
         status, qps = RPCUtil.check_health_and_qps(
-            server_url=server_config.server_url
+            server_url=config.email_config.server_url
         )
-        pslx_frontend_logger.info("Index checking health for url [" + server_config.server_url + '].')
+        pslx_frontend_logger.info("Index checking health for url [" + config.email_config.server_url + '].')
         service_info.append({
             'name': 'email',
             'server': server,

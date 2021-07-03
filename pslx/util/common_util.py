@@ -39,21 +39,14 @@ class CommonUtil(object):
             dict_config = YamlUtil.yaml_to_dict(file_name=yaml_path)
             config = FrontendConfig()
 
-            container_backend_config = FrontendConfig.ServerConfig()
-            container_backend_config.server_url = dict_config['CONTAINER_BACKEND_CONFIG']['SERVER_URL']
-            config.container_backend_config.CopyFrom(container_backend_config)
+            config.container_backend_config.server_url = dict_config['CONTAINER_BACKEND_CONFIG']['SERVER_URL']
             config.galaxy_viewer_url = dict_config['GALAXY_VIEWER_URL']
 
-
             if 'INSTANT_MESSAGING_CONFIG' in dict_config:
-                for val in dict_config['INSTANT_MESSAGING_CONFIG'].values():
-                    server_config = config.instant_messaging_config.add()
-                    server_config.server_url = val['SERVER_URL']
+                config.instant_messaging_config.server_url = dict_config['INSTANT_MESSAGING_CONFIG']['SERVER_URL']
 
             if 'EMAIL_CONFIG' in dict_config:
-                for val in dict_config['EMAIL_CONFIG'].values():
-                    server_config = config.email_config.add()
-                    server_config.server_url = val['SERVER_URL']
+                config.instant_messaging_config.server_url = dict_config['EMAIL_CONFIG']['SERVER_URL']
 
             credential = Credentials()
             credential.user_name = dict_config['USER_NAME']

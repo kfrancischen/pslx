@@ -54,7 +54,7 @@ class ContainerBackendRPC(RPCBase):
         storage = self._lru_cache_tool.get(key=self._backend_folder)
         if not storage:
             self._SYS_LOGGER.info("Did not find the storage in cache. Making a new one...")
-            storage = ShardedProtoTableStorage(size_per_shard=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE'))
+            storage = ShardedProtoTableStorage(size_per_shard=int(EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE')))
             storage.initialize_from_dir(dir_name=self._backend_folder)
             self._lru_cache_tool.set(
                 key=self._backend_folder,

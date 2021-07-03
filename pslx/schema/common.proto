@@ -23,10 +23,9 @@ message FrontendConfig {
     }
 
     ServerConfig container_backend_config = 2;
-    ServerConfig proto_viewer_config = 3;
-    repeated ServerConfig instant_messaging_config = 4;
-    repeated ServerConfig email_config = 5;
+    ServerConfig instant_messaging_config = 3;
+    ServerConfig email_config = 4;
 
-    Credentials credential = 6;
-    string galaxy_viewer_url = 7;
+    Credentials credential = 5;
+    string galaxy_viewer_url = 6;
 }
