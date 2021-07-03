@@ -20,7 +20,7 @@ class ContainerBackendRPC(RPCBase):
             log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_INTERNAL/container_backend_rpc'
         )
         self._lru_cache_tool = LRUCacheTool(
-            max_capacity=EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_CACHE')
+            max_capacity=int(EnvUtil.get_pslx_env_variable(var='PSLX_INTERNAL_CACHE'))
         )
         self._backend_folder = FileUtil.join_paths_to_dir(
             root_dir=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_METADATA_DIR'),
