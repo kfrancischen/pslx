@@ -4,7 +4,6 @@ import signal
 import sys
 import time
 from pslx.core.exception import TimeoutException
-from pslx.util.color_util import ColorsUtil
 
 
 class ThreadedTimeout(object):
@@ -171,7 +170,6 @@ class DecoratorUtil(object):
     @classmethod
     def experimental(cls, func):
         def decorator(*args, **kwargs):
-            print(ColorsUtil.make_text_bold(
-                ColorsUtil.make_foreground_red("THIS IS EXPERIMENTAL CODE. PLEASE USE WITH CAUTION!!!")))
+            print("THIS IS EXPERIMENTAL CODE. PLEASE USE WITH CAUTION!!!")
             func(*args, **kwargs)
         return decorator
