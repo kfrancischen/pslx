@@ -1,3 +1,4 @@
+import datetime
 from flask import render_template, request
 from flask_login import login_required
 from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logger
@@ -7,6 +8,7 @@ from pslx.storage.sharded_proto_table_storage import ShardedProtoTableStorage
 from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
+from pslx.util.timezone_util import TimezoneUtil
 
 container_backend_config = pslx_frontend_ui_app.config['frontend_config'].container_backend_config
 backend_folder = FileUtil.join_paths_to_dir(
@@ -23,21 +25,31 @@ def get_containers_info():
     storage = ShardedProtoTableStorage()
     storage.initialize_from_dir(backend_folder)
     data = storage.read_all()
+    keys_to_remove = []
     for key, val in data.items():
         result_proto = ProtoUtil.any_to_message(
             message_type=ContainerBackendValue,
             any_message=val
         )
-        container_info = {
-            'container_name': key,
-            'status': ProtoUtil.get_name_by_value(
-                    enum_type=Status, value=result_proto.container_status),
-            'updated_time': result_proto.updated_time,
-            'mode': ProtoUtil.get_name_by_value(enum_type=ModeType, value=result_proto.mode),
-            'data_model': ProtoUtil.get_name_by_value(
-                enum_type=DataModelType, value=result_proto.data_model),
-        }
-        containers_info.append(container_info)
+        ttl = result_proto.ttl
+        if ttl > 0 and TimezoneUtil.cur_time_in_pst() - TimezoneUtil.cur_time_from_str(
+            result_proto.end_time) >= datetime.timedelta(days=ttl):
+            keys_to_remove.append(key)
+        else:
+            container_info = {
+                'container_name': key,
+                'status': ProtoUtil.get_name_by_value(
+                        enum_type=Status, value=result_proto.container_status),
+                'updated_time': result_proto.updated_time,
+                'mode': ProtoUtil.get_name_by_value(enum_type=ModeType, value=result_proto.mode),
+                'data_model': ProtoUtil.get_name_by_value(
+                    enum_type=DataModelType, value=result_proto.data_model),
+            }
+            containers_info.append(container_info)
+
+    if keys_to_remove:
+        storage.read_multiple(params={'keys': keys_to_remove})
+        pslx_frontend_logger.info('Removing containers [', ', '.join(keys_to_remove) + '].')
 
     return containers_info
 

@@ -50,6 +50,7 @@ class ContainerBackendRPC(RPCBase):
         storage_value.log_file = request.log_file
         for key in request.counters:
             storage_value.counters[key] = request.counters[key]
+        storage_value.ttl = int(EnvUtil.get_pslx_env_variable('PSLX_BACKEND_CONTAINER_TTL'))
 
         storage = self._lru_cache_tool.get(key=self._backend_folder)
         if not storage:

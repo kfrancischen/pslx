@@ -17,6 +17,7 @@ class EnvUtil(object):
         'PSLX_FRONTEND_CONFIG_PROTO_PATH': '',
         "PSLX_RPC_FLUSH_RATE": 1,
         'PSLX_RPC_PASSWORD': 'admin',
+        'PSLX_BACKEND_CONTAINER_TTL': 7,
     }
 
     @classmethod
