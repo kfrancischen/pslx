@@ -200,7 +200,7 @@ class OperatorBase(OrderedNodeBase):
             self._SYS_LOGGER.info("Operator [" + self.get_node_name() +
                                   "] already failed because of upstream jobs. Existing...")
             self._logger.error("Operator [" + self.get_node_name() +
-                               "] already failed because of upstream jobs. Existing...", publish=True)
+                               "] already failed because of upstream jobs. Existing...")
             return
 
         self.set_status(status=Status.RUNNING)
@@ -226,8 +226,7 @@ class OperatorBase(OrderedNodeBase):
             return Signal.STOP
         except Exception as err:
             self._SYS_LOGGER.error("operator [" + self.get_node_name() + "] failed with error " + str(err) + '.')
-            self._logger.error("operator [" + self.get_node_name() + "] failed with error " + str(err) + '.',
-                               publish=True)
+            self._logger.error("operator [" + self.get_node_name() + "] failed with error " + str(err) + '.')
             raise OperatorFailureException("operator [" + self.get_node_name() + "] failed with error " +
                                            str(err) + '.')
 

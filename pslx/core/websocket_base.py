@@ -44,7 +44,7 @@ class WebsocketBase(Base):
             raise ConnectionError
 
     async def _connect(self):
-        self._ws_connection = await websockets.client.connect(self._ws_url)
+        self._ws_connection = await websockets.connect(self._ws_url)
         self._logger.info("Connected to websocket..")
         assert await self._check_connection()
 

@@ -16,7 +16,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pslx",
-    version="2.1",
+    version="2.2",
     scripts=['compile_protos.sh'],
     cmdclass={
         'install': CustomInstallCommand,

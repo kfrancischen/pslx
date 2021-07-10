@@ -32,8 +32,9 @@ def get_containers_info():
             any_message=val
         )
         ttl = result_proto.ttl
-        if ttl > 0 and TimezoneUtil.cur_time_in_pst() - TimezoneUtil.cur_time_from_str(
-            result_proto.end_time) >= datetime.timedelta(days=ttl):
+
+        if ttl > 0  and result_proto.updated_time and TimezoneUtil.cur_time_in_pst() - TimezoneUtil.cur_time_from_str(
+            result_proto.updated_time) >= datetime.timedelta(days=ttl):
             keys_to_remove.append(key)
         else:
             container_info = {
