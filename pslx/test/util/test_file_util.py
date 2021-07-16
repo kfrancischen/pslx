@@ -7,6 +7,7 @@ from pslx.util.file_util import FileUtil
 class FileUtilTest(unittest.TestCase):
 
     TEST_DATA_PATH = '/galaxy/bb-d/pslx/test_data/test.json'
+    TEST_DATA_PATH_1 = '/galaxy/bb-d/pslx/test_data/test.txt'
 
     def test_base_name(self):
         file_name = 'foo/bar/file.txt'
@@ -74,3 +75,8 @@ class FileUtilTest(unittest.TestCase):
         }
         FileUtil.write_json_to_file(json_obj=data, file_name=self.TEST_DATA_PATH)
         self.assertDictEqual(data, FileUtil.read_json_from_file(file_name=self.TEST_DATA_PATH))
+
+    def test_lined_txt_to_file(self):
+        data = ['123', '234']
+        FileUtil.write_lined_txt_to_file(data=data, file_name=self.TEST_DATA_PATH_1)
+        self.assertEqual(data, FileUtil.read_lined_txt_from_file(file_name=self.TEST_DATA_PATH_1))

@@ -160,6 +160,15 @@ class FileUtil(object):
             return {}
 
     @classmethod
+    def read_lined_txt_from_file(cls, file_name):
+        data = gclient_ext.read_txt(file_name)
+        return [item.strip() for item in data.rstrip().split('\n')]
+
+    @classmethod
+    def write_lined_txt_to_file(cls, data, file_name):
+        gclient.write(path=file_name, data='\n'.join(data))
+
+    @classmethod
     def parse_timestamp_to_dir(cls, timestamp):
         timestamp_list = [str(timestamp.year), '%02d' % timestamp.month, '%02d' % timestamp.day,
                           '%02d' % timestamp.hour, '%02d' % timestamp.minute]

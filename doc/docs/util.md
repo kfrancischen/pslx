@@ -214,10 +214,24 @@ write_json_to_file(json_obj, file_name)
 ```python
 read_json_from_file(file_name)
 ```
-* Description: read a json dictionary with given type from a file.
+* Description: read a json dictionary from a file.
 * Arguments:
     1. file_name: the name of the file containing the json dictionary.
 
+```python
+write_lined_txt_to_file(data, file_name)
+```
+* Description: write a list as lines to a file.
+* Arguments:
+    1. data: the list to be written.
+    2. file_name: the output file name.
+
+```python
+read_lined_txt_from_file(file_name)
+```
+* Description: read a list of lines from a file.
+* Arguments:
+    1. file_name: the name of the file containing the list.
 
 ### Documentation of Protobuf Utilities
 THe following functions are related to protobuf.
