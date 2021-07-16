@@ -64,8 +64,7 @@ class DefaultStorage(StorageBase):
                 self._logger.warning(param +
                                      " will be omitted since it is not useful as an input argument in this function.")
                 self._SYS_LOGGER.warning(param + " will be omitted since it is not useful as an input argument in this function.")
-        data = gclient_ext.read_txt(self._file_name)
-        lines = data.rstrip().split('\n')
+        lines = FileUtil.read_lined_txt_from_file(self._file_name)
 
         if 'read_rule_type' in self._config and self._config['read_rule_type'] == ReadRuleType.READ_FROM_END:
             lines = lines[::-1]
