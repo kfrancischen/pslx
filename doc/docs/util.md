@@ -203,6 +203,22 @@ read_proto_from_file(proto_type, file_name)
     1. proto_type: the type of the proto message.
     2. file_name: the name of the file containing the message.
 
+```python
+write_json_to_file(json_obj, file_name)
+```
+* Description: write a json dictionary to a file.
+* Arguments:
+    1. json_obj: the json dictionary to be written.
+    2. file_name: the output file name.
+
+```python
+read_json_from_file(file_name)
+```
+* Description: read a json dictionary with given type from a file.
+* Arguments:
+    1. file_name: the name of the file containing the json dictionary.
+
+
 ### Documentation of Protobuf Utilities
 THe following functions are related to protobuf.
 

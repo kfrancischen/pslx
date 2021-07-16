@@ -147,6 +147,19 @@ class FileUtil(object):
         return proto
 
     @classmethod
+    def write_json_to_file(cls, json_obj, file_name):
+        data = json.dumps(json_obj, indent=2)
+        gclient.write(path=file_name, data=data)
+
+    @classmethod
+    def read_json_from_file(cls, file_name):
+        data = gclient_ext.read_txt(path=file_name)
+        if data:
+            return json.loads(data)
+        else:
+            return {}
+
+    @classmethod
     def parse_timestamp_to_dir(cls, timestamp):
         timestamp_list = [str(timestamp.year), '%02d' % timestamp.month, '%02d' % timestamp.day,
                           '%02d' % timestamp.hour, '%02d' % timestamp.minute]
