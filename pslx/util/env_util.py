@@ -40,3 +40,7 @@ class EnvUtil(object):
     @classmethod
     def get_pslx_env_and_default_value(cls):
         return cls.PSLX_ENV_TO_DEFAULT_MAP
+
+    @classmethod
+    def get_home_path(cls):
+        return os.path.expanduser('~')
