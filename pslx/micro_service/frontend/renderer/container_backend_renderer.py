@@ -50,7 +50,7 @@ def get_containers_info():
 
     if keys_to_remove:
         storage.read_multiple(params={'keys': keys_to_remove})
-        pslx_frontend_logger.info('Removing containers [', ', '.join(keys_to_remove) + '].')
+        pslx_frontend_logger.info('Removing containers [' + ', '.join(keys_to_remove) + '].')
 
     return containers_info
 
