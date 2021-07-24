@@ -33,7 +33,7 @@ def get_containers_info():
         )
         ttl = result_proto.ttl
 
-        if ttl > 0  and result_proto.updated_time and TimezoneUtil.cur_time_in_pst() - TimezoneUtil.cur_time_from_str(
+        if ttl > 0 and result_proto.updated_time and TimezoneUtil.cur_time_in_pst() - TimezoneUtil.cur_time_from_str(
             result_proto.updated_time) >= datetime.timedelta(days=ttl):
             keys_to_remove.append(key)
         else:
@@ -45,6 +45,7 @@ def get_containers_info():
                 'mode': ProtoUtil.get_name_by_value(enum_type=ModeType, value=result_proto.mode),
                 'data_model': ProtoUtil.get_name_by_value(
                     enum_type=DataModelType, value=result_proto.data_model),
+                'run_cell': result_proto.run_cell,
             }
             containers_info.append(container_info)
 

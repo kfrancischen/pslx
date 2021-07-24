@@ -48,6 +48,7 @@ class ContainerBackendRPC(RPCBase):
         storage_value.start_time = request.start_time
         storage_value.end_time = request.end_time
         storage_value.log_file = request.log_file
+        storage_value.run_cell = request.run_cell
         for key in request.counters:
             storage_value.counters[key] = request.counters[key]
         storage_value.ttl = int(EnvUtil.get_pslx_env_variable('PSLX_BACKEND_CONTAINER_TTL'))

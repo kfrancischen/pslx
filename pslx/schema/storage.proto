@@ -21,7 +21,7 @@ message ProtoTableIndexMap {
     uint64 size_per_shard  = 3;
 }
 
-// the next will be 12
+// the next will be 13
 message ContainerBackendValue {
     string container_name = 1;
 
@@ -44,4 +44,5 @@ message ContainerBackendValue {
     string log_file = 9;
     map<string, int32> counters = 10;
     int32 ttl = 11;
+    string run_cell = 12;
 }

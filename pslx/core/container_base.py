@@ -123,6 +123,7 @@ class ContainerBase(GraphBase):
         snapshot.mode = self._mode
         snapshot.data_model = self.DATA_MODEL
         snapshot.log_file = glogging.get_logger_file(self._logger)
+        snapshot.run_cell = EnvUtil.get_other_env_variable(var='GALAXY_fs_cell', fallback_value='')
         for key, val in self._counter.items():
             snapshot.counters[key] = val
         if self._start_time:

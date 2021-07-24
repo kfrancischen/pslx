@@ -61,6 +61,7 @@
                                   <th>Container</th>
                                   <th>Status</th>
                                   <th>Updated Time (PST)</th>
+                                  <th>Cell</th>
                                 </tr>
                               </thead>
                               {% for container_info in containers_info %}
@@ -81,6 +82,7 @@
                                         <td><font color="purple">{{ container_info['status'] }}</font></td>
                                     {% endif %}
                                       <td>{{ container_info['updated_time'] }}</td>
+                                      <td>{{ container_info['run_cell'] }}</td>
                                   </tr>
                                 </tbody>
                               {% endfor %}
