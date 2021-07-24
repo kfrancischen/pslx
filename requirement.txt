@@ -15,7 +15,6 @@ dnspython==2.1.0
 docopt==0.6.2
 Flask==2.0.1
 Flask-Login==0.5.0
-galaxy-py==0.3.1
 greenlet==1.1.0
 grpcio==1.38.1
 grpcio-tools==1.38.1
@@ -33,7 +32,6 @@ pandas==1.2.5
 pika==1.2.0
 pip-upgrader==1.4.15
 protobuf==3.17.3
-pslx==2.0
 pycares==4.0.0
 pycparser==2.20
 pymongo==3.11.4
