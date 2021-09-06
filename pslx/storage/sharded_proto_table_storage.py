@@ -11,7 +11,7 @@ from pslx.util.proto_util import ProtoUtil
 class ShardedProtoTableStorage(StorageBase):
     STORAGE_TYPE = StorageType.SHARDED_PROTO_TABLE_STORAGE
 
-    def __init__(self, size_per_shard=None, logger=None):
+    def __init__(self, size_per_shard=100, logger=None):
         super().__init__(logger=logger)
         self._dir_name = None
         self._size_per_shard = size_per_shard
