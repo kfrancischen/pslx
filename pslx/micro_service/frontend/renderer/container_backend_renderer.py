@@ -4,7 +4,7 @@ from flask_login import login_required
 from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logger
 from pslx.schema.enums_pb2 import Status, ModeType, DataModelType
 from pslx.schema.storage_pb2 import ContainerBackendValue
-from pslx.storage.sharded_proto_table_storage import ShardedProtoTableStorage
+from pslx.storage.proto_table_storage import ProtoTableStorage
 from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
@@ -22,11 +22,16 @@ if galaxy_viewer_url and galaxy_viewer_url[-1] == '/':
 
 def get_containers_info():
     containers_info = []
-    storage = ShardedProtoTableStorage()
-    storage.initialize_from_dir(backend_folder)
-    data = storage.read_all()
-    keys_to_remove = []
-    for key, val in data.items():
+    all_proto_files = FileUtil.list_files_in_dir(backend_folder)
+    for proto_file in all_proto_files:
+
+        storage = ProtoTableStorage()
+        storage.initialize_from_file(
+            file_name=proto_file
+        )
+        raw_data = storage.read_all()
+        key = list(raw_data.keys())[0]
+        val = raw_data[key]
         result_proto = ProtoUtil.any_to_message(
             message_type=ContainerBackendValue,
             any_message=val
@@ -35,7 +40,7 @@ def get_containers_info():
 
         if ttl > 0 and result_proto.updated_time and TimezoneUtil.cur_time_in_pst() - TimezoneUtil.cur_time_from_str(
             result_proto.updated_time) >= datetime.timedelta(days=ttl):
-            keys_to_remove.append(key)
+            FileUtil.remove_file(storage.get_file_name())
         else:
             container_info = {
                 'container_name': key,
@@ -49,10 +54,6 @@ def get_containers_info():
             }
             containers_info.append(container_info)
 
-    if keys_to_remove:
-        storage.read_multiple(params={'keys': keys_to_remove})
-        pslx_frontend_logger.info('Removing containers [' + ', '.join(keys_to_remove) + '].')
-
     return containers_info
 
 
@@ -65,13 +66,14 @@ def get_container_info(container_name):
     }
     operators_info = []
     pslx_frontend_logger.info("Container backend checking folder [" + backend_folder + '].')
-    storage = ShardedProtoTableStorage()
-    storage.initialize_from_dir(backend_folder)
-    data = storage.read(params={'key': container_name})
-    result_proto = ProtoUtil.any_to_message(
-        message_type=ContainerBackendValue,
-        any_message=data
+    storage = ProtoTableStorage()
+    storage.initialize_from_file(
+        FileUtil.join_paths_to_file(
+            root_dir=backend_folder,
+            base_name=container_name + '.pb'
+        )
     )
+    result_proto = storage.read(params={'key': container_name, 'message_type': ContainerBackendValue})
 
     container_info['log_file'] = galaxy_viewer_url + result_proto.log_file
     container_info['start_time'] = result_proto.start_time
