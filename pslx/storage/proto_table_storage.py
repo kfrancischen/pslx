@@ -80,7 +80,7 @@ class ProtoTableStorage(StorageBase):
 
     def delete(self, key):
         try:
-            self.read_multiple(keys=[key])
+            self.read_multiple(params={'keys': [key]})
         except Exception as err:
             self._SYS_LOGGER.error("Delete file [" + self.get_file_name() + "] got exception: " + str(err))
             self._logger.error("Delete file [" + self.get_file_name() + "] got exception: " + str(err))

@@ -3,7 +3,7 @@ from pslx.micro_service.rpc.rpc_base import RPCBase
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.snapshots_pb2 import ContainerSnapshot
 from pslx.schema.storage_pb2 import ContainerBackendValue
-from pslx.storage.sharded_proto_table_storage import ShardedProtoTableStorage
+from pslx.storage.proto_table_storage import ProtoTableStorage
 from pslx.tool.lru_cache_tool import LRUCacheTool
 from pslx.util.env_util import EnvUtil
 from pslx.util.file_util import FileUtil
@@ -53,11 +53,16 @@ class ContainerBackendRPC(RPCBase):
             storage_value.counters[key] = request.counters[key]
         storage_value.ttl = int(EnvUtil.get_pslx_env_variable('PSLX_BACKEND_CONTAINER_TTL'))
 
-        storage = self._lru_cache_tool.get(key=self._backend_folder)
+        storage = self._lru_cache_tool.get(key=storage_value.container_name)
         if not storage:
             self._SYS_LOGGER.info("Did not find the storage in cache. Making a new one...")
-            storage = ShardedProtoTableStorage(size_per_shard=int(EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_CACHE')))
-            storage.initialize_from_dir(dir_name=self._backend_folder)
+            storage = ProtoTableStorage()
+            storage.initialize_from_file(
+                file_name=FileUtil.join_paths_to_file(
+                    root_dir=self._backend_folder,
+                    base_name=storage_value.container_name + '.pb'
+                )
+            )
             self._lru_cache_tool.set(
                 key=self._backend_folder,
                 value=storage
