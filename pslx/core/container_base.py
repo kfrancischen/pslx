@@ -122,10 +122,7 @@ class ContainerBase(GraphBase):
         snapshot.class_name = self.get_full_class_name()
         snapshot.mode = self._mode
         snapshot.data_model = self.DATA_MODEL
-        snapshot.log_file = glogging.get_logger_file(self._logger)
-        if '/LOCAL' in snapshot.log_file:
-            snapshot.log_file = snapshot.log_file.replace(
-                '/LOCAL', '/galaxy/' + EnvUtil.get_other_env_variable(var='GALAXY_fs_cell') + '-d')
+        snapshot.log_file = FileUtil.convert_local_to_cell_path(glogging.get_logger_file(self._logger))
         snapshot.run_cell = EnvUtil.get_other_env_variable(var='GALAXY_fs_cell', fallback_value='')
         for key, val in self._counter.items():
             snapshot.counters[key] = val
@@ -144,8 +141,10 @@ class ContainerBase(GraphBase):
             )
             snapshot.operator_snapshot_map[op_name].CopyFrom(op.get_operator_snapshot(output_file=op_output_file))
 
-        self._SYS_LOGGER.info("Snapshot saved to folder [" + self._snapshot_file_folder + '].')
-        self._logger.info("Snapshot saved to folder [" + self._snapshot_file_folder + '].')
+        self._SYS_LOGGER.info("Snapshot saved to folder [" +
+                              FileUtil.convert_local_to_cell_path(self._snapshot_file_folder) + '].')
+        self._logger.info(
+            "Snapshot saved to folder [" + FileUtil.convert_local_to_cell_path(self._snapshot_file_folder) + '].')
         output_file_name = FileUtil.join_paths_to_file(
             root_dir=FileUtil.join_paths_to_dir(FileUtil.dir_name(
                 self._snapshot_file_folder), 'containers'),

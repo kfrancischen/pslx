@@ -5,6 +5,7 @@ import os
 from galaxy_py import gclient, gclient_ext
 from pslx.core.exception import FileNotExistException, DirNotExistException
 from pslx.schema.enums_pb2 import ModeType
+from pslx.util.env_util import EnvUtil
 
 
 class FileUtil(object):
@@ -185,3 +186,17 @@ class FileUtil(object):
             dir_name_list.append(0)
         return datetime.datetime(dir_name_list[0], dir_name_list[1], dir_name_list[2], dir_name_list[3],
                                  dir_name_list[4])
+
+    @classmethod
+    def convert_local_to_cell_path(cls, path):
+        if '/LOCAL' in path:
+            path = path.replace('/LOCAL', '/galaxy/' + EnvUtil.get_other_env_variable(var='GALAXY_fs_cell') + '-d')
+        return path
+
+    @classmethod
+    def get_file_attr(cls, file_name):
+        attr = gclient.get_attr(file_name)
+        if attr:
+            return json.loads(attr)
+        else:
+            return {}
