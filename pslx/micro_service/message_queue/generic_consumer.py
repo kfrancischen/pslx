@@ -24,7 +24,7 @@ class GenericQueueConsumer(Base):
 
         self._connection_str = ''
         self._connection = None
-        self._queue = Noney
+        self._queue = None
         self._thread = None
 
         self._has_added_queue = False
