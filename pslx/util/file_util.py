@@ -189,6 +189,8 @@ class FileUtil(object):
 
     @classmethod
     def convert_local_to_cell_path(cls, path):
+        if not path:
+            return ''
         if '/LOCAL' in path:
             path = path.replace('/LOCAL', '/galaxy/' + EnvUtil.get_other_env_variable(var='GALAXY_fs_cell') + '-d')
         return path
