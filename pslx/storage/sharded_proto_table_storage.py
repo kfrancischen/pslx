@@ -27,17 +27,17 @@ class ShardedProtoTableStorage(StorageBase):
             root_dir=dir_name,
             base_name='index_map.pb'
         )
-        self._index_map_file = FileUtil.create_file_if_not_exist(file_name=self._index_map_file)
-        if FileUtil.is_file_empty(self._index_map_file):
+        self._index_map_file = FileUtil.normalize_file_name(file_name=self._index_map_file)
+        self._index_map = FileUtil.read_proto_from_file(
+            proto_type=ProtoTableIndexMap,
+            file_name=self._index_map_file
+        )
+        if self._index_map is None:
             self._index_map = ProtoTableIndexMap()
             self._index_map.cur_shard = 0
             assert self._size_per_shard > 0
             self._index_map.size_per_shard = self._size_per_shard
         else:
-            self._index_map = FileUtil.read_proto_from_file(
-                proto_type=ProtoTableIndexMap,
-                file_name=self._index_map_file
-            )
             if self._size_per_shard and self._index_map.size_per_shard != self._size_per_shard:
                 self._logger.error("Please use the correct size per shard of [" + str(self._size_per_shard) + '].')
             self._size_per_shard = self._index_map.size_per_shard

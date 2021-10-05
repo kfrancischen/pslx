@@ -24,14 +24,13 @@ class ProtoTableStorage(StorageBase):
         if '.pb' not in file_name:
             self._SYS_LOGGER.warning("Please use .pb extension for proto files.")
 
-        self._file_name = FileUtil.create_file_if_not_exist(file_name=file_name)
-        if FileUtil.is_file_empty(file_name=self._file_name):
+        self._file_name = FileUtil.normalize_file_name(file_name=file_name)
+        self._table_message = FileUtil.read_proto_from_file(
+            proto_type=ProtoTable,
+            file_name=self._file_name
+        )
+        if self._table_message is None:
             self._table_message = ProtoTable()
-        else:
-            self._table_message = FileUtil.read_proto_from_file(
-                proto_type=ProtoTable,
-                file_name=self._file_name
-            )
         if not self._table_message.table_path:
             self._table_message.table_path = self._file_name
         if not self._table_message.table_name:

@@ -9,12 +9,12 @@ from pslx.util.proto_util import ProtoUtil
 
 
 class PartitionerStorageTest(unittest.TestCase):
-    YEARLY_PATITIONER_TEST_DATA = "/galaxy/bb-d/pslx/test_data/yearly_partitioner_1/"
-    YEARLY_PATITIONER_TEST_DATA_2 = "/galaxy/bb-d/pslx/test_data/yearly_partitioner_2/"
-    YEARLY_PATITIONER_TEST_DATA_3 = "/galaxy/bb-d/pslx/test_data/yearly_partitioner_3/"
-    YEARLY_PATITIONER_TEST_DATA_4 = "/galaxy/bb-d/pslx/test_data/yearly_partitioner_4/"
-    MONTHLY_PATITIONER_TEST_DATA = "/galaxy/bb-d/pslx/test_data/monthly_partitioner_1/"
-    MONTHLY_PATITIONER_TEST_DATA_2 = "/galaxy/bb-d/pslx/test_data/monthly_partitioner_2/"
+    YEARLY_PATITIONER_TEST_DATA = "/galaxy/ab-d/pslx/test_data/yearly_partitioner_1/"
+    YEARLY_PATITIONER_TEST_DATA_2 = "/galaxy/ab-d/pslx/test_data/yearly_partitioner_2/"
+    YEARLY_PATITIONER_TEST_DATA_3 = "/galaxy/ab-d/pslx/test_data/yearly_partitioner_3/"
+    YEARLY_PATITIONER_TEST_DATA_4 = "/galaxy/ab-d/pslx/test_data/yearly_partitioner_4/"
+    MONTHLY_PATITIONER_TEST_DATA = "/galaxy/ab-d/pslx/test_data/monthly_partitioner_1/"
+    MONTHLY_PATITIONER_TEST_DATA_2 = "/galaxy/ab-d/pslx/test_data/monthly_partitioner_2/"
 
     def test_initialize_from_dir(self):
         partitioner = YearlyPartitionerStorage()
@@ -67,7 +67,7 @@ class PartitionerStorageTest(unittest.TestCase):
         proto_table_storage = ProtoTableStorage()
         partitioner.set_underlying_storage(storage=proto_table_storage)
         self.assertEqual(partitioner.get_oldest_dir_in_root_directory(),
-                         '/galaxy/bb-d/pslx/test_data/yearly_partitioner_4/2019/')
+                         '/galaxy/ab-d/pslx/test_data/yearly_partitioner_4/2019/')
 
     def test_read_range_1(self):
         partitioner = YearlyPartitionerStorage()

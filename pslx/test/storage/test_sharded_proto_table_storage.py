@@ -15,9 +15,9 @@ class ShardedProtoTableStorageTest(unittest.TestCase):
         parents_names: ["parent_1", "parent_2"]
         """
     )
-    TEST_DATA_DIR_1 = '/galaxy/bb-d/pslx/test_data/sharded_proto_table_1'
-    TEST_DATA_DIR_2 = '/galaxy/bb-d/pslx/test_data/sharded_proto_table_2'
-    TEST_DATA_DIR_3 = '/galaxy/bb-d/pslx/test_data/sharded_proto_table_3'
+    TEST_DATA_DIR_1 = '/galaxy/ab-d/pslx/test_data/sharded_proto_table_1'
+    TEST_DATA_DIR_2 = '/galaxy/ab-d/pslx/test_data/sharded_proto_table_2'
+    TEST_DATA_DIR_3 = '/galaxy/ab-d/pslx/test_data/sharded_proto_table_3'
 
     def test_initialize_from_dir(self):
         shared_proto_table_storage = ShardedProtoTableStorage(size_per_shard=3)

@@ -41,10 +41,10 @@ class ProtoTableStorageTest(unittest.TestCase):
         }
         """
     )
-    TEST_DATA_1 = "/galaxy/bb-d/pslx/test_data/test_proto_table_data.pb"
-    TEST_DATA_2 = "/galaxy/bb-d/pslx/test_data/test_proto_table_data_2.pb"
-    TEST_DATA_3 = "/galaxy/bb-d/pslx/test_data/test_proto_table_data_3.pb"
-    TEST_DATA_4 = "/galaxy/bb-d/pslx/test_data/test_proto_table_data_4.pb"
+    TEST_DATA_1 = "/galaxy/ab-d/pslx/test_data/test_proto_table_data.pb"
+    TEST_DATA_2 = "/galaxy/ab-d/pslx/test_data/test_proto_table_data_2.pb"
+    TEST_DATA_3 = "/galaxy/ab-d/pslx/test_data/test_proto_table_data_3.pb"
+    TEST_DATA_4 = "/galaxy/ab-d/pslx/test_data/test_proto_table_data_4.pb"
 
     def test_read_1(self):
         proto_table_storage = ProtoTableStorage()

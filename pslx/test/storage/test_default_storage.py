@@ -5,8 +5,8 @@ from pslx.storage.default_storage import DefaultStorage
 
 
 class DefaultStorageTest(unittest.TestCase):
-    TEST_DATA_1 = "/galaxy/bb-d/pslx/test_data/test_default_storage_data.txt"
-    TEST_DATA_2 = "/galaxy/bb-d/pslx/test_data/test_default_storage_data_2.txt"
+    TEST_DATA_1 = "/galaxy/ab-d/pslx/test_data/test_default_storage_data.txt"
+    TEST_DATA_2 = "/galaxy/ab-d/pslx/test_data/test_default_storage_data_2.txt"
 
     def test_initialize_from_file(self):
         default_storage = DefaultStorage()

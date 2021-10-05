@@ -35,16 +35,19 @@ class FileUtil(object):
 
     @classmethod
     def is_file_empty(cls, file_name):
-        cls.die_if_file_not_exist(file_name=file_name)
-        attr = json.loads(gclient.get_attr(path=file_name))
-        if 'size' in attr:
-            return int(attr['size']) == 0
-        return True
+        try:
+            attr = json.loads(gclient.get_attr(path=file_name))
+            if 'size' in attr:
+                return int(attr['size']) == 0
+        except Exception as _:
+            return True
 
     @classmethod
     def is_dir_empty(cls, dir_name):
-        cls.die_if_dir_not_exist(dir_name=dir_name)
-        return len(gclient_ext.list_all_in_dir(dir_name)) == 0
+        try:
+            return len(gclient_ext.list_all_in_dir(dir_name)) == 0
+        except Exception as _:
+            return True
 
     @classmethod
     def create_file_if_not_exist(cls, file_name):
