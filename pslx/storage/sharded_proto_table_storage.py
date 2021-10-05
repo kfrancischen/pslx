@@ -1,7 +1,8 @@
 from collections import defaultdict
+from galaxy_py import gclient_ext
 from pslx.core.exception import StorageReadException, StorageWriteException
 from pslx.schema.enums_pb2 import StorageType
-from pslx.schema.storage_pb2 import ProtoTableIndexMap
+from pslx.schema.storage_pb2 import ProtoTableIndexMap, ProtoTable
 from pslx.storage.proto_table_storage import ProtoTableStorage
 from pslx.storage.storage_base import StorageBase
 from pslx.util.file_util import FileUtil
@@ -71,21 +72,24 @@ class ShardedProtoTableStorage(StorageBase):
     def read_multiple(self, params):
         assert 'keys' in params
 
-        related_shards = set()
-        shard_to_key_map = defaultdict(list)
+        related_shards, related_files = set(), set()
+        file_to_key_map = defaultdict(list)
         for key in params['keys']:
             if key in self._index_map.index_map:
                 related_shards.add(self._index_map.index_map[key])
-                shard_to_key_map[self._index_map.index_map[key]].append(key)
+                proto_file = self._shard_to_file(shard=self._index_map.index_map[key])
+                related_files.add(proto_file)
+                file_to_key_map[proto_file].append(key)
         try:
             result = {}
-            for shard in related_shards:
-                related_proto_file = self._shard_to_file(shard=shard)
-                proto_table = ProtoTableStorage()
-                proto_table.initialize_from_file(file_name=related_proto_file)
-                all_data = proto_table.read_all()
-                for key in shard_to_key_map[shard]:
-                    result[key] = all_data[key]
+            proto_table_map = gclient_ext.read_proto_messages(
+                paths=list(related_files),
+                message_type=ProtoTable
+            )
+            for proto_file, proto_table in proto_table_map.items():
+                proto_table_data = dict(proto_table.data)
+                for key in file_to_key_map[proto_file]:
+                    result[key] = proto_table_data[key]
 
             return result
         except Exception as err:
@@ -112,14 +116,19 @@ class ShardedProtoTableStorage(StorageBase):
 
     def read_all(self):
         num_shards = self.get_num_shards()
-        result = {}
+        related_proto_files = set()
+        for shard in range(num_shards):
+            related_proto_file = self._shard_to_file(shard=shard)
+            related_proto_files.add(related_proto_file)
+
         try:
-            for shard in range(num_shards):
-                related_proto_file = self._shard_to_file(shard=shard)
-                proto_table = ProtoTableStorage()
-                proto_table.initialize_from_file(file_name=related_proto_file)
-                all_data = proto_table.read_all()
-                result.update(all_data)
+            result = {}
+            proto_table_map = gclient_ext.read_proto_messages(
+                paths=list(related_proto_files),
+                message_type=ProtoTable
+            )
+            for proto_table in proto_table_map.values():
+                result.update(dict(proto_table.data))
 
             return result
         except Exception as err:
