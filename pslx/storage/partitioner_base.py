@@ -166,6 +166,19 @@ class PartitionerBase(StorageBase):
         else:
             return self._file_tree.get_leftmost_leaf()
 
+    def _get_oldest_dir_in_root_directory_interal(self):
+        if not self._file_tree:
+            self._SYS_LOGGER.info("Current partitioner is empty.")
+            return ''
+        else:
+            oldest_directory = self._file_tree.get_root_name()
+            while True:
+                sub_dirs = FileUtil.list_dirs_in_dir(dir_name=oldest_directory)
+                if sub_dirs:
+                    oldest_directory = sorted(sub_dirs)[0]
+                else:
+                    return oldest_directory
+
     def get_latest_dir(self):
         self.initialize_from_dir(dir_name=self.get_dir_name())
         if self.is_empty():
@@ -197,6 +210,7 @@ class PartitionerBase(StorageBase):
                     return oldest_directory
 
     def get_previous_dir(self, cur_dir):
+        self.initialize_from_dir(dir_name=self.get_dir_name())
         cur_dir = cur_dir.replace(self._file_tree.get_root_name(), '')
         cur_time = FileUtil.parse_dir_to_timestamp(dir_name=cur_dir)
         if self.PARTITIONER_TYPE == PartitionerStorageType.YEARLY:
@@ -224,6 +238,7 @@ class PartitionerBase(StorageBase):
             return None
 
     def get_next_dir(self, cur_dir):
+        self.initialize_from_dir(dir_name=self.get_dir_name())
         cur_dir = cur_dir.replace(self._file_tree.get_root_name(), '')
         cur_time = FileUtil.parse_dir_to_timestamp(dir_name=cur_dir)
         if self.PARTITIONER_TYPE == PartitionerStorageType.YEARLY:
@@ -253,13 +268,14 @@ class PartitionerBase(StorageBase):
             return None
 
     def _reinitialize_underlying_storage(self, file_base_name):
-        file_name = FileUtil.join_paths_to_file(root_dir=self.get_latest_dir(), base_name=file_base_name)
+        file_name = FileUtil.join_paths_to_file(root_dir=self._get_latest_dir_internal(), base_name=file_base_name)
         if not FileUtil.does_file_exist(file_name):
             self._SYS_LOGGER.info("The file to read does not exist.")
             return
         self._underlying_storage.initialize_from_file(file_name=file_name)
 
     def read(self, params=None):
+        self.initialize_from_dir(dir_name=self.get_dir_name())
         if self._underlying_storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE:
             file_base_name = 'data.pb'
         else:
@@ -271,7 +287,7 @@ class PartitionerBase(StorageBase):
             self._reinitialize_underlying_storage(file_base_name=file_base_name)
 
         self._SYS_LOGGER.info("Read from the latest partition.")
-        latest_dir = self.get_latest_dir()
+        latest_dir = self._get_latest_dir_internal()
         if not latest_dir:
             self._SYS_LOGGER.info("Current partitioner is empty, cannot read anything.")
             return []
@@ -290,6 +306,7 @@ class PartitionerBase(StorageBase):
             raise StorageReadException("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
 
     def read_range(self, params):
+        self.initialize_from_dir(dir_name=self.get_dir_name())
 
         def _reformat_time(timestamp):
             if self.PARTITIONER_TYPE == PartitionerStorageType.YEARLY:
@@ -307,7 +324,7 @@ class PartitionerBase(StorageBase):
 
         assert 'start_time' in params and 'end_time' in params and params['start_time'] <= params['end_time']
 
-        oldest_dir, latest_dir = self.get_oldest_dir_in_root_directory(), self.get_latest_dir()
+        oldest_dir, latest_dir = self._get_oldest_dir_in_root_directory_interal(), self._get_latest_dir_internal()
         if not latest_dir or not oldest_dir:
             self._logger.warning("Current partitioner [" + self.get_dir_name() +
                                  "] is empty, cannot read anything.")
