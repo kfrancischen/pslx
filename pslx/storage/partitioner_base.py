@@ -93,8 +93,8 @@ class PartitionerBase(StorageBase):
 
         from_scratch = False
         dir_name = FileUtil.normalize_dir_name(dir_name=dir_name)
-        FileUtil.create_dir_if_not_exist(dir_name=dir_name)
-        if not self._file_tree or self.is_updated() or force:
+        if not self._file_tree or force:
+            # FileUtil.create_dir_if_not_exist(dir_name=dir_name)
             root_node = OrderedNodeBase(
                 node_name=dir_name
             )
@@ -122,11 +122,6 @@ class PartitionerBase(StorageBase):
             return self._file_tree.get_num_nodes()
 
     def is_empty(self):
-        if self.is_updated():
-            self._SYS_LOGGER.info("Tree updated, need force rebuilding the tree.")
-            self._logger.info("Tree updated, need force rebuilding the tree.")
-            self.initialize_from_dir(dir_name=self.get_dir_name(), force=True)
-
         leftmost_leaf_name, rightmost_leaf_name = (self._file_tree.get_leftmost_leaf(),
                                                    self._file_tree.get_rightmost_leaf())
         if FileUtil.is_dir_empty(dir_name=leftmost_leaf_name) and FileUtil.is_dir_empty(dir_name=rightmost_leaf_name):
@@ -134,7 +129,7 @@ class PartitionerBase(StorageBase):
         else:
             return False
 
-    def is_updated(self):
+    def is_gabage_collected(self):
         rightmost_leaf_name = self._file_tree.get_rightmost_leaf()
         if not FileUtil.does_dir_exist(dir_name=rightmost_leaf_name):
             return True
@@ -188,6 +183,7 @@ class PartitionerBase(StorageBase):
             return self._file_tree.get_rightmost_leaf()
 
     def get_oldest_dir_in_root_directory(self):
+        self.initialize_from_dir(dir_name=self.get_dir_name())
         if self.is_empty():
             self._SYS_LOGGER.info("Current partitioner is empty.")
             return ''
@@ -281,14 +277,11 @@ class PartitionerBase(StorageBase):
             return []
 
         file_name = FileUtil.join_paths_to_file(root_dir=latest_dir, base_name=file_base_name)
-        if not FileUtil.does_file_exist(file_name):
-            self._SYS_LOGGER.error("The file [" + file_name + "] to read does not exist.")
-            raise StorageReadException("The file [" + file_name + "] to read does not exist.")
 
-        if file_name != self._underlying_storage.get_file_name():
-            self._SYS_LOGGER.info("Sync to the latest file to " + file_name)
-            self._underlying_storage.initialize_from_file(file_name=file_name)
         try:
+            if file_name != self._underlying_storage.get_file_name():
+                self._SYS_LOGGER.info("Sync to the latest file to " + file_name)
+                self._underlying_storage.initialize_from_file(file_name=file_name)
             result = self._underlying_storage.read(params=params)
             return result
         except Exception as err:
@@ -316,12 +309,11 @@ class PartitionerBase(StorageBase):
 
         oldest_dir, latest_dir = self.get_oldest_dir_in_root_directory(), self.get_latest_dir()
         if not latest_dir or not oldest_dir:
-            if self.is_empty():
-                self._logger.warning("Current partitioner [" + self.get_dir_name() +
+            self._logger.warning("Current partitioner [" + self.get_dir_name() +
+                                 "] is empty, cannot read anything.")
+            self._SYS_LOGGER.warning("Current partitioner [" + self.get_dir_name() +
                                      "] is empty, cannot read anything.")
-                self._SYS_LOGGER.warning("Current partitioner [" + self.get_dir_name() +
-                                         "] is empty, cannot read anything.")
-                return {}
+            return {}
 
         oldest_dir = oldest_dir.replace(self._file_tree.get_root_name(), '')
         latest_dir = latest_dir.replace(self._file_tree.get_root_name(), '')
@@ -340,9 +332,11 @@ class PartitionerBase(StorageBase):
                     root_dir=self._file_tree.get_root_name(),
                     base_name=dir_name
                 )
-                if FileUtil.does_dir_exist(dir_name=dir_name):
+                try:
                     file_names = FileUtil.list_files_in_dir(dir_name=dir_name)
                     all_file_names.extend(file_names)
+                except Exception as _:
+                    pass
 
                 if self.PARTITIONER_TYPE == PartitionerStorageType.YEARLY:
                     start_time = start_time.replace(year=start_time.year + 1, month=1, day=1)
@@ -376,22 +370,30 @@ class PartitionerBase(StorageBase):
 
     def make_new_partition(self, timestamp):
         new_dir_list = FileUtil.parse_timestamp_to_dir(timestamp=timestamp).split('/')
-        new_dir = '/'.join(new_dir_list[:self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]])
-        child_node = OrderedNodeBase(
-            node_name=FileUtil.join_paths_to_dir(
+        for i in range(1, self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]):
+            new_dir = '/'.join(new_dir_list[:i])
+            child_node_name = FileUtil.join_paths_to_dir(
                 root_dir=self._file_tree.get_root_name(),
                 base_name=new_dir
             )
-        )
-        if FileUtil.does_dir_exist(dir_name=child_node.get_node_name()):
-            self._SYS_LOGGER.info('Node [' + child_node.get_node_name() + "] exist. Don't make new partition.")
-            return None
-        else:
-            self._SYS_LOGGER.info('Node [' + child_node.get_node_name() + "] doesn't exist. Make new partition.")
-            self._logger.info('Node [' + child_node.get_node_name() + "] doesn't exist. Make new partition.")
-            FileUtil.create_dir_if_not_exist(dir_name=child_node.get_node_name())
-            self.initialize_from_dir(dir_name=self._file_tree.get_root_name())
-            return child_node.get_node_name()
+            if self._file_tree.find_node(child_node_name):
+                parent_node_name = FileUtil.join_paths_to_dir(
+                    root_dir=self._file_tree.get_root_name(),
+                    base_name='/'.join(new_dir_list[:i-1]) if i > 1 else ''
+                )
+                parent_node = self._file_tree.find_node(node_name=parent_node_name)
+                child_node = OrderedNodeBase(
+                    node_name=child_node_name
+                )
+
+                assert parent_node is not None, "Parent node at least needs to exist."
+                self._file_tree.add_node(
+                    parent_node=parent_node,
+                    child_node=child_node,
+                    order=SortOrder.REVERSE
+                )
+
+        self._file_tree.trim_tree(max_capacity=self._max_capacity)
 
     def write(self, data, params=None):
         to_make_partition = True
@@ -413,8 +415,6 @@ class PartitionerBase(StorageBase):
                 self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_utc())
             elif params['timezone'] == 'EST':
                 self.make_new_partition(timestamp=TimezoneUtil.cur_time_in_est())
-
-        self.initialize_from_dir(dir_name=self._file_tree.get_root_name())
 
         file_name = FileUtil.join_paths_to_file(
             root_dir=self._file_tree.get_leftmost_leaf(),
