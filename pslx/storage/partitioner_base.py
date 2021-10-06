@@ -55,7 +55,9 @@ class PartitionerBase(StorageBase):
                 return
 
             node_name = node.get_node_name()
-            for child_node_name in sorted(FileUtil.list_dirs_in_dir(dir_name=node_name), reverse=from_scratch):
+            self._num_rpc_calls += 1
+            child_node_names = sorted(FileUtil.list_dirs_in_dir(dir_name=node_name), reverse=from_scratch)
+            for child_node_name in child_node_names:
                 if from_scratch and self._file_tree.get_num_nodes() >= self._max_capacity > 0:
                     self._SYS_LOGGER.info("Reach the max number of node: " + str(self._max_capacity) + '.')
                     return
@@ -124,6 +126,7 @@ class PartitionerBase(StorageBase):
     def is_empty(self):
         leftmost_leaf_name, rightmost_leaf_name = (self._file_tree.get_leftmost_leaf(),
                                                    self._file_tree.get_rightmost_leaf())
+        self._num_rpc_calls += 2
         if FileUtil.is_dir_empty(dir_name=leftmost_leaf_name) and FileUtil.is_dir_empty(dir_name=rightmost_leaf_name):
             return True
         else:
@@ -131,6 +134,7 @@ class PartitionerBase(StorageBase):
 
     def is_gabage_collected(self):
         rightmost_leaf_name = self._file_tree.get_rightmost_leaf()
+        self._num_rpc_calls += 1
         if not FileUtil.does_dir_exist(dir_name=rightmost_leaf_name):
             return True
         else:
@@ -173,6 +177,7 @@ class PartitionerBase(StorageBase):
         else:
             oldest_directory = self._file_tree.get_root_name()
             while True:
+                self._num_rpc_calls += 1
                 sub_dirs = FileUtil.list_dirs_in_dir(dir_name=oldest_directory)
                 if sub_dirs:
                     oldest_directory = sorted(sub_dirs)[0]
@@ -203,6 +208,7 @@ class PartitionerBase(StorageBase):
         else:
             oldest_directory = self._file_tree.get_root_name()
             while True:
+                self._num_rpc_calls += 1
                 sub_dirs = FileUtil.list_dirs_in_dir(dir_name=oldest_directory)
                 if sub_dirs:
                     oldest_directory = sorted(sub_dirs)[0]
@@ -232,6 +238,7 @@ class PartitionerBase(StorageBase):
             root_dir=self._file_tree.get_root_name(),
             base_name=last_dir_name
         )
+        self._num_rpc_calls += 1
         if FileUtil.does_dir_exist(dir_name=last_dir_name):
             return last_dir_name
         else:
@@ -262,6 +269,7 @@ class PartitionerBase(StorageBase):
             root_dir=self._file_tree.get_root_name(),
             base_name=next_dir_name
         )
+        self._num_rpc_calls += 1
         if FileUtil.does_dir_exist(dir_name=next_dir_name):
             return next_dir_name
         else:
@@ -269,6 +277,7 @@ class PartitionerBase(StorageBase):
 
     def _reinitialize_underlying_storage(self, file_base_name):
         file_name = FileUtil.join_paths_to_file(root_dir=self._get_latest_dir_internal(), base_name=file_base_name)
+        self._num_rpc_calls += 1
         if not FileUtil.does_file_exist(file_name):
             self._SYS_LOGGER.info("The file to read does not exist.")
             return
@@ -299,6 +308,7 @@ class PartitionerBase(StorageBase):
                 self._SYS_LOGGER.info("Sync to the latest file to " + file_name)
                 self._underlying_storage.initialize_from_file(file_name=file_name)
             result = self._underlying_storage.read(params=params)
+            self._num_rpc_calls += self._underlying_storage.get_rpc_call_count_and_reset()
             return result
         except Exception as err:
             self._SYS_LOGGER.error("Read dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
@@ -350,6 +360,7 @@ class PartitionerBase(StorageBase):
                     base_name=dir_name
                 )
                 try:
+                    self._num_rpc_calls += 1
                     file_names = FileUtil.list_files_in_dir(dir_name=dir_name)
                     all_file_names.extend(file_names)
                 except Exception as _:
@@ -369,6 +380,7 @@ class PartitionerBase(StorageBase):
                 else:
                     start_time += datetime.timedelta(minutes=1)
             result = {}
+            self._num_rpc_calls += 1
             if self._underlying_storage.get_storage_type() == StorageType.PROTO_TABLE_STORAGE:
                 tmp_result = gclient_ext.read_proto_messages(paths=all_file_names, message_type=ProtoTable)
                 for file_name, v in tmp_result.items():
@@ -387,13 +399,13 @@ class PartitionerBase(StorageBase):
 
     def make_new_partition(self, timestamp):
         new_dir_list = FileUtil.parse_timestamp_to_dir(timestamp=timestamp).split('/')
-        for i in range(1, self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE]):
+        for i in range(1, self.PARTITIONER_TYPE_TO_HEIGHT_MAP[self.PARTITIONER_TYPE] + 1):
             new_dir = '/'.join(new_dir_list[:i])
             child_node_name = FileUtil.join_paths_to_dir(
                 root_dir=self._file_tree.get_root_name(),
                 base_name=new_dir
             )
-            if self._file_tree.find_node(child_node_name):
+            if not self._file_tree.find_node(child_node_name):
                 parent_node_name = FileUtil.join_paths_to_dir(
                     root_dir=self._file_tree.get_root_name(),
                     base_name='/'.join(new_dir_list[:i-1]) if i > 1 else ''
@@ -445,6 +457,7 @@ class PartitionerBase(StorageBase):
 
         try:
             self._underlying_storage.write(data=data, params=params)
+            self._num_rpc_calls += self._underlying_storage.get_rpc_call_count_and_reset()
         except Exception as err:
             self._SYS_LOGGER.error("Write to dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
             self._logger.error("Write to dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')

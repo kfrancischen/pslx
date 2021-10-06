@@ -12,6 +12,8 @@ class StorageBase(Base):
         else:
             self._logger = logger
 
+        self._num_rpc_calls = 0
+
     def get_storage_type(self):
         return self.STORAGE_TYPE
 
@@ -26,3 +28,8 @@ class StorageBase(Base):
 
     def write(self, data, params=None):
         raise NotImplementedError
+
+    def get_rpc_call_count_and_reset(self):
+        total_call = self._num_rpc_calls
+        self._num_rpc_calls = 0
+        return total_call

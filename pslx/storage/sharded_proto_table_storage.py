@@ -29,6 +29,7 @@ class ShardedProtoTableStorage(StorageBase):
             base_name='index_map.pb'
         )
         self._index_map_file = FileUtil.normalize_file_name(file_name=self._index_map_file)
+        self._num_rpc_calls += 1
         self._index_map = FileUtil.read_proto_from_file(
             proto_type=ProtoTableIndexMap,
             file_name=self._index_map_file
@@ -157,6 +158,7 @@ class ShardedProtoTableStorage(StorageBase):
                 proto_table = ProtoTableStorage()
                 proto_table.initialize_from_file(file_name=related_proto_file)
                 proto_table.write(data=existing_data, params=params)
+                self._num_rpc_calls += proto_table.get_rpc_call_count_and_reset()
             if new_data:
                 all_new_keys = list(new_data.keys())
                 latest_shard = self.get_latest_shard()
@@ -168,6 +170,7 @@ class ShardedProtoTableStorage(StorageBase):
                     data={key: new_data[key] for key in all_new_keys[:self._size_per_shard - latest_proto_table_size]},
                     params=params
                 )
+                self._num_rpc_calls += proto_table.get_rpc_call_count_and_reset()
                 for key in all_new_keys[:self._size_per_shard - latest_proto_table_size]:
                     self._index_map.index_map[key] = latest_shard
 
@@ -187,11 +190,13 @@ class ShardedProtoTableStorage(StorageBase):
                             data={key: new_data[key] for key in data_for_new_shard},
                             params=params
                         )
+                        self._num_rpc_calls += proto_table.get_rpc_call_count_and_reset()
                         for key in data_for_new_shard:
                             self._index_map.index_map[key] = latest_shard
 
                         start_index += self._size_per_shard
                 self._logger.info("Writing the index map to [" + self._index_map_file + '].')
+                self._num_rpc_calls += 1
                 FileUtil.write_proto_to_file(
                     proto=self._index_map,
                     file_name=self._index_map_file
@@ -203,6 +208,7 @@ class ShardedProtoTableStorage(StorageBase):
             raise StorageWriteException("Write to dir [" + self.get_dir_name() + "] got exception: " + str(err) + '.')
 
     def resize_to_new_table(self, new_size_per_shard, new_dir_name):
+        self._num_rpc_calls += 2
         assert not FileUtil.does_dir_exist(dir_name=new_dir_name) or FileUtil.is_dir_empty(dir_name=new_dir_name)
         new_sptable_storage = ShardedProtoTableStorage(size_per_shard=new_size_per_shard)
         new_sptable_storage.initialize_from_dir(dir_name=new_dir_name)
@@ -211,4 +217,5 @@ class ShardedProtoTableStorage(StorageBase):
             proto_table = ProtoTableStorage()
             proto_table.initialize_from_file(file_name=related_proto_file)
             new_sptable_storage.write(data=proto_table.read_all())
+            self._num_rpc_calls += proto_table.get_rpc_call_count_and_reset()
         return new_sptable_storage

@@ -29,7 +29,7 @@ class DefaultStorage(StorageBase):
     def initialize_from_file(self, file_name):
         self._SYS_LOGGER.info("Initialize from file " + file_name + '.')
         self._logger.info("Initialize from file " + file_name + '.')
-        self._file_name = FileUtil.create_file_if_not_exist(file_name=file_name)
+        self._file_name = FileUtil.normalize_file_name(file_name=file_name)
         self._last_read_line = 0
 
     def get_file_name(self):
@@ -64,7 +64,11 @@ class DefaultStorage(StorageBase):
                 self._logger.warning(param +
                                      " will be omitted since it is not useful as an input argument in this function.")
                 self._SYS_LOGGER.warning(param + " will be omitted since it is not useful as an input argument in this function.")
-        lines = FileUtil.read_lined_txt_from_file(self._file_name)
+        try:
+            self._num_rpc_calls += 1
+            lines = FileUtil.read_lined_txt_from_file(self._file_name)
+        except Exception as _:
+            lines = []
 
         if 'read_rule_type' in self._config and self._config['read_rule_type'] == ReadRuleType.READ_FROM_END:
             lines = lines[::-1]
@@ -117,6 +121,7 @@ class DefaultStorage(StorageBase):
         else:
             data_to_write = data
         try:
+            self._num_rpc_calls += 1
             if self._config['write_rule_type'] == WriteRuleType.WRITE_FROM_END:
                 gclient.write(path=self._file_name, data=data_to_write + '\n', mode='a')
             else:
