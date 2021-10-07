@@ -100,3 +100,6 @@ class PartitionerFetcher(Base):
             self._logger.error("Fetch range for partition [" + self._partitioner.get_dir_name() +
                                "] with error " + str(err) + '.')
         return {}
+
+    def get_rpc_call_count_and_reset(self):
+        return self._partitioner.get_rpc_call_count_and_reset()

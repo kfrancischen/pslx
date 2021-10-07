@@ -42,3 +42,6 @@ class PartitionerWatcher(Base):
                                    "] with error " + str(err) + '.')
 
         return None
+
+    def get_rpc_call_count_and_reset(self):
+        return self._partitioner.get_rpc_call_count_and_reset()
