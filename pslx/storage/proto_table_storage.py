@@ -29,7 +29,7 @@ class ProtoTableStorage(StorageBase):
             proto_type=ProtoTable,
             file_name=self._file_name
         )
-        self._num_rpc_calls += 1
+        self.increment_rpc_count_by(n=1)
         if self._table_message is None:
             self._table_message = ProtoTable()
         if not self._table_message.table_path:
@@ -93,7 +93,7 @@ class ProtoTableStorage(StorageBase):
 
         try:
             self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
-            self._num_rpc_calls += 1
+            self.increment_rpc_count_by(n=1)
             FileUtil.write_proto_to_file(
                 proto=self._table_message,
                 file_name=self._file_name
@@ -110,7 +110,7 @@ class ProtoTableStorage(StorageBase):
             del self._table_message.data[key]
         try:
             self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
-            self._num_rpc_calls += 1
+            self.increment_rpc_count_by(n=1)
             FileUtil.write_proto_to_file(
                 proto=self._table_message,
                 file_name=self._file_name
@@ -140,7 +140,7 @@ class ProtoTableStorage(StorageBase):
                                          "combined with proto table.")
             self._table_message.updated_time = str(TimezoneUtil.cur_time_in_pst())
 
-            self._num_rpc_calls += 1
+            self.increment_rpc_count_by(n=1)
             FileUtil.write_proto_to_file(
                 proto=self._table_message,
                 file_name=self._file_name

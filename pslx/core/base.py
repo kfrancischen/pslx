@@ -40,6 +40,8 @@ class Base(object):
         else:
             self._mode = ModeType.TEST
         self._config = {}
+        self._num_rpc_calls = 0
+        self._num_rest_calls = 0
 
     def get_mode(self):
         return self._mode
@@ -64,3 +66,25 @@ class Base(object):
         for class_obj in mro[::-1][1:]:
             inheritance_level.append(class_obj.__name__)
         return '->'.join(inheritance_level)
+
+    def get_rpc_call_count(self):
+        return self._num_rpc_calls
+
+    def get_rpc_call_count_and_reset(self):
+        total_call = self._num_rpc_calls
+        self._num_rpc_calls = 0
+        return total_call
+
+    def get_rest_call_count(self):
+        return self._num_rest_calls
+
+    def get_rest_call_count_and_reset(self):
+        total_call = self._num_rest_calls
+        self._num_rest_calls = 0
+        return total_call
+
+    def increment_rpc_count_by(self, n):
+        self._num_rpc_calls += n
+
+    def increment_rest_count_by(self, n):
+        self._num_rest_calls += n
