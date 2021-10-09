@@ -45,3 +45,6 @@ class PartitionerWatcher(Base):
 
     def get_rpc_call_count_and_reset(self):
         return self._partitioner.get_rpc_call_count_and_reset()
+
+    def get_rpc_call_count(self):
+        return self._partitioner.get_rpc_call_count()
