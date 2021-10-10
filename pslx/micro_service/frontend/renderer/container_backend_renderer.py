@@ -28,7 +28,7 @@ def get_containers_info():
     for cell_name in all_cells:
         folder = FileUtil.convert_local_to_cell_path(path=backend_folder, cell=cell_name)
         proto_files = FileUtil.list_files_in_dir(folder)
-        all_proto_files.union(set(proto_files))
+        all_proto_files = all_proto_files.union(set(proto_files))
 
     for proto_file in all_proto_files:
 
@@ -72,7 +72,7 @@ def get_container_info(container_name, cell_name):
         'counter_info': [],
     }
     operators_info = []
-    folder = FileUtil.convert_local_to_cell_path(path=backend_folder, cell_name=cell_name)
+    folder = FileUtil.convert_local_to_cell_path(path=backend_folder, cell=cell_name)
     pslx_frontend_logger.info("Container backend checking folder [" + folder + '].')
     storage = ProtoTableStorage()
     storage.initialize_from_file(
