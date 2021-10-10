@@ -29,14 +29,14 @@ def get_containers_info():
         folder = FileUtil.convert_local_to_cell_path(path=backend_folder, cell=cell_name)
         proto_files = FileUtil.list_files_in_dir(folder)
         all_proto_files = all_proto_files.union(set(proto_files))
-
     for proto_file in all_proto_files:
-
         storage = ProtoTableStorage()
         storage.initialize_from_file(
             file_name=proto_file
         )
         raw_data = storage.read_all()
+        if not raw_data:
+            continue
         key = list(raw_data.keys())[0]
         val = raw_data[key]
         result_proto = ProtoUtil.any_to_message(
@@ -127,10 +127,10 @@ def container_backend():
 @login_required
 def view_container():
     container_name = request.args.get('container_name')
-    cell_name = request.args.get('cell')
+    # cell_name = request.args.get('cell')
     container_info, operators_info = get_container_info(
         container_name=container_name,
-        cell_name=cell_name
+        cell_name=''
     )
     try:
         return render_template(
