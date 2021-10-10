@@ -191,11 +191,20 @@ class FileUtil(object):
                                  dir_name_list[4])
 
     @classmethod
-    def convert_local_to_cell_path(cls, path):
+    def is_local_path(cls, path):
+        if not path or '/LOCAL' in path:
+            return True
+        else:
+            return False
+
+    @classmethod
+    def convert_local_to_cell_path(cls, path, cell=''):
         if not path:
             return ''
-        if '/LOCAL' in path:
-            path = path.replace('/LOCAL', '/galaxy/' + EnvUtil.get_other_env_variable(var='GALAXY_fs_cell') + '-d')
+        if cls.is_local_path(path):
+            cell_name = cell if cell else EnvUtil.get_other_env_variable(var='GALAXY_fs_cell')
+            path = path.replace('/LOCAL', '/galaxy/' + cell_name + '-d')
+
         return path
 
     @classmethod

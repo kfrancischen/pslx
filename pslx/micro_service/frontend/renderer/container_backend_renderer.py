@@ -1,4 +1,5 @@
 import datetime
+from galaxy_py import gclient
 from flask import render_template, request
 from flask_login import login_required
 from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logger
@@ -22,7 +23,13 @@ if galaxy_viewer_url and galaxy_viewer_url[-1] == '/':
 
 def get_containers_info():
     containers_info = []
-    all_proto_files = FileUtil.list_files_in_dir(backend_folder)
+    all_proto_files = set()
+    all_cells = gclient.list_cells()
+    for cell_name in all_cells:
+        folder = FileUtil.convert_local_to_cell_path(path=backend_folder, cell=cell_name)
+        proto_files = FileUtil.list_files_in_dir(folder)
+        all_proto_files.union(set(proto_files))
+
     for proto_file in all_proto_files:
 
         storage = ProtoTableStorage()
@@ -57,7 +64,7 @@ def get_containers_info():
     return containers_info
 
 
-def get_container_info(container_name):
+def get_container_info(container_name, cell_name):
     container_info = {
         'log_file': '',
         'start_time': '',
@@ -65,11 +72,12 @@ def get_container_info(container_name):
         'counter_info': [],
     }
     operators_info = []
-    pslx_frontend_logger.info("Container backend checking folder [" + backend_folder + '].')
+    folder = FileUtil.convert_local_to_cell_path(path=backend_folder, cell_name=cell_name)
+    pslx_frontend_logger.info("Container backend checking folder [" + folder + '].')
     storage = ProtoTableStorage()
     storage.initialize_from_file(
         FileUtil.join_paths_to_file(
-            root_dir=backend_folder,
+            root_dir=folder,
             base_name=container_name + '.pb'
         )
     )
@@ -119,8 +127,10 @@ def container_backend():
 @login_required
 def view_container():
     container_name = request.args.get('container_name')
+    cell_name = request.args.get('cell')
     container_info, operators_info = get_container_info(
-        container_name=container_name
+        container_name=container_name,
+        cell_name=cell_name
     )
     try:
         return render_template(
