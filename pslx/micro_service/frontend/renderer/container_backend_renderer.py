@@ -50,7 +50,7 @@ def get_containers_info():
             FileUtil.remove_file(storage.get_file_name())
         else:
             container_info = {
-                'container_name': key,
+                'container_name': result_proto.container_name,
                 'status': ProtoUtil.get_name_by_value(
                         enum_type=Status, value=result_proto.container_status),
                 'updated_time': result_proto.updated_time,
@@ -81,8 +81,13 @@ def get_container_info(container_name, cell_name):
             base_name=container_name + '.pb'
         )
     )
-    result_proto = storage.read(params={'key': container_name, 'message_type': ContainerBackendValue})
-
+    raw_data = storage.read_all()
+    key = sorted(raw_data.keys())[-1]
+    val = raw_data[key]
+    result_proto = ProtoUtil.any_to_message(
+        message_type=ContainerBackendValue,
+        any_message=val
+    )
     container_info['log_file'] = galaxy_viewer_url + result_proto.log_file
     container_info['start_time'] = result_proto.start_time
     container_info['end_time'] = result_proto.end_time
