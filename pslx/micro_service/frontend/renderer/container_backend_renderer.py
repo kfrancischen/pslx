@@ -37,7 +37,7 @@ def get_containers_info():
         raw_data = storage.read_all()
         if not raw_data:
             continue
-        key = list(raw_data.keys())[0]
+        key = sorted(raw_data.keys())[-1]
         val = raw_data[key]
         result_proto = ProtoUtil.any_to_message(
             message_type=ContainerBackendValue,
@@ -127,10 +127,10 @@ def container_backend():
 @login_required
 def view_container():
     container_name = request.args.get('container_name')
-    # cell_name = request.args.get('cell')
+    cell_name = request.args.get('cell')
     container_info, operators_info = get_container_info(
         container_name=container_name,
-        cell_name=''
+        cell_name=cell_name
     )
     try:
         return render_template(
