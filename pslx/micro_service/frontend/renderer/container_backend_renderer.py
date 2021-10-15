@@ -83,10 +83,10 @@ def get_container_info(container_name, cell_name, start_time):
     )
     raw_data = storage.read_all()
     all_past_run = []
-    for key, val in raw_data.items():
+    for key in sorted(list(raw_data.keys()), reverse=True):
         val = ProtoUtil.any_to_message(
             message_type=ContainerBackendValue,
-            any_message=val
+            any_message=raw_data[key]
         )
         all_past_run.append(
             {
@@ -128,7 +128,7 @@ def get_container_info(container_name, cell_name, start_time):
             'log_file': galaxy_viewer_url + val.log_file,
         })
     return (container_info, sorted(operators_info, key=lambda x: (x['dependencies'], x['operator_name'])),
-            all_past_run[::-1])
+            all_past_run)
 
 
 @pslx_frontend_ui_app.route("/container_backend.html", methods=['GET', 'POST'])
