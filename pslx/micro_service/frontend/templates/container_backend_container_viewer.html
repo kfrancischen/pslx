@@ -135,7 +135,45 @@
                           </div>
                         </div>
                       </div>
-
+                      <legend class="text-center header">{{ container_name }} Previous Runs</legend>
+                      <div class="card mb-3">
+                        <div class="card-body">
+                          <div class="table-responsive">
+                            <table class="table table-bordered" id="operators_info_table" width="100%" cellspacing="0">
+                              <thead>
+                                <tr>
+                                  <th>Start Time (PST)</th>
+                                  <th>Updated Time (PST)</th>
+                                  <th>End Time (PST)</th>
+                                  <th>Status</th>
+                                  <th>Viewer Link</th>
+                                </tr>
+                              </thead>
+                              {% for container_info in all_past_run %}
+                              <tbody>
+                                <tr>
+                                  <td>{{ container_info['start_time'] }}</td>
+                                  <td>{{ container_info['updated_time'] }}</td>
+                                  <td>{{ container_info['end_time'] }}</td>
+                                  {% if container_info['status'] == "FAILED" %}
+                                  <td><font color="red">{{ container_info['status'] }}</font></td>
+                                  {% elif container_info['status'] == "SUCCEEDED" %}
+                                      <td><font color="green">{{ container_info['status'] }}</font></td>
+                                  {% elif container_info['status'] == "RUNNING" %}
+                                      <td><font color="blue">{{ container_info['status'] }}</font></td>
+                                  {% elif container_info['status'] == "WAITING" %}
+                                      <td><font color="lime">{{ container_info['status'] }}</font></td>
+                                  {% else %}
+                                      <td><font color="purple">{{ container_info['status'] }}</font></td>
+                                  {% endif %}
+                                  <td><a href="{{ url_for('view_container', container_name=container_info['container_name'], cell=container_info['run_cell'], start_time=container_info['start_time']) }}">Link</a></td>
+                                </tr>
+                              </tbody>
+                              {% endfor %}
+                            </table>
+                          </div>
+                        </div>
+                      </div>
                     </fieldset>
                 </form>
             </div>

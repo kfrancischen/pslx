@@ -222,6 +222,7 @@ class ContainerBase(GraphBase):
             operator_status = self._get_latest_status_of_operators()
 
         self._start_time = TimezoneUtil.cur_time_in_pst()
+        self._end_time = None
         task_queue, finished_queue, num_tasks = Queue(), Queue(), 0
 
         node_levels = self.get_node_levels()

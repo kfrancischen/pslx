@@ -54,5 +54,5 @@ class ContainerBackendUtil(object):
             storage.delete(key=key_to_delete)
 
         storage.write(
-            data={storage_value.updated_time: storage_value}
+            data={storage_value.start_time: storage_value}
         )

@@ -64,7 +64,7 @@ def get_containers_info():
     return containers_info
 
 
-def get_container_info(container_name, cell_name):
+def get_container_info(container_name, cell_name, start_time):
     container_info = {
         'log_file': '',
         'start_time': '',
@@ -82,7 +82,26 @@ def get_container_info(container_name, cell_name):
         )
     )
     raw_data = storage.read_all()
-    key = sorted(raw_data.keys())[-1]
+    all_past_run = []
+    for key, val in raw_data.items():
+        val = ProtoUtil.any_to_message(
+            message_type=ContainerBackendValue,
+            any_message=val
+        )
+        all_past_run.append(
+            {
+                'start_time': val.start_time,
+                'updated_time': val.updated_time,
+                'end_time': val.end_time,
+                'status': ProtoUtil.get_name_by_value(
+                    enum_type=Status, value=val.container_status),
+                'run_cell': val.run_cell,
+            }
+        )
+        if len(all_past_run) > 10:
+            break
+
+    key = start_time if start_time else sorted(raw_data.keys())[-1]
     val = raw_data[key]
     result_proto = ProtoUtil.any_to_message(
         message_type=ContainerBackendValue,
@@ -108,7 +127,8 @@ def get_container_info(container_name, cell_name):
             'dependencies': ', '.join(val.parents),
             'log_file': galaxy_viewer_url + val.log_file,
         })
-    return container_info, sorted(operators_info, key=lambda x: (x['dependencies'], x['operator_name']))
+    return (container_info, sorted(operators_info, key=lambda x: (x['dependencies'], x['operator_name'])),
+            all_past_run[::-1])
 
 
 @pslx_frontend_ui_app.route("/container_backend.html", methods=['GET', 'POST'])
@@ -133,16 +153,19 @@ def container_backend():
 def view_container():
     container_name = request.args.get('container_name')
     cell_name = request.args.get('cell')
-    container_info, operators_info = get_container_info(
+    start_time = request.args.get('start_time')
+    container_info, operators_info, all_past_run = get_container_info(
         container_name=container_name,
-        cell_name=cell_name
+        cell_name=cell_name,
+        start_time=start_time
     )
     try:
         return render_template(
             'container_backend_container_viewer.html',
             container_name=container_name,
             container_info=container_info,
-            operators_info=operators_info
+            operators_info=operators_info,
+            all_past_run=all_past_run
         )
     except Exception as err:
         pslx_frontend_logger.error("Got error rendering container_backend.html: " + str(err) + '.')
@@ -150,5 +173,6 @@ def view_container():
             'container_backend_container_viewer.html',
             container_name=str(err),
             container_info=container_info,
-            operators_info=[]
+            operators_info=[],
+            all_past_run=[]
         )

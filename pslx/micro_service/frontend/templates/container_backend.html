@@ -69,7 +69,7 @@
                                   <tr>
                                     <td>{{ container_info['mode'] }}</td>
                                     <td>{{ container_info['data_model'] }}</td>
-                                    <td><a href="{{ url_for('view_container', container_name=container_info['container_name'], cell=container_info['run_cell']) }}">{{ container_info['container_name'] }}</a></td>
+                                    <td><a href="{{ url_for('view_container', container_name=container_info['container_name'], cell=container_info['run_cell'], start_time='') }}">{{ container_info['container_name'] }}</a></td>
                                     {% if container_info['status'] == "FAILED" %}
                                         <td><font color="red">{{ container_info['status'] }}</font></td>
                                     {% elif container_info['status'] == "SUCCEEDED" %}
