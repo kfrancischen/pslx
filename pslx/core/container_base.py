@@ -212,6 +212,8 @@ class ContainerBase(GraphBase):
                 else:
                     unblocked_blocker += 1
 
+        self._start_time = TimezoneUtil.cur_time_in_pst()
+        self._end_time = None
         self.set_status(status=Status.RUNNING)
         self._SYS_LOGGER.info("Taking snapshot of container [" + self.get_container_name() + "] at start.")
         self._logger.info("Taking snapshot of container [" + self.get_container_name() + "] at start.")
@@ -221,8 +223,6 @@ class ContainerBase(GraphBase):
             self._SYS_LOGGER.info("Updating the status of operators from previous snapshots.")
             operator_status = self._get_latest_status_of_operators()
 
-        self._start_time = TimezoneUtil.cur_time_in_pst()
-        self._end_time = None
         task_queue, finished_queue, num_tasks = Queue(), Queue(), 0
 
         node_levels = self.get_node_levels()

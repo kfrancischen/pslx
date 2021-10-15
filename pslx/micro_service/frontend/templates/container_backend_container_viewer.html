@@ -166,7 +166,7 @@
                                   {% else %}
                                       <td><font color="purple">{{ container_info['status'] }}</font></td>
                                   {% endif %}
-                                  <td><a href="{{ url_for('view_container', container_name=container_info['container_name'], cell=container_info['run_cell'], start_time=container_info['start_time']) }}">Link</a></td>
+                                  <td><a href="{{ url_for('view_container', container_name=container_name, cell=container_info['run_cell'], start_time=container_info['start_time']) }}">Link</a></td>
                                 </tr>
                               </tbody>
                               {% endfor %}
