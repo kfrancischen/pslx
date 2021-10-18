@@ -1,4 +1,7 @@
 import os
+import importlib
+import pkgutil
+from google.protobuf.internal.python_message import GeneratedProtocolMessageType
 from pslx.core.exception import EnvNotExistException
 
 
@@ -44,3 +47,23 @@ class EnvUtil(object):
     @classmethod
     def get_home_path(cls):
         return os.path.expanduser('~')
+
+    @classmethod
+    def get_all_schemas(cls, schema_lookup_paths):
+        modules = []
+        for path in schema_lookup_paths:
+            module = importlib.import_module(path)
+            for sub_module in pkgutil.iter_modules(module.__path__):
+                modules.append(path + '.' + sub_module.name)
+
+        schemas = []
+        for module_name in modules:
+            module = importlib.import_module(module_name)
+            for name in dir(module):
+                cls = getattr(module, name)
+                try:
+                    if isinstance(cls, GeneratedProtocolMessageType):
+                        schemas.append(module_name + '.' + name)
+                except Exception as _:
+                    pass
+        return schemas

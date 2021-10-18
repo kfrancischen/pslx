@@ -4,17 +4,19 @@ from pslx.micro_service.frontend import pslx_frontend_ui_app, pslx_frontend_logg
 from pslx.schema.storage_pb2 import ProtoTable
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
+from pslx.util.env_util import EnvUtil
 
 
 @pslx_frontend_ui_app.route('/proto_table_viewer.html', methods=['GET', 'POST'])
 @pslx_frontend_ui_app.route('/view_proto_table', methods=['GET', 'POST'])
 @login_required
 def view_proto_table():
+    value_types = EnvUtil.get_all_schemas(pslx_frontend_ui_app.config['schemas'])
     if request.method == 'POST':
         try:
             proto_table_path = request.form['proto_table_path'].strip()
-            value_type = request.form['value_type'].strip()
-            modules = value_type.split('.')
+            selected_value_type = request.form['value_type'].strip()
+            modules = selected_value_type.split('.')
             module, value_type = '.'.join(modules[:-1]), modules[-1]
             pslx_frontend_logger.info("Proto table viewer input path [" + proto_table_path + '] with value type [' +
                                       value_type + '] in module name [' + module + '].')
@@ -46,19 +48,25 @@ def view_proto_table():
                             'val': str(proto_val),
                         }
                     )
-
+            value_types.remove(selected_value_type)
             return render_template(
                 'proto_table_viewer.html',
-                proto_contents=proto_contents
+                proto_contents=proto_contents,
+                value_types=value_types,
+                selected_value_type=selected_value_type
             )
         except Exception as err:
             pslx_frontend_logger.error("Got error rendering proto_table_viewer.html: " + str(err) + '.')
             return render_template(
                 'proto_table_viewer.html',
-                proto_contents=[]
+                proto_contents=[],
+                value_types=value_types,
+                selected_value_type=''
             )
     else:
         return render_template(
             'proto_table_viewer.html',
-            proto_contents=[]
+            proto_contents=[],
+            value_types=value_types,
+            selected_value_type=''
         )
