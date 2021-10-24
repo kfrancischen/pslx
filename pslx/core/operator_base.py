@@ -4,7 +4,7 @@ from pslx.core.base import DummyLogger
 from pslx.core.exception import OperatorFailureException, FileNotExistException
 from pslx.core.node_base import OrderedNodeBase
 from pslx.schema.enums_pb2 import DataModelType, Status, Signal
-from pslx.schema.snapshots_pb2 import OperatorSnapshot
+from pslx.schema.snapshots_pb2 import OperatorSnapshot, OperatorContentPlain
 from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneUtil, TimeSleepObj
@@ -12,7 +12,6 @@ from pslx.util.timezone_util import TimezoneUtil, TimeSleepObj
 
 class OperatorBase(OrderedNodeBase):
     DATA_MODEL = DataModelType.DEFAULT
-    CONTENT_MESSAGE_TYPE = None
 
     def __init__(self, operator_name, logger=DummyLogger()):
         super().__init__(node_name=operator_name)
@@ -81,6 +80,19 @@ class OperatorBase(OrderedNodeBase):
     def mark_as_persistent(self):
         self._persistent = True
 
+    @classmethod
+    def content_serializer(self, content):
+        op_content = OperatorContentPlain()
+        try:
+            op_content.plan_content.bytes_val = str(content)
+        except Exception as err:
+            self._logger.warning("Seralize content with error: " + str(err) + '.')
+        return ProtoUtil.message_to_any(message=op_content)
+
+    @classmethod
+    def content_deserializer(self, content):
+        return ProtoUtil.any_to_message(message_type=OperatorContentPlain, any_message=content)
+
     def is_done(self):
         return self._status == Status.SUCCEEDED
 
@@ -102,13 +114,13 @@ class OperatorBase(OrderedNodeBase):
             return Status.IDLE
 
     @classmethod
-    def get_content_from_snapshot(cls, snapshot_file, message_type):
+    def get_content_from_snapshot(cls, snapshot_file, message_type=OperatorContentPlain):
         try:
             snapshot = FileUtil.read_proto_from_file(
                 proto_type=OperatorSnapshot,
                 file_name=FileUtil.die_if_file_not_exist(file_name=snapshot_file)
             )
-            return ProtoUtil.any_to_message(message_type=message_type, any_message=snapshot.content)
+            return cls.content_deserializer(content=snapshot.content)
         except FileNotExistException as _:
             return message_type()
 
@@ -169,8 +181,7 @@ class OperatorBase(OrderedNodeBase):
         if self.get_status() == Status.SUCCEEDED and self._end_time:
             snapshot.end_time = str(self._end_time)
         if self._persistent:
-            assert self.CONTENT_MESSAGE_TYPE is not None
-            snapshot.content.CopyFrom(ProtoUtil.message_to_any(message=self._content))
+            snapshot.content.CopyFrom(self.content_serializer(self._content))
         if output_file and self._config['save_snapshot'] and 'Dummy' not in self.get_class_name():
             self._SYS_LOGGER.info("Saved to file " + output_file + '.')
 

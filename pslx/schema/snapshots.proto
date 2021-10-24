@@ -41,22 +41,13 @@ message ContainerSnapshot {
     string run_cell = 12;
 }
 
-// the next will be 5
+// the next will be 6
 message OperatorContentPlain {
     oneof plan_content {
         string string_val = 1;
         int32 int_val = 2;
         float float_val = 3;
         bool bool_val = 4;
+        bytes bytes_val = 5;
     }
-}
-
-// the next will be 2
-message OperatorContentList {
-    repeated OperatorContentPlain list_content = 1;
-}
-
-// the next will be 2
-message OperatorContentDict {
-    map<string, OperatorContentPlain> dict_content = 1;
 }
