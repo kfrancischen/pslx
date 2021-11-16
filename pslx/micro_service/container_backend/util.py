@@ -29,6 +29,7 @@ class ContainerBackendUtil(object):
         storage_value.end_time = request.end_time
         storage_value.log_file = request.log_file
         storage_value.run_cell = request.run_cell
+        storage_value.snapshot_cell = request.snapshot_cell
         for key in request.counters:
             storage_value.counters[key] = request.counters[key]
         storage_value.ttl = int(EnvUtil.get_pslx_env_variable('PSLX_BACKEND_CONTAINER_TTL'))
