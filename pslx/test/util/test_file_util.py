@@ -80,3 +80,9 @@ class FileUtilTest(unittest.TestCase):
         data = ['123', '234']
         FileUtil.write_lined_txt_to_file(data=data, file_name=self.TEST_DATA_PATH_1)
         self.assertEqual(data, FileUtil.read_lined_txt_from_file(file_name=self.TEST_DATA_PATH_1))
+
+    def test_get_cell_from_path(self):
+        path = '/galaxy/aa-d/test'
+        self.assertEqual('aa', FileUtil.get_cell_from_path(path))
+        path = '/LOCAL/test'
+        self.assertNotEqual('LOCAL', FileUtil.get_cell_from_path(path))

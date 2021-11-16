@@ -124,6 +124,8 @@ class ContainerBase(GraphBase):
         snapshot.data_model = self.DATA_MODEL
         snapshot.log_file = FileUtil.convert_local_to_cell_path(glogging.get_logger_file(self._logger))
         snapshot.run_cell = EnvUtil.get_other_env_variable(var='GALAXY_fs_cell', fallback_value='')
+        snapshot.snapshot_cell = FileUtil.get_cell_from_path(
+            FileUtil.convert_local_to_cell_path(self._snapshot_file_folder))
         for key, val in self._counter.items():
             snapshot.counters[key] = val
         if self._start_time:

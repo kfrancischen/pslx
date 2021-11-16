@@ -208,6 +208,13 @@ class FileUtil(object):
         return path
 
     @classmethod
+    def get_cell_from_path(cls, path):
+        if cls.is_local_path(path):
+            return EnvUtil.get_other_env_variable(var='GALAXY_fs_cell')
+        else:
+            return path.replace('/galaxy/', '').split('-')[0]
+
+    @classmethod
     def get_file_attr(cls, file_name):
         attr = gclient.get_attr(file_name)
         if attr:

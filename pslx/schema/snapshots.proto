@@ -25,7 +25,7 @@ message OperatorSnapshot {
     string log_file = 9;
 }
 
-// the next will be 13
+// the next will be 14
 message ContainerSnapshot {
     string container_name = 1;
     map<string, OperatorSnapshot> operator_snapshot_map = 2;
@@ -39,6 +39,7 @@ message ContainerSnapshot {
     string log_file = 10;
     map<string, int32> counters = 11;
     string run_cell = 12;
+    string snapshot_cell = 13;
 }
 
 // the next will be 6
