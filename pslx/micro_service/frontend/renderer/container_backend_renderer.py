@@ -26,7 +26,8 @@ def get_containers_info():
     all_proto_files = set()
     all_cells = gclient.list_cells()
     for cell_name in all_cells:
-        folder = FileUtil.convert_local_to_cell_path(path=backend_folder, cell=cell_name)
+        folder = FileUtil.convert_local_to_cell_path(
+            path=backend_folder, cell=cell_name)
         proto_files = FileUtil.list_files_in_dir(folder)
         all_proto_files = all_proto_files.union(set(proto_files))
     for proto_file in all_proto_files:
@@ -46,18 +47,19 @@ def get_containers_info():
         ttl = result_proto.ttl
 
         if ttl > 0 and result_proto.updated_time and TimezoneUtil.cur_time_in_pst() - TimezoneUtil.cur_time_from_str(
-            result_proto.updated_time) >= datetime.timedelta(days=ttl):
+                result_proto.updated_time) >= datetime.timedelta(days=ttl):
             FileUtil.remove_file(storage.get_file_name())
         else:
             container_info = {
                 'container_name': result_proto.container_name,
                 'status': ProtoUtil.get_name_by_value(
-                        enum_type=Status, value=result_proto.container_status),
+                    enum_type=Status, value=result_proto.container_status),
                 'updated_time': result_proto.updated_time,
                 'mode': ProtoUtil.get_name_by_value(enum_type=ModeType, value=result_proto.mode),
                 'data_model': ProtoUtil.get_name_by_value(
                     enum_type=DataModelType, value=result_proto.data_model),
                 'run_cell': result_proto.run_cell,
+                'snapshot_cell': result_proto.snapshot_cell,
             }
             containers_info.append(container_info)
 
@@ -72,8 +74,10 @@ def get_container_info(container_name, cell_name, start_time):
         'counter_info': [],
     }
     operators_info = []
-    folder = FileUtil.convert_local_to_cell_path(path=backend_folder, cell=cell_name)
-    pslx_frontend_logger.info("Container backend checking folder [" + folder + '].')
+    folder = FileUtil.convert_local_to_cell_path(
+        path=backend_folder, cell=cell_name)
+    pslx_frontend_logger.info(
+        "Container backend checking folder [" + folder + '].')
     storage = ProtoTableStorage()
     storage.initialize_from_file(
         FileUtil.join_paths_to_file(
@@ -96,6 +100,7 @@ def get_container_info(container_name, cell_name, start_time):
                 'status': ProtoUtil.get_name_by_value(
                     enum_type=Status, value=val.container_status),
                 'run_cell': val.run_cell,
+                'snapshot_cell': val.snapshot_cell,
             }
         )
         if len(all_past_run) > 10:
@@ -138,10 +143,12 @@ def container_backend():
     try:
         return render_template(
             'container_backend.html',
-            containers_info=sorted(containers_info, key=lambda x: x['container_name'])
+            containers_info=sorted(
+                containers_info, key=lambda x: x['container_name'])
         )
     except Exception as err:
-        pslx_frontend_logger.error("Got error rendering container_backend.html: " + str(err) + '.')
+        pslx_frontend_logger.error(
+            "Got error rendering container_backend.html: " + str(err) + '.')
         return render_template(
             'container_backend.html',
             containers_info=[]
@@ -168,7 +175,8 @@ def view_container():
             all_past_run=all_past_run
         )
     except Exception as err:
-        pslx_frontend_logger.error("Got error rendering container_backend.html: " + str(err) + '.')
+        pslx_frontend_logger.error(
+            "Got error rendering container_backend.html: " + str(err) + '.')
         return render_template(
             'container_backend_container_viewer.html',
             container_name=str(err),
