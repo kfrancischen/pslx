@@ -24,7 +24,11 @@ if galaxy_viewer_url and galaxy_viewer_url[-1] == '/':
 def get_containers_info():
     containers_info = []
     all_proto_files = set()
-    all_cells = gclient.list_cells()
+    if not FileUtil.is_local_path(backend_folder):
+        all_cells = ['']
+    else:
+        all_cells = gclient.list_cells()
+
     for cell_name in all_cells:
         folder = FileUtil.convert_local_to_cell_path(
             path=backend_folder, cell=cell_name)
