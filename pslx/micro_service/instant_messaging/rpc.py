@@ -65,7 +65,7 @@ class InstantMessagingRPC(RPCBase):
                 '\n-----------------------------------------------'
             }
             try:
-                requests.post(webhook_url, json.dumps(data))
+                requests.post(webhook_url, data=data)
             except Exception as err:
                 self._logger.error("Rocketchat failed to send message with err " + str(err))
                 status = Status.FAILED
@@ -73,7 +73,7 @@ class InstantMessagingRPC(RPCBase):
                     "text": "Error: " + str(err) + "\nCurrent time is " + str(TimezoneUtil.cur_time_in_pst()) +
                     '\n-----------------------------------------------'
                 }
-                requests.post(webhook_url, json.dumps(error_data))
+                requests.post(webhook_url, data=data)
         return None, status
 
     def _send_by_teams(self, is_test, webhook_url, message):
