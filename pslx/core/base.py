@@ -9,6 +9,9 @@ class DummyLogger(object):
     def __init__(self):
         pass
 
+    def update_log_all_date(self):
+        pass
+
     def info(self, *args, **kwargs):
         pass
 

@@ -192,6 +192,7 @@ class OperatorBase(OrderedNodeBase):
         return snapshot
 
     def execute(self):
+        self._logger.update_log_all_date()
         assert self.is_data_model_consistent() and self.is_status_consistent()
         if self.get_status() == Status.SUCCEEDED:
             self._SYS_LOGGER.info("Operator [" + self.get_node_name() +
