@@ -10,6 +10,10 @@ pslx_frontend_ui_app = Flask(__name__)
 pslx_frontend_ui_app.config.update(
     SECRET_KEY=CLIENT_NAME
 )
+pslx_frontend_ui_app.config.update(
+    SESSION_COOKIE_NAME=CLIENT_NAME + '_cookie'
+)
+
 pslx_frontend_logger = glogging.get_logger(
     log_name=CLIENT_NAME,
     log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_INTERNAL/frontend/'
