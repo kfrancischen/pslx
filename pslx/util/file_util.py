@@ -215,6 +215,21 @@ class FileUtil(object):
             return path.replace('/galaxy/', '').split('-')[0]
 
     @classmethod
+    def get_cell_path_local_path(cls, path, cell=''):
+        if cls.is_local_path(path) or '/galaxy/' not in path:
+            return path
+        try:
+            this_cell = cell if cell else EnvUtil.get_other_env_variable(var='GALAXY_fs_cell')
+            with open(EnvUtil.get_other_env_variable('GALAXY_fs_global_config'), 'r') as infile:
+                config = json.load(infile)
+                root = config[this_cell]['fs_root']
+                if root and root[-1] != '/':
+                    root += '/'
+                return root + '/'.join(path.split('/')[3:])
+        except Exception as _:
+            return ''
+
+    @classmethod
     def get_file_attr(cls, file_name):
         attr = gclient.get_attr(file_name)
         if attr:
