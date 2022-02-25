@@ -27,6 +27,7 @@ pslx_frontend_ui_app.config['frontend_config'] = FileUtil.read_proto_from_file(
     file_name=frontend_config_file
 )
 
+pslx_frontend_ui_app.config['schemas'] = ['pslx.schema']
 
 from pslx.micro_service.frontend.renderer import index_renderer, proto_viewer_renderer, \
     container_backend_renderer, proto_table_viewer_renderer
