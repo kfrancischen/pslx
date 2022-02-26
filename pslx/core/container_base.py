@@ -184,8 +184,15 @@ class ContainerBase(GraphBase):
             task_queue.task_done()
         task_queue.task_done()
 
-    def execute(self, is_backfill=False, num_threads=1):
+    def update_log_date(self):
         glogging.update_log_all_date(logger=self._logger)
+        for op in self._node_name_to_node_dict.values():
+            if 'Dummy' in op.get_class_name():
+                continue
+            op.update_log_date()
+
+    def execute(self, is_backfill=False, num_threads=1):
+        self.update_log_date()
         if is_backfill:
             if self.DATA_MODEL == DataModelType.STREAMING:
                 self._logger.warning('STREAMING container [' + self.get_container_name() +
