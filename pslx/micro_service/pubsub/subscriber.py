@@ -48,10 +48,13 @@ class Subscriber(Base):
     def on_response(self, ch, method, properties, body):
         try:
             message_type = self._topic_names_to_types[method.exchange + ':' + method.routing_key]
-            message = ProtoUtil.string_to_message(
-                message_type=message_type,
-                string=base64.b64decode(body)
-            )
+            if message_type:
+                message = ProtoUtil.string_to_message(
+                    message_type=message_type,
+                    string=base64.b64decode(body)
+                )
+            else:
+                message = base64.b64decode(body)
             return self.parse_message(
                 exchange_name=method.exchange,
                 topic_name=method.routing_key,
