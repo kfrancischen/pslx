@@ -27,9 +27,10 @@ class DefaultBatchContainer(ContainerBase):
 class CronBatchContainer(DefaultBatchContainer):
     DATA_MODEL = DataModelType.BATCH
 
-    def __init__(self, container_name):
+    def __init__(self, container_name, timezone=TimezoneObj.WESTERN_TIMEZONE):
         super().__init__(container_name)
         self._scheduler_specs = []
+        self._timezone = timezone
 
     def add_schedule(self, day_of_week, hour, minute=None, second=None, misfire_grace_time=None):
         scheduler_spec = {
@@ -52,7 +53,7 @@ class CronBatchContainer(DefaultBatchContainer):
         super().execute(is_backfill=is_backfill, num_threads=num_threads)
 
     def execute(self, is_backfill=False, num_threads=1):
-        background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
+        background_scheduler = BackgroundScheduler(timezone=self._timezone)
         for scheduler_spec in self._scheduler_specs:
             background_scheduler.add_job(
                 self._execute_wrapper,
@@ -80,9 +81,10 @@ class CronBatchContainer(DefaultBatchContainer):
 class IntervalBatchContainer(DefaultBatchContainer):
     DATA_MODEL = DataModelType.BATCH
 
-    def __init__(self, container_name):
+    def __init__(self, container_name, timezone=TimezoneObj.WESTERN_TIMEZONE):
         super().__init__(container_name)
         self._scheduler_specs = []
+        self._timezone = timezone
 
     def add_schedule(self, days, hours=0, minutes=0, seconds=0, misfire_grace_time=None):
         scheduler_spec = {
@@ -105,7 +107,7 @@ class IntervalBatchContainer(DefaultBatchContainer):
         super().execute(is_backfill=is_backfill, num_threads=num_threads)
 
     def execute(self, is_backfill=False, num_threads=1):
-        background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
+        background_scheduler = BackgroundScheduler(timezone=self._timezone)
         for scheduler_spec in self._scheduler_specs:
             background_scheduler.add_job(
                 self._execute_wrapper,

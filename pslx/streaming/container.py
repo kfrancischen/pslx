@@ -28,9 +28,10 @@ class DefaultStreamingContainer(ContainerBase):
 class CronStreamingContainer(DefaultStreamingContainer):
     DATA_MODEL = DataModelType.STREAMING
 
-    def __init__(self, container_name):
+    def __init__(self, container_name, timezone=TimezoneObj.WESTERN_TIMEZONE):
         super().__init__(container_name)
         self._scheduler_specs = []
+        self._timezone = timezone
 
     def add_schedule(self, day_of_week, hour, minute=None, second=None, misfire_grace_time=None):
         scheduler_spec = {
@@ -53,7 +54,7 @@ class CronStreamingContainer(DefaultStreamingContainer):
         super().execute(is_backfill=False, num_threads=1)
 
     def execute(self, is_backfill=False, num_threads=1):
-        background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
+        background_scheduler = BackgroundScheduler(timezone=self._timezone)
         for scheduler_spec in self._scheduler_specs:
             background_scheduler.add_job(
                 self._execute_wrapper,
@@ -75,9 +76,10 @@ class CronStreamingContainer(DefaultStreamingContainer):
 class IntervalStreamingContainer(DefaultStreamingContainer):
     DATA_MODEL = DataModelType.STREAMING
 
-    def __init__(self, container_name):
+    def __init__(self, container_name, timezone=TimezoneObj.WESTERN_TIMEZONE):
         super().__init__(container_name)
         self._scheduler_specs = []
+        self._timezone = timezone
 
     def add_schedule(self, days, hours=0, minutes=0, seconds=0, misfire_grace_time=None):
         scheduler_spec = {
@@ -100,7 +102,7 @@ class IntervalStreamingContainer(DefaultStreamingContainer):
         super().execute(is_backfill=False, num_threads=1)
 
     def execute(self, is_backfill=False, num_threads=1):
-        background_scheduler = BackgroundScheduler(timezone=TimezoneObj.WESTERN_TIMEZONE)
+        background_scheduler = BackgroundScheduler(timezone=self._timezone)
         for scheduler_spec in self._scheduler_specs:
             background_scheduler.add_job(
                 self._execute_wrapper,
