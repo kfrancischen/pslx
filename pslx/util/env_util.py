@@ -1,7 +1,6 @@
 import os
 import importlib
 import pkgutil
-from google.protobuf.internal.python_message import GeneratedProtocolMessageType
 from pslx.core.exception import EnvNotExistException
 
 
@@ -62,7 +61,7 @@ class EnvUtil(object):
             for name in dir(module):
                 cls = getattr(module, name)
                 try:
-                    if isinstance(cls, GeneratedProtocolMessageType):
+                    if cls.__class__.__name__ == 'GeneratedProtocolMessageType':
                         schemas.append(module_name + '.' + name)
                 except Exception as _:
                     pass
