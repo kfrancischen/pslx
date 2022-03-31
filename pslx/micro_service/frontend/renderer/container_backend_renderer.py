@@ -23,6 +23,7 @@ if galaxy_viewer_url and galaxy_viewer_url[-1] == '/':
 
 def get_containers_info():
     containers_info = []
+    existing_containers = {}
     all_proto_files = set()
     if not FileUtil.is_local_path(backend_folder):
         all_cells = ['']
@@ -65,7 +66,12 @@ def get_containers_info():
                 'run_cell': result_proto.run_cell,
                 'snapshot_cell': result_proto.snapshot_cell,
             }
-            containers_info.append(container_info)
+            if container_info['container_name'] not in existing_containers:
+                existing_containers[container_info['container_name']] = container_info['updated_time']
+                containers_info.append(container_info)
+            else:
+                if container_info['updated_time'] >= existing_containers[container_info['container_name']]:
+                    containers_info.append(container_info)
 
     return containers_info
 
