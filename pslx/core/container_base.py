@@ -39,8 +39,8 @@ class ContainerBase(GraphBase):
     def get_container_name(self):
         return self._container_name
 
-    def set_snapshot_max(self, max_val):
-        self._num_snapshot_max = max_val
+    def set_max_num_snapshot(self, max_val):
+        self._max_num_snapshot = max_val
 
     def bind_backend(self, server_url):
         self._backend = ContainerBackendRPCClient(
