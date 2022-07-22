@@ -162,6 +162,11 @@ class ContainerBase(GraphBase):
             proto=snapshot,
             file_name=output_file_name
         )
+        if self._max_num_snapshot > 0:
+            all_files = sorted(FileUtil.list_files_in_dir(FileUtil.dir_name(output_file_name)))
+            for file_name in all_files[:-(self._max_num_snapshot-1)]:
+                FileUtil.remove_file(file_name)
+
         if self._backend and send_backend:
             try:
                 self._backend.send_to_backend(snapshot=snapshot)

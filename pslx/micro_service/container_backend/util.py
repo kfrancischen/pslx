@@ -60,5 +60,5 @@ class ContainerBackendUtil(object):
 
         if max_num_snapshot > 0:
             all_files = sorted(FileUtil.list_files_in_dir(backend_folder))
-            for file_name in all_files[:-max_num_snapshot]:
+            for file_name in all_files[:-(max_num_snapshot-1)]:
                 FileUtil.remove_file(file_name)
