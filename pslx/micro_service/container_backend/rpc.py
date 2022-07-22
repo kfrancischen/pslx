@@ -11,7 +11,7 @@ from pslx.util.file_util import FileUtil
 class ContainerBackendRPC(RPCBase):
     REQUEST_MESSAGE_TYPE = ContainerSnapshot
 
-    def __init__(self, rpc_storage):
+    def __init__(self, rpc_storage, max_num_snapshot=-1):
         super().__init__(service_name=self.get_class_name(), rpc_storage=rpc_storage)
         self._logger = glogging.get_logger(
             log_name='PSLX_CONTAINER_BACKEND_RPC',
@@ -24,11 +24,13 @@ class ContainerBackendRPC(RPCBase):
             root_dir=EnvUtil.get_pslx_env_variable('PSLX_INTERNAL_METADATA_DIR'),
             base_name='PSLX_CONTAINER_BACKEND_TABLE'
         )
+        self._max_num_snapshot = max_num_snapshot
 
     def get_response_and_status_impl(self, request):
         ContainerBackendUtil.get_response_impl(
             backend_folder=self._backend_folder,
             request=request,
+            max_num_snapshot=self._max_num_snapshot,
             lru_cache=self._lru_cache_tool
         )
         return None, Status.SUCCEEDED

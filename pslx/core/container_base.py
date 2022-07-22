@@ -34,14 +34,19 @@ class ContainerBase(GraphBase):
         self._backend = None
         self._status = Status.IDLE
         self._counter = defaultdict(int)
+        self._max_num_snapshot = -1
 
     def get_container_name(self):
         return self._container_name
 
+    def set_snapshot_max(self, max_val):
+        self._num_snapshot_max = max_val
+
     def bind_backend(self, server_url):
         self._backend = ContainerBackendRPCClient(
             client_name=self._container_name + '_backend',
-            server_url=server_url
+            server_url=server_url,
+            max_num_snapshot=self._max_num_snapshot
         )
         self._logger.info("Bind to backend with name " + self._backend.get_client_name() + " at server url " +
                           server_url + '.')

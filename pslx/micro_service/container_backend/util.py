@@ -7,7 +7,7 @@ from pslx.util.timezone_util import TimezoneUtil
 
 class ContainerBackendUtil(object):
 
-    def get_response_impl(backend_folder, request, lru_cache=None):
+    def get_response_impl(backend_folder, request, max_num_snapshot=-1, lru_cache=None):
         storage_value = ContainerBackendValue()
         storage_value.container_name = request.container_name
         storage_value.container_status = request.status
@@ -57,3 +57,8 @@ class ContainerBackendUtil(object):
         storage.write(
             data={storage_value.start_time: storage_value}
         )
+
+        if max_num_snapshot > 0:
+            all_files = sorted(FileUtil.list_files_in_dir(backend_folder))
+            for file_name in all_files[:-max_num_snapshot]:
+                FileUtil.remove_file(file_name)
