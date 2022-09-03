@@ -82,6 +82,22 @@ class FileUtil(object):
         return os.path.isfile(path_name)
 
     @classmethod
+    def copy_file(cls, from_path, to_path):
+        gclient.copy_file(from_path, to_path)
+
+    @classmethod
+    def move_file(cls, from_path, to_path):
+        gclient.move_file(from_path, to_path)
+
+    @classmethod
+    def copy_folder(cls, from_path, to_path):
+        gclient_ext.copy_folder(from_path, to_path)
+
+    @classmethod
+    def move_folder(cls, from_path, to_path):
+        gclient_ext.move_folder(from_path, to_path)
+
+    @classmethod
     def is_dir(cls, path_name):
         return os.path.isdir(path_name)
 
@@ -140,6 +156,14 @@ class FileUtil(object):
             return ModeType.TEST
         else:
             return ModeType.PROD
+
+    @classmethod
+    def read(cls, file_name):
+        return gclient_ext.read_txt(file_name)
+
+    @classmethod
+    def write(cls, file_name, data, mode='w'):
+        return gclient.write(file_name, data, mode)
 
     @classmethod
     def write_proto_to_file(cls, proto, file_name):

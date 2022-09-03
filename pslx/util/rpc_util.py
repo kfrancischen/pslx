@@ -1,4 +1,5 @@
 import grpc
+from galaxy_py import gclient
 from pslx.schema.enums_pb2 import Status
 from pslx.schema.rpc_pb2 import HealthCheckerRequest
 from pslx.schema.rpc_pb2_grpc import GenericRPCServiceStub
@@ -23,3 +24,7 @@ class RPCUtil(object):
                 return response.server_status, response.server_qps
             except Exception as _:
                 return Status.FAILED, 0
+
+    @classmethod
+    def remote_execute(cls, cell, home_dir, binary, program_args, env_kargs):
+        gclient.remote_execute(cell, home_dir, binary, program_args, env_kargs)
