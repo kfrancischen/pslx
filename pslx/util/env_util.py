@@ -16,7 +16,6 @@ class EnvUtil(object):
         'PSLX_GRPC_MAX_MESSAGE_LENGTH': 512 * 1024 * 1024,  # 512MB,
         'PSLX_GRPC_TIMEOUT': 1,  # 1 second
         'PSLX_QUEUE_TIMEOUT': 10,  # 10 seconds
-        'PSLX_FRONTEND_CONFIG_PROTO_PATH': '',
         "PSLX_RPC_FLUSH_RATE": 1,
         'PSLX_RPC_PASSWORD': 'admin',
         'PSLX_BACKEND_CONTAINER_TTL': 7,

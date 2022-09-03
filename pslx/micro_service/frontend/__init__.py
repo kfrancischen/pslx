@@ -2,7 +2,6 @@ from flask import Flask
 from galaxy_py import glogging
 from pslx.schema.common_pb2 import FrontendConfig
 from pslx.util.env_util import EnvUtil
-from pslx.util.file_util import FileUtil
 from pslx.util.proto_util import ProtoUtil
 
 CLIENT_NAME = 'PSLX_FRONTEND_UI'
@@ -20,10 +19,9 @@ pslx_frontend_logger = glogging.get_logger(
     log_dir=EnvUtil.get_pslx_env_variable(var='PSLX_DEFAULT_LOG_DIR') + 'PSLX_INTERNAL/frontend/'
 )
 
-frontend_config_file = EnvUtil.get_pslx_env_variable('PSLX_FRONTEND_CONFIG_PROTO_PATH')
+frontend_config = EnvUtil.get_other_env_variable('PSLX_FRONTEND_CONFIG')
 
-assert frontend_config_file != ''
-frontend_config = FileUtil.read(file_name=frontend_config_file)
+assert frontend_config != ''
 pslx_frontend_ui_app.config['frontend_config'] = ProtoUtil.text_to_message(FrontendConfig, frontend_config)
 
 
