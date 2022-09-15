@@ -63,7 +63,8 @@ class DefaultStorage(StorageBase):
             if param != 'num_line':
                 self._logger.warning(param +
                                      " will be omitted since it is not useful as an input argument in this function.")
-                self._SYS_LOGGER.warning(param + " will be omitted since it is not useful as an input argument in this function.")
+                self._SYS_LOGGER.warning(param + " will be omitted since it is not useful as an input argument in this"
+                                         + " function.")
         try:
             self.increment_rpc_count_by(n=1)
             lines = FileUtil.read_lined_txt_from_file(self._file_name)
