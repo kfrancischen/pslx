@@ -229,7 +229,7 @@ class FileUtil(object):
     def convert_local_to_cell_path(cls, path, cell=''):
         if not path:
             return ''
-        if cls.is_local_path(path) and EnvUtil.get_other_env_variable(var='GALAXY_fs_cell'):
+        if '/LOCAL' in path and EnvUtil.get_other_env_variable(var='GALAXY_fs_cell'):
             cell_name = cell if cell else EnvUtil.get_other_env_variable(var='GALAXY_fs_cell')
             path = path.replace('/LOCAL', '/galaxy/' + cell_name + '-d')
 
@@ -237,7 +237,7 @@ class FileUtil(object):
 
     @classmethod
     def convert_cell_to_local_path(cls, path, cell=''):
-        if cls.is_local_path(path) or '/galaxy/' not in path:
+        if '/LOCAL' in path or '/galaxy/' not in path:
             return path
         try:
             this_cell = cell if cell else EnvUtil.get_other_env_variable(var='GALAXY_fs_cell')
