@@ -216,10 +216,14 @@ class FileUtil(object):
 
     @classmethod
     def is_local_path(cls, path):
-        if not path or '/LOCAL' in path:
-            return True
+        return gclient.is_local_path(path)
+
+    @classmethod
+    def get_cell_from_path(cls, path):
+        if cls.is_local_path(path):
+            return EnvUtil.get_other_env_variable(var='GALAXY_fs_cell')
         else:
-            return False
+            return path.replace('/galaxy/', '').split('-')[0]
 
     @classmethod
     def convert_local_to_cell_path(cls, path, cell=''):
@@ -232,14 +236,7 @@ class FileUtil(object):
         return path
 
     @classmethod
-    def get_cell_from_path(cls, path):
-        if cls.is_local_path(path):
-            return EnvUtil.get_other_env_variable(var='GALAXY_fs_cell')
-        else:
-            return path.replace('/galaxy/', '').split('-')[0]
-
-    @classmethod
-    def get_cell_path_local_path(cls, path, cell=''):
+    def convert_cell_to_local_path(cls, path, cell=''):
         if cls.is_local_path(path) or '/galaxy/' not in path:
             return path
         try:
