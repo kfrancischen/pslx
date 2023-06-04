@@ -35,6 +35,7 @@ class ContainerBase(GraphBase):
         self._status = Status.IDLE
         self._counter = defaultdict(int)
         self._max_num_snapshot = -1
+        self._publishers = []
 
     def get_container_name(self):
         return self._container_name
@@ -50,6 +51,12 @@ class ContainerBase(GraphBase):
         )
         self._logger.info("Bind to backend with name " + self._backend.get_client_name() + " at server url " +
                           server_url + '.')
+
+    def bind_publishers(self, publishers):
+        if self.DATA_MODEL != DataModelType.BATCH:
+            raise ValueError("Only batch containers support publishing snapshots.")
+
+        self._publishers = publishers
 
     def initialize(self, force=False):
         for operator in self._node_name_to_node_dict.values():

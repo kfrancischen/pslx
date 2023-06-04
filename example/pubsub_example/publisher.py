@@ -12,7 +12,6 @@ if __name__ == "__main__":
 
     message1 = HealthCheckerRequest()
     message1.server_url = 'test1'
-    message1.secure = False
 
     publisher2 = Publisher(
         exchange_name='test_exchange_2',
@@ -22,7 +21,6 @@ if __name__ == "__main__":
 
     message2 = HealthCheckerRequest()
     message2.server_url = 'test2'
-    message2.secure = True
 
     while True:
         print("Publish message...")

@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+import "google/protobuf/any.proto";
+import "snapshots.proto";
+
 package pslx;
 
 // the next will be 4
@@ -28,4 +31,12 @@ message FrontendConfig {
 
     Credentials credential = 5;
     string galaxy_viewer_url = 6;
+}
+
+message BatchContainerFinishMessage {
+    ContainerSnapshot snapshot = 1;
+    string end_time = 2;
+    string exchange_name = 3;
+    string topic_name = 4;
+    google.protobuf.Any other_data = 5;
 }

@@ -4,6 +4,7 @@ from galaxy_py import glogging
 
 from pslx.core.container_base import ContainerBase
 from pslx.schema.enums_pb2 import DataModelType
+from pslx.schema.common_pb2 import BatchContainerFinishMessage
 from pslx.util.env_util import EnvUtil
 from pslx.util.proto_util import ProtoUtil
 from pslx.util.timezone_util import TimezoneObj, TimeSleepObj
@@ -22,6 +23,16 @@ class DefaultBatchContainer(ContainerBase):
         self._config = {
             'max_instances': 1,
         }
+
+    def format_finish_message(self):
+        snapshot = self.get_container_snapshot()
+        finish_message = BatchContainerFinishMessage(snapshot=snapshot)
+        finish_message.end_time = snapshot.end_time
+        for publisher in self._publishers:
+            finish_message.topic_name = publisher.get_topic_name()
+            finish_message.exchange_name = publisher.get_exchange_name()
+            publisher.publish(finish_message)
+        return finish_message
 
 
 class CronBatchContainer(DefaultBatchContainer):
