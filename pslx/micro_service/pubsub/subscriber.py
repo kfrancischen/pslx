@@ -7,7 +7,7 @@ from pslx.util.proto_util import ProtoUtil
 
 class Subscriber(Base):
 
-    def __init__(self, connection_str, logger=DummyUtil.dummy_logger(), close_after_num_message=-1):
+    def __init__(self, connection_str, logger=DummyUtil.dummy_logger()):
         super().__init__()
         self._logger = logger
         self._connection_str = connection_str
@@ -19,8 +19,6 @@ class Subscriber(Base):
         self._tmp_queue_name = tmp_result.method.queue
         self._topic_names_to_types = {}
         self._op = None
-        self._close_after_num_message = close_after_num_message
-        self._num_message = 0
 
     def subscribe(self, exchange_name, topic_name, message_type):
         # declare tmp queue
@@ -45,16 +43,7 @@ class Subscriber(Base):
         if not self._op:
             self._logger.error("Please bind to operator to parse message.")
         else:
-            if self._close_after_num_message > 0:
-                self._num_message += 1
             self._op.pubsub_msg_parser(exchange_name=exchange_name, topic_name=topic_name, message=message)
-
-        if self._close_after_num_message > 0 and self._close_after_num_message == self._num_message:
-            try:
-                self._channel.close()
-                self._connection.close()
-            except Exception as err:
-                self._logger.error("Stopping subscriber with error " + str(err) + '.')
 
     def on_response(self, ch, method, properties, body):
         try:
@@ -84,3 +73,10 @@ class Subscriber(Base):
             auto_ack=True
         )
         self._channel.start_consuming()
+
+    def close(self):
+        try:
+            self._channel.close()
+            self._connection.close()
+        except Exception as err:
+            self._logger.error("Stopping subscriber with error " + str(err) + '.')
