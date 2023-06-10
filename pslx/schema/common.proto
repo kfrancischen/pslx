@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 import "google/protobuf/any.proto";
-import "snapshots.proto";
 
 package pslx;
 
@@ -33,10 +32,12 @@ message FrontendConfig {
     string galaxy_viewer_url = 6;
 }
 
-message BatchContainerFinishMessage {
-    ContainerSnapshot snapshot = 1;
+// the next will be 7
+message BatchOperatorFinishMessage {
+    string message = 1;
     string end_time = 2;
     string exchange_name = 3;
     string topic_name = 4;
-    google.protobuf.Any other_data = 5;
+    string operator_name = 5;
+    google.protobuf.Any other_data = 6;
 }
